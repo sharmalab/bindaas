@@ -1,0 +1,62 @@
+{
+  "profiles": {
+    "audit": {
+      "dataSource": {
+        "db": "test",
+        "collection": "audit",
+        "host": "hudson.cci.emory.edu",
+        "port": 27017,
+        "initialize": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {
+        "csvFile": {
+          "type": "MULTIPART",
+          "properties": {
+            "inputType": "CSV_FILE"
+          },
+          "name": "csvFile",
+          "timeCreated": "Thu Nov 08 10:32:09 EST 2012",
+          "createdBy": "admin"
+        },
+        "mongoFile": {
+          "type": "MULTIPART",
+          "properties": {
+            "inputType": "JSON_FILE"
+          },
+          "name": "mongoFile",
+          "timeCreated": "Thu Nov 08 10:32:09 EST 2012",
+          "createdBy": "admin"
+        },
+        "csv": {
+          "type": "FORM_DATA",
+          "properties": {
+            "inputType": "CSV"
+          },
+          "name": "csv",
+          "timeCreated": "Thu Nov 08 10:32:09 EST 2012",
+          "createdBy": "admin"
+        },
+        "mongo": {
+          "type": "FORM_DATA",
+          "properties": {
+            "inputType": "JSON"
+          },
+          "name": "mongo",
+          "timeCreated": "Thu Nov 08 10:32:09 EST 2012",
+          "createdBy": "admin"
+        }
+      },
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider",
+      "providerVersion": 1,
+      "name": "audit",
+      "timeCreated": "Thu Nov 08 10:32:09 EST 2012",
+      "createdBy": "admin"
+    }
+  },
+  "params": {},
+  "name": "mongodb",
+  "timeCreated": "Wed Nov 07 18:31:58 EST 2012",
+  "createdBy": "admin"
+}

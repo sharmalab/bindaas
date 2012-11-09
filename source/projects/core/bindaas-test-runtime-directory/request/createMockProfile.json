@@ -1,0 +1,5 @@
+{
+	"providerId" : "edu.emory.cci.mock.datasource.MockProvider",
+	"providerVersion" : "1",
+	"dataSource" : { "url" : "http://localhost" }
+}

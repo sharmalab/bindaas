@@ -1,0 +1,27 @@
+package edu.emory.cci.bindaas.core.model;
+
+import java.util.Map;
+
+import com.google.gson.JsonObject;
+import com.google.gson.annotations.Expose;
+
+import edu.emory.cci.bindaas.framework.model.ModifierEntry;
+
+public class SubmitEndpointRequestParameter {
+
+	@Expose private JsonObject properties;
+	@Expose private Map<Integer,ModifierEntry> submitPayloadModifiers;
+	public JsonObject getProperties() {
+		return properties;
+	}
+	public void setProperties(JsonObject properties) {
+		this.properties = properties;
+	}
+	public Map<Integer, ModifierEntry> getSubmitPayloadModifiers() {
+		return submitPayloadModifiers;
+	}
+	public void setSubmitPayloadModifiers(
+			Map<Integer, ModifierEntry> submitPayloadModifiers) {
+		this.submitPayloadModifiers = submitPayloadModifiers;
+	}
+}
