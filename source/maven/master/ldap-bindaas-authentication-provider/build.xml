@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Nov 12, 2012 2:48:35 PM                                                        
+
+     ldap-bindaas-authentication-provider    
+     Copy project to do maven build
+                   
+     nadir                                                                
+     ====================================================================== -->
+<project name="ldap-bindaas-authentication-provider" default="copyProject">
+	
+	
+    <description>
+            Copy project to do maven build
+    </description>
+
+	<property name="project.home" value="../../../projects/security_providers/ldap-bindaas-authentication-provider"></property>
+	<property name="build.src" value="src/main/java"></property>
+	<property name="build.resources" value="src/main/resources"></property>
+    <!-- ================================= 
+          target: copyProject              
+         ================================= -->
+    <target name="copyProject" depends="clean" description="Copy project to do maven build">
+        <copy todir="${build.src}">
+        	<fileset dir="${project.home}/src">
+        		<include name="**/*"/>
+        	</fileset>
+        </copy>
+    	
+    	<copy todir="${build.resources}">
+    		<fileset dir="${project.home}">
+    			<exclude name="**/src/" />
+    			<exclude name="**/bin/"/>
+    		</fileset>
+    	</copy>
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: clean                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean">
+    	<delete verbose="true" dir="${build.src}" />
+    	<delete verbose="true" dir="${build.resources}" />
+    	<mkdir dir="${build.src}"/>
+    	<mkdir dir="${build.resources}"/>
+    	
+    </target>
+
+</project>

@@ -1,0 +1,25 @@
+
+------------------- Testing [edu.emory.cci.bindaas.junit.provider.aime.AIMETestSuite]  -------------------
+
+...............
+Time: 48.987
+
+OK (15 tests)
+
+
+------------------- Testing [edu.emory.cci.bindaas.junit.core.CoreFrameworkTestSuite]  -------------------
+
+..........................
+.....
+Time: 0.153
+
+OK (31 tests)
+
+
+------------------- Testing [edu.emory.cci.bindaas.junit.provider.mongodb.MongoDBTestSuite]  -------------------
+
+...................
+Time: 1.263
+
+OK (19 tests)
+

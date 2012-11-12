@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Nov 12, 2012 2:48:35 PM                                                        
+
+     Master build.xml    
+     Copy project to do maven build
+                   
+     nadir                                                                
+     ====================================================================== -->
+<project name="master" default="copyProject">
+	
+	
+    <description>
+            Copy project to do maven build
+    </description>
+
+	<target name="copyProject"  description="default build file">
+        
+    </target>
+
+    
+</project>
