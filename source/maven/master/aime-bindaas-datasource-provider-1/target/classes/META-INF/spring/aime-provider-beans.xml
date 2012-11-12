@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<bean id="aimeSubmitHandler" class="edu.emory.cci.bindaas.datasource.provider.aime.AIMESubmitHandler" init-method="init">
+	<property name="xpathExpressions">
+		<map>
+			<entry key="uniqueIdentifier" value="/ns1:ImageAnnotation/@uniqueIdentifier"></entry>
+			<entry key="reviewer" value="/ns1:ImageAnnotation/ns1:user/ns1:User/@loginName"></entry>
+			<entry key="dateCreated" value="/ns1:ImageAnnotation/@dateTime"></entry>
+			<entry key="patientId" value="/ns1:ImageAnnotation/ns1:person/ns1:Person/@id"></entry>
+			<entry key="imageSopInstanceUID" value="/ns1:ImageAnnotation/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries/ns1:imageCollection/ns1:Image/@sopInstanceUID"></entry>
+			<entry key="seriesInstanceUID" value="/ns1:ImageAnnotation/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries/@instanceUID"></entry>
+			<entry key="studyInstanceUID" value="/ns1:ImageAnnotation/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/@instanceUID"></entry>
+		</map>
+	
+	</property>
+	
+	<property name="insertQuery"><value>insert into XMLDS.%s (UNIQUE_ID,REVIEWER,DATE_CREATED,PATIENT_ID,XMLCOLUMN,DATA_SOURCE ,IMAGE_UID, STUDY_UID ,SERIES_UID ) values ( '%s','%s','%s','%s','%s','%s','%s','%s','%s' )</value></property>
+</bean>
+
+<bean id="aimeQueryHandler" class="edu.emory.cci.bindaas.datasource.provider.aime.AIMEQueryHandler">
+	<property name="outputFormatRegistry" ref="outputFormatRegistry"></property>
+</bean>
+
+<bean id="aimeDeleteHandler" class="edu.emory.cci.bindaas.datasource.provider.aime.AIMEDeleteHandler">
+</bean>
+
+<bean id="outputFormatRegistry" class="edu.emory.cci.bindaas.datasource.provider.aime.outputformat.OutputFormatRegistry" init-method="init" ></bean>
+
+<bean id="aimeProvider" class="edu.emory.cci.bindaas.datasource.provider.aime.AIMEProvider" init-method="init">
+<property name="aimeQueryHandler" ref="aimeQueryHandler"></property>
+<property name="aimeDeleteHandler" ref="aimeDeleteHandler"></property>
+<property name="aimeSubmitHandler" ref="aimeSubmitHandler"></property>
+<property name="createAIMETableQuery"><value>create table XMLDS.%s (UNIQUE_ID varchar(64) NOT NULL , REVIEWER varchar(64)  ,  XMLCOLUMN xml, DATA_SOURCE varchar(120) , DATE_CREATED timestamp, PATIENT_ID varchar(64)  , IMAGE_UID  varchar(64) , STUDY_UID  varchar(64) , SERIES_UID varchar(64)  , primary key (UNIQUE_ID) )</value></property>
+<property name="dropAIMETableQuery"><value>drop table XMLDS.%s </value></property>
+</bean>
+
+</beans>
+
+
+
