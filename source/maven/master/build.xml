@@ -7,16 +7,60 @@
                    
      nadir                                                                
      ====================================================================== -->
-<project name="master" default="copyProject">
-	
-	
-    <description>
+<project name="master" default="deploy">
+
+
+	<description>
             Copy project to do maven build
     </description>
+	<property name="dist.placeholder.dir" value="dist">
+	</property>
 
+	<property name="equinoxBundle" value="org.eclipse.osgi-3.5.1.R35x_v20091005.jar" />
+	<property name="gsonBundle" value="com.google.gson_2.1.0.v201203072145.jar" />
+	<property name="dist.location" value="../../../binaries/"></property>
+	
+
+
+	<property name="mandatory.bundle.repo" value="../../dependencies/mandatory">
+	</property>
 	<target name="copyProject"  description="default build file">
-        
-    </target>
 
-    
+	</target>
+
+	<target name="dist" depends="dist-clean">
+		<echo>Copying mandatory dependencies</echo>
+		<copy todir="${dist.placeholder.dir}">
+			<fileset dir="${mandatory.bundle.repo}">
+				<include name="${equinoxBundle}"/>
+				<include name="${gsonBundle}"/>
+			</fileset>
+			<fileset dir="../../dependencies">
+				<include name="**/configuration/*"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${dist.placeholder.dir}/dependencies">
+			<fileset dir="${mandatory.bundle.repo}">
+				<exclude name="${equinoxBundle}"/>
+				<exclude name="${gsonBundle}"/>
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="deploy">
+			<tstamp/>
+			<tar basedir="${dist.placeholder.dir}"  tarfile="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar" />
+			<gzip destfile="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar.gz" src="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar"/>
+			<delete file="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar"></delete>
+	</target>
+
+	<target name="dist-clean">
+		<delete dir="${dist.placeholder.dir}">
+		</delete>
+		<mkdir dir="${dist.placeholder.dir}"/>
+		<mkdir dir="${dist.placeholder.dir}/dependencies"/>
+	</target>
+
 </project>

@@ -17,6 +17,7 @@
 	<property name="project.home" value="../../../projects/core/bindaas-installer-updater"></property>
 	<property name="build.src" value="src/main/java"></property>
 	<property name="build.resources" value="src/main/resources"></property>
+	<property name="dist.placeholder.dir" value="../dist"></property>
     <!-- ================================= 
           target: copyProject              
          ================================= -->
@@ -45,5 +46,14 @@
     	<mkdir dir="${build.resources}"/>
     	
     </target>
+
+	<target name="dist">
+		<copy todir="${dist.placeholder.dir}">
+			<fileset dir="target">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="deploy"></target>
 
 </project>

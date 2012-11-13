@@ -8,13 +8,13 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>bindaas-installer-updater</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
 	<dependencies>
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>bindaas-core-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
 
