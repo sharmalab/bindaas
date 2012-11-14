@@ -8,7 +8,46 @@
         "port": 27017,
         "initialize": true
       },
-      "queryEndpoints": {},
+      "queryEndpoints": {
+      
+      "find": {
+          "queryTemplate": "{ '_operation' : 'find' , '_operation_args' : {'query' : {}, 'fields' : {'_id' : 0 }}}",
+          "bindVariables": {
+          },
+          "outputFormat": {
+            "outputFormat": "JSON"
+          },
+          "description": "Get Audit Logs in JSON format.",
+          "name": "find",
+          "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
+          "createdBy": "junit"
+        },
+              "count": {
+          "queryTemplate": "{ '_operation' : 'count' , '_operation_args' : {'query' : {}, 'fields' : {'_id' : 0 }}}",
+          "bindVariables": {
+          },
+          "outputFormat": {
+            "outputFormat": "JSON"
+          },
+          "description": "Get Audit Logs in JSON format.",
+          "name": "count",
+          "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
+          "createdBy": "junit"
+        },
+         "group": {
+          "queryTemplate": "{ '_operation' : 'group' , '_operation_args' : {'key' : { 'outcome' : true },'initial' : { 'count' : 0 },'finalize' : '' ,'condition' : {},'reduce' : 'function(obj,prev) { prev.count++; }'}}",
+          "bindVariables": {
+          },
+          "outputFormat": {
+            "outputFormat": "JSON"
+          },
+          "description": "Get Audit Logs in JSON format.",
+          "name": "group",
+          "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
+          "createdBy": "junit"
+        }
+
+      },
       "deleteEndpoints": {},
       "submitEndpoints": {
         "csvFile": {
@@ -53,7 +92,37 @@
       "name": "audit",
       "timeCreated": "Thu Nov 08 10:32:09 EST 2012",
       "createdBy": "admin"
+    },
+     "ameen": {
+      "dataSource": {
+        "db": "emrAmeen",
+        "collection": "cancerPatients",
+        "host": "hudson.cci.emory.edu",
+        "port": 27017,
+        "initialize": true
+      },
+      "queryEndpoints": {
+       "cancerPatientsInCSV": {
+          "queryTemplate": "{}",
+          "bindVariables": {},
+          "outputFormat": {
+            "outputFormat": "CSV"
+          },
+          "description": "Get CancerPatients ",
+          "name": "cancerPatientsInCSV",
+          "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
+          "createdBy": "nadir"
+      	}
+      },
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider",
+      "providerVersion": 1,
+      "name": "ameen",
+      "timeCreated": "Thu Nov 08 10:32:09 EST 2012",
+      "createdBy": "admin"
     }
+  
   },
   "params": {},
   "name": "mongodb",

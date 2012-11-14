@@ -9,7 +9,7 @@
       },
       "queryEndpoints": {
          "getByUserInXML": {
-          "queryTemplate": "[{'subject' : '$user$'}]",
+          "queryTemplate": "{'subject' : '$user$'}",
           "bindVariables": {
             "user": {
               "name": "user",
@@ -27,7 +27,7 @@
           "createdBy": "junit"
         },
          "getByUserInJSON": {
-          "queryTemplate": "[{'subject' : '$user$'}]",
+          "queryTemplate": "{'subject' : '$user$'}",
           "bindVariables": {
             "user": {
               "name": "user",
@@ -45,7 +45,7 @@
           "createdBy": "junit"
         },
          "getByUserInCSV": {
-          "queryTemplate": "[{'subject' : '$user$'}]",
+          "queryTemplate": "{'subject' : '$user$'}",
           "bindVariables": {
             "user": {
               "name": "user",
@@ -63,7 +63,7 @@
           "createdBy": "junit"
         },
          "getByUserInHTML": {
-          "queryTemplate": "[{'subject' : '$user$'}, {'_id' : 0 }]",
+          "queryTemplate": "{ '_operation' : 'find' , '_operation_args' : {'query' : {'subject' : '$user$'}, 'fields' : {'_id' : 0 }}}",
           "bindVariables": {
             "user": {
               "name": "user",
