@@ -3,11 +3,14 @@ package edu.emory.cci.bindaas.junit.runner;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 import junit.framework.Test;
+import junit.framework.TestFailure;
 import junit.framework.TestResult;
 import junit.textui.TestRunner;
 
@@ -24,7 +27,9 @@ public class JunitRunner implements CommandProvider {
 
 	private final static String TEST_MANIFEST_HEADER_NAME = "Test-Suite";
 	private Log log = LogFactory.getLog(getClass());
-	private String junitLogFilePattern = "junit-test-%s.log";
+	private String junitLogFilePattern = "junit-bindaas-%s.log";
+	private String junitErrorLogPattern = "junit-bindaas-%s.error";
+	
 	private List<Test> discoverTests()
 	{
 		BundleContext context = Activator.getContext();
@@ -62,18 +67,43 @@ public class JunitRunner implements CommandProvider {
 		
 		return listOfTests;
 	}
-	public void runTestSuite()
+	public void runTestSuite(String id)
 	{
 		log.info("Running All Junit TestCases");
 		PrintStream console;
+		if(id == null)
+		{
+			id = ((new Date()).toString()).replace(" ", "-")   ;
+		}
 		try {
-			console = new JunitLogger(new File( String.format(junitLogFilePattern, (new Date()).toString()).replace(" ", "-")   ));
-			TestRunner testRunner = new TestRunner(console); 
+			console = new JunitLogger(new File( String.format(junitLogFilePattern, id )));
+			TestRunner testRunner = new TestRunner(console);
+			PrintWriter errorWriter = null;
 			for(Test test : discoverTests())
 			{
 				console.println("\n------------------- Testing [" + test.getClass().getName() + "]  -------------------\n");
-				testRunner.doRun(test);
+				TestResult testResult = testRunner.doRun(test);
+				if(testResult.errorCount() > 0)
+				{
+					if(errorWriter == null)
+					{
+						errorWriter = new  PrintWriter(new File( String.format(junitErrorLogPattern, id )));
+					}
+					
+					
+					Enumeration<TestFailure> failures = testResult.errors(); 
+					while(failures.hasMoreElements())
+					{
+						TestFailure failure = failures.nextElement();
+						errorWriter.println(failure);
+					}
+				}
 				
+			}
+			
+			if(errorWriter!=null)
+			{
+				errorWriter.close();
 			}
 			
 			log.info("Finished All Junit TestCases");
@@ -93,7 +123,7 @@ public class JunitRunner implements CommandProvider {
 	
 	public void _junit(CommandInterpreter ci) {
 		
-		runTestSuite();
+		runTestSuite(null);
 	}
 
 }

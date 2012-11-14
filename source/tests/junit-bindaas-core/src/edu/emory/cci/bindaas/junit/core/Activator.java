@@ -11,6 +11,7 @@ import edu.emory.cci.bindaas.junit.runner.JunitRunner;
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
+	private static final String RUN_JUNIT_AT_START_COMMAND = "runJunit";
 
 	public static BundleContext getContext() {
 		return context;
@@ -22,10 +23,16 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		context.registerService(CommandProvider.class.getName(), new JunitRunner(), null);
+		JunitRunner junitRunner = new JunitRunner();
+		context.registerService(CommandProvider.class.getName(),junitRunner , null);
 		MockProvider provider = new MockProvider();
 		provider.init();
 		context.registerService(IProvider.class.getName(), provider, null);
+		
+		if(System.getProperties().containsKey(RUN_JUNIT_AT_START_COMMAND))
+		{
+			junitRunner.runTestSuite(System.getProperties().getProperty(RUN_JUNIT_AT_START_COMMAND));
+		}
 	}
 
 	/*
