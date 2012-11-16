@@ -59,11 +59,11 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				records = parseCSV(data);
 			} catch (Exception e) {
 				log.error("Could not parse the input CSV data ", e);
-				throw new ProviderException(e);
+				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 			}
 
 		} else {
-			throw new ProviderException(
+			throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , 
 					"Invalid InputFormat specified in the endpoint properties");
 		}
 
@@ -84,14 +84,14 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				queryResult.setData(String.format("{ 'result' : 'success' , 'rowsInserted' : '%s'  }", total).getBytes());
 			} catch (Exception e) {
 				log.error(e);
-				throw new ProviderException(e);
+				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 			} finally {
 				if (connection != null) {
 					try {
 						connection.close();
 					} catch (SQLException e) {
 						log.error(e);
-						throw new ProviderException(e);
+						throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 					}
 				}
 			}
@@ -120,7 +120,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				records = parseCSV(data);
 			} catch (Exception e) {
 				log.error("Could not parse the input CSV data ", e);
-				throw new ProviderException(e);
+				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 			}
 
 		} else if (seProps.getInputType() != null
@@ -129,10 +129,10 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				records = parseJson(data);
 			} catch (Exception e) {
 				log.error("Could not parse the input JSON data ", e);
-				throw new ProviderException(e);
+				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 			}
 		} else {
-			throw new ProviderException(
+			throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , 
 					"Invalid InputFormat specified in the endpoint properties");
 		}
 
@@ -153,14 +153,14 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				queryResult.setData(String.format("{ 'result' : 'success' , 'rowsInserted' : '%s'  }", total).getBytes());
 			} catch (Exception e) {
 				log.error(e);
-				throw new ProviderException(e);
+				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 			} finally {
 				if (connection != null) {
 					try {
 						connection.close();
 					} catch (SQLException e) {
 						log.error(e);
-						throw new ProviderException(e);
+						throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 					}
 				}
 			}

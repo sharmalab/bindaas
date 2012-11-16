@@ -14,7 +14,7 @@ public class SubmitEndpoint extends Entity {
 	
 	@Expose private Type type;
 	@Expose private JsonObject properties;
-	@Expose private Map<Integer,ModifierEntry> submitPayloadModifiers;
+	@Expose private ModifierEntry submitPayloadModifiers;
 	
 	public Type getType() {
 		return type;
@@ -28,13 +28,13 @@ public class SubmitEndpoint extends Entity {
 	public void setProperties(JsonObject properties) {
 		this.properties = properties;
 	}
-	public Map<Integer, ModifierEntry> getSubmitPayloadModifiers() {
+	public ModifierEntry getSubmitPayloadModifiers() {
 		return submitPayloadModifiers;
 	}
-	public void setSubmitPayloadModifiers(
-			Map<Integer, ModifierEntry> submitPayloadModifiers) {
+	public void setSubmitPayloadModifiers(ModifierEntry submitPayloadModifiers) {
 		this.submitPayloadModifiers = submitPayloadModifiers;
 	}
+	
 	
 	
 }

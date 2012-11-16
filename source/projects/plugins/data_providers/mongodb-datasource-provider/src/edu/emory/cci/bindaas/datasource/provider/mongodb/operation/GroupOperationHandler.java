@@ -9,6 +9,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
+import edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat.OutputFormatRegistry;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
@@ -44,7 +45,7 @@ public class GroupOperationHandler implements IOperationHandler {
 		}catch(Exception e)
 		{
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 		
 	}
@@ -60,7 +61,7 @@ public class GroupOperationHandler implements IOperationHandler {
 			check(operationDescriptor.finalize!=null ,"Invalid query. GroupOperationDescriptor missing parameter [finalize]");
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 		
 	}

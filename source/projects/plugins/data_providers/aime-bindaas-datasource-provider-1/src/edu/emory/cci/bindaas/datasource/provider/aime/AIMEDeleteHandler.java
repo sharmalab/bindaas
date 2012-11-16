@@ -48,7 +48,7 @@ public class AIMEDeleteHandler implements IDeleteHandler {
 
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException("Delete operation failed", e);
+			throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,"Delete operation failed", e);
 		}
 	}
 

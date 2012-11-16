@@ -13,6 +13,7 @@ import edu.emory.cci.bindaas.junit.core.Activator;
 
 public class MockProvider implements IProvider{
 
+	public static final Integer VERSION = 1;
 	private  MockQueryHandler mockQueryHandler;
 	private  MockDeleteHandler mockDeleteHandler;
 	private  MockSubmitHandler mockSubmitHandler;
@@ -33,7 +34,7 @@ public class MockProvider implements IProvider{
 	@Override
 	public int getVersion() {
 
-		return 1;
+		return VERSION;
 	}
 
 	@Override

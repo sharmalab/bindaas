@@ -16,8 +16,8 @@ public class QueryEndpoint extends Entity {
 	@Expose private Map<String,BindVariable> bindVariables;
 	@Expose private Stage stage;
 	@Expose private JsonObject outputFormat;
-	@Expose private Map<Integer,ModifierEntry> queryModifiers;
-	@Expose private Map<Integer,ModifierEntry> queryResultModifiers;
+	@Expose private ModifierEntry queryModifiers;
+	@Expose private ModifierEntry queryResultModifiers;
 	@Expose private String description;
 	
 	
@@ -63,17 +63,16 @@ public class QueryEndpoint extends Entity {
 	public void setOutputFormat(JsonObject outputFormat) {
 		this.outputFormat = outputFormat;
 	}
-	public Map<Integer, ModifierEntry> getQueryModifiers() {
+	public ModifierEntry getQueryModifiers() {
 		return queryModifiers;
 	}
-	public void setQueryModifiers(Map<Integer, ModifierEntry> queryModifiers) {
+	public void setQueryModifiers(ModifierEntry queryModifiers) {
 		this.queryModifiers = queryModifiers;
 	}
-	public Map<Integer, ModifierEntry> getQueryResultModifiers() {
+	public ModifierEntry getQueryResultModifiers() {
 		return queryResultModifiers;
 	}
-	public void setQueryResultModifiers(
-			Map<Integer, ModifierEntry> queryResultModifiers) {
+	public void setQueryResultModifiers(ModifierEntry queryResultModifiers) {
 		this.queryResultModifiers = queryResultModifiers;
 	}
 	

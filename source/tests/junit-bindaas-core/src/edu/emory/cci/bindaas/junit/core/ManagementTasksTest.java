@@ -166,8 +166,7 @@ public class ManagementTasksTest extends TestCase {
 		params.setBindVariables(bindVars);
 		params.setMetaData(metadata);
 		params.setOutputFormat(outputFormat);
-		params.setQueryModifiers(queryModifierList);
-		params.setQueryResultModifiers(queryResultModifierList);
+		
 		params.setQueryTemplate(queryTemplate);
 		params.setDescription(description);
 		params.setTags(tags);
@@ -180,8 +179,6 @@ public class ManagementTasksTest extends TestCase {
 			assertEquals(bindVars.size(), qe.getBindVariables().size());
 			assertEquals(metadata, qe.getMetaData());
 			assertEquals(outputFormat, qe.getOutputFormat());
-			assertEquals(queryModifierList.size(), qe.getQueryModifiers().size());
-			assertEquals(queryResultModifierList.size(), qe.getQueryResultModifiers().size());
 			assertEquals(queryTemplate, qe.getQueryTemplate());
 			assertEquals(Stage.UNVERIFIED, qe.getStage());
 			assertEquals(tags.iterator().next(), qe.getTags().iterator().next());
@@ -243,7 +240,7 @@ public class ManagementTasksTest extends TestCase {
 		Map<Integer,ModifierEntry> payloadModifier = new HashMap<Integer, ModifierEntry>();
 		
 		params.setProperties(properties);
-		params.setSubmitPayloadModifiers(payloadModifier);
+		
 		
 		
 		
@@ -252,7 +249,6 @@ public class ManagementTasksTest extends TestCase {
 			assertEquals(SUBMIT_ENDPOINT_NAME, se.getName());
 			assertEquals(CREATED_BY, se.getCreatedBy());
 			assertEquals(properties, se.getProperties());
-			assertEquals(payloadModifier.size(), se.getSubmitPayloadModifiers().size());
 			assertEquals(se, managementTasks.getSubmitEndpoint(WORKSPACE_NAME, PROFILE_NAME, SUBMIT_ENDPOINT_NAME));
 			
 		} catch (Exception e) {
@@ -445,8 +441,6 @@ public class ManagementTasksTest extends TestCase {
 		params.setBindVariables(bindVars);
 		params.setMetaData(metadata);
 		params.setOutputFormat(outputFormat);
-		params.setQueryModifiers(queryModifierList);
-		params.setQueryResultModifiers(queryResultModifierList);
 		params.setQueryTemplate(queryTemplate);
 		params.setDescription(description);
 		params.setTags(tags);
@@ -460,8 +454,6 @@ public class ManagementTasksTest extends TestCase {
 			assertEquals(bindVars.size(), qe.getBindVariables().size());
 			assertEquals(metadata, qe.getMetaData());
 			assertEquals(outputFormat, qe.getOutputFormat());
-			assertEquals(queryModifierList.size(), qe.getQueryModifiers().size());
-			assertEquals(queryResultModifierList.size(), qe.getQueryResultModifiers().size());
 			assertEquals(queryTemplate, qe.getQueryTemplate());
 			assertEquals(Stage.UNVERIFIED, qe.getStage());
 			assertEquals(tags.iterator().next(), qe.getTags().iterator().next());
@@ -525,7 +517,6 @@ public class ManagementTasksTest extends TestCase {
 		Map<Integer,ModifierEntry> payloadModifier = new HashMap<Integer, ModifierEntry>();
 		
 		params.setProperties(properties);
-		params.setSubmitPayloadModifiers(payloadModifier);
 		
 		
 		
@@ -535,7 +526,6 @@ public class ManagementTasksTest extends TestCase {
 			assertEquals(SUBMIT_ENDPOINT_NAME, se.getName());
 			assertEquals(CREATED_BY, se.getCreatedBy());
 			assertEquals(properties, se.getProperties());
-			assertEquals(payloadModifier.size(), se.getSubmitPayloadModifiers().size());
 			assertEquals(se, managementTasks.getSubmitEndpoint(WORKSPACE_NAME, PROFILE_NAME, SUBMIT_ENDPOINT_NAME));
 			assertNotSame(oldSubmitEndpoint, se);
 		} catch (Exception e) {

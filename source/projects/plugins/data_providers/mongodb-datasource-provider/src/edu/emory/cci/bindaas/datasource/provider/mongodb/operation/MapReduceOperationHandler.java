@@ -11,6 +11,7 @@ import com.mongodb.MapReduceCommand;
 import com.mongodb.MapReduceOutput;
 import com.mongodb.util.JSON;
 
+import edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat.OutputFormatRegistry;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
@@ -47,7 +48,7 @@ public class MapReduceOperationHandler implements IOperationHandler {
 		}catch(Exception e)
 		{
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 		
 	}
@@ -62,7 +63,7 @@ public class MapReduceOperationHandler implements IOperationHandler {
 			check(operationDescriptor.outputCollection!=null ,"Invalid query. MapReduceOperationDescriptor missing parameter [outputCollection]");
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 		
 	}

@@ -64,7 +64,7 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 			}
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 
 	}

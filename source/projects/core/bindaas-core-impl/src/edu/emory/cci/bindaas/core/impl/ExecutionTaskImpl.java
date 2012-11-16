@@ -8,6 +8,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.gson.JsonObject;
+
 import edu.emory.cci.bindaas.core.api.IExecutionTasks;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
@@ -15,16 +17,17 @@ import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.core.api.IValidator;
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.exception.ExecutionTaskException;
-import edu.emory.cci.bindaas.core.rest.service.api.IManagementService;
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.framework.api.IQueryHandler;
+import edu.emory.cci.bindaas.framework.api.IQueryModifier;
+import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.api.ISubmitHandler;
+import edu.emory.cci.bindaas.framework.api.ISubmitPayloadModifier;
 import edu.emory.cci.bindaas.framework.model.BindVariable;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 import edu.emory.cci.bindaas.framework.model.ModifierEntry;
 import edu.emory.cci.bindaas.framework.model.Profile;
-import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
@@ -78,7 +81,7 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 		
 		try {
 		// execute queryModifier chain
-		String finalQuery = executeQueryModifierChain(user, template, queryEndpoint.getQueryModifiers());
+		String finalQuery = executeQueryModifierChain(user, template, queryEndpoint.getQueryModifiers() , profile.getDataSource());
 		
 		// execute handler
 		
@@ -88,7 +91,7 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 		
 		// execute query result chain
 		
-		queryResult = executeQueryResultModifierChain(user, queryResult, queryEndpoint.getQueryResultModifiers());
+		queryResult = executeQueryResultModifierChain(user, queryResult, queryEndpoint.getQueryResultModifiers(), profile.getDataSource());
 		
 		// render result
 		return queryResult;
@@ -151,7 +154,7 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 	public QueryResult executeSubmitEndpoint(String user ,InputStream is,
 			Profile profile ,SubmitEndpoint submitEndpoint) throws ExecutionTaskException {
 		try{
-		InputStream finalStream = executeSubmitPayloadModifierChain(user, is, submitEndpoint.getSubmitPayloadModifiers());
+		InputStream finalStream = executeSubmitPayloadModifierChain(user, is, submitEndpoint.getSubmitPayloadModifiers(), submitEndpoint);
 		// execute handler
 		
 		IProvider provider = providerRegistry.lookupProvider(profile.getProviderId(), profile.getProviderVersion());
@@ -198,19 +201,71 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 		this.validator = validator;
 	}
 
-	protected String executeQueryModifierChain(String user ,String query , Map<Integer,ModifierEntry> modifierChain) throws Exception
+	protected String executeQueryModifierChain(String user ,String query , ModifierEntry modifierChain , JsonObject dataSource) throws Exception
 	{
-		return query; // TODO : implement later
+		String modifiedQuery = query;
+		ModifierEntry next = modifierChain;
+		while(next!=null)
+		{
+			IQueryModifier queryModifier = modifierRegistry.findQueryModifier(next.getName()) ;
+			if(queryModifier!=null)
+			{
+				modifiedQuery = queryModifier.modifyQuery(modifiedQuery, dataSource, user, next.getProperties());
+				next = next.getAttachment();
+			}
+			else
+			{
+				throw new ExecutionTaskException("[IQueryModifier] by id=[" + next.getName()  +"] not found");
+			}
+			
+		}
+		
+		return modifiedQuery;
 	}
 	
-	protected QueryResult executeQueryResultModifierChain(String user , QueryResult queryResult  ,Map<Integer,ModifierEntry> modifierChain) throws Exception
+	protected QueryResult executeQueryResultModifierChain(String user , QueryResult queryResult  ,ModifierEntry modifierChain , JsonObject dataSource) throws Exception
 	{
-		return queryResult; // TODO : implement later
+		QueryResult modifiedQueryResult = queryResult;
+		ModifierEntry next = modifierChain;
+		while(next!=null)
+		{
+			IQueryResultModifier queryResultModifier = modifierRegistry.findQueryResultModifier(next.getName()) ;
+			if(queryResultModifier!=null)
+			{
+				modifiedQueryResult = queryResultModifier.modifyQueryResult(modifiedQueryResult, dataSource, user, next.getProperties());
+				next = next.getAttachment();
+			}
+			else
+			{
+				throw new ExecutionTaskException("[IQueryResultModifier] by id=[" + next.getName()  +"] not found");
+			}
+			
+		}
+		
+		
+		return modifiedQueryResult; 
 	}
 	
-	protected InputStream executeSubmitPayloadModifierChain(String user, InputStream input , Map<Integer,ModifierEntry> modifierChain) throws Exception
+	protected InputStream executeSubmitPayloadModifierChain(String user, InputStream input , ModifierEntry modifierChain , SubmitEndpoint submitEndpoint) throws Exception
 	{
-		return input; // TODO : implement later
+		InputStream modifiedInput = input;
+		ModifierEntry next = modifierChain;
+		while(next!=null)
+		{
+			ISubmitPayloadModifier submitPayloadModifier = modifierRegistry.findSubmitPayloadModifier(next.getName()) ;
+			if(submitPayloadModifier!=null)
+			{
+				modifiedInput = submitPayloadModifier.transformPayload(modifiedInput, submitEndpoint, next.getProperties());
+				next = next.getAttachment();
+			}
+			else
+			{
+				throw new ExecutionTaskException("[ISubmitPayloadModifier] by id=[" + next.getName()  +"] not found");
+			}
+			
+		}
+		
+		return modifiedInput; 
 	}
 
 	@Override
@@ -218,7 +273,7 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 			Profile profile, SubmitEndpoint submitEndpoint)
 			throws ExecutionTaskException {
 		try{
-			String finalData = executeSubmitPayloadModifierChain(user, data, submitEndpoint.getSubmitPayloadModifiers());
+			String finalData = executeSubmitPayloadModifierChain(user, data, submitEndpoint.getSubmitPayloadModifiers(), submitEndpoint);
 			// execute handler
 			
 			IProvider provider = providerRegistry.lookupProvider(profile.getProviderId(), profile.getProviderVersion());
@@ -233,8 +288,25 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 	}
 
 	private String executeSubmitPayloadModifierChain(String user, String data,
-			Map<Integer, ModifierEntry> submitPayloadModifiers) {
-		// TODO implement later
-		return data;
+			ModifierEntry submitPayloadModifiers , SubmitEndpoint submitEndpoint) throws Exception {
+
+		String modifiedInput = data;
+		ModifierEntry next = submitPayloadModifiers;
+		while(next!=null)
+		{
+			ISubmitPayloadModifier submitPayloadModifier = modifierRegistry.findSubmitPayloadModifier(next.getName()) ;
+			if(submitPayloadModifier!=null)
+			{
+				modifiedInput = submitPayloadModifier.transformPayload(modifiedInput, submitEndpoint, next.getProperties());
+				next = next.getAttachment();
+			}
+			else
+			{
+				throw new ExecutionTaskException("[ISubmitPayloadModifier] by id=[" + next.getName()  +"] not found");
+			}
+			
+		}
+		
+		return modifiedInput; 
 	}
 }

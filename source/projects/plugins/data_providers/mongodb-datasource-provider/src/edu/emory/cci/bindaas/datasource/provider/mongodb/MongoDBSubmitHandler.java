@@ -46,7 +46,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 			return queryResult;
 		} catch (IOException e) {
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 
 	}
@@ -104,7 +104,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				throw new Exception("Unsupported Input Type");
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 		finally{
 			if(mongo!=null)
@@ -182,7 +182,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 		catch(Exception e)
 		{
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 		
 	}

@@ -11,6 +11,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
+import edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.FindOperationHandler.FindOperationDescriptor;
@@ -48,7 +49,7 @@ public class CountOperationHandler implements IOperationHandler {
 			catch(Exception e)
 			{
 				log.error(e);
-				throw new ProviderException(e);
+				throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 			}
 	}
 	
@@ -59,7 +60,7 @@ public class CountOperationHandler implements IOperationHandler {
 			check(operationDescriptor.query!=null ,"Invalid query. CountOperationDescriptor missing parameter [query]");
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 		
 	}

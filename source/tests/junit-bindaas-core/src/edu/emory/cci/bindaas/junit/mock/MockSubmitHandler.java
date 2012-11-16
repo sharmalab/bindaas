@@ -27,7 +27,7 @@ public class MockSubmitHandler implements ISubmitHandler {
 		try {
 			result.setData(IOUtils.readBytesFromStream(is));
 		} catch (IOException e) {
-			throw new ProviderException(e);
+			throw new ProviderException(MockProvider.class.getName() , MockProvider.VERSION , e);
 		}
 		return result;
 	}

@@ -81,8 +81,6 @@ public class InformationServiceImpl implements IInformationService{
 		JsonObject obj = new JsonObject();
 		obj.add("id", new JsonPrimitive(modifier.getClass().getName()));
 		obj.add("documentation", modifier.getDocumentation());
-		obj.add("inlet", new JsonPrimitive(modifier.getInletType()));
-		obj.add("outlet", new JsonPrimitive(modifier.getOutletType()));
 		return obj;
 	}
 	

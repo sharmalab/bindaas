@@ -7,7 +7,14 @@ public class ModifierEntry {
 
 	@Expose private String name;
 	@Expose private JsonObject properties;
+	@Expose private ModifierEntry attachment;
 	
+	public ModifierEntry getAttachment() {
+		return attachment;
+	}
+	public void setAttachment(ModifierEntry attachment) {
+		this.attachment = attachment;
+	}
 	public String getName() {
 		return name;
 	}

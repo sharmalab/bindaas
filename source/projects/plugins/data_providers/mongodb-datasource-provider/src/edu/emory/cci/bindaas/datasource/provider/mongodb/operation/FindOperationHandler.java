@@ -10,6 +10,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
+import edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat.IFormatHandler;
@@ -63,12 +64,12 @@ public class FindOperationHandler implements IOperationHandler {
 			catch(Exception e)
 			{
 				log.error(e);
-				throw new ProviderException(e);
+				throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 			}
 		}
 		else
 		{
-			throw new ProviderException("No handler found for outputType=[" + of + "]");
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,"No handler found for outputType=[" + of + "]");
 		}
 		
 	}
@@ -81,7 +82,7 @@ public class FindOperationHandler implements IOperationHandler {
 			check(operationDescriptor.query!=null ,"Invalid query. FindOperationDescriptor missing parameter [query]");
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 		
 	}
