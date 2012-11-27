@@ -36,7 +36,6 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 
 	private IProviderRegistry providerRegistry;
 	private IModifierRegistry modifierRegistry;
-	private IManagementTasks managementTask;
 	private IValidator validator;
 	private Log log = LogFactory.getLog(getClass());
 	
@@ -185,13 +184,6 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 		this.modifierRegistry = modifierRegistry;
 	}
 
-	public IManagementTasks getManagementTask() {
-		return managementTask;
-	}
-
-	public void setManagementTask(IManagementTasks managementTask) {
-		this.managementTask = managementTask;
-	}
 
 	public IValidator getValidator() {
 		return validator;

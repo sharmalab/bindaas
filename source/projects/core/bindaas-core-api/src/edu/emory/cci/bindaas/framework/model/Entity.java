@@ -11,7 +11,7 @@ import edu.emory.cci.bindaas.framework.util.GSONUtil;
  * @author nadir
  *
  */
-public class Entity {
+public class Entity implements Cloneable{
 
 	@Expose private String name;
 	@Expose private String timeCreated; // TODO : change to DATE later
@@ -54,6 +54,12 @@ public class Entity {
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+
+		return GSONUtil.getGSONInstance().fromJson(toString(), getClass());
 	}
 	
 }

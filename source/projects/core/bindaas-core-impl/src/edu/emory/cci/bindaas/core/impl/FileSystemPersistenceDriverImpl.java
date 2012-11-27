@@ -15,6 +15,14 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.helpers.IOUtils;
 
 import edu.emory.cci.bindaas.core.api.IPersistenceDriver;
+import edu.emory.cci.bindaas.core.exception.FrameworkEntityException.Type;
+import edu.emory.cci.bindaas.core.exception.NotFoundException;
+import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
+import edu.emory.cci.bindaas.framework.model.Profile;
+import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
+import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
+import edu.emory.cci.bindaas.framework.model.Workspace;
+import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
 public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 
@@ -39,9 +47,9 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 		}
 		
 	}
-	@Override
-	public List<String> loadAllWorkspaces() throws IOException {
-		List<String> workspaceContents = new ArrayList<String>();
+	
+	public synchronized List<Workspace> loadAllWorkspaces() throws Exception {
+		List<Workspace> workspaceContents = new ArrayList<Workspace>();
 		
 		File[] listOfWorkspaces = metadataStoreDirectory.listFiles(
 				
@@ -60,14 +68,15 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 		for(File workspaceFile : listOfWorkspaces)
 		{
 			String content = readContent(workspaceFile);
-			workspaceContents.add(content);
+			Workspace workspace = GSONUtil.getGSONInstance().fromJson(content, Workspace.class);
+			workspaceContents.add(workspace);
 		}
 		
 		return workspaceContents;
 	}
 
-	@Override
-	public String loadWorkspaceByName(String name) throws IOException {
+
+	public  String loadWorkspaceByName(String name) throws IOException {
 		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ name + ".workspace");
 		if(workspaceFile.isFile() && workspaceFile.canRead())
 		{
@@ -77,20 +86,15 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 		
 	}
 
-	@Override
-	public void createOrUpdateWorkspace(String name, String content)
-			throws IOException {
-		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ name + ".workspace");
-		writeToFile(workspaceFile, content);
-		
-	}
 
-	@Override
-	public synchronized void removeWorkspace(String name) throws IOException {
-		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ name + ".workspace");
-		workspaceFile.delete();
-		
-	}
+	
+
+
+//	public synchronized void removeWorkspace(String name) throws IOException {
+//		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ name + ".workspace");
+//		workspaceFile.delete();
+//		
+//	}
 	
 	public String getMetadataStore() {
 		return metadataStore;
@@ -105,11 +109,146 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 		return sw.toString();
 		
 	}
-	private synchronized void writeToFile(File file,String content) throws IOException
+	private  void writeToFile(File file,String content) throws IOException
 	{
 		FileOutputStream fos = new FileOutputStream(file);
 		ByteArrayInputStream bis = new ByteArrayInputStream(content.getBytes());
 		IOUtils.copyAndCloseInput(bis, fos);
 	}
+	
+
+	@Override
+	public synchronized boolean doesExist(String workspaceName) {
+		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspaceName + ".workspace");
+		if(workspaceFile.isFile() && workspaceFile.canRead())
+		{
+			return true;
+		}
+		else
+		return false;
+	}
+
+	
+	@Override
+	public Workspace getWorkspace(String workspaceName) throws Exception {
+		try{
+		String content = loadWorkspaceByName(workspaceName);
+		return GSONUtil.getGSONInstance().fromJson(content, Workspace.class);
+		}
+		catch(Exception e)
+		{
+			log.error(e);
+			throw new NotFoundException(workspaceName, Type.Workspace);
+		}
+		
+	}
+	
+	@Override
+	public synchronized void saveWorkspace(Workspace workspace) throws IOException {
+		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspace.getName() + ".workspace");
+		writeToFile(workspaceFile, workspace.toString());
+	}
+	
+	@Override
+	public synchronized void deleteWorkspace(String workspaceName) throws IOException {
+		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspaceName + ".workspace");
+		workspaceFile.delete();
+	}
+	@Override
+	public synchronized void saveProfile(String workspaceName, Profile profile)
+			throws Exception {
+		Workspace workspace = getWorkspace(workspaceName);
+		workspace.getProfiles().put(profile.getName(), profile);
+		saveWorkspace(workspace);
+		
+	}
+	@Override
+	public synchronized void deleteProfile(String workspaceName, String profileName)
+			throws Exception {
+		Workspace workspace = getWorkspace(workspaceName);
+		workspace.getProfiles().remove(profileName);
+		saveWorkspace(workspace);
+	}
+	@Override
+	public synchronized void saveQueryEndpoint(String workspaceName, String profileName,
+			QueryEndpoint queryEndpoint) throws Exception {
+		Workspace workspace = getWorkspace(workspaceName);
+		if(workspace.getProfiles().containsKey(profileName))
+		{
+			workspace.getProfiles().get(profileName).getQueryEndpoints().put(queryEndpoint.getName(), queryEndpoint);
+			saveWorkspace(workspace);
+		}
+		else
+			throw new NotFoundException(profileName, Type.Profile);
+	}
+	
+	@Override
+	public synchronized void deleteQueryEndpoint(String workspaceName,
+			String profileName, String queryEndpointName) throws Exception {
+		Workspace workspace = getWorkspace(workspaceName);
+		if(workspace.getProfiles().containsKey(profileName))
+		{
+			workspace.getProfiles().get(profileName).getQueryEndpoints().remove(queryEndpointName);
+			saveWorkspace(workspace);
+		}
+		else
+			throw new NotFoundException(profileName, Type.Profile);
+	}
+	@Override
+	public synchronized void saveSubmitEndpoint(String workspaceName, String profileName,
+			SubmitEndpoint submitEndpoint) throws Exception {
+		Workspace workspace = getWorkspace(workspaceName);
+		if(workspace.getProfiles().containsKey(profileName))
+		{
+			workspace.getProfiles().get(profileName).getSubmitEndpoints().put(submitEndpoint.getName()	,  submitEndpoint);
+			saveWorkspace(workspace);
+		}
+		else
+			throw new NotFoundException(profileName, Type.Profile);
+	
+		
+	}
+	@Override
+	public synchronized void deleteSubmitEndpoint(String workspaceName,
+			String profileName, String submitEndpointName) throws Exception {
+		Workspace workspace = getWorkspace(workspaceName);
+		if(workspace.getProfiles().containsKey(profileName))
+		{
+			workspace.getProfiles().get(profileName).getSubmitEndpoints().remove(submitEndpointName);
+			saveWorkspace(workspace);
+		}
+		else
+			throw new NotFoundException(profileName, Type.Profile);
+	
+	
+	}
+	@Override
+	public synchronized void saveDeleteEndpoint(String workspaceName, String profileName,
+			DeleteEndpoint deleteEndpoint) throws Exception {
+		Workspace workspace = getWorkspace(workspaceName);
+		if(workspace.getProfiles().containsKey(profileName))
+		{
+			workspace.getProfiles().get(profileName).getDeleteEndpoints().put(deleteEndpoint.getName(),deleteEndpoint);
+			saveWorkspace(workspace);
+		}
+		else
+			throw new NotFoundException(profileName, Type.Profile);
+	
+		
+	}
+	@Override
+	public synchronized void deleteDeleteEndpoint(String workspaceName,
+			String profileName, String deleteEndpointName) throws Exception {
+		Workspace workspace = getWorkspace(workspaceName);
+		if(workspace.getProfiles().containsKey(profileName))
+		{
+			workspace.getProfiles().get(profileName).getDeleteEndpoints().remove(deleteEndpointName);
+			saveWorkspace(workspace);
+		}
+		else
+			throw new NotFoundException(profileName, Type.Profile);
+	
+	}
+
 
 }

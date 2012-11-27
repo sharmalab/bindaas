@@ -43,7 +43,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 	private IPersistenceDriver persistenceDriver;
 	private IValidator validator;
 	private Log log = LogFactory.getLog(getClass());
-	private Map<String,Workspace> workspaces;
+	
 	
 	
 	public ManagementTasksImpl()
@@ -78,104 +78,188 @@ public class ManagementTasksImpl implements IManagementTasks {
 	
 	public void init() throws Exception
 	{
-		loadWorkspaces();
+//		loadWorkspaces();
 	}
 
-	public void loadWorkspaces() throws IOException
-	{
-		log.debug("Loading All workspaces");
-		workspaces = new HashMap<String, Workspace>();
-		List<String> loadedContent = persistenceDriver.loadAllWorkspaces();
-		for(String content : loadedContent)
-		{
-			try {
-					Workspace workspace = GSONUtil.getGSONInstance().fromJson(content, Workspace.class);
-					workspaces.put(workspace.getName(), workspace);
-					log.trace("Workspace Loaded\n" + workspace);
-			}
-			catch(Exception e)
-			{
-				log.error(e);
-			}
-			
-			
-		}
-		
-	}
+//	/**
+//	 * thread-safe. no other thread should call any method on this object when this method is executing ...
+//	 * @throws IOException
+//	 */
+//	public synchronized void loadWorkspaces() throws IOException
+//	{
+//		log.debug("Loading All workspaces");
+//		workspaces = new HashMap<String, Workspace>();
+//		List<String> loadedContent = persistenceDriver.loadAllWorkspaces();
+//		for(String content : loadedContent)
+//		{
+//			try {
+//					Workspace workspace = GSONUtil.getGSONInstance().fromJson(content, Workspace.class);
+//					workspaces.put(workspace.getName(), workspace);
+//					log.trace("Workspace Loaded\n" + workspace);
+//			}
+//			catch(Exception e)
+//			{
+//				log.error(e);
+//			}
+//			
+//			
+//		}
+//		
+//	}
+	/**
+	 * Will deprecate this method as potentially dangerous. 
+	 * @throws IOException
+	 */
 	
-	public void updateAllWorkspaces() throws IOException
-	{
-		log.debug("Updating All Workspaces");
-		for(Workspace workspace : workspaces.values())
-		{
-			persistenceDriver.createOrUpdateWorkspace(workspace.getName(), workspace.toString());
-			log.trace("Created/Updated Workspace\n" + workspace);
-		}
-	}
+//	private void updateAllWorkspaces() throws IOException
+//	{
+//		log.debug("Updating All Workspaces");
+//		for(Workspace workspace : workspaces.values())
+//		{
+//			persistenceDriver.createOrUpdateWorkspace(workspace.getName(), workspace.toString());
+//			log.trace("Created/Updated Workspace\n" + workspace);
+//		}
+//	}
 	
-	public void updateOrCreateWorkspace(Workspace workspace) throws IOException
-	{
-		persistenceDriver.createOrUpdateWorkspace(workspace.getName(), workspace.toString());
-		log.debug("Created/Updated Workspace\n" + workspace);
-	}
 	
-	public void removeWorkspaceFromDB(Workspace workspace) throws IOException
-	{
-		persistenceDriver.removeWorkspace(workspace.getName());
-		log.debug("Workspace removed\n"+workspace);
-	}
 
 	@Override
-	public Workspace createWorkspace(String name, JsonObject parameters,
+	public  Workspace createWorkspace(String name, JsonObject parameters,
 			String createdBy) throws Exception {
-		if(workspaces.containsKey(name) == false)
-		{
-			Workspace workspace = new Workspace();
-			workspace.setName(name);
-			workspace.setCreatedBy(createdBy);
-			workspace.setParams(parameters);
-			workspaces.put(name, workspace);
-			updateOrCreateWorkspace(workspace);
-			log.debug("Workspace created\n" + workspace);
-			return workspace;
-		}
-		else
-			throw new DuplicateException(name, Type.Workspace);
 		
-	}
+			synchronized (persistenceDriver) {
+				if(persistenceDriver.doesExist(name) == false)
+				{
+					Workspace workspace = new Workspace();
+					workspace.setName(name);
+					workspace.setCreatedBy(createdBy);
+					workspace.setParams(parameters);
+					persistenceDriver.saveWorkspace(workspace);
+					log.debug("Workspace created\n" + workspace);
+					return workspace;
+				}
+				else
+					throw new DuplicateException(name, Type.Workspace);	
+			}
+				
+		}
+		
+		
+	
 
 	@Override
-	public Profile createProfile(String name, String workspaceName,
+	public  Profile createProfile(String name, String workspaceName,
 			JsonObject parameters, String createdBy) throws Exception {
 		
 		// locate Workspace
-		Workspace workspace = getWorkspace(workspaceName);
-		if(workspace.getProfiles().containsKey(name) == false)
-		{
+			Workspace workspace = getWorkspace(workspaceName);
+			synchronized (persistenceDriver) {
+				if(workspace.getProfiles().containsKey(name) == false)
+				{
+					
+					Profile profile = new Profile();
+					profile.setCreatedBy(createdBy);
+					profile.setName(name);
+					
+					// locate provider
+					if(parameters.has("providerId") && parameters.has("providerVersion"))
+					{
+						try{
+							String providerId = parameters.getAsJsonPrimitive("providerId").getAsString();
+							int providerVersion = parameters.getAsJsonPrimitive("providerVersion").getAsInt();
+							profile.setDataSource(parameters.getAsJsonObject("dataSource"));
+							
+							log.debug("Locating Provider id=[" + providerId + "] and version=[" + providerVersion + "]");
+							IProvider provider = providerRegistry.lookupProvider(providerId, providerVersion);
+							if(provider!=null)
+							{
+								log.debug("Provider found. Performing validation and initialization");
+								profile = provider.validateAndInitializeProfile(profile);
+								profile.setProviderId(provider.getId());
+								profile.setProviderVersion(provider.getVersion());
+								persistenceDriver.saveProfile(workspaceName, profile);
+								return profile;
+								
+							}
+							else
+							{
+								throw new ProviderNotFoundException(providerId,providerVersion);
+							}
+							
+						}
+						catch(NullPointerException e)
+						{
+							throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
+						}
+						catch(NumberFormatException e)
+						{
+							throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
+						}
+												
+					}
+					else
+					{
+						throw new IllegalArgumentException("providerId and/or providerVersion not specified in  " + parameters);
+					}
+				}
+				else
+				{
+						throw new DuplicateException(name, Type.Profile);
+				}
+
+			}
 			
-			Profile profile = new Profile();
-			profile.setCreatedBy(createdBy);
-			profile.setName(name);
-			
+				
+		}
+		
+
+	@Override
+	public QueryEndpoint createQueryEndpoint(String name, String workspaceName,
+			String profileName, JsonObject parameters, String createdBy)
+			throws Exception {
+		
+		synchronized (persistenceDriver) {
 			// locate provider
-			if(parameters.has("providerId") && parameters.has("providerVersion"))
+			Profile profile = getProfile(workspaceName, profileName);
+			if(profile.getQueryEndpoints().containsKey(name) == false)
 			{
 				try{
-					String providerId = parameters.getAsJsonPrimitive("providerId").getAsString();
-					int providerVersion = parameters.getAsJsonPrimitive("providerVersion").getAsInt();
-					profile.setDataSource(parameters.getAsJsonObject("dataSource"));
-					
+					String providerId = profile.getProviderId();
+					int providerVersion = profile.getProviderVersion();
 					log.debug("Locating Provider id=[" + providerId + "] and version=[" + providerVersion + "]");
 					IProvider provider = providerRegistry.lookupProvider(providerId, providerVersion);
 					if(provider!=null)
 					{
-						log.debug("Provider found. Performing validation and initialization");
-						profile = provider.validateAndInitializeProfile(profile);
-						profile.setProviderId(provider.getId());
-						profile.setProviderVersion(provider.getVersion());
-						workspace.getProfiles().put(name, profile);
-						updateOrCreateWorkspace(workspace);
-						return profile;
+						IQueryHandler queryHandler = provider.getQueryHandler();
+						
+						if(queryHandler!=null)
+						{
+						
+							QueryEndpoint queryEndpoint = new QueryEndpoint();
+							queryEndpoint.setName(name);
+							queryEndpoint.setCreatedBy(createdBy);
+							queryEndpoint.setStage(Stage.UNVERIFIED);
+						
+							queryEndpoint = constructQueryEndpointFromProps(queryEndpoint, parameters);
+						
+						
+							log.debug("Provider found. Extracting QueryHandler");
+							
+							// perform framework validation
+							validator.validateQueryModifierRequestChain(queryEndpoint.getQueryModifiers());
+							validator.validateQueryResultModifierRequestChain(queryEndpoint.getQueryResultModifiers());
+							// perform provider validation
+							queryEndpoint = queryHandler.validateAndInitializeQueryEndpoint(queryEndpoint);
+							
+							// register queryEndpoint
+							persistenceDriver.saveQueryEndpoint(workspaceName, profileName, queryEndpoint);
+							return queryEndpoint;	
+						}
+						else
+						{
+							throw new Exception("Query Functionality not available from provider [" + providerId + "] version=[" + providerVersion  +"]");
+						}
+						
 						
 					}
 					else
@@ -198,89 +282,12 @@ public class ManagementTasksImpl implements IManagementTasks {
 			}
 			else
 			{
-				throw new IllegalArgumentException("providerId and/or providerVersion not specified in  " + parameters);
+				throw new DuplicateException(name, Type.QueryEndpoint);
 			}
-		}
-		else
-		{
-				throw new DuplicateException(name, Type.Profile);
-		}
-}
 
-	@Override
-	public QueryEndpoint createQueryEndpoint(String name, String workspaceName,
-			String profileName, JsonObject parameters, String createdBy)
-			throws Exception {
-		
-		Workspace  workspace = getWorkspace(workspaceName);
-		Profile profile = getProfile(workspaceName, profileName);
-		
-		// locate provider
-		if(profile.getQueryEndpoints().containsKey(name) == false)
-		{
-			try{
-				String providerId = profile.getProviderId();
-				int providerVersion = profile.getProviderVersion();
-				log.debug("Locating Provider id=[" + providerId + "] and version=[" + providerVersion + "]");
-				IProvider provider = providerRegistry.lookupProvider(providerId, providerVersion);
-				if(provider!=null)
-				{
-					IQueryHandler queryHandler = provider.getQueryHandler();
-					
-					if(queryHandler!=null)
-					{
-					
-						QueryEndpoint queryEndpoint = new QueryEndpoint();
-						queryEndpoint.setName(name);
-						queryEndpoint.setCreatedBy(createdBy);
-						queryEndpoint.setStage(Stage.UNVERIFIED);
-					
-						queryEndpoint = constructQueryEndpointFromProps(queryEndpoint, parameters);
-					
-					
-						log.debug("Provider found. Extracting QueryHandler");
-						
-						// perform framework validation
-						validator.validateQueryModifierRequestChain(queryEndpoint.getQueryModifiers());
-						validator.validateQueryResultModifierRequestChain(queryEndpoint.getQueryResultModifiers());
-						// perform provider validation
-						queryEndpoint = queryHandler.validateAndInitializeQueryEndpoint(queryEndpoint);
-						
-						// register queryEndpoint
-						profile.getQueryEndpoints().put(name, queryEndpoint);
-						
-						updateOrCreateWorkspace(workspace);
-						return queryEndpoint;	
-					}
-					else
-					{
-						throw new Exception("Query Functionality not available from provider [" + providerId + "] version=[" + providerVersion  +"]");
-					}
-					
-					
-				}
-				else
-				{
-					throw new ProviderNotFoundException(providerId,providerVersion);
-				}
-				
-			}
-			catch(NullPointerException e)
-			{
-				throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
-			}
-			catch(NumberFormatException e)
-			{
-				throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
-			}
-			
-			
 			
 		}
-		else
-		{
-			throw new DuplicateException(name, Type.QueryEndpoint);
-		}
+		
 	}
 
 	
@@ -309,67 +316,67 @@ public class ManagementTasksImpl implements IManagementTasks {
 	public DeleteEndpoint createDeleteEndpoint(String name,
 			String workspaceName, String profileName, JsonObject parameters,
 			String createdBy) throws Exception {
-		Workspace  workspace = getWorkspace(workspaceName);
-		Profile profile = getProfile(workspaceName, profileName);
+
 		
-		// locate provider
-		if(profile.getDeleteEndpoints().containsKey(name) == false)
-		{
-			try{
-				String providerId = profile.getProviderId();
-				int providerVersion = profile.getProviderVersion();
-				
-				log.debug("Locating Provider id=[" + providerId + "] and version=[" + providerVersion + "]");
-				IProvider provider = providerRegistry.lookupProvider(providerId, providerVersion);
-				if(provider!=null)
-				{
-					log.debug("Provider found. Extracting DeleteHandler");
-					if(provider.getDeleteHandler()!=null)
+		
+		synchronized (persistenceDriver) {
+			Profile profile = getProfile(workspaceName, profileName);
+			// locate provider
+			if(profile.getDeleteEndpoints().containsKey(name) == false)
+			{
+				try{
+					String providerId = profile.getProviderId();
+					int providerVersion = profile.getProviderVersion();
+					
+					log.debug("Locating Provider id=[" + providerId + "] and version=[" + providerVersion + "]");
+					IProvider provider = providerRegistry.lookupProvider(providerId, providerVersion);
+					if(provider!=null)
 					{
-						DeleteEndpoint deleteEndpoint = new DeleteEndpoint();
-						deleteEndpoint.setName(name);
-						deleteEndpoint.setCreatedBy(createdBy);
-						deleteEndpoint.setStage(Stage.UNVERIFIED);
+						log.debug("Provider found. Extracting DeleteHandler");
+						if(provider.getDeleteHandler()!=null)
+						{
+							DeleteEndpoint deleteEndpoint = new DeleteEndpoint();
+							deleteEndpoint.setName(name);
+							deleteEndpoint.setCreatedBy(createdBy);
+							deleteEndpoint.setStage(Stage.UNVERIFIED);
+							
+							deleteEndpoint = constructDeleteEndpointFromProps(deleteEndpoint, parameters);
+							persistenceDriver.saveDeleteEndpoint(workspaceName, profileName, deleteEndpoint);
+							return deleteEndpoint;
+						}
+						else
+						{
+							throw new Exception("Delete Functionality not available from provider [" + providerId + "] version=[" + providerVersion  +"]");
+						}
 						
-						deleteEndpoint = constructDeleteEndpointFromProps(deleteEndpoint, parameters);
-						
-						profile.getDeleteEndpoints().put(name, deleteEndpoint);
 						
 						
-						
-						updateOrCreateWorkspace(workspace);
-						return deleteEndpoint;
 					}
 					else
 					{
-						throw new Exception("Delete Functionality not available from provider [" + providerId + "] version=[" + providerVersion  +"]");
+						throw new ProviderNotFoundException(providerId,providerVersion);
 					}
 					
-					
-					
 				}
-				else
+				catch(NullPointerException e)
 				{
-					throw new ProviderNotFoundException(providerId,providerVersion);
+					throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
+				}
+				catch(NumberFormatException e)
+				{
+					throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
 				}
 				
+				
+				
 			}
-			catch(NullPointerException e)
+			else
 			{
-				throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
+				throw new DuplicateException(name, Type.DeleteEndpoint);
 			}
-			catch(NumberFormatException e)
-			{
-				throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
-			}
-			
-			
-			
+
 		}
-		else
-		{
-			throw new DuplicateException(name, Type.DeleteEndpoint);
-		}
+		
 
 					
 	}
@@ -394,71 +401,69 @@ public class ManagementTasksImpl implements IManagementTasks {
 			String workspaceName, String profileName, JsonObject parameters,
 			String createdBy) throws Exception {
 		
-		Workspace  workspace = getWorkspace(workspaceName);
-		Profile profile = getProfile(workspaceName, profileName);
 		
-		// locate provider
-		if(profile.getSubmitEndpoints().containsKey(name) == false)
-		{
-			try{
-				String providerId = profile.getProviderId();
-				int providerVersion = profile.getProviderVersion();
-				
-				log.debug("Locating Provider id=[" + providerId + "] and version=[" + providerVersion + "]");
-				IProvider provider = providerRegistry.lookupProvider(providerId, providerVersion);
-				if(provider!=null)
-				{
-					ISubmitHandler submitHandler = provider.getSubmitHandler();
+		
+		
+		synchronized (persistenceDriver) {
+			Profile profile = getProfile(workspaceName, profileName);
+			// locate provider
+			if(profile.getSubmitEndpoints().containsKey(name) == false)
+			{
+				try{
+					String providerId = profile.getProviderId();
+					int providerVersion = profile.getProviderVersion();
 					
-					if(submitHandler!=null)
+					log.debug("Locating Provider id=[" + providerId + "] and version=[" + providerVersion + "]");
+					IProvider provider = providerRegistry.lookupProvider(providerId, providerVersion);
+					if(provider!=null)
 					{
-						SubmitEndpoint submitEndpoint = new SubmitEndpoint();
-						submitEndpoint.setName(name);
-						submitEndpoint.setCreatedBy(createdBy);
-						submitEndpoint = constructSubmitEndpointFromProps(submitEndpoint, parameters);
+						ISubmitHandler submitHandler = provider.getSubmitHandler();
 						
-						// perform framework validation
-						
-						validator.validateSubmitPayloadModifierRequestChain(submitEndpoint.getSubmitPayloadModifiers());
+						if(submitHandler!=null)
+						{
+							SubmitEndpoint submitEndpoint = new SubmitEndpoint();
+							submitEndpoint.setName(name);
+							submitEndpoint.setCreatedBy(createdBy);
+							submitEndpoint = constructSubmitEndpointFromProps(submitEndpoint, parameters);
+							
+							// perform framework validation
+							
+							validator.validateSubmitPayloadModifierRequestChain(submitEndpoint.getSubmitPayloadModifiers());
 
-						// perform provider validation
-						submitEndpoint = submitHandler.validateAndInitializeSubmitEndpoint(submitEndpoint);
-						profile.getSubmitEndpoints().put(name, submitEndpoint);
+							// perform provider validation
+							submitEndpoint = submitHandler.validateAndInitializeSubmitEndpoint(submitEndpoint);
+							persistenceDriver.saveSubmitEndpoint(workspaceName, profileName, submitEndpoint);
+							return submitEndpoint;
+						}
+						else
+						{
+							throw new Exception("Submit Functionality not available from provider [" + providerId + "] version=[" + providerVersion  +"]");
+						}
 						
-						
-						updateOrCreateWorkspace(workspace);
-						return submitEndpoint;
 					}
 					else
 					{
-						throw new Exception("Submit Functionality not available from provider [" + providerId + "] version=[" + providerVersion  +"]");
+						throw new ProviderNotFoundException(providerId,providerVersion);
 					}
 					
-					
-					
 				}
-				else
+				catch(NullPointerException e)
 				{
-					throw new ProviderNotFoundException(providerId,providerVersion);
+					throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
 				}
+				catch(NumberFormatException e)
+				{
+					throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
+				}				
 				
 			}
-			catch(NullPointerException e)
+			else
 			{
-				throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
+				throw new DuplicateException(name, Type.SubmitEndpoint);
 			}
-			catch(NumberFormatException e)
-			{
-				throw new IllegalArgumentException("providerId and/or providerVersion don't have correct values" + parameters);
-			}
-			
-			
-			
+
 		}
-		else
-		{
-			throw new DuplicateException(name, Type.SubmitEndpoint);
-		}
+		
 					
 	}
 
@@ -477,40 +482,34 @@ public class ManagementTasksImpl implements IManagementTasks {
 	@Override
 	public void deleteWorkspace(String workspaceName) throws Exception {
 		// locate Workspace
-		Workspace workspace = workspaces.remove(workspaceName);
-		if(workspace!=null)
-		{
-			this.removeWorkspaceFromDB(workspace);
-		}
-		
-		
+		persistenceDriver.deleteWorkspace(workspaceName);
 	}
 
+	///-----
 	@Override
 	public void deleteProfile(String workspaceName, String profileName)
 			throws Exception {
-		
-		Workspace  workspace = getWorkspace(workspaceName);
-		workspace.getProfiles().remove(profileName);
-		updateOrCreateWorkspace(workspace);	
+		persistenceDriver.deleteProfile(workspaceName, profileName);
 	}
 	
 
 	@Override
 	public QueryEndpoint deleteQueryEndpoint(String workspaceName,
 			String profileName, String queryEndpointName) throws Exception {
-		Workspace  workspace = getWorkspace(workspaceName);
-		Profile profile = getProfile(workspaceName, profileName);
 		
-		QueryEndpoint queryEndpoint = profile.getQueryEndpoints().remove(queryEndpointName);
-		if(queryEndpoint!=null)
-		{
-			updateOrCreateWorkspace(workspace);
-			return queryEndpoint;
-		}
+		synchronized (persistenceDriver) {
+			Profile profile = getProfile(workspaceName, profileName);	
 			
-		else
-			throw new NotFoundException(queryEndpointName, Type.QueryEndpoint);
+			if(profile.getQueryEndpoints().containsKey(queryEndpointName))
+			{
+				QueryEndpoint queryEndpoint = profile.getQueryEndpoints().get(queryEndpointName);
+				persistenceDriver.deleteQueryEndpoint(workspaceName, profileName, queryEndpointName);
+				return queryEndpoint;
+			}
+			else
+				throw new NotFoundException(queryEndpointName, Type.QueryEndpoint);	
+		}
+		
 	}
 
 	
@@ -518,91 +517,102 @@ public class ManagementTasksImpl implements IManagementTasks {
 	public DeleteEndpoint deleteDeleteEndpoint(String workspaceName,
 			String profileName, String deleteEndpointName) throws Exception {
 		
-		Workspace  workspace = getWorkspace(workspaceName);
-		Profile profile = getProfile(workspaceName, profileName);
-		DeleteEndpoint deleteEndpoint = profile.getDeleteEndpoints().remove(deleteEndpointName);
-		if(deleteEndpoint!=null)
-		{
-			updateOrCreateWorkspace(workspace);
-			return deleteEndpoint;
-		}
+		synchronized (persistenceDriver) {
+			Profile profile = getProfile(workspaceName, profileName);	
 			
-		else
-			throw new NotFoundException(deleteEndpointName, Type.DeleteEndpoint);
+			if(profile.getDeleteEndpoints().containsKey(deleteEndpointName))
+			{
+				DeleteEndpoint deleteEndpoint = profile.getDeleteEndpoints().get(deleteEndpointName);
+				persistenceDriver.deleteDeleteEndpoint(workspaceName, profileName, deleteEndpointName);
+				return deleteEndpoint;
+			}
+			else
+				throw new NotFoundException(deleteEndpointName, Type.DeleteEndpoint);	
+		}	
 	}
 	
 
 	@Override
 	public SubmitEndpoint deleteSubmitEndpoint(String workspaceName,
 			String profileName, String submitEndpointName) throws Exception {
-		
-		Workspace  workspace = getWorkspace(workspaceName);
-		Profile profile = getProfile(workspaceName, profileName);
-		
-		SubmitEndpoint submitEndpoint = profile.getSubmitEndpoints().remove(submitEndpointName);
-		if(submitEndpoint!=null)
-		{
-			updateOrCreateWorkspace(workspace);
-			return submitEndpoint;
-		}
+		synchronized (persistenceDriver) {
+			Profile profile = getProfile(workspaceName, profileName);	
 			
-		else
-			throw new NotFoundException(submitEndpointName, Type.SubmitEndpoint);
+			if(profile.getSubmitEndpoints().containsKey(submitEndpointName))
+			{
+				SubmitEndpoint submitEndpoint = profile.getSubmitEndpoints().get(submitEndpointName);
+				persistenceDriver.deleteSubmitEndpoint(workspaceName, profileName, submitEndpointName);
+				return submitEndpoint;
+			}
+			else
+				throw new NotFoundException(submitEndpointName, Type.SubmitEndpoint);	
+		}
 	}
 
 	@Override
 	public Profile updateProfile(String profileName, String workspaceName,
 			JsonObject parameters, String updatedBy) throws Exception {
-		deleteProfile(workspaceName, profileName);
-		Profile profile = this.createProfile(profileName, workspaceName, parameters, updatedBy);
-		return profile;
+		
+		synchronized (persistenceDriver) {
+			deleteProfile(workspaceName, profileName);
+			Profile profile = this.createProfile(profileName, workspaceName, parameters, updatedBy);
+			return profile;	
+		}
+		
 	}
 
 	@Override
 	public QueryEndpoint updateQueryEndpoint(String queryEndpointName, String workspaceName,
 			String profileName, JsonObject parameters, String updatedBy)
 			throws Exception {
-		deleteQueryEndpoint(workspaceName, profileName, queryEndpointName);
-		QueryEndpoint queryEndpoint = this.createQueryEndpoint(queryEndpointName, workspaceName, profileName, parameters, updatedBy);
-		return queryEndpoint;
+		
+		synchronized (persistenceDriver) {
+			deleteQueryEndpoint(workspaceName, profileName, queryEndpointName);
+			QueryEndpoint queryEndpoint = this.createQueryEndpoint(queryEndpointName, workspaceName, profileName, parameters, updatedBy);
+			return queryEndpoint;	
+		}
+		
 	}
 
 	@Override
 	public DeleteEndpoint updateDeleteEndpoint(String deleteEndpointName,
 			String workspaceName, String profileName, JsonObject parameters,
 			String updatedBy) throws Exception {
-		deleteDeleteEndpoint(workspaceName, profileName, deleteEndpointName);
-		DeleteEndpoint deleteEndpoint = this.createDeleteEndpoint(deleteEndpointName, workspaceName, profileName, parameters, updatedBy);
-		return deleteEndpoint;
+		
+		synchronized (persistenceDriver) {
+			deleteDeleteEndpoint(workspaceName, profileName, deleteEndpointName);
+			DeleteEndpoint deleteEndpoint = this.createDeleteEndpoint(deleteEndpointName, workspaceName, profileName, parameters, updatedBy);
+			return deleteEndpoint;	
+		}
+		
 	}
 
 	@Override
 	public SubmitEndpoint updateSubmitEndpoint(String submitEndpointName,
 			String workspaceName, String profileName, JsonObject parameters,
 			String updatedBy) throws Exception {
-		deleteSubmitEndpoint(workspaceName, profileName, submitEndpointName);
-		SubmitEndpoint submitEndpoint = this.createSubmitEndpoint(submitEndpointName, workspaceName, profileName, parameters, updatedBy);
-		return submitEndpoint;
-	}
-
-	@Override
-	public Workspace getWorkspace(String workspaceName) throws Exception {
-		Workspace workspace = workspaces.get(workspaceName);
-		if(workspace!=null)
-		{
-			return workspace;
+		
+		synchronized (persistenceDriver) {
+			deleteSubmitEndpoint(workspaceName, profileName, submitEndpointName);
+			SubmitEndpoint submitEndpoint = this.createSubmitEndpoint(submitEndpointName, workspaceName, profileName, parameters, updatedBy);
+			return submitEndpoint;	
 		}
-		else
-			throw new NotFoundException(workspaceName, Type.Workspace);
 		
 	}
 
 	@Override
+	public Workspace getWorkspace(String workspaceName) throws Exception {
+			Workspace workspace = persistenceDriver.getWorkspace(workspaceName);
+			return workspace;	
+		}
+		
+		
+	
+
+	@Override
 	public Profile getProfile(String workspaceName, String profileName)
 			throws Exception {
-		Workspace workspace = workspaces.get(workspaceName);
-		if(workspace!=null)
-		{
+			Workspace workspace = getWorkspace(workspaceName);
 			Profile profile = workspace.getProfiles().get(profileName);
 			if(profile!=null)
 			{
@@ -613,114 +623,75 @@ public class ManagementTasksImpl implements IManagementTasks {
 				throw new NotFoundException(profileName, Type.Profile);
 			}
 		}
-		else
-		{
-			throw new NotFoundException(workspaceName, Type.Workspace);
-		}
-	}
+		
+		
 
 	@Override
 	public QueryEndpoint getQueryEndpoint(String workspaceName,
-			String profileName, String queryEndpointName) throws Exception {
-		Workspace workspace = workspaces.get(workspaceName);
-		if(workspace!=null)
-		{
-			Profile profile = workspace.getProfiles().get(profileName);
-			if(profile!=null)
+		String profileName, String queryEndpointName) throws Exception {
+		Profile profile = getProfile(workspaceName, profileName);
+		
+		
+			QueryEndpoint queryEndpoint = profile.getQueryEndpoints().get(queryEndpointName);
+			if(queryEndpoint!=null)
 			{
-				QueryEndpoint queryEndpoint = profile.getQueryEndpoints().get(queryEndpointName);
-				if(queryEndpoint!=null)
-				{
-					
-					return queryEndpoint;
-				}
-					
-				else
-					throw new NotFoundException(queryEndpointName, Type.QueryEndpoint);
-					
+				
+				return queryEndpoint;
 			}
+				
 			else
-			{
-				throw new NotFoundException(profileName, Type.Profile);
-			}
-			
+				throw new NotFoundException(queryEndpointName, Type.QueryEndpoint);	
 		}
-		else
-		{
-			throw new NotFoundException(workspaceName, Type.Workspace);
-		}
-	}
+		
+		
+	
 
 	@Override
 	public DeleteEndpoint getDeleteEndpoint(String workspaceName,
 			String profileName, String deleteEndpointName) throws Exception {
-		Workspace workspace = workspaces.get(workspaceName);
-		if(workspace!=null)
-		{
-			Profile profile = workspace.getProfiles().get(profileName);
-			if(profile!=null)
+		Profile profile = getProfile(workspaceName, profileName);
+	
+			DeleteEndpoint deleteEndpoint = profile.getDeleteEndpoints().get(deleteEndpointName);
+			if(deleteEndpoint!=null)
 			{
-				DeleteEndpoint deleteEndpoint = profile.getDeleteEndpoints().get(deleteEndpointName);
-				if(deleteEndpoint!=null)
-				{
-					
-					return deleteEndpoint;
-				}
-					
-				else
-					throw new NotFoundException(deleteEndpointName, Type.DeleteEndpoint);
-					
+				
+				return deleteEndpoint;
 			}
+				
 			else
-			{
-				throw new NotFoundException(profileName, Type.Profile);
-			}
-			
+				throw new NotFoundException(deleteEndpointName, Type.DeleteEndpoint);
 		}
-		else
-		{
-			throw new NotFoundException(workspaceName, Type.Workspace);
-		}
-	}
+	
 
 	@Override
 	public SubmitEndpoint getSubmitEndpoint(String workspaceName,
 			String profileName, String submitEndpointName) throws Exception {
-		Workspace workspace = workspaces.get(workspaceName);
-		if(workspace!=null)
-		{
-			Profile profile = workspace.getProfiles().get(profileName);
-			if(profile!=null)
+		Profile profile = getProfile(workspaceName, profileName);
+	
+			SubmitEndpoint submitEndpoint = profile.getSubmitEndpoints().get(submitEndpointName);
+			if(submitEndpoint!=null)
 			{
-				SubmitEndpoint submitEndpoint = profile.getSubmitEndpoints().get(submitEndpointName);
-				if(submitEndpoint!=null)
-				{
-					
-					return submitEndpoint;
-				}
-					
-				else
-					throw new NotFoundException(submitEndpointName, Type.SubmitEndpoint);
-					
+				
+				return submitEndpoint;
 			}
+				
 			else
-			{
-				throw new NotFoundException(profileName, Type.Profile);
-			}
-			
+				throw new NotFoundException(submitEndpointName, Type.SubmitEndpoint);
+
 		}
-		else
-		{
-			throw new NotFoundException(workspaceName, Type.Workspace);
-		}
-	}
+	
 
 	@Override
 	public void publishQueryEndpoint(String workspaceName, String profileName,
 			String queryEndpointName) throws Exception {
 		
-		QueryEndpoint queryEndpoint = getQueryEndpoint(workspaceName, profileName, queryEndpointName);
-		queryEndpoint.setStage(Stage.VERIFIED);
+		synchronized (persistenceDriver) {
+			QueryEndpoint queryEndpoint = getQueryEndpoint(workspaceName, profileName, queryEndpointName);
+			queryEndpoint.setStage(Stage.VERIFIED);
+			persistenceDriver.saveQueryEndpoint(workspaceName, profileName, queryEndpoint);
+		}
+		
+		
 				
 		
 	}
@@ -728,14 +699,17 @@ public class ManagementTasksImpl implements IManagementTasks {
 	@Override
 	public void publishDeleteEndpoint(String workspaceName, String profileName,
 			String deleteEndpointName) throws Exception {
-	
-		DeleteEndpoint deleteEndpoint = getDeleteEndpoint(workspaceName, profileName, deleteEndpointName);
-		deleteEndpoint.setStage(Stage.VERIFIED);
+		synchronized (persistenceDriver) {
+			DeleteEndpoint deleteEndpoint = getDeleteEndpoint(workspaceName, profileName, deleteEndpointName);
+			deleteEndpoint.setStage(Stage.VERIFIED);
+			persistenceDriver.saveDeleteEndpoint(workspaceName, profileName, deleteEndpoint);
+		}
+		
 	}
 
 	@Override
 	public Collection<Workspace> listWorkspaces() throws Exception {
-		return workspaces.values();
+		return persistenceDriver.loadAllWorkspaces();
 	}
 	
 	private static void check(boolean condition , String errorMessage) throws Exception

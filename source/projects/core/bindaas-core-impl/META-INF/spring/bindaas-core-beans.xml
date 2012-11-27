@@ -14,7 +14,6 @@
 <!-- Execution Task Bean -->
 
 <bean id="executionTask" class="edu.emory.cci.bindaas.core.impl.ExecutionTaskImpl">
-	<property name="managementTask" ref="managementTask"></property>
 	<property name="providerRegistry" ref="providerRegistry"></property>
 	<property name="validator" ref="validator"></property>
 	<property name="modifierRegistry" ref="modifierRegistry"></property>
