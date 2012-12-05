@@ -8,9 +8,9 @@ import edu.emory.cci.bindaas.framework.model.ModifierEntry;
 public interface IValidator {
 
 	
-	public void validateQueryModifierRequestChain(Map<Integer,ModifierEntry> queryModifierChain) throws ValidationException;
-	public void validateQueryResultModifierRequestChain(Map<Integer,ModifierEntry> queryModifierChain) throws ValidationException;
-	public void validateSubmitPayloadModifierRequestChain(Map<Integer,ModifierEntry> queryModifierChain) throws ValidationException;
+	public void validateQueryModifierRequestChain(ModifierEntry queryModifierChain) throws ValidationException;
+	public void validateQueryResultModifierRequestChain(ModifierEntry queryModifierChain) throws ValidationException;
+	public void validateSubmitPayloadModifierRequestChain(ModifierEntry queryModifierChain) throws ValidationException;
 	
 	
 }

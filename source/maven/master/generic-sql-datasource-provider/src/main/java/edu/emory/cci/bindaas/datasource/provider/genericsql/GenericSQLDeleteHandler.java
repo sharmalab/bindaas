@@ -55,7 +55,7 @@ public class GenericSQLDeleteHandler implements IDeleteHandler {
 
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException("Delete operation failed", e);
+			throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , "Delete operation failed", e);
 		}
 		
 	}

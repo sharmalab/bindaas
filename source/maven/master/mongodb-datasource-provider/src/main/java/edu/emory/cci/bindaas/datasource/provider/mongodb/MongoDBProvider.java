@@ -25,7 +25,7 @@ import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
 public class MongoDBProvider implements IProvider{
 
-	private final static int VERSION = 1;
+	public final static int VERSION = 1;
 	private IQueryHandler queryHandler;
 	private IDeleteHandler deleteHandler;
 	private ISubmitHandler submitHandler;
@@ -103,7 +103,7 @@ public class MongoDBProvider implements IProvider{
 		catch(Exception e)
 		{
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 		
 	}

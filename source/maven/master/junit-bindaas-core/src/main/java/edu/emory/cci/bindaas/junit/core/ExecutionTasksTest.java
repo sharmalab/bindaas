@@ -114,8 +114,7 @@ public class ExecutionTasksTest extends TestCase {
 		outputFormat.add("type", new JsonPrimitive("xml"));
 		
 		List<String> tags = Arrays.asList(new String[]{"tag1"});
-		Map<Integer,ModifierEntry> queryModifierList = new HashMap<Integer, ModifierEntry>();
-		Map<Integer,ModifierEntry> queryResultModifierList = new HashMap<Integer, ModifierEntry>();
+		
 		String description = "description:";
 		
 		BindVariable name = new BindVariable();
@@ -142,8 +141,7 @@ public class ExecutionTasksTest extends TestCase {
 		params.setBindVariables(bindVars);
 		params.setMetaData(metadata);
 		params.setOutputFormat(outputFormat);
-		params.setQueryModifiers(queryModifierList);
-		params.setQueryResultModifiers(queryResultModifierList);
+		
 		params.setQueryTemplate(queryTemplate);
 		params.setDescription(description);
 		params.setTags(tags);
@@ -189,7 +187,7 @@ public class ExecutionTasksTest extends TestCase {
 		Map<Integer,ModifierEntry> payloadModifier = new HashMap<Integer, ModifierEntry>();
 		
 		params.setProperties(properties);
-		params.setSubmitPayloadModifiers(payloadModifier);
+		
 		
 		
 		

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!-- Request Handlers -->
+
+<bean id="dashboard" class="edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView" >
+	<property name="uriTemplate" value="/"></property>
+</bean>
+
+<bean id="createProfile" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateProfile" >
+	<property name="uriTemplate" value="/{workspace}/createProfile.action"></property>
+</bean>
+
+<bean id="createQueryEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateQueryEndpoint" >
+	<property name="uriTemplate" value="/{workspace}/{profile}/createQueryEndpoint.action"></property>
+</bean>
+
+<bean id="createSubmitEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateSubmitEndpoint" >
+	<property name="uriTemplate" value="/{workspace}/{profile}/createSubmitEndpoint.action"></property>
+</bean>
+
+<bean id="createDeleteEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateDeleteEndpoint" >
+	<property name="uriTemplate" value="/{workspace}/{profile}/createDeleteEndpoint.action"></property>
+</bean>
+
+<bean id="queryEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryEndpointView" >
+	<property name="uriTemplate" value="/{workspace}/{profile}/{queryEndpoint}/view"></property>
+</bean>
+
+
+<bean id="mainController" class="edu.emory.cci.bindaas.webconsole.MainController">
+
+	<property name="requestHandlers">
+		<list>
+			<ref bean="dashboard"/>
+			<ref bean="createProfile"/>
+			<ref bean="createQueryEndpoint"/>
+			<ref bean="createSubmitEndpoint"/>
+			<ref bean="createDeleteEndpoint"/>
+			<ref bean="queryEndpointView"/>
+		</list>
+	</property>
+</bean>
+
+<bean id="loginAction" class="edu.emory.cci.bindaas.webconsole.LoginAction">
+</bean>
+
+<bean id="webConsoleStarter" class="edu.emory.cci.bindaas.webconsole.WebConsoleStarter" init-method="init">
+	<property name="loginAction" ref="loginAction"></property>
+	<property name="mainController" ref="mainController"></property>
+</bean>
+
+</beans>
+
+
+

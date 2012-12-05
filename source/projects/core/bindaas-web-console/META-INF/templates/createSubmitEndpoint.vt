@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Create Submit Endpoint</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+  <script src="/foundation/javascripts/modernizr.foundation.js"></script>
+	
+	
+  
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+ <!-- Page Layout HTML here -->
+
+  <!-- Latest version of jQuery -->
+  <script src="/foundation/javascripts/jquery.js"></script>
+
+  <!-- Included JS Files (Unminified) -->
+  <!-- [JS Files] -->
+  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+  <!-- Included JS Files (Minified) -->
+  <script src="/foundation/javascripts/foundation.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="/foundation/javascripts/app.js"></script>
+  
+  <div class="row">
+    <div class="tweleve columns">
+      <h2>Bindaas</h2>
+      <p><strong>Be worry free!</strong></p>
+      <p>This is version <strong>2.0.0 Beta</strong></p>
+      <hr />
+    </div>
+    
+  </div>
+
+  <div class="row">
+    <div class="tweleve columns">
+    	
+    	<div class="row">
+    		<ul class="breadcrumbs">
+  				<li class="current"><a href="#"><strong>Dashboard</strong></a></li>
+  				<li><a href="#"><strong>Workspaces</strong></a></li>
+  				<li><a href="#"><strong>Data Providers</strong></a></li>
+  				<li><a href="#"><strong>Administration</strong></a></li>
+  			</ul>
+    </div>
+    	<div class="row">
+    		<h3 class="subheader">/workspace:$workspace/profile:$profile</h3>
+    	</div>
+   	 	<div class="row">
+   	 		<fieldset>
+    			<legend><h3>Create Submit Endpoint</h3></legend>
+    				<form class="custom">
+    					<label>Submit Endpoint Name</label>
+    					<input type="text" placeholder="name" id="submitEndpointName"/>
+    					
+    					<label>Endpoint Properties</label>
+    					<textarea id="seProps" placeholder="{}"></textarea>
+    					<br> </br>
+    					<div class="panel">
+    						<h6 class="subheader">Endpoint Properties JSON Schema</h6>
+    					</div>
+    					<div class="panel" id="submitPayloadModifierPanel">
+	    					<label for="submitPayloadModifier">Submit Payload Modifier</label>
+	    					<select  name="submitPayloadModifier" id="submitPayloadModifier">
+	  						  <option selected="true" value="null">--select--</option>
+						      #foreach ($spm in $submitPayloadModifiers)
+						      <option value="$spm.getClass().getName()">$spm.getClass().getName()</option>
+						      #end
+	  						</select>
+	  						<label for="submitPayloadModifierProperties">Submit Payload Modifier Properties</label>
+  							<textarea id="submitPayloadModifierProperties" placeholder="{}"></textarea>	
+    					</div>
+	    					<script>
+    			$("form").ajaxError(function(e, jqxhr, settings, exception){
+  										alert(exception);
+						});
+						
+						
+    					function submitForm()
+    					{
+    						var jsonRequest = {};
+    						try {
+    						jsonRequest.properties = jQuery.parseJSON( $("#seProps").attr("value") ); //
+    						var spmId = $("#submitPayloadModifierPanel").find("select option:selected").attr("value");
+    						if(spmId != "null")
+    						{
+    							var submitPayloadModifierProp = jQuery.parseJSON( $("#submitPayloadModifierProperties").attr("value") );
+    							jsonRequest.submitPayloadModifiers = {};
+    							jsonRequest.submitPayloadModifiers.name = spmId;
+    							jsonRequest.submitPayloadModifiers.properties = submitPayloadModifierProp;
+    							
+    						}
+    						
+    						var req = {};
+    						req.submitEndpointName = $("#submitEndpointName").attr("value");
+    						req.jsonRequest = JSON.stringify(jsonRequest ,  null );
+    						$.post("/dashboard/$workspace/$profile/createSubmitEndpoint.action" , req , function (data){
+								
+								alert("Server Returned :\n" + JSON.stringify(data));
+								});
+    						}
+    						catch(e){
+    							alert(e);
+    							}
+    							
+    						
+  								
+  							}
+    						
+    					
+    				
+    			</script>
+
+  						<input onclick="submitForm()" class="button" value="Submit" />
+    				</form>		
+    			</fieldset>
+    			    	</div>
+   	 	<div class="row">
+   	 	</div>
+    </div>
+
+  </div>
+
+  
+</body>
+</html>

@@ -2,10 +2,11 @@ package edu.emory.cci.bindaas.framework.api;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.framework.model.ModifierException;
+
 public interface IModifier {
-	public String getInletType();
-	public String getOutletType();
-	public JsonObject getDocumentation();
 	
+	public JsonObject getDocumentation();
+	public void validate() throws ModifierException;
 
 }

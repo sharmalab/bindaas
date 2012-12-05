@@ -107,7 +107,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, InputStream is)
 			throws ProviderException {
-		throw new ProviderException("Not Yet Implemented"); // TODO : handle zip stream
+		throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,"Not Yet Implemented"); // TODO : handle zip stream
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 				
 			} catch (Exception e) {
 				log.error(e);
-				throw new ProviderException(e);
+				throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,e);
 			}
 			finally{
 				if(connection!=null){
@@ -148,7 +148,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 		}
 		else
 		{
-			throw new ProviderException("Wrong type of data submitted. Expected XML");
+			throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,"Wrong type of data submitted. Expected XML");
 		}
 		
 		QueryResult result = new QueryResult();

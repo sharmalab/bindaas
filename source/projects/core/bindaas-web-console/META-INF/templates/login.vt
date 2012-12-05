@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Bindaas Login</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+  <script type="text/javascript" src="/foundation/media/js/jquery.dataTables.js"></script>
+  
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+	<!-- Latest version of jQuery -->
+  <script src="/foundation/javascripts/jquery.js"></script>
+
+  <!-- Included JS Files (Unminified) -->
+  <!-- [JS Files] -->
+  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+  <!-- Included JS Files (Minified) -->
+  <script src="/foundation/javascripts/foundation.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="/foundation/javascripts/app.js"></script>
+
+  <div class="row">
+    <div class="tweleve columns">
+      <h2>Bindaas</h2>
+      <p><strong>Be worry free!</strong></p>
+      <p>This is version <strong>2.0.0 Beta</strong></p>
+      <hr />
+    </div>
+    
+  </div>
+
+  <div class="row">
+    <div class="twelve columns">
+      <form action="/authenticate" method="post">
+	 	 <fieldset>
+	
+		    <legend><h4>Login to proceed</h4></legend>
+		
+		    <div class="row">
+			    <div class="two mobile-one columns">
+			      <label class="right inline">Username:</label>
+			    </div>
+			    <div class="ten mobile-three columns">
+			      <input type="text" placeholder="username" class="eight" name="username" />
+			    </div>
+			  </div>
+			  <div class="row">
+			    <div class="two mobile-one columns">
+			      <label class="right inline">Password:</label>
+			    </div>
+			    <div class="ten mobile-three columns">
+			      <input type="password" class="eight" name="password" />
+			      <input type="hidden" name="loginTarget" value="$loginTarget" />
+			    </div>
+			  </div>
+			  <div class="row">
+			  	<div class="two columns"></div>
+			  	<div class="ten mobile-one columns">
+			    	<label class="error">${errorMessage}</label>
+			    </div>
+			    
+			  	
+			  </div>
+			  <div class="row">
+			  	<div class="two mobile-one columns">
+			    	<input type="submit" class="right button" value="Submit" />
+			    </div>
+			    <div class="ten mobile-one columns">
+			    	
+			    </div>
+			  	
+			  </div>
+		
+	  </fieldset>
+	</form>
+    </div>
+
+   </div>
+
+</body>
+</html>

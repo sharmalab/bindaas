@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Create Query Endpoint</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+  <script src="/foundation/javascripts/modernizr.foundation.js"></script>
+	
+	
+  
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+ <!-- Page Layout HTML here -->
+
+  <!-- Latest version of jQuery -->
+  <script src="/foundation/javascripts/jquery.js"></script>
+
+  <!-- Included JS Files (Unminified) -->
+  <!-- [JS Files] -->
+  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+  <!-- Included JS Files (Minified) -->
+  <script src="/foundation/javascripts/foundation.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="/foundation/javascripts/app.js"></script>
+  <script>
+  function randomString(length) {
+    var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
+
+    if (! length) {
+        length = Math.floor(Math.random() * chars.length);
+    }
+
+    var str = '';
+    for (var i = 0; i < length; i++) {
+        str += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return str;
+}
+  
+   function validateQueryTempalate()
+   {
+   	var regex = /\$(.*?)\$/g;
+	var text = $("#qeTemplate").attr('value');
+	var matches = text.match(regex); 
+	
+	// first reset the container
+	
+	$("#bindVarContainer").html("");
+	for(var count in matches) { 
+		
+		addBindVariable(matches[count].replace(/\$/g,""));		
+	}
+   }
+  	function addBindVariable(variableName) {
+		var bindVariable = document.createElement("div");
+		bindVariable.id = randomString(8);
+		bindVariable.className = "panel callout radius";
+		bindVariable.innerHTML = $("#bindVarTemplate").html();
+		var removeLink = document.createElement("a");
+		removeLink.className = "alert round small button";
+		removeLink.text = "remove";
+		bindVariable.appendChild(removeLink);
+		removeLink.onclick = function(event)
+		{
+			var parent = bindVariable.parentNode;
+			parent.removeChild(bindVariable);
+		};
+		
+		$("#bindVarContainer").append(bindVariable);
+		
+		$("#" + bindVariable.id + " input[name='bvName']").attr('value',variableName);
+	  }
+  	
+  </script>
+  <div id="bindVarTemplate" class="hide">
+  	<input type="text" placeholder="name" name="bvName" />
+    								<input type="text" placeholder="description" name="bvDescription" />
+    								<label for="customDropdown">Required</label>
+  										<select  id="customDropdown" name="bvRequired">
+    										<option value="Y">Yes</option>
+    										<option value="N">No</option>
+  										</select>
+  										<br></br>
+    								
+    								<input type="text" placeholder="default value" name="defaultValue" />
+  </div>
+  
+  <div class="row">
+    <div class="tweleve columns">
+      <h2>Bindaas</h2>
+      <p><strong>Be worry free!</strong></p>
+      <p>This is version <strong>2.0.0 Beta</strong></p>
+      <hr />
+    </div>
+    
+  </div>
+
+  <div class="row">
+    <div class="tweleve columns">
+    	
+    	<div class="row">
+    		<ul class="breadcrumbs">
+  				<li class="current"><a href="#"><strong>Dashboard</strong></a></li>
+  				<li><a href="#"><strong>Workspaces</strong></a></li>
+  				<li><a href="#"><strong>Data Providers</strong></a></li>
+  				<li><a href="#"><strong>Administration</strong></a></li>
+  			</ul>
+    </div>
+    	<div class="row">
+    		<h3 class="subheader">/$workspace/$profile</h3>
+    	</div>
+   	 	<div class="row">
+   	 		<fieldset>
+    			<legend><h3>Create Query Endpoint</h3></legend>
+    				<form class="custom"  >
+    					<input type="hidden" value="$profile" name="profileName" />
+    					<input type="hidden" value="$workspace" name="workspaceName" />
+    					<input type="hidden" name="jsonRequest" id="jsonRequest"/>
+    					<label>Query Endpoint Name</label>
+    					<input type="text" placeholder="name" name="qeName" id="qeName"/>
+    					<label>Description</label>
+    					<input type="text" placeholder="description" id="qeDescription"/>
+    					<label>Query Metadata(optional)</label>
+    					<textarea id="qeMetada" placeholder="{}"></textarea>
+    					<br> </br>
+    					
+    					<div class="panel">
+    						<label>Query Template</label>
+    						<textarea name="qeTemplate" id="qeTemplate"></textarea>
+    						<fieldset>
+    							<legend><strong>Bind Variables</strong></legend>
+    							<div id="bindVarContainer">
+    							<!--	
+    								Bind variable container
+    							-->
+    							</div>
+    							<a  href="javascript:addBindVariable()" class="round small button"><i>add more</i></a>
+    							<a  href="javascript:validateQueryTempalate()" class="round small button"><i>auto detect</i></a>
+    						</fieldset>	
+    					</div>
+    					<label>Output Format</label>
+    					<textarea id="qeOutputFormat" placeholder="{}"></textarea>
+    					
+    					<div class="panel" id="queryModifierPanel">
+	    					<label for="queryModifier">Query Modifier</label>
+	    					<select  name="queryModifier" id="queryModifier">
+	  						  <option selected="true" value="null">--select--</option>
+						      #foreach ($qm in $queryModifiers)
+						      <option value="$qm.getClass().getName()">$qm.getClass().getName()</option>
+						      #end
+						      
+	  						</select>
+	  						<label for="queryModifierProperties">Query Modifier Properties</label>
+  							<textarea id="queryModifierProperties" placeholder="{}"></textarea>	
+    					</div>
+    					
+    					<div class="panel" id="queryResultModifierPanel">
+	    					<label for="queryResultModifier">Query Result Modifier</label>
+	    					<select  name="queryResultModifier" id="queryResultModifier">
+	  						  <option selected="true" value="null">--select--</option>
+						      #foreach ($qrm in $queryResultModifiers)
+						      <option value="$qrm.getClass().getName()">$qrm.getClass().getName()</option>
+						      #end
+	  						</select>
+	  						<label for="queryResultModifierProperties">Query Result Modifier Properties</label>
+  							<textarea id="queryResultModifierProperties" placeholder="{}"></textarea>	
+    					</div>
+    					
+  						
+    					
+  						<script>
+  						
+  						$("form").ajaxError(function(e, jqxhr, settings, exception){
+  										alert(exception);
+						});
+						
+						
+  							function submitForm()
+  							{
+  								try{
+  								var bindVariables = {};
+  								$("#bindVarContainer").find("div").each(
+  									
+  									function (index)
+  									{
+  										var bindVariable = {};
+  										bindVariable.name = $(this).find("input[name='bvName']").attr("value");
+  										bindVariable.description = $(this).find("input[name='bvDescription']").attr("value");
+  										bindVariable.defaultValue = $(this).find("input[name='defaultValue']").attr("value");
+  										bindVariable.required = $(this).find("select option:selected").attr("value");
+  										bindVariables[bindVariable.name] = bindVariable;
+  									}
+  								);
+  								
+  								// alert(JSON.stringify(bindVariables));
+  								var jsonRequest = {};
+  								
+  								jsonRequest.queryTemplate = $("#qeTemplate").attr("value");
+  								jsonRequest.description = $("#qeDescription").attr("value");
+  								var metadataStr =  $("#qeMetada").attr("value") ;
+  								if(metadataStr!= null)
+  								{
+  									try{
+  										jsonRequest.metaData = jQuery.parseJSON( metadataStr );
+  									}	catch(e)
+  									{
+  										alert(e);
+  									}
+  								}
+  								
+  								jsonRequest.bindVariables = bindVariables;
+  								jsonRequest.outputFormat = jQuery.parseJSON( $("#qeOutputFormat").attr("value") );
+  								
+  								// add query modifier
+  								var queryModId = $("#queryModifierPanel").find("select option:selected").attr("value");
+  								if(queryModId != "null")
+  								{
+  									var queryModProp = jQuery.parseJSON( $("#queryModifierProperties").attr("value") );
+  									jsonRequest.queryModifiers = {};
+  									jsonRequest.queryModifiers.name = queryModId;
+  									jsonRequest.queryModifiers.properties = queryModProp;
+  								}
+  								
+  								// add query result modifier
+  								var queryResultModId = $("#queryResultModifierPanel").find("select option:selected").attr("value");
+  								if(queryResultModId != "null")
+  								{
+  									var queryResultModProp = jQuery.parseJSON( $("#queryResultModifierProperties").attr("value") );
+  									jsonRequest.queryResulModifiers = {};
+  									jsonRequest.queryResultModifiers.name = queryResultModId;
+  									jsonRequest.queryResultModifiers.properties = queryResultModProp;
+  								}
+  								
+  								
+  								var req = {};
+  								req.queryEndpointName = $("#qeName").attr("value");
+  								req.jsonRequest = JSON.stringify(jsonRequest,null);
+  								
+  								$.post("/dashboard/$workspace/$profile/createQueryEndpoint.action" , req , function (data){
+								
+								alert("Server Returned :\n" + JSON.stringify(data));
+								});
+  								
+  								}
+  								catch(e)
+  								{
+  									alert(e);
+  								}
+  								
+  								
+  								//alert($('form').serialize());
+  								//alert(JSON.stringify(jsonRequest,null));
+  								
+  								
+  							}
+  						</script>
+  						<input type="button" class="button" value="Submit" onclick="submitForm()" />
+    				</form>		
+    			</fieldset>
+    	</div>
+   	 	<div class="row">
+   	 	</div>
+    </div>
+
+  </div>
+
+  
+</body>
+</html>

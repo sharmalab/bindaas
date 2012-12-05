@@ -22,6 +22,7 @@ import edu.emory.cci.bindaas.framework.util.GSONUtil;
 public abstract class AbstractSQLProvider implements IProvider {
 
 	public abstract Driver getDatabaseDriver() throws Exception;
+	public final static int VERSION = 1;
 	private Driver driver;
 	
 	
@@ -89,7 +90,7 @@ public abstract class AbstractSQLProvider implements IProvider {
 			
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(this.getClass().getName() , this.getVersion() , e);
 		}
 		finally{
 			if(connection!=null)
@@ -98,7 +99,7 @@ public abstract class AbstractSQLProvider implements IProvider {
 					connection.close();
 				} catch (SQLException e) {
 					log.error(e);
-					throw new ProviderException(e);
+					throw new ProviderException(this.getClass().getName() , this.getVersion() ,e);
 				}
 			}
 		}

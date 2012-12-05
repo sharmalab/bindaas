@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Create Profile</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+  <script src="/foundation/javascripts/modernizr.foundation.js"></script>
+	
+	
+  
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+ <!-- Page Layout HTML here -->
+
+  <!-- Latest version of jQuery -->
+  <script src="/foundation/javascripts/jquery.js"></script>
+
+  <!-- Included JS Files (Unminified) -->
+  <!-- [JS Files] -->
+  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+  <!-- Included JS Files (Minified) -->
+  <script src="/foundation/javascripts/foundation.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="/foundation/javascripts/app.js"></script>
+  
+  <!--script>
+  
+ $(document).ready(function(){
+
+	$("input[type='submit']").click(function(){
+		var jsonRequest = {};
+		
+		var profileName = $('#profileName').val();
+		
+		var providerInfo = $("#provider option:selected").val().split("#");
+		jsonRequest.providerId = providerInfo[0];
+		jsonRequest.providerVersion = providerInfo[1];
+		
+		alert(JSON.stringify(jsonRequest,null) );
+		
+		
+	});
+});
+
+  
+  	
+  </script-->
+  
+  <div class="row">
+    <div class="tweleve columns">
+      <h2>Bindaas</h2>
+      <p><strong>Be worry free!</strong></p>
+      <p>This is version <strong>2.0.0 Beta</strong></p>
+      <hr />
+    </div>
+    
+  </div>
+
+  <div class="row">
+    <div class="tweleve columns">
+    	
+    	<div class="row">
+    		<ul class="breadcrumbs">
+  				<li class="current"><a href="#"><strong>Dashboard</strong></a></li>
+  				<li><a href="#"><strong>Workspaces</strong></a></li>
+  				<li><a href="#"><strong>Data Providers</strong></a></li>
+  				<li><a href="#"><strong>Administration</strong></a></li>
+  			</ul>
+    </div>
+    	<div class="row">
+    		<h3 class="subheader">/${workspace}/</h3>
+    	</div>
+   	 	<div class="row">
+   	 		<fieldset>
+    			<legend><h3>Create Profile</h3></legend>
+    				<form class="custom" action="createProfile.action" method="get">
+    					<input type="hidden" value="${workspace}"  name="workspace"/>
+    					<input type="hidden"  name="jsonRequest"/>
+    					<label>Profile Name</label>
+    					<input type="text" placeholder="name" name="profileName" id="profileName"/>
+    					<label for="provider">Data Provider</label>
+    					<select  name="provider" id="provider">
+  						  <option>ProvideId1#version2</option>
+					      <option>ProvideId2#version1</option>
+					      <option>ProvideId3#version3</option>
+  						</select>
+  						<br> </br>
+  						<div class="panel">
+  							<h6 class="subheader">Provider Description</h6>
+  							<div id="providerDescription"></div>
+  						</div>
+  						<label for="dataSource">Data Source Configuration</label>
+  						<textarea name="dataSource" placeholder="{ 'outputFormat':'XML' }" id="dataSource"></textarea>
+  						<div class="panel">
+  							<h6 class="subheader">Data Source JSON Schema</h6>
+  							<div id="dataSourceSchema"></div>
+  						</div>
+  						<input type="button" class="button" value="Submit" id="submitForm"/>
+    				</form>		
+    			</fieldset>
+    			
+    			<script>
+    				$("#submitForm").ajaxError(function(e, jqxhr, settings, exception){
+  										alert(exception);
+						});
+    				
+    				$("#submitForm").click(function(){
+    					
+    					var jsonRequest = {};
+		
+						var profileName = $('#profileName').val();
+		
+						var providerInfo = $("#provider option:selected").val().split("#");
+						jsonRequest.providerId = providerInfo[0];
+						jsonRequest.providerVersion = providerInfo[1];
+						
+						try{
+							jsonRequest.dataSource = jQuery.parseJSON($('#dataSource').val());
+							$("#jsonRequest").val(JSON.stringify(jsonRequest,null));
+							
+							var req = {};
+							req.workspace = ${workspace};
+							req.jsonRequest = JSON.stringify(jsonRequest,null); 
+							
+							$.post("/${workspace}/createProfile.action" , req , function (data){
+								
+								alert("Server Returned :\n" + data);
+							});
+							
+						}catch(e){
+							
+							alert("DataSource must be a valid JSON object");
+						}
+						
+						
+    				});
+    			</script>
+    	</div>
+   	 	<div class="row">
+   	 	</div>
+    </div>
+
+  </div>
+
+  
+</body>
+</html>

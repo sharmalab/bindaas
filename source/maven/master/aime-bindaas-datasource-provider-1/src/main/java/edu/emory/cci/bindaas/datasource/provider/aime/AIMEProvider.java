@@ -167,7 +167,7 @@ public class AIMEProvider implements IProvider{
 			
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(e);
+			throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,e);
 		}
 		
 		return profile;

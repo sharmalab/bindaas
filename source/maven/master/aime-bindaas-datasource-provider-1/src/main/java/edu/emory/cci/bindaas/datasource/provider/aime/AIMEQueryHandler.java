@@ -77,7 +77,7 @@ public class AIMEQueryHandler implements IQueryHandler {
 
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException("Query Not Executed", e);
+			throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,"Query Not Executed", e);
 		}
 
 	}
@@ -103,7 +103,7 @@ public class AIMEQueryHandler implements IQueryHandler {
 			}
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(
+			throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,
 					"Validation of Input Parameters failed", e);
 		}
 

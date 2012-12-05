@@ -88,9 +88,17 @@ public class ManagementTasksImpl implements IManagementTasks {
 		List<String> loadedContent = persistenceDriver.loadAllWorkspaces();
 		for(String content : loadedContent)
 		{
-			Workspace workspace = GSONUtil.getGSONInstance().fromJson(content, Workspace.class);
-			workspaces.put(workspace.getName(), workspace);
-			log.trace("Workspace Loaded\n" + workspace);
+			try {
+					Workspace workspace = GSONUtil.getGSONInstance().fromJson(content, Workspace.class);
+					workspaces.put(workspace.getName(), workspace);
+					log.trace("Workspace Loaded\n" + workspace);
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+			}
+			
+			
 		}
 		
 	}

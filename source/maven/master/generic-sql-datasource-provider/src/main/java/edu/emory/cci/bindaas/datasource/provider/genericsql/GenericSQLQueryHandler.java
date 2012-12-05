@@ -78,7 +78,7 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException("Query Not Executed", e);
+			throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , "Query Not Executed", e);
 		}
 	}
 
@@ -101,7 +101,7 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 			}
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(
+			throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , 
 					"Validation of Input Parameters failed", e);
 		}
 
