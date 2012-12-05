@@ -10,6 +10,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
@@ -17,13 +18,23 @@ import com.google.gson.JsonSerializer;
 public class GSONUtil {
 
 	private static Gson gson;
-	
+	private static JsonParser jsonParser;
 	
 	private GSONUtil()
 	{
 		// do all the initialization here
 		
 
+	}
+	
+	
+	public static JsonParser getJsonParser()
+	{
+		if(jsonParser == null)
+		{
+			jsonParser = new JsonParser();
+		}
+		return jsonParser;
 	}
 	public static Gson getGSONInstance()
 	{
