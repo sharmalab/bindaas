@@ -1,5 +1,12 @@
 package edu.emory.cci.bindaas.core.bundle;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.PosixParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
@@ -7,29 +14,61 @@ import org.apache.log4j.Priority;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
+/**
+ * bindaas -audit true/false
+ * bindaas -authentication true/false
+ * bindaas -authorization true/false
+ * bindaas -version
+ * bindaas -status
+ * bindaas -help
+ * bindaas -host <hostname>
+ * bindaas -port <port>
+ * bindaas -restart 
+ * @author nadir
+ *
+ */
 public class BindaasOSGIConsole implements CommandProvider {
 
 	private BindaasInitializer bindaasInitialzier;
 	private Log log = LogFactory.getLog(getClass());
+	private CommandLineParser parser;
+	private Options bindaasOptions ;
 	
+	private String usageHelp;
+	
+	private void initCLI()
+	{
+		parser = new PosixParser();
+		HelpFormatter formatter = new HelpFormatter();
+		bindaasOptions = new Options();
+		bindaasOptions.addOption("audit", true, "Enable/Disable Audit. Specify [true/false]");
+		bindaasOptions.addOption("authentication", true, "Enable/Disable Audit. Specify [true/false]");
+		bindaasOptions.addOption("authorization", true, "Enable/Disable Audit. Specify [true/false]");
+		bindaasOptions.addOption("help", false, "Help on Command Line options");
+		bindaasOptions.addOption("status", false, "Status of Bindaas Server");
+		bindaasOptions.addOption("host", true, "Bindaas Server Hostname");
+		bindaasOptions.addOption("port", true, "Bindaas Server Port");
+		bindaasOptions.addOption("restart", false, "restart Bindaas Server");
+		
+		StringWriter sw = new StringWriter();
+		formatter.printHelp(new PrintWriter(sw),80,"bindaas [options]" , "\n" ,  bindaasOptions , 5, 5, "\n");
+		usageHelp = "\n"  + sw.toString() + "\n";
+	}
 	public BindaasOSGIConsole(BindaasInitializer bindaasInitialzier) {
 		this.bindaasInitialzier = bindaasInitialzier;
+		initCLI();
 		log.info("Bindaas OSGI Console Started");
 	}
 
 	@Override
 	public String getHelp() {
-		StringBuffer message = new StringBuffer();
-		message.append("version - Bindaas version").append("\n");
-		message.append("host - Hostname of Bindaas Server").append("\n");
-		message.append("port - Bindaas Server Port.").append("\n");
-		message.append("authentication - true|false").append("\n");
-		message.append("authorization - true|false").append("\n");
-		message.append("audit - true|false").append("\n");
-		message.append("bindaasStatus").append("\n");
-		message.append("restart").append("\n");
-
-		return message.toString();
+		return usageHelp;
+	}
+	
+	
+	public void _bindaas(CommandInterpreter ci)
+	{
+		
 	}
 
 	public void _version(CommandInterpreter ci) {

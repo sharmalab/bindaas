@@ -402,6 +402,8 @@ Export-Package: au.com.bytecode.opencsv,
  edu.emory.cci.bindaas.core.rest.service.api,
  edu.emory.cci.bindaas.core.rest.service.impl,
  edu.emory.cci.bindaas.core.util,
- edu.emory.cci.bindaas.security.impl
+ edu.emory.cci.bindaas.security.impl,
+ org.apache.commons.cli
 Bundle-ClassPath: opencsv-2.3.jar,
- .
+ .,
+ commons-cli-1.2.jar

@@ -20,6 +20,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
 import edu.emory.cci.bindaas.core.api.BindaasConstants;
+import edu.emory.cci.bindaas.core.api.ISecurityHandler;
 import edu.emory.cci.bindaas.core.rest.security.AuditInLogger;
 import edu.emory.cci.bindaas.core.rest.security.SecurityHandler;
 import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
@@ -292,6 +293,8 @@ public class BindaasInitializer implements IBindaasAdminService{
 		executionServiceReg = context.registerService(IExecutionService.class.getName(), executionService, cxfServiceProps);
 		
 		// configure auditModule : read props enable audit
+		
+		context.registerService(ISecurityHandler.class.getName(), securityModule, null);
 	}
 	
 	public void stop() throws Exception

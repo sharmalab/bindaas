@@ -24,13 +24,14 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
+import edu.emory.cci.bindaas.core.api.ISecurityHandler;
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 import edu.emory.cci.bindaas.security.api.IAuthorizationProvider;
 
 
-public class SecurityHandler implements RequestHandler {
+public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private Log log = LogFactory.getLog(getClass());
 	private boolean enableAuthorization ;
 	private boolean enableAuthentication ;
@@ -271,14 +272,14 @@ public class SecurityHandler implements RequestHandler {
 	}
 
 
-	IAuthenticationProvider locateAuthenticationProvider()
+	public IAuthenticationProvider locateAuthenticationProvider()
 	{
 		
 		final BundleContext context = Activator.getContext();
 		ServiceReference[] serviceReferences;
 		try {
 			serviceReferences = context.getAllServiceReferences(IAuthenticationProvider.class.getName(), "(class=" +  authenticationProviderClass +")");
-			if(serviceReferences.length > 0)
+			if(serviceReferences!=null && serviceReferences.length > 0)
 			{
 				Object service = context.getService(serviceReferences[0]);
 				if(service!=null)
@@ -295,7 +296,7 @@ public class SecurityHandler implements RequestHandler {
 		
 	}
 	
-	IAuthorizationProvider locateAuthorizationProvider()
+	public IAuthorizationProvider locateAuthorizationProvider()
 	{
 		final BundleContext context = Activator.getContext();
 		ServiceReference[] serviceReferences;

@@ -10,6 +10,7 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
+import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.framework.api.IQueryModifier;
@@ -32,7 +33,7 @@ public class ModifierRegistryImpl implements IModifierRegistry{
 		new RegistryTracker<IQueryModifier>(queryModifierRegistry, IQueryModifier.class.getName());
 		new RegistryTracker<IQueryResultModifier>(queryResultModifierRegistry, IQueryResultModifier.class.getName());
 		new RegistryTracker<ISubmitPayloadModifier>(submitPayloadModifierRegistry, ISubmitPayloadModifier.class.getName());
-		
+		Activator.getContext().registerService(IModifierRegistry.class.getName(), this, null);
 	}
 	
 	public Map<String, IQueryModifier> getQueryModifierRegistry() {
