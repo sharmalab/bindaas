@@ -122,7 +122,9 @@
     						req.jsonRequest = JSON.stringify(jsonRequest ,  null );
     						$.post("/dashboard/$workspace/$profile/createSubmitEndpoint.action" , req , function (data){
 								
-								alert("Server Returned :\n" + JSON.stringify(data));
+								//alert("Server Returned :\n" + JSON.stringify(data));
+								window.location = "/dashboard/$workspace/$profile/submit/" + req.submitEndpointName;
+								
 								});
     						}
     						catch(e){

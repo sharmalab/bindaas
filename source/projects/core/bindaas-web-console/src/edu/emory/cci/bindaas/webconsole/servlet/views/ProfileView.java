@@ -17,9 +17,11 @@ import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
+import edu.emory.cci.bindaas.core.api.IProviderRegistry;
+import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.framework.api.IQueryModifier;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
-import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
+import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -27,9 +29,9 @@ import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
 
-public class QueryEndpointView extends AbstractRequestHandler {
+public class ProfileView extends AbstractRequestHandler {
 
-	private static String templateName = "queryEndpoint.vt";
+	private static String templateName = "profile.vt";
 	private static Template template;
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
@@ -59,11 +61,11 @@ public class QueryEndpointView extends AbstractRequestHandler {
 		}
 		else if (request.getMethod().equalsIgnoreCase("post"))
 		{
-			updateQueryEndpoint(request, response, pathParameters);
+			updateProfile(request, response, pathParameters);
 		}
 		else if (request.getMethod().equalsIgnoreCase("delete"))
 		{
-			deleteQueryEndpoint(request, response, pathParameters);
+			deleteProfile(request, response, pathParameters);
 		}
 		else
 		{
@@ -80,20 +82,25 @@ public class QueryEndpointView extends AbstractRequestHandler {
 		if(managementTasks!=null)
 		{
 			String workspace = pathParameters.get("workspace");
-			String profile = pathParameters.get("profile");
-			String queryEndpointName = pathParameters.get("queryEndpoint");
+			String profileName = pathParameters.get("profile");
 			
-			QueryEndpoint queryEndpoint = managementTasks.getQueryEndpoint(workspace, profile, queryEndpointName); 
+			Profile profile = managementTasks.getProfile(workspace, profileName); 
 			VelocityContext context = new VelocityContext(pathParameters);
 			context.put("esc", new EscapeTool());
-			context.put("queryEndpoint", queryEndpoint);
+			context.put("profile", profile);
 			
-			IModifierRegistry modifierRegistry = Activator.getModifierRegistry();
-			Collection<IQueryModifier> queryModifiers = modifierRegistry.findAllQueryModifier();
-			Collection<IQueryResultModifier> queryResultModifiers = modifierRegistry.findAllQueryResultModifiers();
-			context.put("queryModifiers" , queryModifiers);
-			context.put("queryResultModifiers" , queryResultModifiers);
-			
+			IProviderRegistry providerRegistry = Activator.getProviderRegistry();
+			if(providerRegistry!=null)
+			{
+				Collection<IProvider> listOfProviders = providerRegistry.findProviders();
+				context.put("providers" , listOfProviders);
+			}
+			else
+			{
+				log.error("IProviderRegistry not available");
+				ErrorView.handleError(response, new Exception() );
+			}
+	
 			template.merge(context, response.getWriter());
 		}
 		else
@@ -103,22 +110,21 @@ public class QueryEndpointView extends AbstractRequestHandler {
 		}
 	}
 	
-	public void updateQueryEndpoint(HttpServletRequest request,
+	public void updateProfile(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters)
 	{
 		String workspace = pathParameters.get("workspace");
-		String profile = pathParameters.get("profile");
-		String queryEndpointName = request.getParameter("queryEndpointName");
+		String profileName = pathParameters.get("profile");
 		String createdBy = ((Principal)request.getSession().getAttribute("loggedInUser")).getName();
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
 		IManagementTasks managementTask = Activator.getManagementTasksBean();
 		try {
-			if(managementTask!=null){
-				QueryEndpoint queryEndpoint = managementTask.updateQueryEndpoint(queryEndpointName, workspace, profile, jsonObject, createdBy);
+			if(managementTask!=null){ 
+				Profile profile = managementTask.updateProfile(profileName, workspace, jsonObject, createdBy);
 				response.setContentType(StandardMimeType.JSON.toString());
-				response.getWriter().append(queryEndpoint.toString());
+				response.getWriter().append(profile.toString());
 				response.getWriter().flush();
 			}
 			else
@@ -134,20 +140,16 @@ public class QueryEndpointView extends AbstractRequestHandler {
 
 	}
 	
-public void deleteQueryEndpoint(HttpServletRequest request,
+public void deleteProfile(HttpServletRequest request,
 		HttpServletResponse response, Map<String, String> pathParameters) 
 {
 	String workspace = pathParameters.get("workspace");
-	String profile = pathParameters.get("profile");
-	String queryEndpointName = pathParameters.get("queryEndpoint");
+	String profileName = pathParameters.get("profile");
 	
 	IManagementTasks managementTask = Activator.getManagementTasksBean();
 	try {
 		if(managementTask!=null){
-			QueryEndpoint queryEndpoint = managementTask.deleteQueryEndpoint(workspace, profile, queryEndpointName);
-			response.setContentType(StandardMimeType.JSON.toString());
-			response.getWriter().append(queryEndpoint.toString());
-			response.getWriter().flush();
+			managementTask.deleteProfile(workspace,profileName);
 		}
 		else
 		{

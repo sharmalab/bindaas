@@ -1,7 +1,6 @@
 package edu.emory.cci.bindaas.webconsole.servlet.views;
 
 import java.security.Principal;
-import java.util.Collection;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,20 +15,16 @@ import org.apache.velocity.tools.generic.EscapeTool;
 import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
-import edu.emory.cci.bindaas.core.api.IModifierRegistry;
-import edu.emory.cci.bindaas.framework.api.IQueryModifier;
-import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
-import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
-import edu.emory.cci.bindaas.framework.model.Workspace;
+import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
 
-public class QueryEndpointView extends AbstractRequestHandler {
+public class DeleteEndpointView extends AbstractRequestHandler {
 
-	private static String templateName = "queryEndpoint.vt";
+	private static String templateName = "deleteEndpoint.vt";
 	private static Template template;
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
@@ -59,11 +54,11 @@ public class QueryEndpointView extends AbstractRequestHandler {
 		}
 		else if (request.getMethod().equalsIgnoreCase("post"))
 		{
-			updateQueryEndpoint(request, response, pathParameters);
+			updateDeleteEndpoint(request, response, pathParameters);
 		}
 		else if (request.getMethod().equalsIgnoreCase("delete"))
 		{
-			deleteQueryEndpoint(request, response, pathParameters);
+			deleteDeleteEndpoint(request, response, pathParameters);
 		}
 		else
 		{
@@ -81,19 +76,12 @@ public class QueryEndpointView extends AbstractRequestHandler {
 		{
 			String workspace = pathParameters.get("workspace");
 			String profile = pathParameters.get("profile");
-			String queryEndpointName = pathParameters.get("queryEndpoint");
+			String deleteEndpointName = pathParameters.get("deleteEndpoint");
 			
-			QueryEndpoint queryEndpoint = managementTasks.getQueryEndpoint(workspace, profile, queryEndpointName); 
+			DeleteEndpoint deleteEndpoint = managementTasks.getDeleteEndpoint(workspace, profile, deleteEndpointName); 
 			VelocityContext context = new VelocityContext(pathParameters);
 			context.put("esc", new EscapeTool());
-			context.put("queryEndpoint", queryEndpoint);
-			
-			IModifierRegistry modifierRegistry = Activator.getModifierRegistry();
-			Collection<IQueryModifier> queryModifiers = modifierRegistry.findAllQueryModifier();
-			Collection<IQueryResultModifier> queryResultModifiers = modifierRegistry.findAllQueryResultModifiers();
-			context.put("queryModifiers" , queryModifiers);
-			context.put("queryResultModifiers" , queryResultModifiers);
-			
+			context.put("deleteEndpoint", deleteEndpoint);
 			template.merge(context, response.getWriter());
 		}
 		else
@@ -103,12 +91,12 @@ public class QueryEndpointView extends AbstractRequestHandler {
 		}
 	}
 	
-	public void updateQueryEndpoint(HttpServletRequest request,
+	public void updateDeleteEndpoint(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters)
 	{
 		String workspace = pathParameters.get("workspace");
 		String profile = pathParameters.get("profile");
-		String queryEndpointName = request.getParameter("queryEndpointName");
+		String deleteEndpointName = request.getParameter("deleteEndpointName");
 		String createdBy = ((Principal)request.getSession().getAttribute("loggedInUser")).getName();
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
@@ -116,9 +104,9 @@ public class QueryEndpointView extends AbstractRequestHandler {
 		IManagementTasks managementTask = Activator.getManagementTasksBean();
 		try {
 			if(managementTask!=null){
-				QueryEndpoint queryEndpoint = managementTask.updateQueryEndpoint(queryEndpointName, workspace, profile, jsonObject, createdBy);
+				DeleteEndpoint deleteEndpoint = managementTask.updateDeleteEndpoint(deleteEndpointName, workspace, profile, jsonObject, createdBy);
 				response.setContentType(StandardMimeType.JSON.toString());
-				response.getWriter().append(queryEndpoint.toString());
+				response.getWriter().append(deleteEndpoint.toString());
 				response.getWriter().flush();
 			}
 			else
@@ -134,33 +122,35 @@ public class QueryEndpointView extends AbstractRequestHandler {
 
 	}
 	
-public void deleteQueryEndpoint(HttpServletRequest request,
-		HttpServletResponse response, Map<String, String> pathParameters) 
-{
-	String workspace = pathParameters.get("workspace");
-	String profile = pathParameters.get("profile");
-	String queryEndpointName = pathParameters.get("queryEndpoint");
-	
-	IManagementTasks managementTask = Activator.getManagementTasksBean();
-	try {
-		if(managementTask!=null){
-			QueryEndpoint queryEndpoint = managementTask.deleteQueryEndpoint(workspace, profile, queryEndpointName);
-			response.setContentType(StandardMimeType.JSON.toString());
-			response.getWriter().append(queryEndpoint.toString());
-			response.getWriter().flush();
-		}
-		else
-		{
-			log.error("IManagementTasks service not available");
-			throw new Exception("Service not available");
-		}
+	public void deleteDeleteEndpoint(HttpServletRequest request,
+			HttpServletResponse response, Map<String, String> pathParameters) 
+	{
+		String workspace = pathParameters.get("workspace");
+		String profile = pathParameters.get("profile");
+		String deleteEndpointName = pathParameters.get("deleteEndpoint");
 		
-	} catch (Exception e) {
-			log.error(e);
-			ErrorView.handleError(response, e);
+		IManagementTasks managementTask = Activator.getManagementTasksBean();
+		try {
+			if(managementTask!=null){
+				DeleteEndpoint deleteEndpoint = managementTask.deleteDeleteEndpoint(workspace, profile, deleteEndpointName);
+				response.setContentType(StandardMimeType.JSON.toString());
+				response.getWriter().append(deleteEndpoint.toString());
+				response.getWriter().flush();
+			}
+			else
+			{
+				log.error("IManagementTasks service not available");
+				throw new Exception("Service not available");
+			}
+			
+		} catch (Exception e) {
+				log.error(e);
+				ErrorView.handleError(response, e);
+		}
+
 	}
 
-}
+	
 	
 
 }

@@ -554,8 +554,14 @@ public class ManagementTasksImpl implements IManagementTasks {
 			JsonObject parameters, String updatedBy) throws Exception {
 		
 		synchronized (persistenceDriver) {
+			Profile oldProfile = getProfile(workspaceName, profileName);
 			deleteProfile(workspaceName, profileName);
+			
 			Profile profile = this.createProfile(profileName, workspaceName, parameters, updatedBy);
+			profile.setQueryEndpoints(oldProfile.getQueryEndpoints());
+			profile.setDeleteEndpoints(oldProfile.getDeleteEndpoints());
+			profile.setSubmitEndpoints(oldProfile.getSubmitEndpoints());
+			persistenceDriver.saveProfile(workspaceName, profile);
 			return profile;	
 		}
 		

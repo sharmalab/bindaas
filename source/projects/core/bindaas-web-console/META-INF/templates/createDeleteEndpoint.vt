@@ -170,7 +170,7 @@
   							{
   								try{
   									var bindVariables = {};
-  									$("#bindVarContainer").find("div").each(
+  									$("#bindVarContainer").find(".panel").each(
   									
 		  									function (index)
 		  									{
@@ -198,7 +198,8 @@
   								
   								$.post("/dashboard/$workspace/$profile/createDeleteEndpoint.action" , req , function (data){
 								
-								alert("Server Returned :\n" + JSON.stringify(data));
+								//alert("Server Returned :\n" + JSON.stringify(data));
+								window.location = "/dashboard/$workspace/$profile/delete/" + req.deleteEndpointName;
 								});
   								
   								}

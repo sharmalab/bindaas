@@ -47,30 +47,7 @@
 
   <!-- Initialize JS Plugins -->
   <script src="/foundation/javascripts/app.js"></script>
-  
-  <!--script>
-  
- $(document).ready(function(){
-
-	$("input[type='submit']").click(function(){
-		var jsonRequest = {};
-		
-		var profileName = $('#profileName').val();
-		
-		var providerInfo = $("#provider option:selected").val().split("#");
-		jsonRequest.providerId = providerInfo[0];
-		jsonRequest.providerVersion = providerInfo[1];
-		
-		alert(JSON.stringify(jsonRequest,null) );
-		
-		
-	});
-});
-
-  
-  	
-  </script-->
-  
+    
   <div class="row">
     <div class="tweleve columns">
       <h2>Bindaas</h2>
@@ -105,9 +82,9 @@
     					<input type="text" placeholder="name" name="profileName" id="profileName"/>
     					<label for="provider">Data Provider</label>
     					<select  name="provider" id="provider">
-  						  <option>ProvideId1#version2</option>
-					      <option>ProvideId2#version1</option>
-					      <option>ProvideId3#version3</option>
+    						#foreach ($provider in $providers)
+  						  <option value="$provider.getId()#$provider.getVersion()">ID = $provider.getId() VERSION = $provider.getVersion()</option>
+  						  	#end
   						</select>
   						<br> </br>
   						<div class="panel">
@@ -133,27 +110,24 @@
     					
     					var jsonRequest = {};
 		
-						var profileName = $('#profileName').val();
+						var profileName = $('#profileName').attr("value");
 		
-						var providerInfo = $("#provider option:selected").val().split("#");
+						var providerInfo = $("#provider option:selected").attr("value").split("#");
 						jsonRequest.providerId = providerInfo[0];
 						jsonRequest.providerVersion = providerInfo[1];
 						
 						try{
-							jsonRequest.dataSource = jQuery.parseJSON($('#dataSource').val());
-							$("#jsonRequest").val(JSON.stringify(jsonRequest,null));
-							
+							jsonRequest.dataSource = jQuery.parseJSON($('#dataSource').attr("value"));
 							var req = {};
-							req.workspace = ${workspace};
+							req.profileName = profileName;
 							req.jsonRequest = JSON.stringify(jsonRequest,null); 
 							
-							$.post("/${workspace}/createProfile.action" , req , function (data){
-								
-								alert("Server Returned :\n" + data);
+							$.post("/dashboard/$workspace/createProfile.action" , req , function (data){
+								window.location = "/dashboard/$workspace/profile/" + profileName;
 							});
 							
 						}catch(e){
-							
+							alert(e);
 							alert("DataSource must be a valid JSON object");
 						}
 						

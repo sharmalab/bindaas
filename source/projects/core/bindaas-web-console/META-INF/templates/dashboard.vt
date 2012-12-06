@@ -101,13 +101,13 @@
     							<tbody>
     								#foreach ($profile in $workspace.getProfiles().values())
     								<tr>
-    									<td>$profile.getName()</td>
+    									<td><a href="/dashboard/$workspace.getName()/profile/$profile.getName()">$profile.getName()</a></td>
     									<td>$profile.getTimeCreated()</td>
     									<td>$profile.getCreatedBy()</td>
     									<td>
     										<ul>
     											#foreach ($queryEndpoint in $profile.getQueryEndpoints().values())
-    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/$queryEndpoint.getName()/view" class="small">$queryEndpoint.getName()</a></li>
+    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()" class="small">$queryEndpoint.getName()</a></li>
     											#end
     											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/createQueryEndpoint.action" class="medium">Create New >>> </a></li>
     										</ul>
@@ -115,7 +115,7 @@
     									<td>
     										<ul>
     											#foreach ($submitEndpoint in $profile.getSubmitEndpoints().values())
-    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/$submitEndpoint.getName()/view" class="small">$submitEndpoint.getName()</a></li>
+    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()" class="small">$submitEndpoint.getName()</a></li>
     											#end
     											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/createSubmitEndpoint.action" class="medium">Create New >>> </a></li>
     										</ul>
@@ -123,7 +123,7 @@
     									<td>
     										<ul>
     											#foreach ($deleteEndpoint in $profile.getDeleteEndpoints().values())
-    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/$deleteEndpoint.getName()/view" class="small">$deleteEndpoint.getName()</a></li>
+    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/delete/$deleteEndpoint.getName()" class="small">$deleteEndpoint.getName()</a></li>
     											#end
     											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/createDeleteEndpoint.action" class="medium">Create New >>> </a></li>
     										</ul>

@@ -26,7 +26,19 @@
 </bean>
 
 <bean id="queryEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryEndpointView" >
-	<property name="uriTemplate" value="/{workspace}/{profile}/{queryEndpoint}/view"></property>
+	<property name="uriTemplate" value="/{workspace}/{profile}/query/{queryEndpoint}"></property>
+</bean>
+
+<bean id="deleteEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.DeleteEndpointView" >
+	<property name="uriTemplate" value="/{workspace}/{profile}/delete/{deleteEndpoint}"></property>
+</bean>
+
+<bean id="submitEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.SubmitEndpointView" >
+	<property name="uriTemplate" value="/{workspace}/{profile}/submit/{submitEndpoint}"></property>
+</bean>
+
+<bean id="profileView" class="edu.emory.cci.bindaas.webconsole.servlet.views.ProfileView" >
+	<property name="uriTemplate" value="/{workspace}/profile/{profile}"></property>
 </bean>
 
 
@@ -40,6 +52,10 @@
 			<ref bean="createSubmitEndpoint"/>
 			<ref bean="createDeleteEndpoint"/>
 			<ref bean="queryEndpointView"/>
+			<ref bean="deleteEndpointView"/>
+			<ref bean="submitEndpointView"/>
+			<ref bean="profileView"/>
+			
 		</list>
 	</property>
 </bean>

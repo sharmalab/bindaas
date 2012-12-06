@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Profile : $profile.getName()</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+  <script src="/foundation/javascripts/modernizr.foundation.js"></script>
+	
+	
+  
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+ <!-- Page Layout HTML here -->
+
+  <!-- Latest version of jQuery -->
+  <script src="/foundation/javascripts/jquery.js"></script>
+
+  <!-- Included JS Files (Unminified) -->
+  <!-- [JS Files] -->
+  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+  <!-- Included JS Files (Minified) -->
+  <script src="/foundation/javascripts/foundation.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="/foundation/javascripts/app.js"></script>
+    
+  <div class="row">
+    <div class="tweleve columns">
+      <h2>Bindaas</h2>
+      <p><strong>Be worry free!</strong></p>
+      <p>This is version <strong>2.0.0 Beta</strong></p>
+      <hr />
+    </div>
+    
+  </div>
+
+  <div class="row">
+    <div class="tweleve columns">
+    	
+    	<div class="row">
+    		<ul class="breadcrumbs">
+  				<li class="current"><a href="#"><strong>Dashboard</strong></a></li>
+  				<li><a href="#"><strong>Workspaces</strong></a></li>
+  				<li><a href="#"><strong>Data Providers</strong></a></li>
+  				<li><a href="#"><strong>Administration</strong></a></li>
+  			</ul>
+    </div>
+    	<div class="row">
+    		<h3 class="subheader">/workspace:${workspace}/</h3>
+    	</div>
+   	 	<div class="row">
+   	 		<fieldset>
+    			<legend><h3>Profile : $profile.getName()</h3></legend>
+    				<form class="custom" action="createProfile.action" method="get">
+    					<input type="hidden" value="${workspace}"  name="workspace"/>
+    					<input type="hidden"  name="jsonRequest"/>
+    					<label>Profile Name</label>
+    					<input type="text" placeholder="name" name="profileName" id="profileName" value="$profile.getName()"/>
+    					<label for="provider">Data Provider</label>
+    					<select  name="provider" id="provider">
+    						
+    						#foreach ($provider in $providers)
+    							#if ($provider.getId().equals($profile.getProviderId())  && $provider.getVersion() == $profile.getProviderVersion()   )
+    								<option value="$provider.getId()#$provider.getVersion()" selected="true">ID = $provider.getId() VERSION = $provider.getVersion()</option>
+    							#else
+    								<option value="$provider.getId()#$provider.getVersion()">ID = $provider.getId() VERSION = $provider.getVersion()</option>
+    							#end
+  						  	#end
+  						</select>
+  						<br> </br>
+  						<div class="panel">
+  							<h6 class="subheader">Provider Description</h6>
+  							<div id="providerDescription"></div>
+  						</div>
+  						<label for="dataSource">Data Source Configuration</label>
+  						<textarea name="dataSource" placeholder="{ 'outputFormat':'XML' }" id="dataSource">$profile.getDataSource()</textarea>
+  						<div class="panel">
+  							<h6 class="subheader">Data Source JSON Schema</h6>
+  							<div id="dataSourceSchema"></div>
+  						</div>
+  						<input type="button" class="button" value="Edit"  id="editButton" onclick="edit()" />
+  						<input type="button" class="button" value="Save"  id="saveButton" onclick="save()" />
+  						<input type="button" class="button" value="Cancel"  id="cancelButton" onclick="cancel()"/>
+  						<input type="button" class="button" value="Delete" onclick="deleteEndpoint()" />
+    				</form>		
+    			</fieldset>
+    			
+    			<script>
+    				$("form").ajaxError(function(e, jqxhr, settings, exception){
+  										alert(exception);
+						});
+    				
+    				function submitForm()
+    				{
+    					
+    					var jsonRequest = {};
+		
+						var profileName = $('#profileName').attr("value");
+		
+						var providerInfo = $("#provider option:selected").attr("value").split("#");
+						jsonRequest.providerId = providerInfo[0];
+						jsonRequest.providerVersion = providerInfo[1];
+						
+						try{
+							jsonRequest.dataSource = jQuery.parseJSON($('#dataSource').attr("value"));
+							var req = {};
+							req.profileName = profileName;
+							req.jsonRequest = JSON.stringify(jsonRequest,null); 
+							
+							$.post("/dashboard/$workspace/profile/$profile.getName()" , req , function (data){
+								location.reload(true);
+							});
+							
+						}catch(e){
+							alert(e);
+							alert("DataSource must be a valid JSON object");
+						}
+						
+						
+    				}
+    			
+    			 			function edit()
+  							{
+  								$("#editButton").hide();
+  								$("#saveButton").show();
+  								$("#cancelButton").show();
+  								
+  								enableForm();
+  							}
+  							
+  							function save()
+  							{
+  								$("#editButton").show();
+  								$("#saveButton").hide();
+  								$("#cancelButton").hide();
+  								submitForm();
+  								
+  								
+  							}
+  							
+  							function cancel()
+  							{
+  								$("#editButton").show();
+  								$("#saveButton").hide();
+  								$("#cancelButton").hide();
+  								
+  								// referesh
+  								location.reload(true);
+  							}
+  							
+  							
+  							function enableForm()
+  							{
+  								$("#provider").removeAttr("disabled");
+  								$("#dataSource").removeAttr("disabled" );
+  							}
+  							
+  							function disableForm()
+  							{
+  								$("#profileName").attr("disabled" , "disabled");
+  								$("#provider").attr("disabled" , "disabled");
+  								$("#dataSource").attr("disabled" , "disabled");
+  								
+  							}
+  							
+  							
+  							function deleteEndpoint()
+  							{
+  								var r = confirm("Deleting a profile will delete all associated endpoints. Do you still want to continue?");
+									if ( r == true )
+									  {
+											$.ajax(
+				  									{
+				  										url : "/dashboard/$workspace/profile/$profile.getName()" ,
+				  										type : "DELETE",
+				  										success : function(data){
+				  											console.log(JSON.stringify(data));
+				  											window.location = "/dashboard/";
+				  										}
+				  									}
+				  								);
+
+									  }
+  							}
+
+    			</script>
+    			<script>
+  						
+  							$("#saveButton").hide();
+  							$("#cancelButton").hide();
+  							disableForm();
+  						
+  				</script>
+    	</div>
+   	 	<div class="row">
+   	 	</div>
+    </div>
+
+  </div>
+
+  
+</body>
+</html>
