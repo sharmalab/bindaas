@@ -56,7 +56,8 @@
 			<delete file="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar"></delete>
 	</target>
 
-	<target name="clean"></target>
+	<target name="clean" depends="dist-clean">
+	</target>
 	<target name="dist-clean">
 		<delete dir="${dist.placeholder.dir}">
 		</delete>
