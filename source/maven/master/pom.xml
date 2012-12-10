@@ -32,6 +32,18 @@
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
+				<execution>
+						<id>clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<ant antfile="${basedir}/build.xml" target="clean" />
+							</tasks>
+						</configuration>
+					</execution>
 					<execution>
 						<id>copy-source</id>
 						<phase>prepare-package</phase>
@@ -146,5 +158,6 @@
 		<module>aime-bindaas-datasource-provider-1</module>
 		<module>bindaas-core-api</module>
 		<module>bindaas-core-impl</module>
+		<module>bindaas-web-console</module>
 	</modules>
 </project>
