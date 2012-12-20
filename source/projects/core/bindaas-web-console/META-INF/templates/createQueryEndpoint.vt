@@ -64,7 +64,7 @@
   
    function validateQueryTempalate()
    {
-   	var regex = /\$(.*?)\$/g;
+   	#[[ var regex = /\$[a-zA-Z0-9_]+\$/g; ]]#
 	var text = $("#qeTemplate").attr('value');
 	var matches = text.match(regex); 
 	
@@ -121,18 +121,35 @@
   </div>
 
   <div class="row">
-    <div class="tweleve columns">
+  	<div class="two columns">
+  		
+  		<div class="row">
+  		
+  		<ul class="four side-nav">
+			  <li ><a href="#">Create Workspace</a></li>
+			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Profile</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query Endpoint</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete Endpoint</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createSubmitEndpoint.action">Create Submit Endpoint</a></li>
+			  <li ><a href="#">Clone Query Endpoint</a></li>
+			  <li ><a href="#">Clone Submit Endpoint</a></li>
+			  <li ><a href="#">Clone Delete Endpoint</a></li>
+			  
+		</ul>	
+  		</div>
+  		
+  	</div>
+    <div class="six columns">
     	
     	<div class="row">
     		<ul class="breadcrumbs">
-  				<li class="current"><a href="#"><strong>Dashboard</strong></a></li>
-  				<li><a href="#"><strong>Workspaces</strong></a></li>
-  				<li><a href="#"><strong>Data Providers</strong></a></li>
+  				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
+  				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
   				<li><a href="#"><strong>Administration</strong></a></li>
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/$workspace/$profile</h3>
+    		<h3 class="subheader">/Workspace:$workspace/Profile:<a href="/dashboard/$workspace/$profile/">$profile</a></h3>
     	</div>
    	 	<div class="row">
    	 		<fieldset>
@@ -160,14 +177,27 @@
     							-->
     							</div>
     							<a  href="javascript:addBindVariable()" class="round small button"><i>add more</i></a>
-    							<a  href="javascript:validateQueryTempalate()" class="round small button"><i>auto detect</i></a>
+<!--     							<a  href="javascript:validateQueryTempalate()" class="round small button"><i>auto detect</i></a> -->
+    							<script>
+    								$("#qeTemplate").keyup(function(){ validateQueryTempalate() });
+    							</script>
     						</fieldset>	
     					</div>
+    					<div class="panel">
     					<label>Output Format</label>
-    					<textarea id="qeOutputFormat" placeholder="{}"></textarea>
+    						<textarea id="qeOutputFormat"></textarea>
+    						<br>
+    						#if ($documentation && $documentation.get('qeOutputFormatHtml'))
+    						$documentation.get('qeOutputFormatHtml').getAsString()
+    						<script>
+    							$("#qeOutputFormat").attr("disabled" , "true");
+    						</script>
+    						#end
+    					</div>
+    					
     					
     					<div class="panel" id="queryModifierPanel">
-	    					<label for="queryModifier">Query Modifier</label>
+	    					<label for="queryModifier">Query Modifier (Optional)</label>
 	    					<select  name="queryModifier" id="queryModifier">
 	  						  <option selected="true" value="null">--select--</option>
 						      #foreach ($qm in $queryModifiers)
@@ -180,7 +210,7 @@
     					</div>
     					
     					<div class="panel" id="queryResultModifierPanel">
-	    					<label for="queryResultModifier">Query Result Modifier</label>
+	    					<label for="queryResultModifier">Query Result Modifier (Optional)</label>
 	    					<select  name="queryResultModifier" id="queryResultModifier">
 	  						  <option selected="true" value="null">--select--</option>
 						      #foreach ($qrm in $queryResultModifiers)
@@ -288,6 +318,12 @@
    	 	</div>
     </div>
 
+	<div class="four columns">
+		#if ($documentation.get("queryHelp"))
+			$documentation.get("queryHelp").getAsString()
+		#end
+	</div>
+	
   </div>
 
   

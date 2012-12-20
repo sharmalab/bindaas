@@ -59,18 +59,28 @@
   </div>
 
   <div class="row">
-    <div class="tweleve columns">
+  	<div class="two columns">
+  		
+  		<div class="row">
+  		
+  		<ul class="four side-nav">
+			  <li ><a href="#">Create Workspace</a></li>
+			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Profile</a></li>
+		</ul>	
+  		</div>
+  		
+  	</div>
+    <div class="ten columns">
     	
     	<div class="row">
     		<ul class="breadcrumbs">
-  				<li class="current"><a href="#"><strong>Dashboard</strong></a></li>
-  				<li><a href="#"><strong>Workspaces</strong></a></li>
-  				<li><a href="#"><strong>Data Providers</strong></a></li>
+  				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
+  				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
   				<li><a href="#"><strong>Administration</strong></a></li>
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/${workspace}/</h3>
+    		<h3 class="subheader">/Workspace:${workspace}/</h3>
     	</div>
    	 	<div class="row">
    	 		<fieldset>
@@ -82,17 +92,84 @@
     					<input type="text" placeholder="name" name="profileName" id="profileName"/>
     					<label for="provider">Data Provider</label>
     					<select  name="provider" id="provider">
+    						<option>--- Select ---</option>
     						#foreach ($provider in $providers)
-  						  <option value="$provider.getId()#$provider.getVersion()">ID = $provider.getId() VERSION = $provider.getVersion()</option>
+  						  <option value="$provider.getId()#$provider.getVersion()" ref="$provider.getDocumentation().get('commonName').getAsString()" >
+  						  		#if ($provider.getDocumentation().get('title'))
+  						  			$provider.getDocumentation().get('title').getAsString()
+  						  		#else
+  						  			ID = $provider.getId() version = $provider.getVersion()
+  						  		#end
+  						  </option>
   						  	#end
+  						  	
   						</select>
   						<br> </br>
   						<div class="panel">
   							<h6 class="subheader">Provider Description</h6>
-  							<div id="providerDescription"></div>
+  							<div id="providerDescription">
+  								#foreach ($provider in $providers)
+  									#if ($provider.getDocumentation() && $provider.getDocumentation().get('commonName'))
+  									<div id="$provider.getDocumentation().get('commonName').getAsString()_providerDescription">
+  										#if ($provider.getDocumentation().get('description'))
+  											$provider.getDocumentation().get('description').getAsString()
+  										#end
+  									</div>
+  									#end
+  								#end
+  								
+  							</div>
   						</div>
-  						<label for="dataSource">Data Source Configuration</label>
-  						<textarea name="dataSource" placeholder="{ 'outputFormat':'XML' }" id="dataSource"></textarea>
+  						<div class="panel">
+  							<label for="dataSource">Data Source Configuration <a onclick="enableDataSource()">(Click to edit)</a></label>
+  							<textarea name="dataSource" id="dataSource" disabled="true"></textarea>
+  							<script>
+  								function enableDataSource()
+  								{
+  									$("#dataSource").removeAttr("disabled");
+  								}
+  							</script>
+  							
+  							<div id="dataSourceContainer">
+  								#foreach ($provider in $providers)
+  									#if ($provider.getDocumentation() && $provider.getDocumentation().get('commonName'))
+  									<div id="$provider.getDocumentation().get('commonName').getAsString()">
+  										$provider.getDocumentation().get('dataSourceHtml').getAsString()
+  									</div>
+  									#end
+  								#end
+  							</div>
+  							
+  							
+  							<script>
+  							hideAllDataSources();
+  							
+  							$("#provider").change(function () {
+		          				
+		          				hideAllDataSources();
+		          				showDataSource($("#provider option:selected").attr("ref"));
+		          				$("#dataSource").attr("value","");
+		          				
+		          				});
+  								function hideAllDataSources()
+  								{
+  									$("#dataSourceContainer > div").each ( function () {
+  										$(this).addClass("hide");
+  									});
+  									
+  									$("#providerDescription > div").each ( function () {
+  										$(this).addClass("hide");
+  									});
+  								}
+  								
+  								function showDataSource(id)
+  								{
+  									$("#" + id).removeClass("hide");
+  									$("#" + id + "_providerDescription").removeClass("hide");
+  								}
+  							</script>
+  						</div>
+  						
   						<div class="panel">
   							<h6 class="subheader">Data Source JSON Schema</h6>
   							<div id="dataSourceSchema"></div>

@@ -98,6 +98,24 @@
 		
 	  </fieldset>
 	</form>
+	<h3>Or</h3>
+	
+	 	 <fieldset>
+	
+		    <legend><h4>Login using one of the following</h4></legend>
+	<form action="/openidlogin?loginTarget=$loginTarget&identifier=https://www.google.com/accounts/o8/id" method="post" name="google">
+			<a href="javascript:document.google.submit()">
+				<img src="http://beta.clickhint.com/assets/images/google-openid.png" width="143" height="39" border="0" alt="Submit this form" name="sub_but" />
+			</a>
+	</form>
+	
+	<form action="/openidlogin?loginTarget=$loginTarget&identifier=https://me.yahoo.com" method="post" name="yahoo">
+			<a href="javascript:document.yahoo.submit()">
+				<img src="http://www.ige4.com/images/openid/yahoo.png" width="143" height="39" border="0" alt="Submit this form" name="sub_but" />
+			</a>
+	</form>
+	  </fieldset>
+	
     </div>
 
    </div>
