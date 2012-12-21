@@ -165,8 +165,8 @@
    	 	</div>
     </div>
 	<div class="four columns">
-		#if ($documentation.get("submitHelp"))
-			$documentation.get("submitHelp").getAsString()
+		#if ($documentation.get("submitEndpointHelp"))
+			$documentation.get("submitEndpointHelp").getAsString()
 		#end
 	</div>
   </div>

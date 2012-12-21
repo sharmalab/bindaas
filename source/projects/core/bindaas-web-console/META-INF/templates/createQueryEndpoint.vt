@@ -187,8 +187,8 @@
     					<label>Output Format</label>
     						<textarea id="qeOutputFormat"></textarea>
     						<br>
-    						#if ($documentation && $documentation.get('qeOutputFormatHtml'))
-    						$documentation.get('qeOutputFormatHtml').getAsString()
+    						#if ($documentation && $documentation.get('outputFormatView'))
+    						$documentation.get('outputFormatView').getAsString()
     						<script>
     							$("#qeOutputFormat").attr("disabled" , "true");
     						</script>
@@ -293,7 +293,6 @@
   								
   								$.post("/dashboard/$workspace/$profile/createQueryEndpoint.action" , req , function (data){
 								
-									//alert("Server Returned :\n" + JSON.stringify(data));
 									window.location = "/dashboard/$workspace/$profile/query/" + req.queryEndpointName;
 								});
   								
@@ -319,8 +318,8 @@
     </div>
 
 	<div class="four columns">
-		#if ($documentation.get("queryHelp"))
-			$documentation.get("queryHelp").getAsString()
+		#if ($documentation.get("queryEndpointHelp"))
+			$documentation.get("queryEndpointHelp").getAsString()
 		#end
 	</div>
 	

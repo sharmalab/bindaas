@@ -94,7 +94,7 @@
     					<select  name="provider" id="provider">
     						<option>--- Select ---</option>
     						#foreach ($provider in $providers)
-  						  <option value="$provider.getId()#$provider.getVersion()" ref="$provider.getDocumentation().get('commonName').getAsString()" >
+  						  <option value="$provider.getId()#$provider.getVersion()" ref="$provider.getDocumentation().get('simpleName').getAsString()" >
   						  		#if ($provider.getDocumentation().get('title'))
   						  			$provider.getDocumentation().get('title').getAsString()
   						  		#else
@@ -109,10 +109,10 @@
   							<h6 class="subheader">Provider Description</h6>
   							<div id="providerDescription">
   								#foreach ($provider in $providers)
-  									#if ($provider.getDocumentation() && $provider.getDocumentation().get('commonName'))
-  									<div id="$provider.getDocumentation().get('commonName').getAsString()_providerDescription">
-  										#if ($provider.getDocumentation().get('description'))
-  											$provider.getDocumentation().get('description').getAsString()
+  									#if ($provider.getDocumentation() && $provider.getDocumentation().get('simpleName'))
+  									<div id="$provider.getDocumentation().get('simpleName').getAsString()_providerDescription">
+  										#if ($provider.getDocumentation().get('providerDescription'))
+  											$provider.getDocumentation().get('providerDescription').getAsString()
   										#end
   									</div>
   									#end
@@ -132,9 +132,9 @@
   							
   							<div id="dataSourceContainer">
   								#foreach ($provider in $providers)
-  									#if ($provider.getDocumentation() && $provider.getDocumentation().get('commonName'))
-  									<div id="$provider.getDocumentation().get('commonName').getAsString()">
-  										$provider.getDocumentation().get('dataSourceHtml').getAsString()
+  									#if ($provider.getDocumentation() && $provider.getDocumentation().get('simpleName'))
+  									<div id="$provider.getDocumentation().get('simpleName').getAsString()">
+  										$provider.getDocumentation().get('dataSourceView').getAsString()
   									</div>
   									#end
   								#end

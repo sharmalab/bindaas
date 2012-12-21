@@ -98,7 +98,7 @@
   	
   </script>
   <div id="bindVarTemplate" class="hide">
-  	<input type="text" placeholder="$name" name="bvName" />
+  	<input type="text"  name="bvName" />
     								<input type="text" placeholder="description" name="bvDescription" />
     								<label for="customDropdown">Required</label>
   										<select  id="customDropdown" name="bvRequired">
@@ -215,10 +215,10 @@
   								req.jsonRequest = JSON.stringify(jsonRequest,null);
   								
   								$.post("/dashboard/$workspace/$profile/createDeleteEndpoint.action" , req , function (data){
-								
-								//alert("Server Returned :\n" + JSON.stringify(data));
-								window.location = "/dashboard/$workspace/$profile/delete/" + req.deleteEndpointName;
+									window.location = "/dashboard/$workspace/$profile/delete/" + req.deleteEndpointName;
 								});
+								
+								
   								
   								}
   								catch(e)
@@ -236,8 +236,8 @@
    	 	</div>
     </div>
 	<div class="four columns">
-		#if ($documentation.get("deleteHelp"))
-			$documentation.get("deleteHelp").getAsString()
+		#if ($documentation.get("deleteEndpointHelp"))
+			$documentation.get("deleteEndpointHelp").getAsString()
 		#end
 	</div>
   </div>

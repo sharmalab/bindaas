@@ -235,8 +235,8 @@
     					<label>Output Format</label>
     					<textarea id="qeOutputFormat" placeholder="{}"   >$queryEndpoint.getOutputFormat().toString()</textarea>
     						<br>
-    						#if ($documentation && $documentation.get('qeOutputFormatHtml'))
-    						$documentation.get('qeOutputFormatHtml').getAsString()
+    						#if ($documentation && $documentation.get('outputFormatView'))
+    						$documentation.get('outputFormatView').getAsString()
     						<script>
     							$("#qeOutputFormat").attr("disabled" , "true");
     						</script>
@@ -532,8 +532,8 @@
    	 	</div>
     </div>
 	<div class="four columns">
-		#if ($documentation.get("queryHelp"))
-			$documentation.get("queryHelp").getAsString()
+		#if ($documentation.get("queryEndpointHelp"))
+			$documentation.get("queryEndpointHelp").getAsString()
 		#end
 	</div>
   </div>

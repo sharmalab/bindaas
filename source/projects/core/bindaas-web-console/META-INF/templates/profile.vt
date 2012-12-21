@@ -109,8 +109,8 @@
   							<h6 class="subheader">Provider Description</h6>
   							<div id="providerDescription">
   									<div >
-  										#if ($provider.getDocumentation().get('description'))
-  											$provider.getDocumentation().get('description').getAsString()
+  										#if ($provider.getDocumentation().get('providerDescription'))
+  											$provider.getDocumentation().get('providerDescription').getAsString()
   										#end
   									</div>
   							</div>
@@ -127,8 +127,8 @@
   							
   							<div id="dataSourceContainer">
   									<div>
-  										#if ($provider.getDocumentation().get('dataSourceHtml'))
-  											$provider.getDocumentation().get('dataSourceHtml').getAsString()
+  										#if ($provider.getDocumentation().get('dataSourceView'))
+  											$provider.getDocumentation().get('dataSourceView').getAsString()
   										#end
   									</div>
   								

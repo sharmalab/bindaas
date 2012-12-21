@@ -149,9 +149,9 @@
     						var req = {};
     						req.submitEndpointName = $("#submitEndpointName").attr("value");
     						req.jsonRequest = JSON.stringify(jsonRequest ,  null );
-    						$.post("/dashboard/$workspace/$profile/submit/$submitEndpoint.getName()" , req , function (data){
+    						$.post("/dashboard/$workspace/$profile/submit/" +  req.submitEndpointName, req , function (data){
 								
-									location.reload(true);
+									window.location = "/dashboard/$workspace/$profile/submit/" +  req.submitEndpointName;
 								});
     						}
     						catch(e){
@@ -234,6 +234,18 @@
   						<input type="button" class="button" value="Save"  id="saveButton" onclick="save()" />
   						<input type="button" class="button" value="Cancel"  id="cancelButton" onclick="cancel()"/>
   						<input type="button" class="button" value="Delete" onclick="deleteEndpoint()" />
+  						<input type="button" class="button" value="Clone"  id="cloneButton" onclick="cloneEndpoint()"/>
+  						<script>
+  							function cloneEndpoint()
+  							{
+  								$("#cloneButton").hide();
+  								edit();
+  								$("#qeName").removeAttr("disabled");
+  								$("#qeName").attr("value" , $("#qeName").attr('value') + "Clone");
+  								$("#qeName").focus();
+  							}
+  								
+  						</script>
   						<script>
   						
   							$("#saveButton").hide();
@@ -253,8 +265,8 @@
    	 	</div>
     </div>
 	<div class="four columns">
-		#if ($documentation.get("submitHelp"))
-			$documentation.get("submitHelp").getAsString()
+		#if ($documentation.get("submitEndpointHelp"))
+			$documentation.get("submitEndpointHelp").getAsString()
 		#end
 	</div>
   </div>

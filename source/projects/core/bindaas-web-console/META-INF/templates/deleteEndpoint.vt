@@ -258,9 +258,10 @@
   								req.deleteEndpointName = $("#deleteEndpointName").attr("value");
   								req.jsonRequest = JSON.stringify(jsonRequest,null);
   								
-  								$.post("/dashboard/$workspace/$profile/delete/$deleteEndpoint.getName()" , req , function (data){
+  								
+  								$.post("/dashboard/$workspace/$profile/delete/" + req.deleteEndpointName , req , function (data){
 								
-									location.reload(true);
+									window.location = "/dashboard/$workspace/$profile/delete/" + req.deleteEndpointName;
 								});
   								
   								}
@@ -368,6 +369,18 @@
   						<input type="button" class="button" value="Save"  id="saveButton" onclick="save()" />
   						<input type="button" class="button" value="Cancel"  id="cancelButton" onclick="cancel()"/>
   						<input type="button" class="button" value="Delete"  onclick="deleteEndpoint()" />
+  						<input type="button" class="button" value="Clone"  id="cloneButton" onclick="cloneEndpoint()"/>
+  						<script>
+  							function cloneEndpoint()
+  							{
+  								$("#cloneButton").hide();
+  								edit();
+  								$("#qeName").removeAttr("disabled");
+  								$("#qeName").attr("value" , $("#qeName").attr('value') + "Clone");
+  								$("#qeName").focus();
+  							}
+  								
+  						</script>
   						<script>
   						
   							$("#saveButton").hide();
@@ -394,8 +407,8 @@
    	 	</div>
     </div>
 	<div class="four columns">
-		#if ($documentation.get("deleteHelp"))
-			$documentation.get("deleteHelp").getAsString()
+		#if ($documentation.get("deleteEndpointHelp"))
+			$documentation.get("deleteEndpointHelp").getAsString()
 		#end
 	</div>
   </div>
