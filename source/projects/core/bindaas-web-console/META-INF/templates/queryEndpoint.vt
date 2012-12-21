@@ -160,13 +160,30 @@
   </div>
 
   <div class="row">
-    <div class="tweleve columns">
+   <div class="two columns">
+  		
+  		<div class="row">
+  		
+  		<ul class="four side-nav">
+			  <li ><a href="#">Create Workspace</a></li>
+			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Profile</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query Endpoint</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete Endpoint</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createSubmitEndpoint.action">Create Submit Endpoint</a></li>
+			  <li ><a href="#">Clone Query Endpoint</a></li>
+			  <li ><a href="#">Clone Submit Endpoint</a></li>
+			  <li ><a href="#">Clone Delete Endpoint</a></li>
+			  
+		</ul>	
+  		</div>
+  		
+  	</div>
+    <div class="six columns">
     	
     	<div class="row">
     		<ul class="breadcrumbs">
-  				<li class="current"><a href="#"><strong>Dashboard</strong></a></li>
-  				<li><a href="#"><strong>Workspaces</strong></a></li>
-  				<li><a href="#"><strong>Data Providers</strong></a></li>
+  				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
+  				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
   				<li><a href="#"><strong>Administration</strong></a></li>
   			</ul>
     </div>
@@ -176,6 +193,8 @@
    	 	<div class="row">
    	 		<fieldset>
     			<legend><h3>Query Endpoint : $queryEndpoint.getName() </h3></legend>
+    			<h6 class="subheader">Last Modified : $queryEndpoint.getTimeCreated()</h6>
+    			<h6 class="subheader">Modified By : $queryEndpoint.getCreatedBy()</h6>
     				<form class="custom"  >
     					<input type="hidden" value="$profile" name="profileName" />
     					<input type="hidden" value="$workspace" name="workspaceName" />
@@ -214,6 +233,14 @@
     					</div>
     					<label>Output Format</label>
     					<textarea id="qeOutputFormat" placeholder="{}"   >$queryEndpoint.getOutputFormat().toString()</textarea>
+    						<br>
+    						#if ($documentation && $documentation.get('qeOutputFormatHtml'))
+    						$documentation.get('qeOutputFormatHtml').getAsString()
+    						<script>
+    							$("#qeOutputFormat").attr("disabled" , "true");
+    						</script>
+    						#end
+    					
     					
     					<div class="panel" id="queryModifierPanel">
 	    					<label for="queryModifier">Query Modifier</label>
@@ -327,11 +354,8 @@
   								req.queryEndpointName = $("#qeName").attr("value");
   								req.jsonRequest = JSON.stringify(jsonRequest,null);
   								
-  								$.post("/dashboard/$workspace/$profile/query/$queryEndpoint.getName()" , req , function (data){
-								
-									//alert("Server Returned :\n" + JSON.stringify(data));
-									// referesh
-  									location.reload(true);
+  								$.post("/dashboard/$workspace/$profile/query/" + req.queryEndpointName , req , function (data){
+  								window.location = "/dashboard/$workspace/$profile/query/" + req.queryEndpointName;
 								});
   								
   								}
@@ -461,6 +485,19 @@
   						<input type="button" class="button" value="Save"  id="saveButton" onclick="save()" />
   						<input type="button" class="button" value="Cancel"  id="cancelButton" onclick="cancel()"/>
   						<input type="button" class="button" value="Delete"  onclick="deleteEndpoint()"/>
+  						<input type="button" class="button" value="Clone"  id="cloneButton" onclick="cloneEndpoint()"/>
+  						<script>
+  							function cloneEndpoint()
+  							{
+  								$("#cloneButton").hide();
+  								edit();
+  								$("#qeName").removeAttr("disabled");
+  								$("#qeName").attr("value" , $("#qeName").attr('value') + "Clone");
+  								$("#qeName").focus();
+  							}
+  								
+  						</script>
+  						
   						<script>
   						
   							$("#saveButton").hide();
@@ -493,7 +530,11 @@
    	 	<div class="row">
    	 	</div>
     </div>
-
+	<div class="four columns">
+		#if ($documentation.get("queryHelp"))
+			$documentation.get("queryHelp").getAsString()
+		#end
+	</div>
   </div>
 
   
