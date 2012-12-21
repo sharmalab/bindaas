@@ -20,7 +20,7 @@ import edu.emory.cci.bindaas.security.api.IAuditProvider;
 
 public class FileSystemAuditProvider implements IAuditProvider{
 
-	private JsonParser parser = new JsonParser();
+	private JsonParser parser = GSONUtil.getJsonParser();
 	
 	public void init()
 	{

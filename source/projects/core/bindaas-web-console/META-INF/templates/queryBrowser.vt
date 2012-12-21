@@ -87,7 +87,7 @@
 	    			</div>
 	    			<div class="content">
 	    				<div class="row">$queryEndpoint.getDescription()</div>
-							<div class="row">
+							<div class="row" >
 								<table>
 									<thead>
 										<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
@@ -99,11 +99,22 @@
 										
 									</tbody>
 								</table>
-								<a class="button secondary" onclick="executeAPI('$serviceUrl/services/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()')" >Submit</a>	
+								<a class="button secondary" onclick="executeAPI('$serviceUrl/services/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()' , this)" >Submit</a>	
 								<script>
-									function executeAPI(url)
+									function executeAPI(url , buttonClicked)
 									{
-										window.open(url);
+										var queryString = "?";
+										$(buttonClicked).parent().find("input").each ( function () {
+											
+											if( $(this).attr("value") && $(this).attr("value") != "" )
+											{
+												queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';	
+											}
+											
+											
+										});
+										url = url + queryString;
+										window.open(encodeURI(url));
 									}
 									
 									

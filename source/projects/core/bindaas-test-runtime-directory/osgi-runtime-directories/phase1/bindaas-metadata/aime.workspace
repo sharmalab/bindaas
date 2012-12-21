@@ -269,7 +269,6 @@
           "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
           "createdBy": "edu.emory.cci.bindaas.migration.tool.QueryMigrator"
         }
-        
       },
       "deleteEndpoints": {},
       "submitEndpoints": {},
@@ -311,6 +310,20 @@
       "providerVersion": 1,
       "name": "RENAL",
       "timeCreated": "Fri Sep 14 16:37:59 EDT 2012",
+      "createdBy": "admin"
+    },
+    "": {
+      "dataSource": {
+        "nothib": "1",
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "",
+      "timeCreated": "Mon Dec 10 10:50:40 EST 2012",
       "createdBy": "admin"
     }
   },

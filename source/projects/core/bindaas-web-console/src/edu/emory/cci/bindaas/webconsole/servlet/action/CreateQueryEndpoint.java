@@ -69,15 +69,19 @@ public class CreateQueryEndpoint extends AbstractRequestHandler{
 	private void generateView(HttpServletRequest request,
 			HttpServletResponse response , Map<String,String> pathParameters)
 	{
+		try {
 		VelocityContext context = new VelocityContext(pathParameters);
 		IModifierRegistry modifierRegistry = Activator.getModifierRegistry();
 		Collection<IQueryModifier> queryModifiers = modifierRegistry.findAllQueryModifier();
 		Collection<IQueryResultModifier> queryResultModifiers = modifierRegistry.findAllQueryResultModifiers();
 		context.put("queryModifiers" , queryModifiers);
-		context.put("queryResultModifiers" , queryResultModifiers);
+		context.put("queryResultModifiers" , queryResultModifiers); 
 		
-		try {
-			template.merge(context, response.getWriter());
+		IManagementTasks managementTask = Activator.getManagementTasksBean();
+		Profile profile = managementTask.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
+		JsonObject documentation = Activator.getProviderRegistry().lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+		context.put("documentation" , documentation); 
+		template.merge(context, response.getWriter());
 		} catch (Exception e) {
 			log.error(e);
 			ErrorView.handleError(response, e);

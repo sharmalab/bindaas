@@ -95,10 +95,16 @@ public class WebConsoleStarter {
 				        	  HttpContext defaultContext = service.createDefaultHttpContext();
 								try {
 									service.registerResources("/foundation", "/foundation", defaultContext);
-//									service.registerResources("/foundation", "/foundation", defaultContext);
 									service.registerServlet("/dashboard", mainController, null, defaultContext);
 									service.registerServlet("/authenticate", loginAction, null, defaultContext);
+									
 									((org.apache.felix.http.api.ExtHttpService) service) .registerFilter(loginAction, "/dashboard/.*", null, 0 ,  defaultContext);
+									
+									
+									OpenIDAuth openIdAuth = new OpenIDAuth();
+									service.registerServlet(openIdAuth.getServletLocation(), openIdAuth, null, defaultContext);
+									
+									
 								} catch (Exception e) {
 										log.error(e);
 								}

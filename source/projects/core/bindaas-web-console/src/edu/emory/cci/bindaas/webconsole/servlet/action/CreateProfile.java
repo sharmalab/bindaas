@@ -78,6 +78,7 @@ public class CreateProfile extends AbstractRequestHandler{
 		{
 			Collection<IProvider> listOfProviders = providerRegistry.findProviders();
 			context.put("providers" , listOfProviders);
+			context.put("esc", Activator.getEscapeTool());
 			try {
 				template.merge(context, response.getWriter());
 			} catch (Exception e) {

@@ -17,6 +17,7 @@ import com.google.gson.JsonObject;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.framework.api.ISubmitPayloadModifier;
+import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -70,6 +71,11 @@ public class CreateSubmitEndpoint extends AbstractRequestHandler{
 		context.put("submitPayloadModifiers" , submitPayloadModifier);
 		
 		try {
+			IManagementTasks managementTask = Activator.getManagementTasksBean();
+			Profile profile = managementTask.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
+			JsonObject documentation = Activator.getProviderRegistry().lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			context.put("documentation" , documentation);
+			
 			template.merge(context, response.getWriter());
 		} catch (Exception e) {
 			log.error(e);

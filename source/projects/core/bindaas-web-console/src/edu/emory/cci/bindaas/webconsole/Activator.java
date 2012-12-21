@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.tools.generic.EscapeTool;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -14,6 +15,7 @@ import org.osgi.framework.ServiceRegistration;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
+import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
 
 public class Activator implements BundleActivator {
 
@@ -21,6 +23,7 @@ public class Activator implements BundleActivator {
 	private static VelocityEngine velocityEngine;
 	private final static String TEMPLATE_DIRECTORY_PATH = "META-INF/templates";
 	private static List<ServiceRegistration> registrations;
+	private static EscapeTool escapeTool;
 
 	public static BundleContext getContext() {
 		return context;
@@ -39,6 +42,7 @@ public class Activator implements BundleActivator {
 		props.put("class.resource.loader.class",
 				"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 		velocityEngine.init(props);
+		escapeTool = new EscapeTool();
 	}
 	
 	public static void addServiceRegistration(ServiceRegistration sreg)
@@ -70,6 +74,10 @@ public class Activator implements BundleActivator {
 		return velocityEngine;
 	}
 	
+	public static EscapeTool getEscapeTool()
+	{
+		return escapeTool;
+	}
 	public static Template getVelocityTemplateByName(String templateName)
 	{
 		String templateLoc = TEMPLATE_DIRECTORY_PATH + "/" + templateName;
@@ -112,6 +120,18 @@ public class Activator implements BundleActivator {
 		{
 			IModifierRegistry modifierReg = (IModifierRegistry) context.getService(sr);
 			return modifierReg;
+		}
+		else
+			return null;
+	}
+	
+	public static IBindaasAdminService getBindaasAdminService()
+	{
+		ServiceReference sr = (ServiceReference) context.getServiceReference(IBindaasAdminService.class.getName());
+		if(sr!=null)
+		{
+			IBindaasAdminService adminServ = (IBindaasAdminService) context.getService(sr);
+			return adminServ;
 		}
 		else
 			return null;

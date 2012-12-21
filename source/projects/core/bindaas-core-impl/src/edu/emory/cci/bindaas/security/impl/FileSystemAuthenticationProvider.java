@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 
 public class FileSystemAuthenticationProvider implements IAuthenticationProvider{
@@ -34,19 +35,19 @@ public class FileSystemAuthenticationProvider implements IAuthenticationProvider
 	}
 
 	@Override
-	public Principal login(String username, String password, Properties props)
+	public BindaasUser login(String username, String password, Properties props)
 			throws AuthenticationException {
 		String pass = props.getProperty(username);
 		if(pass!=null && pass.equals(password))
 		{
-			return createPrincipal(username);
+			return new BindaasUser(username);
 		}
 		else
 			throw new AuthenticationException(username);
 	}
 
 	@Override
-	public Principal login(String securityToken, Properties props)
+	public BindaasUser login(String securityToken, Properties props)
 			throws AuthenticationException {
 		throw new AuthenticationException(securityToken);
 	}

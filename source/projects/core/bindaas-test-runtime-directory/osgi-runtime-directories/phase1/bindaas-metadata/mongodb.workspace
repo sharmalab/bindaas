@@ -9,11 +9,9 @@
         "initialize": true
       },
       "queryEndpoints": {
-      
-      "find": {
-          "queryTemplate": "{ '_operation' : 'find' , '_operation_args' : {'query' : {}, 'fields' : {'_id' : 0 }}}",
-          "bindVariables": {
-          },
+        "find": {
+          "queryTemplate": "{ \u0027_operation\u0027 : \u0027find\u0027 , \u0027_operation_args\u0027 : {\u0027query\u0027 : {}, \u0027fields\u0027 : {\u0027_id\u0027 : 0 }}}",
+          "bindVariables": {},
           "outputFormat": {
             "outputFormat": "JSON"
           },
@@ -22,10 +20,9 @@
           "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
           "createdBy": "junit"
         },
-              "count": {
-          "queryTemplate": "{ '_operation' : 'count' , '_operation_args' : {'query' : {}, 'fields' : {'_id' : 0 }}}",
-          "bindVariables": {
-          },
+        "count": {
+          "queryTemplate": "{ \u0027_operation\u0027 : \u0027count\u0027 , \u0027_operation_args\u0027 : {\u0027query\u0027 : {}, \u0027fields\u0027 : {\u0027_id\u0027 : 0 }}}",
+          "bindVariables": {},
           "outputFormat": {
             "outputFormat": "JSON"
           },
@@ -34,10 +31,9 @@
           "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
           "createdBy": "junit"
         },
-         "group": {
-          "queryTemplate": "{ '_operation' : 'group' , '_operation_args' : {'key' : { 'outcome' : true },'initial' : { 'count' : 0 },'finalize' : '' ,'condition' : {},'reduce' : 'function(obj,prev) { prev.count++; }'}}",
-          "bindVariables": {
-          },
+        "group": {
+          "queryTemplate": "{ \u0027_operation\u0027 : \u0027group\u0027 , \u0027_operation_args\u0027 : {\u0027key\u0027 : { \u0027outcome\u0027 : true },\u0027initial\u0027 : { \u0027count\u0027 : 0 },\u0027finalize\u0027 : \u0027\u0027 ,\u0027condition\u0027 : {},\u0027reduce\u0027 : \u0027function(obj,prev) { prev.count++; }\u0027}}",
+          "bindVariables": {},
           "outputFormat": {
             "outputFormat": "JSON"
           },
@@ -46,7 +42,6 @@
           "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
           "createdBy": "junit"
         }
-
       },
       "deleteEndpoints": {},
       "submitEndpoints": {
@@ -93,7 +88,7 @@
       "timeCreated": "Thu Nov 08 10:32:09 EST 2012",
       "createdBy": "admin"
     },
-     "ameen": {
+    "ameen": {
       "dataSource": {
         "db": "emrAmeen",
         "collection": "cancerPatients",
@@ -102,7 +97,7 @@
         "initialize": true
       },
       "queryEndpoints": {
-       "cancerPatientsInCSV": {
+        "cancerPatientsInCSV": {
           "queryTemplate": "{}",
           "bindVariables": {},
           "outputFormat": {
@@ -112,7 +107,7 @@
           "name": "cancerPatientsInCSV",
           "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
           "createdBy": "nadir"
-      	}
+        }
       },
       "deleteEndpoints": {},
       "submitEndpoints": {},
@@ -121,8 +116,36 @@
       "name": "ameen",
       "timeCreated": "Thu Nov 08 10:32:09 EST 2012",
       "createdBy": "admin"
+    },
+    "ivi02": {
+      "dataSource": {
+        "username": "db2inst1",
+        "password": "aim03@cci",
+        "url": "jdbc:db2://ivi02.cci.emory.edu:50000/XMLDB"
+      },
+      "queryEndpoints": {
+        "mytest": {
+          "queryTemplate": "select * from XMLDS.XMLTABLE ",
+          "bindVariables": {},
+          "stage": "UNVERIFIED",
+          "outputFormat": {
+            "outputFormat": "XML",
+            "l": "aa"
+          },
+          "description": "some description ",
+          "name": "mytest",
+          "timeCreated": "Thu Dec 20 17:22:11 EST 2012",
+          "createdBy": "nadirsaghar@gmail.com"
+        }
+      },
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.db2.DB2Provider",
+      "providerVersion": 1,
+      "name": "ivi02",
+      "timeCreated": "Wed Dec 19 18:40:26 EST 2012",
+      "createdBy": "nadirsaghar@gmail.com"
     }
-  
   },
   "params": {},
   "name": "mongodb",

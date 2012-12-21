@@ -125,7 +125,15 @@
           "outputFormat": {
             "queryType": "XQUERY",
             "outputFormat": "CSV",
-			"csvHeader": ["Annotation Name","Unique Identifier","Date Time" , "Reviewer" , "Case" , "Measurement 1" , "Measurement 2"]
+            "csvHeader": [
+              "Annotation Name",
+              "Unique Identifier",
+              "Date Time",
+              "Reviewer",
+              "Case",
+              "Measurement 1",
+              "Measurement 2"
+            ]
           },
           "description": "Fetch all AIME objects matching attributes specified in the query string. Supported attributes are \u0027uniqueIdentifier\u0027,\u0027annotationName\u0027,\u0027patientName\u0027,\u0027imageSopInstanceUID\u0027,\u0027seriesInstanceUID\u0027,\u0027studyInstanceUID\u0027, \u0027imageObservationCharacteristic\u0027,\u0027imageObservation\u0027,\u0027username\u0027,\u0027anatomicEntities\u0027,\u0027anatomicEntityCharacteristics\u0027",
           "name": "fetchCSV",
@@ -296,9 +304,9 @@
         }
       },
       "deleteEndpoints": {
-        "deleteByReviewer" : {
-          "queryTemplate": "DELETE FROM XMLDS.TEST_GBM WHERE REVIEWER='$reviewer$'",
-           "bindVariables": {
+        "deleteByReviewer": {
+          "queryTemplate": "DELETE FROM XMLDS.TEST_GBM WHERE REVIEWER\u003d\u0027$reviewer$\u0027",
+          "bindVariables": {
             "uid": {
               "name": "reviewer",
               "required": true,
@@ -311,7 +319,6 @@
           "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
           "createdBy": "junit"
         }
-      
       },
       "submitEndpoints": {
         "xml": {
@@ -330,6 +337,110 @@
       "name": "GBM",
       "timeCreated": "Tue Oct 30 13:02:41 EDT 2012",
       "createdBy": "junit"
+    },
+    "TEST": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "TEST",
+      "timeCreated": "Fri Dec 14 14:17:38 EST 2012",
+      "createdBy": "nadirsaghar@gmail.com"
+    },
+    "TEST2": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "TEST2",
+      "timeCreated": "Fri Dec 14 15:03:14 EST 2012",
+      "createdBy": "nadirsaghar@gmail.com"
+    },
+    "TEST3": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "TEST3",
+      "timeCreated": "Fri Dec 14 15:16:21 EST 2012",
+      "createdBy": "nadirsaghar@gmail.com"
+    },
+    "TEST4": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "TEST4",
+      "timeCreated": "Fri Dec 14 15:20:35 EST 2012",
+      "createdBy": "nadirsaghar@gmail.com"
+    },
+    "TEST5": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "TEST5",
+      "timeCreated": "Fri Dec 14 15:54:16 EST 2012",
+      "createdBy": "nadirsaghar@gmail.com"
+    },
+    "TEST55": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "TEST55",
+      "timeCreated": "Fri Dec 14 15:57:52 EST 2012",
+      "createdBy": "nadirsaghar@gmail.com"
+    },
+    "TEST2323": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "TEST2323",
+      "timeCreated": "Fri Dec 14 16:16:34 EST 2012",
+      "createdBy": "nadirsaghar@gmail.com"
+    },
+    "tttt": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "tttt",
+      "timeCreated": "Fri Dec 14 16:21:17 EST 2012",
+      "createdBy": "nadirsaghar@gmail.com"
     }
   },
   "params": {

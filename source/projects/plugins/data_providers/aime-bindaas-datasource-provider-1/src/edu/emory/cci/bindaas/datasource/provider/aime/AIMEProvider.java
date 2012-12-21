@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.datasource.provider.aime;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -10,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.ibm.db2.jcc.DB2Driver;
 
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
@@ -20,7 +23,9 @@ import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
+import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+import edu.emory.cci.bindaas.framework.util.IOUtils;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.SubmitEndpointProperties;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.SubmitEndpointProperties.InputType;
@@ -37,12 +42,19 @@ public class AIMEProvider implements IProvider{
 	public final static int VERSION = 1;
 	private Log log = LogFactory.getLog(getClass());
 	private static DB2Driver dbDriver;
+	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
+	private JsonObject documentation;
 	
 	
 	public void init() {
 		
 		dbDriver = new DB2Driver();
 		Activator.getContext().registerService(IProvider.class.getName(), this, null);
+		
+		// initialize documentation object
+		
+		documentation = DocumentationUtil.getProviderDocumentation(Activator.getContext(), DOCUMENTATION_RESOURCES_LOCATION);
+		
 	}
 	
 	public String getDropAIMETableQuery() {
@@ -117,7 +129,8 @@ public class AIMEProvider implements IProvider{
 	@Override
 	public JsonObject getDocumentation() {
 
-		return new JsonObject();
+		
+		return documentation;
 	}
 
 	@Override
@@ -217,7 +230,11 @@ public class AIMEProvider implements IProvider{
 	}
 	private void testConnection(DataSourceConfiguration configuration) throws Exception{
 		Connection connection = getConnection(configuration);
-		connection.close();
+		if(connection!=null)
+			connection.close();
+		else
+			throw new ProviderException(AIMEProvider.class.getName(), AIMEProvider.VERSION , "Cannot establish a database connection with the parameters provided");
+		
 		
 	}
 	@Override

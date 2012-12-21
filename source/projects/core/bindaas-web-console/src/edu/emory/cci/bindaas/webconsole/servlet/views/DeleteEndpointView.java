@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
+import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
@@ -80,8 +81,13 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 			
 			DeleteEndpoint deleteEndpoint = managementTasks.getDeleteEndpoint(workspace, profile, deleteEndpointName); 
 			VelocityContext context = new VelocityContext(pathParameters);
-			context.put("esc", new EscapeTool());
+			context.put("esc", Activator.getEscapeTool());
 			context.put("deleteEndpoint", deleteEndpoint);
+			
+			Profile prof = managementTasks.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
+			JsonObject documentation = Activator.getProviderRegistry().lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			context.put("documentation" , documentation);
+			
 			template.merge(context, response.getWriter());
 		}
 		else

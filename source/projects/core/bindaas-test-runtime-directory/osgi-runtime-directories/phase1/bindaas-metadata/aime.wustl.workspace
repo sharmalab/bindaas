@@ -330,6 +330,19 @@
       "name": "RENAL",
       "timeCreated": "Fri Sep 14 16:37:59 EDT 2012",
       "createdBy": "admin"
+    },
+    "Ghg": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "Ghg",
+      "timeCreated": "Fri Dec 14 16:20:42 EST 2012",
+      "createdBy": "nadirsaghar@gmail.com"
     }
   },
   "params": {

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,11 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private String authorizationProviderClass;
 	
 	
+	
+	public void setRequestId(Message message)
+	{
+		message.put("requestId", UUID.randomUUID().toString());
+	}
 	public void init() throws Exception
 	{
 		// do init here
@@ -49,7 +55,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 
 	@Override
  	public Response handleRequest(Message message, ClassResourceInfo arg1) {
-
+		setRequestId(message);
 		Principal authenticatedUser =  null;
 		if(enableAuthentication)
 		{

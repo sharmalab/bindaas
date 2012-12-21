@@ -1,0 +1,52 @@
+<label>Username</label>
+		<span class="has-tip tip-left" data-width="210" title="username for connecting to IBM DB2 database"> <input type="text" id="db2_username" /></span>
+		<label>Password</label>
+		<span class="has-tip tip-left" data-width="210" title="password for connecting to IBM DB2 database"><input type="password" id="db2_password" /></span>
+		<label>JDBC Url</label>
+		<span class="has-tip tip-left" data-width="210" title="JDBC URL example: jdbc:db2://localhost:50000/XMLDB"><input type="text" id="db2_url" /></span>
+				
+		<script>
+			
+			$("#db2_username").keyup(function ()
+			{
+				updateProviderFieldDb2();
+			});
+			$("#db2_password").keyup(function ()
+			{
+				updateProviderFieldDb2();
+			});
+			
+			$("#db2_url").keyup(function ()
+			{
+				updateProviderFieldDb2();
+			});
+			
+			
+						
+			   
+		   function updateProviderFieldDb2()
+		   {
+		   	 var dataSourceJson = {};
+		   	 dataSourceJson.username = $("#db2_username").attr("value");
+		   	 dataSourceJson.password = $("#db2_password").attr("value");
+		   	 dataSourceJson.url = $("#db2_url").attr("value");
+		   	 $("#dataSource").attr("value" , JSON.stringify(dataSourceJson));
+		   }  
+		   
+		   function reverseUpdateDataSourceViewDB2()
+		   {
+			   try{
+				   var dataSourceJson =  $("#dataSource").attr("value");
+				   dataSourceJson = jQuery.parseJSON( dataSourceJson ) ;
+				   $("#db2_username").attr("value", dataSourceJson.username);
+				   $("#db2_password").attr("value", dataSourceJson.password);
+				   $("#db2_url").attr("value", dataSourceJson.url);
+				   
+			   }catch(e){}
+			   
+		   }
+		   
+		   reverseUpdateDataSourceViewDB2();
+
+		</script>
+		

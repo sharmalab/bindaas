@@ -2,13 +2,29 @@ package edu.emory.cci.bindaas.datasource.provider.mysql;
 
 import java.sql.Driver;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.google.gson.JsonObject;
 
-
 import edu.emory.cci.bindaas.datasource.provider.genericsql.AbstractSQLProvider;
+import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 
 public class MySQLProvider extends AbstractSQLProvider{
 	private static Driver driver = null;
+	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
+	private JsonObject documentation;
+	private Log log = LogFactory.getLog(getClass());
+	
+	public void init() throws Exception
+	{
+		super.init();
+		
+		// initialize documentation object
+		
+		documentation = DocumentationUtil.getProviderDocumentation(Activator.getContext(), DOCUMENTATION_RESOURCES_LOCATION);
+	}
+	
 	@Override
 	public String getId() {
 		
@@ -18,13 +34,13 @@ public class MySQLProvider extends AbstractSQLProvider{
 	@Override
 	public int getVersion() {
 
-		return 1;
+		return 2;
 	}
 
 	@Override
 	public JsonObject getDocumentation() {
-		// TODO later
-		return new JsonObject();
+		
+		return documentation;
 	}
 
 	@Override

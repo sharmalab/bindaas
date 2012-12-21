@@ -41,6 +41,10 @@
 	<property name="uriTemplate" value="/{workspace}/profile/{profile}"></property>
 </bean>
 
+<bean id="queryBrowserView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryBrowserView" >
+	<property name="uriTemplate" value="/queryBrowser"></property>
+</bean>
+
 
 <bean id="mainController" class="edu.emory.cci.bindaas.webconsole.MainController">
 
@@ -55,6 +59,7 @@
 			<ref bean="deleteEndpointView"/>
 			<ref bean="submitEndpointView"/>
 			<ref bean="profileView"/>
+			<ref bean="queryBrowserView"/>
 			
 		</list>
 	</property>

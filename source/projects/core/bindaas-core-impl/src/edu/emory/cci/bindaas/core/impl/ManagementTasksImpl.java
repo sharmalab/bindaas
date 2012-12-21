@@ -24,8 +24,10 @@ import edu.emory.cci.bindaas.core.exception.NotFoundException;
 import edu.emory.cci.bindaas.core.exception.ProviderNotFoundException;
 import edu.emory.cci.bindaas.core.exception.FrameworkEntityException.Type;
 import edu.emory.cci.bindaas.core.model.DeleteEndpointRequestParameter;
+import edu.emory.cci.bindaas.core.model.EntityEventType;
 import edu.emory.cci.bindaas.core.model.QueryEndpointRequestParameter;
 import edu.emory.cci.bindaas.core.model.SubmitEndpointRequestParameter;
+import edu.emory.cci.bindaas.core.util.EventHelper;
 import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.framework.api.IQueryHandler;
 import edu.emory.cci.bindaas.framework.api.ISubmitHandler;
@@ -136,6 +138,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 					workspace.setParams(parameters);
 					persistenceDriver.saveWorkspace(workspace);
 					log.debug("Workspace created\n" + workspace);
+					EventHelper.createEntityEvent(workspace, EntityEventType.CREATE).emitAsynchronously();
 					return workspace;
 				}
 				else
@@ -178,6 +181,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 								profile.setProviderId(provider.getId());
 								profile.setProviderVersion(provider.getVersion());
 								persistenceDriver.saveProfile(workspaceName, profile);
+								EventHelper.createEntityEvent(profile, EntityEventType.CREATE).emitAsynchronously();
 								return profile;
 								
 							}
@@ -253,6 +257,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 							
 							// register queryEndpoint
 							persistenceDriver.saveQueryEndpoint(workspaceName, profileName, queryEndpoint);
+							EventHelper.createEntityEvent(queryEndpoint, EntityEventType.CREATE).emitAsynchronously();
 							return queryEndpoint;	
 						}
 						else
@@ -342,6 +347,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 							
 							deleteEndpoint = constructDeleteEndpointFromProps(deleteEndpoint, parameters);
 							persistenceDriver.saveDeleteEndpoint(workspaceName, profileName, deleteEndpoint);
+							EventHelper.createEntityEvent(deleteEndpoint, EntityEventType.CREATE).emitAsynchronously();
 							return deleteEndpoint;
 						}
 						else
@@ -433,6 +439,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 							// perform provider validation
 							submitEndpoint = submitHandler.validateAndInitializeSubmitEndpoint(submitEndpoint);
 							persistenceDriver.saveSubmitEndpoint(workspaceName, profileName, submitEndpoint);
+							EventHelper.createEntityEvent(submitEndpoint, EntityEventType.CREATE).emitAsynchronously();
 							return submitEndpoint;
 						}
 						else
@@ -483,6 +490,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 	public void deleteWorkspace(String workspaceName) throws Exception {
 		// locate Workspace
 		persistenceDriver.deleteWorkspace(workspaceName);
+		EventHelper.createDeleteWorkspaceEvent(workspaceName).emitAsynchronously();
 	}
 
 	///-----
@@ -490,6 +498,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 	public void deleteProfile(String workspaceName, String profileName)
 			throws Exception {
 		persistenceDriver.deleteProfile(workspaceName, profileName);
+		EventHelper.createDeleteProfileEvent(workspaceName, profileName).emitAsynchronously();
 	}
 	
 
@@ -504,10 +513,12 @@ public class ManagementTasksImpl implements IManagementTasks {
 			{
 				QueryEndpoint queryEndpoint = profile.getQueryEndpoints().get(queryEndpointName);
 				persistenceDriver.deleteQueryEndpoint(workspaceName, profileName, queryEndpointName);
+				EventHelper.createDeleteQueryEndpointEvent(workspaceName, profileName, queryEndpointName).emitAsynchronously();
 				return queryEndpoint;
 			}
 			else
-				throw new NotFoundException(queryEndpointName, Type.QueryEndpoint);	
+				return null;
+//				throw new NotFoundException(queryEndpointName, Type.QueryEndpoint); // TODO : Need to decide on the behaviour. To throw exception when query not found or not	
 		}
 		
 	}
@@ -524,10 +535,13 @@ public class ManagementTasksImpl implements IManagementTasks {
 			{
 				DeleteEndpoint deleteEndpoint = profile.getDeleteEndpoints().get(deleteEndpointName);
 				persistenceDriver.deleteDeleteEndpoint(workspaceName, profileName, deleteEndpointName);
+				EventHelper.createDeleteDeleteEndpointEvent(workspaceName, profileName, deleteEndpointName).emitAsynchronously();
 				return deleteEndpoint;
 			}
 			else
-				throw new NotFoundException(deleteEndpointName, Type.DeleteEndpoint);	
+				return null;
+//			else
+//				throw new NotFoundException(deleteEndpointName, Type.DeleteEndpoint);	
 		}	
 	}
 	
@@ -542,10 +556,13 @@ public class ManagementTasksImpl implements IManagementTasks {
 			{
 				SubmitEndpoint submitEndpoint = profile.getSubmitEndpoints().get(submitEndpointName);
 				persistenceDriver.deleteSubmitEndpoint(workspaceName, profileName, submitEndpointName);
+				EventHelper.createDeleteSubmitEndpointEvent(workspaceName, profileName, submitEndpointName).emitAsynchronously();
 				return submitEndpoint;
 			}
 			else
-				throw new NotFoundException(submitEndpointName, Type.SubmitEndpoint);	
+				return null;
+//			else
+//				throw new NotFoundException(submitEndpointName, Type.SubmitEndpoint);	
 		}
 	}
 
@@ -562,6 +579,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 			profile.setDeleteEndpoints(oldProfile.getDeleteEndpoints());
 			profile.setSubmitEndpoints(oldProfile.getSubmitEndpoints());
 			persistenceDriver.saveProfile(workspaceName, profile);
+			EventHelper.createEntityEvent(profile, EntityEventType.UPDATE).emitAsynchronously();
 			return profile;	
 		}
 		
@@ -575,6 +593,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 		synchronized (persistenceDriver) {
 			deleteQueryEndpoint(workspaceName, profileName, queryEndpointName);
 			QueryEndpoint queryEndpoint = this.createQueryEndpoint(queryEndpointName, workspaceName, profileName, parameters, updatedBy);
+			EventHelper.createEntityEvent(queryEndpoint, EntityEventType.UPDATE).emitAsynchronously();
 			return queryEndpoint;	
 		}
 		
@@ -588,6 +607,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 		synchronized (persistenceDriver) {
 			deleteDeleteEndpoint(workspaceName, profileName, deleteEndpointName);
 			DeleteEndpoint deleteEndpoint = this.createDeleteEndpoint(deleteEndpointName, workspaceName, profileName, parameters, updatedBy);
+			EventHelper.createEntityEvent(deleteEndpoint, EntityEventType.UPDATE).emitAsynchronously();
 			return deleteEndpoint;	
 		}
 		
@@ -601,6 +621,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 		synchronized (persistenceDriver) {
 			deleteSubmitEndpoint(workspaceName, profileName, submitEndpointName);
 			SubmitEndpoint submitEndpoint = this.createSubmitEndpoint(submitEndpointName, workspaceName, profileName, parameters, updatedBy);
+			EventHelper.createEntityEvent(submitEndpoint, EntityEventType.UPDATE).emitAsynchronously();
 			return submitEndpoint;	
 		}
 		

@@ -1,0 +1,58 @@
+Write queries using BSON sytax.
+<p> 
+All queries must follow following syntax
+<code>
+	{
+		"_operation" : <kbd>operation</kbd> ,
+		"_operation_args" : <kbd>operation_args</kbd>
+	}
+</code>
+where <kbd>operation</kbd> can be either of <kbd>find</kbd>,<kbd>count</kbd>,<kbd>group</kbd> or <kbd>mapreduce</kbd>
+</p>
+<p>Depending on the <kbd>operation</kbd> , <kbd>operation_args</kbd> must be specified as follows 
+
+<div class="panel">
+	<label><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#find(com.mongodb.DBObject, com.mongodb.DBObject)">find : Find all objects matching the query</a></label>
+	<code>
+		{
+			"query" : { ... }  , // <a href="http://docs.mongodb.org/manual/core/document/">BSON object<a>
+			"fields" :{ ... },
+			"skip" : <kbd>skip count - integer (optional)</kbd>,
+			"limit" : <kbd>limit count - integer (optional)</kbd>
+		}
+	</code>
+</div>
+<div class="panel">
+	<label><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#count(com.mongodb.DBObject)">count : Count all objects matching the query</a></label>
+	<code>
+		{
+			"query" : "query" : { ... }  , // <a href="http://docs.mongodb.org/manual/core/document/">BSON object<a>
+		}
+	</code>
+</div>
+<div class="panel">
+	<label><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#group(com.mongodb.DBObject, com.mongodb.DBObject, com.mongodb.DBObject, java.lang.String)">group : Group operation</a> </label>
+	<code>
+		{
+			"key" : { ... }  , // <a href="http://docs.mongodb.org/manual/core/document/">BSON object<a>
+			"condition" : { ... }  ,
+			"initial" : { ... }  ,
+			"reduce" : ...  ,
+			"finalize" :  ...   
+		}
+	</code>
+</div>
+<div class="panel">
+	<label><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#mapReduce(java.lang.String, java.lang.String, java.lang.String, com.mongodb.DBObject)">mapreduce : MapReduce operation</a></label>
+	<code>
+		{
+			"query" : { ... }  , // <a href="http://docs.mongodb.org/manual/core/document/">BSON object<a>
+			"map" : ... ,
+			"reduce" : ... ,
+			"outputCollection" :  ... 
+		}
+	</code>
+</div>
+
+</p>
+

@@ -1,13 +1,18 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
+
 
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
@@ -20,8 +25,10 @@ import edu.emory.cci.bindaas.framework.api.ISubmitHandler;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
-import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
+
+import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+import edu.emory.cci.bindaas.framework.util.IOUtils;
 
 public class MongoDBProvider implements IProvider{
 
@@ -30,10 +37,14 @@ public class MongoDBProvider implements IProvider{
 	private IDeleteHandler deleteHandler;
 	private ISubmitHandler submitHandler;
 	private Log log = LogFactory.getLog(getClass());
-	
+	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
+	private JsonObject documentation;
 	
 	public void init() {
 		Activator.getContext().registerService(IProvider.class.getName(), this, null);
+		// initialize documentation object
+		
+				documentation = DocumentationUtil.getProviderDocumentation(Activator.getContext(), DOCUMENTATION_RESOURCES_LOCATION);
 	}
 	public void setQueryHandler(IQueryHandler queryHandler) {
 		this.queryHandler = queryHandler;
@@ -60,8 +71,8 @@ public class MongoDBProvider implements IProvider{
 
 	@Override
 	public JsonObject getDocumentation() {
-		// TODO later
-		return new JsonObject();
+		
+		return documentation;
 	}
 
 	@Override

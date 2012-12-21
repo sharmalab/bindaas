@@ -1,0 +1,90 @@
+<label>Username</label>
+		<span class="has-tip tip-left" data-width="210" title="username for connecting to IBM DB2 database"> <input type="text" id="aime_username" /></span>
+		<label>Password</label>
+		<span class="has-tip tip-left" data-width="210" title="password for connecting to IBM DB2 database"><input type="password" id="aime_password" /></span>
+		<label>JDBC Url</label>
+		<span class="has-tip tip-left" data-width="210" title="JDBC URL example: jdbc:db2://localhost:50000/XMLDB"><input type="text" id="aime_url" /></span>
+		<span class="has-tip tip-left" data-width="210" title="This option will generate some basic query,submit and delete API if checked"><label for="aime_auto_init"><input type="checkbox" CHECKED id="aime_auto_init">  Auto Initialize</label></span>
+		<br>
+		<label for="aime_table">Database Table to store annotations</label>
+		<span class="has-tip tip-left" data-width="210" title="Mandatory if Auto Initialize is checked"><input type="text" id="aime_table" /></span>
+		
+		<script>
+			
+			$("#aime_username").keyup(function ()
+			{
+				updateProviderField();
+			});
+			$("#aime_password").keyup(function ()
+			{
+				updateProviderField();
+			});
+			
+			$("#aime_url").keyup(function ()
+			{
+				updateProviderField();
+			});
+			
+			$("#aime_table").keyup(function ()
+			{
+				updateProviderField();
+			});
+			
+			$("#aime_auto_init").click(function ()
+			{
+				updateProviderField();
+			});
+			
+			$("#aime_auto_init").change(function ()
+			{
+				updateProviderField();
+			});
+		
+			
+			   
+		   function updateProviderField()
+		   {
+		   	 var dataSourceJson = {};
+		   	 dataSourceJson.username = $("#aime_username").attr("value");
+		   	 dataSourceJson.password = $("#aime_password").attr("value");
+		   	 dataSourceJson.url = $("#aime_url").attr("value");
+		   	 dataSourceJson.tableName = $("#aime_table").attr("value");
+		   	 
+		   	 if($('#aime_auto_init').attr('checked')) {
+					  dataSourceJson.autoInitialize = true;
+					  $("#aime_table").removeAttr("disabled");
+					} else {
+					  dataSourceJson.autoInitialize = false;
+					  $("#aime_table").attr("disabled", "true");
+					}
+		   	 
+		   	 
+		   	 $("#dataSource").attr("value" , JSON.stringify(dataSourceJson));
+		   }    
+		   
+		   function reverseUpdateDataSourceViewAIME()
+		   {
+			   try{
+				   var dataSourceJson =  $("#dataSource").attr("value");
+				   dataSourceJson = jQuery.parseJSON( dataSourceJson ) ;
+				   $("#aime_username").attr("value", dataSourceJson.username);
+				   $("#aime_password").attr("value", dataSourceJson.password);
+				   $("#aime_url").attr("value", dataSourceJson.url);
+				   $("#aime_table").attr("value", dataSourceJson.tableName);
+				   if(dataSourceJson.autoInitialize == true) {
+						  
+						  $('#aime_auto_init').attr('checked' , "true");
+						  $("#aime_table").removeAttr("disabled");
+						} else {
+							$('#aime_auto_init').removeAttr('checked');
+						  	$("#aime_table").attr("disabled", "true");
+						}
+			   	
+				   
+			   }catch(e){}
+			   
+		   }
+		   
+		   reverseUpdateDataSourceViewAIME();
+		   
+		</script>

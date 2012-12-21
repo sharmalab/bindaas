@@ -2,15 +2,30 @@ package edu.emory.cci.bindaas.datasource.provider.db2;
 
 import java.sql.Driver;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.google.gson.JsonObject;
 import com.ibm.db2.jcc.DB2Driver;
 
 import edu.emory.cci.bindaas.datasource.provider.genericsql.AbstractSQLProvider;
-import edu.emory.cci.bindaas.framework.api.IProvider;
+import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 
 public class DB2Provider extends AbstractSQLProvider{
 
 	private static Driver driver = null;
+	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
+	private JsonObject documentation;
+	private Log log = LogFactory.getLog(getClass());
+	
+	public void init() throws Exception
+	{
+		super.init();
+		
+		// initialize documentation object
+		
+		documentation = DocumentationUtil.getProviderDocumentation(DB2Activator.getContext(), DOCUMENTATION_RESOURCES_LOCATION);
+	}
 	
 	@Override
 	public String getId() {
@@ -26,8 +41,8 @@ public class DB2Provider extends AbstractSQLProvider{
 
 	@Override
 	public JsonObject getDocumentation() {
-		// TODO later
-		return new JsonObject();
+		
+		return documentation;
 	}
 
 	@Override

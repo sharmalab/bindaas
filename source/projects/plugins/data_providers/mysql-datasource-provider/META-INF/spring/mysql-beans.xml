@@ -25,7 +25,8 @@
 <bean id="submitHandler" class="edu.emory.cci.bindaas.datasource.provider.genericsql.GenericSQLSubmitHandler">
 </bean>
 
-<osgi:reference id="outputFormatRegistry" interface="edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.OutputFormatRegistry"/>
+<bean id="outputFormatRegistry" class="edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.OutputFormatRegistry" init-method="init">
+</bean>
 
 
 </beans>

@@ -1,6 +1,5 @@
 package edu.emory.cci.bindaas.security.api;
 
-import java.security.Principal;
 import java.util.Map;
 import java.util.Properties;
 
@@ -31,7 +30,7 @@ public interface IAuthenticationProvider {
 	 * @return
 	 * @throws Exception when authentication fails
 	 */
-	public Principal login(String username , String password , Properties props) throws AuthenticationException;
+	public BindaasUser login(String username , String password , Properties props) throws AuthenticationException;
 	
 	/**
 	 * 
@@ -40,7 +39,7 @@ public interface IAuthenticationProvider {
 	 * @return Username of the authentication user
 	 * @throws Exception when authentication fails
 	 */
-	public Principal login(String securityToken , Properties props) throws AuthenticationException;
+	public BindaasUser login(String securityToken , Properties props) throws AuthenticationException;
 	
 	/**
 	 * Return description of properties required to configure this auth provider. key = property name , value = description

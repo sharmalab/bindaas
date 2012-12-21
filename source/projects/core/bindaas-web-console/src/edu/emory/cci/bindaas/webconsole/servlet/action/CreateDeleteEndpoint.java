@@ -19,6 +19,7 @@ import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.framework.api.IQueryModifier;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
+import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -70,6 +71,11 @@ public class CreateDeleteEndpoint extends AbstractRequestHandler{
 		VelocityContext context = new VelocityContext(pathParameters);
 		
 		try {
+			IManagementTasks managementTask = Activator.getManagementTasksBean();
+			Profile profile = managementTask.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
+			JsonObject documentation = Activator.getProviderRegistry().lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			context.put("documentation" , documentation);
+			
 			template.merge(context, response.getWriter());
 		} catch (Exception e) {
 			log.error(e);

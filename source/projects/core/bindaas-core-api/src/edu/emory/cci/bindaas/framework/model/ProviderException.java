@@ -22,6 +22,7 @@ public class ProviderException extends Exception {
 		super(arg0);
 		this.providerId = providerId;
 		this.providerVersion = providerVersion;
+		
 	}
 
 	public ProviderException(String providerId , Integer providerVersion,Throwable arg0) {

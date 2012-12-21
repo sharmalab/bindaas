@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Dictionary;
@@ -18,6 +19,8 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 
 import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.ISecurityHandler;
@@ -30,7 +33,10 @@ import edu.emory.cci.bindaas.core.rest.service.api.IManagementService;
 import edu.emory.cci.bindaas.core.rest.service.impl.ExecutionServiceImpl;
 import edu.emory.cci.bindaas.core.rest.service.impl.InformationServiceImpl;
 import edu.emory.cci.bindaas.core.rest.service.impl.ManagementServiceImpl;
+import edu.emory.cci.bindaas.framework.event.BindaasEvent;
+import edu.emory.cci.bindaas.framework.event.BindaasEventConstants;
 import edu.emory.cci.bindaas.framework.util.PrettyPrintProperties;
+import edu.emory.cci.bindaas.security.impl.TestEventSubscriber;
 
 /**
  *  Entry point for the application. Register services , set properties . 
@@ -67,6 +73,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 	{
 		BundleContext context = Activator.getContext();
 		context.registerService(CommandProvider.class.getName(), new BindaasOSGIConsole(this), null);
+		context.registerService(IBindaasAdminService.class.getName(), this , null);
 	}
 	
 	public Properties getBindaasProperties() {
@@ -261,6 +268,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 		start();
 		
 		
+		
 	}
 	
 	
@@ -295,6 +303,19 @@ public class BindaasInitializer implements IBindaasAdminService{
 		// configure auditModule : read props enable audit
 		
 		context.registerService(ISecurityHandler.class.getName(), securityModule, null);
+		
+		
+		/** Temp Code 
+		 * 
+		 */
+		String[] topics = new String[] {
+	            BindaasEventConstants.CREATE_PROFILE_TOPIC
+	        };
+	        
+	        Dictionary props = new Hashtable();
+	        props.put(EventConstants.EVENT_TOPIC, topics);
+	        context.registerService(EventHandler.class.getName(), new TestEventSubscriber() , props); // TODO : Test code to remove later
+	        
 	}
 	
 	public void stop() throws Exception
@@ -449,6 +470,12 @@ public class BindaasInitializer implements IBindaasAdminService{
 		buffer.append("Registered QueryResult Modifiers " + informationService.listQueryResultModifiers().getEntity());
 		buffer.append("Registered Submit Payload Modifiers " + informationService.listSubmitPayloadModifiers().getEntity()).append("\n");
 		return buffer.toString();
+	}
+
+	@Override
+	public String getProperty(String key) throws Exception {
+		return bindaasProperties.getProperty(key);
+		
 	}
 	
  // set properties

@@ -1,7 +1,6 @@
 package edu.emory.cci.bindaas.webconsole;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Properties;
 
 import javax.servlet.Filter;
@@ -24,6 +23,7 @@ import org.osgi.framework.ServiceReference;
 import edu.emory.cci.bindaas.core.api.ISecurityHandler;
 
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 
 
@@ -35,7 +35,6 @@ public class LoginAction extends HttpServlet implements Filter{
 	 */
 	private static final long serialVersionUID = 1370274434730700069L;
 	private String defaultLoginTarget ;
-	private boolean initialized = false;
 	private Log log = LogFactory.getLog(getClass());
 	
 	@Override
@@ -52,7 +51,7 @@ public class LoginAction extends HttpServlet implements Filter{
 		if(authenticationProvider!=null && authenticationProvider.isAuthenticationByUsernamePasswordSupported() && authenticationProviderProps!=null)
 		{
 			try {
-				Principal principal = authenticationProvider.login(username, password, authenticationProviderProps);
+				BindaasUser principal = authenticationProvider.login(username, password, authenticationProviderProps);
 				request.getSession(true).setAttribute("loggedInUser", principal);
 				response.sendRedirect(loginTarget);
 			} catch (AuthenticationException e) {

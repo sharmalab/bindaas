@@ -15,10 +15,13 @@ import org.apache.velocity.tools.generic.EscapeTool;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
+import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
 import edu.emory.cci.bindaas.framework.api.IQueryModifier;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
+import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
@@ -85,7 +88,7 @@ public class QueryEndpointView extends AbstractRequestHandler {
 			
 			QueryEndpoint queryEndpoint = managementTasks.getQueryEndpoint(workspace, profile, queryEndpointName); 
 			VelocityContext context = new VelocityContext(pathParameters);
-			context.put("esc", new EscapeTool());
+			context.put("esc", Activator.getEscapeTool());
 			context.put("queryEndpoint", queryEndpoint);
 			
 			IModifierRegistry modifierRegistry = Activator.getModifierRegistry();
@@ -93,6 +96,16 @@ public class QueryEndpointView extends AbstractRequestHandler {
 			Collection<IQueryResultModifier> queryResultModifiers = modifierRegistry.findAllQueryResultModifiers();
 			context.put("queryModifiers" , queryModifiers);
 			context.put("queryResultModifiers" , queryResultModifiers);
+			
+			
+			Profile prof = managementTasks.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
+			JsonObject documentation = Activator.getProviderRegistry().lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			context.put("documentation" , documentation);
+			
+			IBindaasAdminService adminService = Activator.getBindaasAdminService();
+			String serviceUrl = adminService.getProperty(BindaasConstants
+					.SERVICE_URL);
+			context.put("serviceUrl", serviceUrl);
 			
 			template.merge(context, response.getWriter());
 		}

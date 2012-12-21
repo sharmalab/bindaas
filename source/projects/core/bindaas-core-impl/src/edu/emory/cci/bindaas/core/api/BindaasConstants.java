@@ -11,5 +11,6 @@ public interface BindaasConstants {
 	public final static String AUTHORIZATION_PROVIDER = "authorization.provider.class";
 	public final static String AUDIT_STATUS = "audit.status";
 	public final static String AUDIT_PROVIDER = "audit.provider.class";
+	public final static String SERVICE_URL = "serviceUrl";
 	
 }

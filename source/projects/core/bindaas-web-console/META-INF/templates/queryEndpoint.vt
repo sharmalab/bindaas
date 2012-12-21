@@ -188,7 +188,8 @@
     	</div>
    	 	<div class="row">
    	 		<fieldset>
-    			<legend><h3>Query Endpoint : $queryEndpoint.getName() </h3></legend>
+    			<legend><h3>Query Endpoint : $queryEndpoint.getName()</h3></legend>
+    			<a data-reveal-id="tryQuery" class="radius small button" href="#">Try Me !!</a>
     			<h6 class="subheader">Last Modified : $queryEndpoint.getTimeCreated()</h6>
     			<h6 class="subheader">Modified By : $queryEndpoint.getCreatedBy()</h6>
     				<form class="custom"  >
@@ -534,6 +535,58 @@
 	</div>
   </div>
 
-  
+  <div id="tryQuery" class="reveal-modal xlarge">
+ 	<ul class="accordion">
+	  			<li>
+	    			<div class="title">
+	  					<div class="row">
+	    					<div class="two columns"><a class="radius button">GET</a></div>
+	    					<div class="ten columns left-align" ><h4>$queryEndpoint.getName()</h4><h4 class="subheader">$serviceUrl/services/$workspace/$profile/query/$queryEndpoint.getName()</h4></div>
+	    				</div>
+	    	
+	         
+	    			</div>
+	    			<div class="content">
+	    				<div class="row">$queryEndpoint.getDescription()</div>
+							<div class="row">
+								<table>
+									<thead>
+										<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
+									</thead>
+									<tbody>
+										#foreach ($bindVar in $queryEndpoint.getBindVariables().values())
+											<tr><td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td><input type="text" id="$bindVar.getName()" /></td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td></tr>
+										#end
+										
+									</tbody>
+								</table>
+								<a class="button secondary" onclick="executeAPI('$serviceUrl/services/$workspace/$profile/query/$queryEndpoint.getName()' , this )" >Submit</a>	
+								<script>
+									function executeAPI(url , buttonClicked)
+									{
+										var queryString = "?";
+										$(buttonClicked).parent().find("input").each ( function () {
+											
+											if( $(this).attr("value") && $(this).attr("value") != "" )
+											{
+												queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';	
+											}
+											
+											
+										});
+										url = url + queryString;
+										window.open(encodeURI(url));
+									}
+									
+									
+								</script>
+						</div>
+							
+					
+	    			</div>
+	  			</li>
+	  	</ul>	
+  <a class="close-reveal-modal">&#215;</a>
+  </div>
 </body>
 </html>

@@ -1,0 +1,89 @@
+<label>Host</label>
+		<span class="has-tip tip-left" data-width="210" title="MongDB Host"> <input type="text" id="mongo_host" value="127.0.0.1" /></span>
+		<label>Port</label>
+		<span class="has-tip tip-left" data-width="210" title="MongoDB Port"><input type="text" id="mong_port" value="27017" /></span>
+		<label>Database Name</label>
+		<span class="has-tip tip-left" data-width="210" title="Name of the MongoDB database"><input type="text" id="mongo_db" /></span>
+		
+		<label for="aime_table">Collection Name</label>
+		<span class="has-tip tip-left" data-width="210" title="Name of the MongoDB database collection"><input type="text" id="mongo_collection" /></span>
+		
+		<span class="has-tip tip-left" data-width="210" title="This option will generate submit API to upload data in CSV and JSON formats"><label for="mongo_auto_init"><input type="checkbox" CHECKED id="mongo_auto_init">  Auto Initialize</label></span>
+		
+		<script>
+			
+			$("#mongo_host").keyup(function ()
+			{
+				updateProviderFieldMongo();
+			});
+			$("#mong_port").keyup(function ()
+			{
+				updateProviderFieldMongo();
+			});
+			
+			$("#mongo_db").keyup(function ()
+			{
+				updateProviderFieldMongo();
+			});
+			
+			$("#mongo_collection").keyup(function ()
+			{
+				updateProviderFieldMongo();
+			});
+			
+			$("#mongo_auto_init").click(function ()
+			{
+				updateProviderFieldMongo();
+			});
+			
+			$("#mongo_auto_init").change(function ()
+			{
+				updateProviderFieldMongo();
+			});
+		
+			
+			   
+		   function updateProviderFieldMongo()
+		   {
+		   	 var dataSourceJson = {};
+		   	 dataSourceJson.host = $("#mongo_host").attr("value");
+		   	 dataSourceJson.port = $("#mong_port").attr("value");
+		   	 dataSourceJson.db = $("#mongo_db").attr("value");
+		   	 dataSourceJson.collection = $("#mongo_collection").attr("value");
+		   	 
+		   	 if($('#mongo_auto_init').attr('checked')) {
+					  dataSourceJson.autoInitialize = true;
+					 
+					} else {
+					  dataSourceJson.autoInitialize = false;
+					 
+					}
+		   	 
+		   	 
+		   	 $("#dataSource").attr("value" , JSON.stringify(dataSourceJson));
+		   }    
+		   
+		   function reverseUpdateDataSourceViewMongo()
+		   {
+			   try{
+				   var dataSourceJson =  $("#dataSource").attr("value");
+				   dataSourceJson = jQuery.parseJSON( dataSourceJson ) ;
+				   $("#mongo_host").attr("value", dataSourceJson.host);
+				   $("#mong_port").attr("value", dataSourceJson.port);
+				   $("#mongo_db").attr("value", dataSourceJson.db);
+				   $("#mongo_collection").attr("value", dataSourceJson.collection);
+				   
+				   if(dataSourceJson.autoInitialize == true) {
+						  $('#mongo_auto_init').attr('checked' , "true");
+						  
+						} else {
+							$('#mongo_auto_init').removeAttr('checked');
+						}
+			   	
+				   
+			   }catch(e){}
+			   
+		   }
+		   
+		   reverseUpdateDataSourceViewMongo();
+		</script>

@@ -86,14 +86,14 @@ public class ProfileView extends AbstractRequestHandler {
 			
 			Profile profile = managementTasks.getProfile(workspace, profileName); 
 			VelocityContext context = new VelocityContext(pathParameters);
-			context.put("esc", new EscapeTool());
+			context.put("esc", Activator.getEscapeTool());
 			context.put("profile", profile);
 			
 			IProviderRegistry providerRegistry = Activator.getProviderRegistry();
 			if(providerRegistry!=null)
 			{
-				Collection<IProvider> listOfProviders = providerRegistry.findProviders();
-				context.put("providers" , listOfProviders);
+				IProvider provider = providerRegistry.lookupProvider(profile.getProviderId(), profile.getProviderVersion());
+				context.put("provider" , provider);
 			}
 			else
 			{

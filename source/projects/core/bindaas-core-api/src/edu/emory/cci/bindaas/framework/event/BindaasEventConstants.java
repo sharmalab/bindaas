@@ -8,6 +8,7 @@ public class BindaasEventConstants {
 
 	// Workspace Events
 	public static final String CREATE_WORKSPACE_TOPIC = "edu/emory/cci/bindaas/framework/event/workspace/create";
+	public static final String DELETE_WORKSPACE_TOPIC = "edu/emory/cci/bindaas/framework/event/workspace/delete";
 	
 	// Profile Events
 	public static final String CREATE_PROFILE_TOPIC = "edu/emory/cci/bindaas/framework/event/profile/create";
@@ -51,6 +52,8 @@ public class BindaasEventConstants {
 		
 		public static final String BINDAAS_START = "edu/emory/cci/bindaas/framework/event/system/start";
 		public static final String BINDAAS_STOP = "edu/emory/cci/bindaas/framework/event/system/stop";
+
+		
 		
 		
 	

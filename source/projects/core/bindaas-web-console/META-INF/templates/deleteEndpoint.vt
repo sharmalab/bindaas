@@ -169,10 +169,6 @@
 			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query Endpoint</a></li>
 			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete Endpoint</a></li>
 			  <li ><a href="/dashboard/$workspace/$profile/createSubmitEndpoint.action">Create Submit Endpoint</a></li>
-			  <li ><a href="#">Clone Query Endpoint</a></li>
-			  <li ><a href="#">Clone Submit Endpoint</a></li>
-			  <li ><a href="#">Clone Delete Endpoint</a></li>
-			  
 		</ul>	
   		</div>
   		
@@ -187,7 +183,7 @@
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/workspace:$workspace/profile:$profile</h3>
+    		<h3 class="subheader">/Workspace:$workspace/Profile:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
     	</div>
    	 	<div class="row">
    	 		<fieldset>

@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 
 public class LDAPAuthenticationProvider implements IAuthenticationProvider {
@@ -32,7 +33,7 @@ public class LDAPAuthenticationProvider implements IAuthenticationProvider {
 	}
 
 	@Override
-	public Principal login(final String username, String password, Properties props)
+	public BindaasUser login(final String username, String password, Properties props)
 			throws AuthenticationException {
 		String ldapServer = props.getProperty("LDAP_SERVER");
 		String dnPattern = props.getProperty("DN_PATTERN");
@@ -54,19 +55,11 @@ public class LDAPAuthenticationProvider implements IAuthenticationProvider {
 		}
 
 		
-		
-		return new Principal() {
-			
-			@Override
-			public String getName() {
-				
-				return username;
-			}
-		};
+		return new BindaasUser(username);
 	}
 
 	@Override
-	public Principal login(String securityToken, Properties props)
+	public BindaasUser login(String securityToken, Properties props)
 			throws AuthenticationException {
 		// method not implemented
 		log.error("Login via SecurityToken not supported. Authentication failed");

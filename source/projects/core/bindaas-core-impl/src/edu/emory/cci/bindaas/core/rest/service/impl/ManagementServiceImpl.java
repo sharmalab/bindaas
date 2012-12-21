@@ -25,8 +25,10 @@ import com.google.gson.JsonParser;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.bundle.Activator;
+import edu.emory.cci.bindaas.core.model.EntityEventType;
 import edu.emory.cci.bindaas.core.rest.service.api.IInformationService;
 import edu.emory.cci.bindaas.core.rest.service.api.IManagementService;
+import edu.emory.cci.bindaas.core.util.EventHelper;
 import edu.emory.cci.bindaas.core.util.RestUtils;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 import edu.emory.cci.bindaas.framework.model.Profile;
@@ -56,7 +58,7 @@ public class ManagementServiceImpl implements IManagementService {
 	private JsonParser parser;
 
 	public void init() throws Exception {
-		parser = new JsonParser();
+		parser = GSONUtil.getJsonParser();
 	}
 
 	private String getUser() {
@@ -91,6 +93,9 @@ public class ManagementServiceImpl implements IManagementService {
 
 			Workspace works = managementTask.createWorkspace(workspace, params,
 					user);
+			
+			
+			
 			return RestUtils.createJsonResponse(works.toString());
 		} catch (Exception e) {
 			log.error(e);
@@ -109,6 +114,7 @@ public class ManagementServiceImpl implements IManagementService {
 
 			Profile prof = managementTask.createProfile(profile, workspace,
 					parsePostRequest(), user);
+		
 			return RestUtils.createJsonResponse(prof.toString());
 		} catch (Exception e) {
 			log.error(e);
@@ -130,6 +136,7 @@ public class ManagementServiceImpl implements IManagementService {
 			QueryEndpoint qe = managementTask
 					.createQueryEndpoint(queryEndpoint, workspace, profile,
 							parsePostRequest(), user);
+			
 			return RestUtils.createJsonResponse(qe.toString());
 		} catch (Exception e) {
 			log.error(e);
@@ -150,6 +157,7 @@ public class ManagementServiceImpl implements IManagementService {
 			DeleteEndpoint de = managementTask.createDeleteEndpoint(
 					deleteEndpoint, workspace, profile, parsePostRequest(),
 					user);
+			
 			return RestUtils.createJsonResponse(de.toString());
 		} catch (Exception e) {
 			log.error(e);
@@ -170,6 +178,7 @@ public class ManagementServiceImpl implements IManagementService {
 			SubmitEndpoint se = managementTask.createSubmitEndpoint(
 					submitEndpoint, workspace, profile, parsePostRequest(),
 					user);
+			
 			return RestUtils.createJsonResponse(se.toString());
 		} catch (Exception e) {
 			log.error(e);
@@ -185,6 +194,7 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 
 			managementTask.deleteWorkspace(workspace);
+			
 			return RestUtils.createSuccessResponse("Workspace [" + workspace
 					+ "] deleted");
 		} catch (Exception e) {
@@ -201,6 +211,7 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 
 			managementTask.deleteProfile(workspace, profile);
+			
 			return RestUtils.createSuccessResponse("Profile [" + profile
 					+ "] deleted");
 		} catch (Exception e) {
@@ -219,6 +230,7 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 			managementTask.deleteQueryEndpoint(workspace, profile,
 					queryEndpoint);
+			
 			return RestUtils.createSuccessResponse("QueryEndpoint ["
 					+ queryEndpoint + "] deleted");
 		} catch (Exception e) {
@@ -237,6 +249,7 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 			managementTask.deleteDeleteEndpoint(workspace, profile,
 					deleteEndpoint);
+			
 			return RestUtils.createSuccessResponse("DeleteEndpoint ["
 					+ deleteEndpoint + "] deleted");
 		} catch (Exception e) {
@@ -255,6 +268,7 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 			managementTask.deleteSubmitEndpoint(workspace, profile,
 					submitEndpoint);
+			
 			return RestUtils.createSuccessResponse("SubmitEndpoint ["
 					+ submitEndpoint + "] deleted");
 		} catch (Exception e) {
@@ -271,6 +285,7 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 			Profile profile = managementTask.updateProfile(profileName,
 					workspace, parsePostRequest(), getUser());
+			
 			return RestUtils.createJsonResponse(profile.toString());
 		} catch (Exception e) {
 			log.error(e);
@@ -290,6 +305,7 @@ public class ManagementServiceImpl implements IManagementService {
 			QueryEndpoint qe = managementTask.updateQueryEndpoint(
 					queryEndpoint, workspace, profile, parsePostRequest(),
 					getUser());
+			
 			return RestUtils.createJsonResponse(qe.toString());
 		} catch (Exception e) {
 			log.error(e);
@@ -309,6 +325,7 @@ public class ManagementServiceImpl implements IManagementService {
 			DeleteEndpoint de = managementTask.updateDeleteEndpoint(
 					deleteEndpoint, workspace, profile, parsePostRequest(),
 					getUser());
+			
 			return RestUtils.createJsonResponse(de.toString());
 		} catch (Exception e) {
 			log.error(e);
@@ -327,6 +344,7 @@ public class ManagementServiceImpl implements IManagementService {
 			SubmitEndpoint se = managementTask.updateSubmitEndpoint(
 					submitEndpoint, workspace, profile, parsePostRequest(),
 					getUser());
+			
 			return RestUtils.createJsonResponse(se.toString());
 		} catch (Exception e) {
 			log.error(e);
