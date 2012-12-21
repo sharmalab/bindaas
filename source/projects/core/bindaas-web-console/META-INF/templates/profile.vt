@@ -59,13 +59,23 @@
   </div>
 
   <div class="row">
-    <div class="tweleve columns">
+    <div class="two columns">
+  		
+  		<div class="row">
+  		
+  		<ul class="four side-nav">
+			  <li ><a href="#">Create Workspace</a></li>
+			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Profile</a></li>
+		</ul>	
+  		</div>
+  		
+  	</div>
+    <div class="ten columns">
     	
     	<div class="row">
     		<ul class="breadcrumbs">
-  				<li class="current"><a href="#"><strong>Dashboard</strong></a></li>
-  				<li><a href="#"><strong>Workspaces</strong></a></li>
-  				<li><a href="#"><strong>Data Providers</strong></a></li>
+  				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
+  				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
   				<li><a href="#"><strong>Administration</strong></a></li>
   			</ul>
     </div>
@@ -75,29 +85,59 @@
    	 	<div class="row">
    	 		<fieldset>
     			<legend><h3>Profile : $profile.getName()</h3></legend>
+    				<h6 class="subheader">Last Modified : $profile.getTimeCreated()</h6>
+    				<h6 class="subheader">Modified By : $profile.getCreatedBy()</h6>
     				<form class="custom" action="createProfile.action" method="get">
     					<input type="hidden" value="${workspace}"  name="workspace"/>
     					<input type="hidden"  name="jsonRequest"/>
     					<label>Profile Name</label>
     					<input type="text" placeholder="name" name="profileName" id="profileName" value="$profile.getName()"/>
-    					<label for="provider">Data Provider</label>
-    					<select  name="provider" id="provider">
+    					<label for="providerTitle">Data Provider</label>
+    					<input type="text" disabled="true" id="providerTitle" />
+    					<script>
     						
-    						#foreach ($provider in $providers)
-    							#if ($provider.getId().equals($profile.getProviderId())  && $provider.getVersion() == $profile.getProviderVersion()   )
-    								<option value="$provider.getId()#$provider.getVersion()" selected="true">ID = $provider.getId() VERSION = $provider.getVersion()</option>
-    							#else
-    								<option value="$provider.getId()#$provider.getVersion()">ID = $provider.getId() VERSION = $provider.getVersion()</option>
-    							#end
-  						  	#end
-  						</select>
+    
+    								#if ( $provider.getDocumentation().get("title"))
+    									$("#providerTitle").attr("value", "$esc.java( $provider.getDocumentation().get('title').getAsString() )");
+    								#else
+    									$("#providerTitle").attr("value", "ID = $provider.getId() VERSION = $provider.getVersion()");
+    								#end
+    
+  						</script>
   						<br> </br>
   						<div class="panel">
   							<h6 class="subheader">Provider Description</h6>
-  							<div id="providerDescription"></div>
+  							<div id="providerDescription">
+  									<div >
+  										#if ($provider.getDocumentation().get('description'))
+  											$provider.getDocumentation().get('description').getAsString()
+  										#end
+  									</div>
+  							</div>
   						</div>
-  						<label for="dataSource">Data Source Configuration</label>
-  						<textarea name="dataSource" placeholder="{ 'outputFormat':'XML' }" id="dataSource">$profile.getDataSource()</textarea>
+  						<div class="panel">
+  							<label for="dataSource">Data Source Configuration <a onclick="enableDataSource()">(Click to edit)</a></label>
+  							<textarea name="dataSource" id="dataSource" disabled="true">$profile.getDataSource().toString()</textarea>
+  							<script>
+  								function enableDataSource()
+  								{
+  									$("#dataSource").removeAttr("disabled");
+  								}
+  							</script>
+  							
+  							<div id="dataSourceContainer">
+  									<div>
+  										#if ($provider.getDocumentation().get('dataSourceHtml'))
+  											$provider.getDocumentation().get('dataSourceHtml').getAsString()
+  										#end
+  									</div>
+  								
+  								
+  							</div>
+  							
+  							
+  						</div>
+  						
   						<div class="panel">
   							<h6 class="subheader">Data Source JSON Schema</h6>
   							<div id="dataSourceSchema"></div>
@@ -121,9 +161,8 @@
 		
 						var profileName = $('#profileName').attr("value");
 		
-						var providerInfo = $("#provider option:selected").attr("value").split("#");
-						jsonRequest.providerId = providerInfo[0];
-						jsonRequest.providerVersion = providerInfo[1];
+						jsonRequest.providerId = "$provider.getId()";
+						jsonRequest.providerVersion = $provider.getVersion();
 						
 						try{
 							jsonRequest.dataSource = jQuery.parseJSON($('#dataSource').attr("value"));

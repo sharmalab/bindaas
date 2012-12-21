@@ -59,13 +59,30 @@
   </div>
 
   <div class="row">
-    <div class="tweleve columns">
+   <div class="two columns">
+  		
+  		<div class="row">
+  		
+  		<ul class="four side-nav">
+			  <li ><a href="#">Create Workspace</a></li>
+			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Profile</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query Endpoint</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete Endpoint</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createSubmitEndpoint.action">Create Submit Endpoint</a></li>
+			  <li ><a href="#">Clone Query Endpoint</a></li>
+			  <li ><a href="#">Clone Submit Endpoint</a></li>
+			  <li ><a href="#">Clone Delete Endpoint</a></li>
+			  
+		</ul>	
+  		</div>
+  		
+  	</div>
+    <div class="six columns">
     	
     	<div class="row">
     		<ul class="breadcrumbs">
-  				<li class="current"><a href="#"><strong>Dashboard</strong></a></li>
-  				<li><a href="#"><strong>Workspaces</strong></a></li>
-  				<li><a href="#"><strong>Data Providers</strong></a></li>
+  				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
+  				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
   				<li><a href="#"><strong>Administration</strong></a></li>
   			</ul>
     </div>
@@ -75,6 +92,8 @@
    	 	<div class="row">
    	 		<fieldset>
     			<legend><h3>Submit Endpoint : $submitEndpoint.getName()</h3></legend>
+    				<h6 class="subheader">Last Modified : $submitEndpoint.getTimeCreated()</h6>
+    				<h6 class="subheader">Modified By : $submitEndpoint.getCreatedBy()</h6>
     				<form class="custom">
     					<label>Submit Endpoint Name</label>
     					<input type="text" placeholder="name" id="submitEndpointName"/>
@@ -233,7 +252,11 @@
    	 	<div class="row">
    	 	</div>
     </div>
-
+	<div class="four columns">
+		#if ($documentation.get("submitHelp"))
+			$documentation.get("submitHelp").getAsString()
+		#end
+	</div>
   </div>
 
   

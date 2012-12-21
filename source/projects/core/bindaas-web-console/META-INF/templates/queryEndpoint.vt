@@ -231,6 +231,7 @@
 
     						</fieldset>	
     					</div>
+    					<div class="panel">
     					<label>Output Format</label>
     					<textarea id="qeOutputFormat" placeholder="{}"   >$queryEndpoint.getOutputFormat().toString()</textarea>
     						<br>
@@ -240,7 +241,7 @@
     							$("#qeOutputFormat").attr("disabled" , "true");
     						</script>
     						#end
-    					
+    					</div>
     					
     					<div class="panel" id="queryModifierPanel">
 	    					<label for="queryModifier">Query Modifier</label>
