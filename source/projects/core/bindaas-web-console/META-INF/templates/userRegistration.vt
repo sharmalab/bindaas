@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Sign Up for an API-Key</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+  <script type="text/javascript" src="/foundation/media/js/jquery.dataTables.js"></script>
+  
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+	<!-- Latest version of jQuery -->
+  <script src="/foundation/javascripts/jquery.js"></script>
+
+  <!-- Included JS Files (Unminified) -->
+  <!-- [JS Files] -->
+  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+  <!-- Included JS Files (Minified) -->
+  <script src="/foundation/javascripts/foundation.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="/foundation/javascripts/app.js"></script>
+
+  <div class="row">
+    <div class="tweleve columns">
+      <h2>Bindaas</h2>
+      <p><strong>Be worry free!</strong></p>
+      <p>This is version <strong>2.0.0 Beta</strong></p>
+      <hr />
+    </div>
+    
+  </div>
+
+  <div class="row">
+    <div class="twelve columns">
+      <form action="/userRegistration" method="post">
+	 	 <fieldset>
+	
+		    <legend><h4>Sign Up for an API Key</h4></legend>
+		
+		    <div class="row">
+			    <div class="four mobile-one columns">
+			      <label class="right inline">Email Address:</label>
+			    </div>
+			    <div class="eight mobile-three columns">
+			      <input type="text" placeholder="awesome@someplace.com" class="eight" name="emailAddress" />
+			    </div>
+			  </div>
+			  <div class="row">
+			    <div class="four mobile-one columns">
+			      <label class="right inline">First Name :</label>
+			    </div>
+			    <div class="eight mobile-three columns">
+			      <input type="text" class="eight" name="firstName" />
+			    </div>
+			  </div>
+			  <div class="row">
+			    <div class="four mobile-one columns">
+			      <label class="right inline">Last Name :</label>
+			    </div>
+			    <div class="eight mobile-three columns">
+			      <input type="text" class="eight" name="lastName" />
+			    </div>
+			  </div>
+			    
+			  <div class="row">
+			  	<div class="four mobile-one columns">
+			    	<input type="submit" class="small round right button" value="Submit" />
+			    </div>
+			    <div class="eight mobile-one columns">
+			    	
+			    </div>
+			  	
+			  </div>
+		
+	  </fieldset>
+	</form>
+	<h3>Or</h3>
+	
+	 	 <fieldset>
+	
+		    <legend><h4>Sign Up using following Accounts</h4></legend>
+	<form action="/openidlogin?loginTarget=/postSignup&attribute2set=newUserSignup&identifier=https://www.google.com/accounts/o8/id" method="post" name="google">
+			<a href="javascript:document.google.submit()">
+				<img src="http://beta.clickhint.com/assets/images/google-openid.png" width="143" height="39" border="0" alt="Submit this form" name="sub_but" />
+			</a>
+	</form>
+	
+	<form action="/openidlogin?loginTarget=/postSignup&attribute2set=newUserSignup&identifier=https://me.yahoo.com" method="post" name="yahoo">
+			<a href="javascript:document.yahoo.submit()">
+				<img src="http://www.ige4.com/images/openid/yahoo.png" width="143" height="39" border="0" alt="Submit this form" name="sub_but" />
+			</a>
+	</form>
+	  </fieldset>
+	
+    </div>
+
+   </div>
+
+</body>
+</html>
