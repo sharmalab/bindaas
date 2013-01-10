@@ -45,12 +45,12 @@
   <script src="/foundation/javascripts/app.js"></script>
 
   <div class="row">
-    <div class="tweleve columns">
+    <div class="twelve columns">
       <h2>Bindaas</h2>
       <p><strong>Be worry free!</strong></p>
       <p>This is version <strong>2.0.0 Beta</strong></p>
       <hr />
-    </div>
+    </div> 
     
   </div>
 
@@ -98,6 +98,7 @@
 		
 	  </fieldset>
 	</form>
+	<!--
 	<h3>Or</h3>
 	
 	 	 <fieldset>
@@ -119,6 +120,6 @@
     </div>
 
    </div>
-
+-->
 </body>
 </html>

@@ -46,12 +46,20 @@
   <script src="/foundation/javascripts/app.js"></script>
 
   <div class="row">
-    <div class="tweleve columns">
+    <div class="six columns">
       <h2>Bindaas</h2>
       <p><strong>Be worry free!</strong></p>
       <p>This is version <strong>2.0.0 Beta</strong></p>
       <hr />
     </div>
+    <div class="six columns">
+    	<ul class="inline-list">
+    		<li><h6>Welcome $bindaasUser</h6></li>
+    		<li><h6><a href="/dashboard/logout">logout</a></h6></li>
+    	</ul>
+      
+    </div>
+    
     
   </div>
   <div class="row">

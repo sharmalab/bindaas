@@ -180,7 +180,7 @@
     		<ul class="breadcrumbs">
   				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
   				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
-  				<li><a href="#"><strong>Administration</strong></a></li>
+  				<li><a href="/dashboard/administration/manageUserRegistration"><strong>Administration</strong></a></li>
   			</ul>
     </div>
     	<div class="row">
@@ -564,7 +564,7 @@
 								<script>
 									function executeAPI(url , buttonClicked)
 									{
-										var queryString = "?";
+										var queryString = "?api_key=$apiKey&";
 										$(buttonClicked).parent().find("input").each ( function () {
 											
 											if( $(this).attr("value") && $(this).attr("value") != "" )
