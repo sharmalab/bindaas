@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!-- Request Handlers -->
+
+<bean id="ldapProvider" class="edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider" init-method="init">
+	<property name="defaultProperties" >
+		<props>
+			<prop key="ldap.url">ldap://ad1.ccibmi.cci.emory.edu:389</prop>
+			<prop key="ldap.dn.pattern">cn=%s,cn=Users,dc=ccibmi,dc=cci,dc=emory,dc=edu</prop>
+		</props>
+	</property>
+</bean>
+</beans>
+
+
+

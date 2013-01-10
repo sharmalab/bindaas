@@ -24,6 +24,7 @@ import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
@@ -71,15 +72,16 @@ public class CreateQueryEndpoint extends AbstractRequestHandler{
 	{
 		try {
 		VelocityContext context = new VelocityContext(pathParameters);
-		IModifierRegistry modifierRegistry = Activator.getModifierRegistry();
+		IModifierRegistry modifierRegistry = Activator.getService(IModifierRegistry.class);
 		Collection<IQueryModifier> queryModifiers = modifierRegistry.findAllQueryModifier();
 		Collection<IQueryResultModifier> queryResultModifiers = modifierRegistry.findAllQueryResultModifiers();
 		context.put("queryModifiers" , queryModifiers);
 		context.put("queryResultModifiers" , queryResultModifiers); 
+		context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 		
-		IManagementTasks managementTask = Activator.getManagementTasksBean();
+		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		Profile profile = managementTask.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
-		JsonObject documentation = Activator.getProviderRegistry().lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+		JsonObject documentation = Activator.getService(IProviderRegistry.class).lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
 		context.put("documentation" , documentation); 
 		template.merge(context, response.getWriter());
 		} catch (Exception e) {
@@ -99,7 +101,7 @@ public class CreateQueryEndpoint extends AbstractRequestHandler{
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getManagementTasksBean();
+		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
 			QueryEndpoint queryEndpoint = managementTask.createQueryEndpoint(queryEndpointName, workspace, profile, jsonObject, createdBy);
 			response.setContentType(StandardMimeType.JSON.toString());

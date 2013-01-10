@@ -27,7 +27,7 @@ public class AuditInLogger extends AbstractPhaseInterceptor<Message> {
 
 	private Log log = LogFactory.getLog(getClass());
 	private boolean enableAudit;
-	private Properties auditProviderProps;
+	
 	private String auditProviderClass;
 
 	public boolean isEnableAudit() {
@@ -36,14 +36,6 @@ public class AuditInLogger extends AbstractPhaseInterceptor<Message> {
 
 	public void setEnableAudit(boolean enableAudit) {
 		this.enableAudit = enableAudit;
-	}
-
-	public Properties getAuditProviderProps() {
-		return auditProviderProps;
-	}
-
-	public void setAuditProviderProps(Properties auditProviderProps) {
-		this.auditProviderProps = auditProviderProps;
 	}
 
 	public String getAuditProviderClass() {
@@ -109,7 +101,7 @@ public class AuditInLogger extends AbstractPhaseInterceptor<Message> {
 
 				IAuditProvider auditProvider = locateAuditProvider();
 				if (auditProvider != null) {
-					auditProvider.audit(auditMessage, auditProviderProps);
+					auditProvider.audit(auditMessage);
 				} else
 					throw new Exception("IAuditProvider not available");
 			} catch (Exception e) {

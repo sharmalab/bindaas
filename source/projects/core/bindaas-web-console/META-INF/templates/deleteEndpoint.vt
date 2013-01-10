@@ -172,7 +172,7 @@
   		<div class="row">
   		
   		<ul class="four side-nav">
-			  <li ><a href="#">Create Workspace</a></li>
+			  
 			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Profile</a></li>
 			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query Endpoint</a></li>
 			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete Endpoint</a></li>
@@ -187,7 +187,7 @@
     		<ul class="breadcrumbs">
   				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
   				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
-  				<li><a href="/dashboard/administration/manageUserRegistration"><strong>Administration</strong></a></li>
+  				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
   			</ul>
     </div>
     	<div class="row">

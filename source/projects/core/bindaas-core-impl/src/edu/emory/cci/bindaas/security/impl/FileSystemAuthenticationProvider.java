@@ -1,6 +1,5 @@
 package edu.emory.cci.bindaas.security.impl;
 
-import java.security.Principal;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -8,17 +7,46 @@ import java.util.Map;
 import java.util.Properties;
 
 import edu.emory.cci.bindaas.core.bundle.Activator;
+import edu.emory.cci.bindaas.core.rest.security.AuthenticationProtocol;
+import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 
 public class FileSystemAuthenticationProvider implements IAuthenticationProvider{
 
+	private DynamicProperties dynamicProperties;
+	private Properties defaultProperties;
+	
+	public DynamicProperties getDynamicProperties() {
+		return dynamicProperties;
+	}
+
+
+	public void setDynamicProperties(DynamicProperties dynamicProperties) {
+		this.dynamicProperties = dynamicProperties;
+	}
+
+
+	public Properties getDefaultProperties() {
+		return defaultProperties;
+	}
+
+
+	public void setDefaultProperties(Properties defaultProperties) {
+		this.defaultProperties = defaultProperties;
+	}
+
+
+
 	public void init()
 	{
 		Dictionary<String, String> props = new Hashtable<String, String>();
 		props.put("class", FileSystemAuthenticationProvider.class.getName());
+		props.put("protocol", AuthenticationProtocol.HTTP_BASIC.toString());
 		Activator.getContext().registerService(IAuthenticationProvider.class.getName(), this, props);
+		
+		dynamicProperties = new DynamicProperties("bindaas.authentication", defaultProperties , Activator.getContext());
 	}
 	
 	
@@ -35,9 +63,9 @@ public class FileSystemAuthenticationProvider implements IAuthenticationProvider
 	}
 
 	@Override
-	public BindaasUser login(String username, String password, Properties props)
+	public BindaasUser login(String username, String password)
 			throws AuthenticationException {
-		String pass = props.getProperty(username);
+		String pass = (String) dynamicProperties.get(username);
 		if(pass!=null && pass.equals(password))
 		{
 			return new BindaasUser(username);
@@ -47,7 +75,7 @@ public class FileSystemAuthenticationProvider implements IAuthenticationProvider
 	}
 
 	@Override
-	public BindaasUser login(String securityToken, Properties props)
+	public BindaasUser login(String securityToken)
 			throws AuthenticationException {
 		throw new AuthenticationException(securityToken);
 	}
@@ -58,16 +86,25 @@ public class FileSystemAuthenticationProvider implements IAuthenticationProvider
 		return new HashMap<String, String>(); // TODO implement later
 	}
 	
-	public Principal createPrincipal(final String username)
-	{
-		return new Principal() {
-			
-			@Override
-			public String getName() {
-			
-				return username;
-			}
-		};
+
+
+	@Override
+	public boolean isAuthenticationByAPIKeySupported() {
+
+		return true;
+	}
+
+
+	@Override
+	public BindaasUser loginUsingAPIKey(String api_key )
+			throws AuthenticationException {
+		String username = (String) dynamicProperties.get(api_key);
+		if(username!=null)
+		{
+			return new BindaasUser(username);
+		}
+		else
+			throw new AuthenticationException(api_key);
 	}
 
 }

@@ -9,6 +9,11 @@
 	<property name="uriTemplate" value="/"></property>
 </bean>
 
+<bean id="createWorkspace" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateWorkspace" >
+	<property name="uriTemplate" value="/createWorkspace/{workspace}"></property>
+</bean>
+
+
 <bean id="createProfile" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateProfile" >
 	<property name="uriTemplate" value="/{workspace}/createProfile.action"></property>
 </bean>
@@ -45,12 +50,44 @@
 	<property name="uriTemplate" value="/queryBrowser"></property>
 </bean>
 
+<bean id="manageUserRegistration" class="edu.emory.cci.bindaas.webconsole.servlet.action.ManageUserRegistration">
+	<property name="uriTemplate" value="/administration/manageUserRegistration"></property>
+</bean>
+
+<bean id="administration" class="edu.emory.cci.bindaas.webconsole.admin.AdminServlet">
+	<property name="uriTemplate" value="/administration"></property>
+	<property name="adminActionMap">
+		<map>
+			<entry key="serverAdministration" value-ref="serverAdminAction"></entry>
+			<entry key="userManagement" value-ref="userMgmtAction"></entry>
+			<entry key="securityConfig" value-ref="securityAction"></entry>
+			<entry key="emailConfig" value-ref="emailAction"></entry>
+			<entry key="checkLDAPConnection" value-ref="checkLDAPConnectionAction"></entry>
+		</map>
+	</property>
+</bean>
+
+<bean id="securityAction" class="edu.emory.cci.bindaas.webconsole.admin.SecurityAction">
+</bean>
+<bean id="emailAction" class="edu.emory.cci.bindaas.webconsole.admin.EmailAction">
+</bean>
+<bean id="serverAdminAction" class="edu.emory.cci.bindaas.webconsole.admin.ServerAdminAction">
+</bean>
+<bean id="userMgmtAction" class="edu.emory.cci.bindaas.webconsole.admin.UserManagementAction">
+</bean>
+<bean id="checkLDAPConnectionAction" class="edu.emory.cci.bindaas.webconsole.admin.CheckLDAPConnectionAction"></bean>
+
+<bean id="logoutAction" class="edu.emory.cci.bindaas.webconsole.servlet.action.LogoutAction">
+	<property name="uriTemplate" value="/logout"></property>
+	<property name="homepage" value="/dashboard/"></property>
+</bean>
 
 <bean id="mainController" class="edu.emory.cci.bindaas.webconsole.MainController">
 
 	<property name="requestHandlers">
 		<list>
 			<ref bean="dashboard"/>
+			<ref bean="createWorkspace"/>
 			<ref bean="createProfile"/>
 			<ref bean="createQueryEndpoint"/>
 			<ref bean="createSubmitEndpoint"/>
@@ -60,7 +97,9 @@
 			<ref bean="submitEndpointView"/>
 			<ref bean="profileView"/>
 			<ref bean="queryBrowserView"/>
-			
+			<ref bean="manageUserRegistration"/>
+			<ref bean="administration"/>
+			<ref bean="logoutAction"/>
 		</list>
 	</property>
 </bean>

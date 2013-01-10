@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
+import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.framework.api.IQueryModifier;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
@@ -23,6 +24,7 @@ import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
@@ -71,16 +73,17 @@ public class CreateDeleteEndpoint extends AbstractRequestHandler{
 		VelocityContext context = new VelocityContext(pathParameters);
 		
 		try {
-			IManagementTasks managementTask = Activator.getManagementTasksBean();
+			IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 			Profile profile = managementTask.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
-			JsonObject documentation = Activator.getProviderRegistry().lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			JsonObject documentation = Activator.getService(IProviderRegistry.class).lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
 			context.put("documentation" , documentation);
+			context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 			
 			template.merge(context, response.getWriter());
 		} catch (Exception e) {
 			log.error(e);
 			ErrorView.handleError(response, e);
-		}
+		} 
 		
 	}
 	
@@ -94,7 +97,7 @@ public class CreateDeleteEndpoint extends AbstractRequestHandler{
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getManagementTasksBean();
+		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
 			DeleteEndpoint deleteEndpoint = managementTask.createDeleteEndpoint(deleteEndpointName, workspace, profile, jsonObject, createdBy);
 			response.setContentType(StandardMimeType.JSON.toString());

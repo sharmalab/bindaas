@@ -58,5 +58,9 @@ public class BindaasUser implements Principal {
 		return properties.get(name);
 	}
 	
+	public String toString()
+	{
+		return String.format("Name = [%s] Domain = [%s]", name , domain);
+	}
 	
 }

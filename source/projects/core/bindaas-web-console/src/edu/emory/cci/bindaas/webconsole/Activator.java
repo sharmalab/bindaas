@@ -1,29 +1,30 @@
 package edu.emory.cci.bindaas.webconsole;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.tools.generic.EscapeTool;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
-
-import edu.emory.cci.bindaas.core.api.IManagementTasks;
-import edu.emory.cci.bindaas.core.api.IModifierRegistry;
-import edu.emory.cci.bindaas.core.api.IProviderRegistry;
-import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
 
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
-	private static VelocityEngine velocityEngine;
+	
 	private final static String TEMPLATE_DIRECTORY_PATH = "META-INF/templates";
-	private static List<ServiceRegistration> registrations;
-	private static EscapeTool escapeTool;
+	private final static EscapeTool escapeTool;
+	private static Log log = LogFactory.getLog(Activator.class);
+	
+	static {
+		
+		escapeTool = new EscapeTool();
+	}
 
 	public static BundleContext getContext() {
 		return context;
@@ -35,23 +36,24 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		registrations = new ArrayList<ServiceRegistration>();
-		velocityEngine = new VelocityEngine();
+		VelocityEngine velocityEngine = new VelocityEngine();
 		Properties props = new Properties();
 		props.put("resource.loader", "class");
 		props.put("class.resource.loader.class",
 				"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-		velocityEngine.init(props);
-		escapeTool = new EscapeTool();
+		props.put( RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, edu.emory.cci.bindaas.webconsole.util.VelocityLogger.class.getName());
+		velocityEngine.init(props);	
+		context.registerService(VelocityEngine.class.getName(), velocityEngine, null);
+		
 	}
-	
-	public static void addServiceRegistration(ServiceRegistration sreg)
-	{
-		if(registrations!=null)
-		{
-			registrations.add(sreg);
-		}
-	}
+//	
+//	public static void addServiceRegistration(ServiceRegistration sreg)
+//	{
+//		if(registrations!=null)
+//		{
+//			registrations.add(sreg);
+//		}
+//	}
 	
 
 	/*
@@ -59,28 +61,23 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;
-		if(registrations!=null)
-		{
-			for(ServiceRegistration sreg : registrations)
-			{
-				sreg.unregister();
-			}
-		}
+		Activator.context = null;	
 	}
 	
 	public static VelocityEngine getVelocityEngine()
 	{
-		return velocityEngine;
+		return getService(VelocityEngine.class);
 	}
 	
 	public static EscapeTool getEscapeTool()
 	{
 		return escapeTool;
 	}
+	
 	public static Template getVelocityTemplateByName(String templateName)
 	{
 		String templateLoc = TEMPLATE_DIRECTORY_PATH + "/" + templateName;
+		VelocityEngine velocityEngine = getService(VelocityEngine.class);
 		if(velocityEngine!=null)
 		{
 			return velocityEngine.getTemplate(templateLoc);
@@ -88,53 +85,36 @@ public class Activator implements BundleActivator {
 		else
 			return null;
 	}
-	
-	public static IManagementTasks getManagementTasksBean()
+		
+	public static <T> T  getService(Class<T> clazz)
 	{
-		ServiceReference sr = (ServiceReference) context.getServiceReference(IManagementTasks.class.getName());
+		ServiceReference sr = (ServiceReference) context.getServiceReference(clazz.getName());
 		if(sr!=null)
 		{
-			IManagementTasks managementTasks = (IManagementTasks) context.getService(sr);
-			return managementTasks;
+			T serviceObj = clazz.cast(context.getService(sr) ) ;
+			return serviceObj;
 		}
 		else
 			return null;
 	}
 	
-	public static IProviderRegistry getProviderRegistry()
+	public static <T> T  getService(Class<T> clazz , String filter)
 	{
-		ServiceReference sr = (ServiceReference) context.getServiceReference(IProviderRegistry.class.getName());
-		if(sr!=null)
-		{
-			IProviderRegistry providerReg = (IProviderRegistry) context.getService(sr);
-			return providerReg;
-		}
-		else
+		ServiceReference[] sr;
+		try {
+			sr = (ServiceReference[]) context.getServiceReferences(clazz.getName() , filter);
+			if(sr!=null && sr.length > 0)
+			{
+				T serviceObj = clazz.cast(context.getService(sr[0]) ) ;
+				return serviceObj;
+			}
+			else
+				return null;
+		} catch (InvalidSyntaxException e) {
+			log.error(e);
 			return null;
-	}
-	
-	public static IModifierRegistry getModifierRegistry()
-	{
-		ServiceReference sr = (ServiceReference) context.getServiceReference(IModifierRegistry.class.getName());
-		if(sr!=null)
-		{
-			IModifierRegistry modifierReg = (IModifierRegistry) context.getService(sr);
-			return modifierReg;
 		}
-		else
-			return null;
-	}
-	
-	public static IBindaasAdminService getBindaasAdminService()
-	{
-		ServiceReference sr = (ServiceReference) context.getServiceReference(IBindaasAdminService.class.getName());
-		if(sr!=null)
-		{
-			IBindaasAdminService adminServ = (IBindaasAdminService) context.getService(sr);
-			return adminServ;
-		}
-		else
-			return null;
+		
 	}
 
 }

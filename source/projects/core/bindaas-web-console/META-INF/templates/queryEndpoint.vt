@@ -150,12 +150,20 @@
   </div>
   
   <div class="row">
-    <div class="tweleve columns">
+    <div class="six columns">
       <h2>Bindaas</h2>
       <p><strong>Be worry free!</strong></p>
       <p>This is version <strong>2.0.0 Beta</strong></p>
       <hr />
     </div>
+    <div class="six columns">
+    	<ul class="inline-list">
+    		<li><h6>Welcome $bindaasUser</h6></li>
+    		<li><h6><a href="/dashboard/logout">logout</a></h6></li>
+    	</ul>
+      
+    </div>
+    
     
   </div>
 
@@ -165,7 +173,7 @@
   		<div class="row">
   		
   		<ul class="four side-nav">
-			  <li ><a href="#">Create Workspace</a></li>
+			  
 			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Profile</a></li>
 			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query Endpoint</a></li>
 			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete Endpoint</a></li>
@@ -180,7 +188,7 @@
     		<ul class="breadcrumbs">
   				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
   				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
-  				<li><a href="/dashboard/administration/manageUserRegistration"><strong>Administration</strong></a></li>
+  				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
   			</ul>
     </div>
     	<div class="row">

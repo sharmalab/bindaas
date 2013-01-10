@@ -5,5 +5,5 @@ import java.util.Properties;
 
 public interface IAuditProvider {
 
-	public void audit(Map<String,String> auditMessage , Properties props) throws Exception;
+	public void audit(Map<String,String> auditMessage) throws Exception;
 }

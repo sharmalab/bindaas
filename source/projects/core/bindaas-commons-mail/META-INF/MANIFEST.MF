@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Bindaas Commons Mail
+Bundle-SymbolicName: bindaas-commons-mail
+Bundle-Version: 1.0.0
+Bundle-Activator: edu.emory.cci.bindaas.commons.mail.Activator
+Bundle-Vendor: CCI Emory University
+Spring-Context: *
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: edu.emory.cci.bindaas.core.util,
+ javax.activation,
+ org.osgi.framework;version="1.3.0"
+Export-Package: edu.emory.cci.bindaas.commons.mail.api
+Bundle-ClassPath: mail.jar,
+ .

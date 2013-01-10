@@ -16,11 +16,13 @@ import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
+import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.framework.api.ISubmitPayloadModifier;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
@@ -66,14 +68,15 @@ public class CreateSubmitEndpoint extends AbstractRequestHandler{
 			HttpServletResponse response , Map<String,String> pathParameters)
 	{
 		VelocityContext context = new VelocityContext(pathParameters);
-		IModifierRegistry modifierRegistry = Activator.getModifierRegistry();
+		IModifierRegistry modifierRegistry = Activator.getService(IModifierRegistry.class);
 		Collection<ISubmitPayloadModifier> submitPayloadModifier = modifierRegistry.findAllSubmitPayloadModifiers();
 		context.put("submitPayloadModifiers" , submitPayloadModifier);
+		context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 		
 		try {
-			IManagementTasks managementTask = Activator.getManagementTasksBean();
+			IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 			Profile profile = managementTask.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
-			JsonObject documentation = Activator.getProviderRegistry().lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			JsonObject documentation = Activator.getService(IProviderRegistry.class).lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
 			context.put("documentation" , documentation);
 			
 			template.merge(context, response.getWriter());
@@ -94,7 +97,7 @@ public class CreateSubmitEndpoint extends AbstractRequestHandler{
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getManagementTasksBean();
+		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
 			SubmitEndpoint queryEndpoint = managementTask.createSubmitEndpoint(submitEndpointName, workspace, profile, jsonObject, createdBy);
 			response.setContentType(StandardMimeType.JSON.toString());

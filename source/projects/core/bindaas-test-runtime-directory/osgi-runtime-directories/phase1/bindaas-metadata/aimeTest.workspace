@@ -377,19 +377,6 @@
       "timeCreated": "Fri Dec 14 15:16:21 EST 2012",
       "createdBy": "nadirsaghar@gmail.com"
     },
-    "TEST4": {
-      "dataSource": {
-        "validated": true
-      },
-      "queryEndpoints": {},
-      "deleteEndpoints": {},
-      "submitEndpoints": {},
-      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
-      "providerVersion": 1,
-      "name": "TEST4",
-      "timeCreated": "Fri Dec 14 15:20:35 EST 2012",
-      "createdBy": "nadirsaghar@gmail.com"
-    },
     "TEST5": {
       "dataSource": {
         "validated": true

@@ -10,15 +10,40 @@ import java.util.Properties;
 import java.util.Set;
 
 import edu.emory.cci.bindaas.core.bundle.Activator;
+import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.security.api.IAuthorizationProvider;
 
 public class FileSystemAuthorizationProvider implements IAuthorizationProvider{
+
+	private DynamicProperties dynamicProperties;
+	private Properties defaultProperties;
+	
+	public DynamicProperties getDynamicProperties() {
+		return dynamicProperties;
+	}
+
+
+	public void setDynamicProperties(DynamicProperties dynamicProperties) {
+		this.dynamicProperties = dynamicProperties;
+	}
+
+
+	public Properties getDefaultProperties() {
+		return defaultProperties;
+	}
+
+
+	public void setDefaultProperties(Properties defaultProperties) {
+		this.defaultProperties = defaultProperties;
+	}
+
 
 	public void init()
 	{
 		Dictionary<String, String> props = new Hashtable<String, String>();
 		props.put("class", FileSystemAuthorizationProvider.class.getName());
 		Activator.getContext().registerService(IAuthorizationProvider.class.getName(), this, props);
+		dynamicProperties = new DynamicProperties("bindaas.authorization", defaultProperties , Activator.getContext());
 	}
 	
 	
@@ -35,8 +60,9 @@ public class FileSystemAuthorizationProvider implements IAuthorizationProvider{
 	
 	@Override
 	public boolean isAuthorized(Map<String, String> userAttributes,
-			String username, String resourceId, String actionId,
-			Properties props) throws Exception {
+			String username, String resourceId, String actionId) throws Exception {
+		
+		Properties props = (Properties) dynamicProperties.getProperties().clone();
 		
 		Map<String,Set<String>> rules = createRuleMap(props);
 		Map<String,Set<String>> roles = createRoleMap(props);

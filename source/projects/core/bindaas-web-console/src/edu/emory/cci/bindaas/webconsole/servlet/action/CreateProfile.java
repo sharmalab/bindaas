@@ -20,6 +20,7 @@ import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
@@ -73,12 +74,13 @@ public class CreateProfile extends AbstractRequestHandler{
 			HttpServletResponse response, Map<String, String> pathParameters)
 	{
 		VelocityContext context = new VelocityContext(pathParameters);
-		IProviderRegistry providerRegistry = Activator.getProviderRegistry();
+		IProviderRegistry providerRegistry = Activator.getService(IProviderRegistry.class);
 		if(providerRegistry!=null)
 		{
 			Collection<IProvider> listOfProviders = providerRegistry.findProviders();
 			context.put("providers" , listOfProviders);
 			context.put("esc", Activator.getEscapeTool());
+			context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 			try {
 				template.merge(context, response.getWriter());
 			} catch (Exception e) {
@@ -104,7 +106,7 @@ public class CreateProfile extends AbstractRequestHandler{
 		String createdBy = ((Principal)request.getSession().getAttribute("loggedInUser")).getName();
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getManagementTasksBean();
+		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
 			Profile profile = managementTask.createProfile(profileName, workspace, jsonObject, createdBy);
 			response.setContentType(StandardMimeType.JSON.toString());

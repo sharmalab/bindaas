@@ -37,7 +37,7 @@ public class CreateWorkspace extends AbstractRequestHandler{
 
 		if(request.getMethod().equalsIgnoreCase("post"))
 		{
-			doAction(request, response);
+			doCreate(request, response , pathParameters);
 		}
 		
 		else
@@ -46,15 +46,15 @@ public class CreateWorkspace extends AbstractRequestHandler{
 		}
 	}
 	
-	private void doAction(HttpServletRequest request,
-			HttpServletResponse response)
+	private void doCreate(HttpServletRequest request,
+			HttpServletResponse response, Map<String,String> pathParameters)
 	{
-		String workspaceName = request.getParameter("workspace");
+		String workspaceName = pathParameters.get("workspace");
 		String createdBy = ((Principal)request.getSession().getAttribute("loggedInUser")).getName();
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getManagementTasksBean();
+		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
 			Workspace workspace = managementTask.createWorkspace(workspaceName, jsonObject, createdBy);
 			response.setContentType(StandardMimeType.JSON.toString());

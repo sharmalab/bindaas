@@ -15,6 +15,7 @@ import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
 import edu.emory.cci.bindaas.framework.model.Workspace;
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 
@@ -42,17 +43,21 @@ public class QueryBrowserView extends AbstractRequestHandler {
 	public void handleRequest(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters)
 			throws Exception {
-		IManagementTasks managementTasks = Activator.getManagementTasksBean();
-		IBindaasAdminService adminService = Activator.getBindaasAdminService();
+		IManagementTasks managementTasks = Activator.getService(IManagementTasks.class);
+		IBindaasAdminService adminService = Activator.getService(IBindaasAdminService.class);
 		if(managementTasks!=null && adminService!=null)
 		{
 			Collection<Workspace> workspaces = managementTasks.listWorkspaces();
 			VelocityContext context = new VelocityContext();
 			context.put("workspaces", workspaces);
+			context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 			
 			String serviceUrl = adminService.getProperty(BindaasConstants
 					.SERVICE_URL);
 			context.put("serviceUrl", serviceUrl);
+			
+			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
+			context.put("apiKey", admin.getProperty("apiKey"));
 			template.merge(context, response.getWriter());
 		}
 		else

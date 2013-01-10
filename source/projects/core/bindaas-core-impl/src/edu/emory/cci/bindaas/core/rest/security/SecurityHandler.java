@@ -5,11 +5,11 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.logging.Log;
@@ -18,6 +18,7 @@ import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.interceptor.security.DefaultSecurityContext;
 import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
+import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
@@ -36,13 +37,22 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private Log log = LogFactory.getLog(getClass());
 	private boolean enableAuthorization ;
 	private boolean enableAuthentication ;
-	private Properties authenticationProps;
-	private Properties authorizationProps;
+	
 	private String authenticationProviderClass;
 	private String authorizationProviderClass;
 	
+	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.API_KEY; // default
+	public final static String TOKEN = "token";
+	public final static String API_KEY = "api_key";
 	
 	
+	public AuthenticationProtocol getAuthenticationProtocol() {
+		return authenticationProtocol;
+	}
+	public void setAuthenticationProtocol(
+			AuthenticationProtocol authenticationProtocol) {
+		this.authenticationProtocol = authenticationProtocol;
+	}
 	public void setRequestId(Message message)
 	{
 		message.put("requestId", UUID.randomUUID().toString());
@@ -51,6 +61,86 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	{
 		// do init here
 	}
+	
+	private Principal handleHTTP_BASIC(Message message , IAuthenticationProvider authenticationProvider) throws Exception
+	{
+		String[] usernamePassword = extractUsernamePassword(message);
+		if(usernamePassword != null && authenticationProvider.isAuthenticationByUsernamePasswordSupported())
+		{
+			try {
+				Principal authenticatedUser = authenticationProvider.login(usernamePassword[0], usernamePassword[1] );
+				return authenticatedUser;
+			} catch (AuthenticationException e) {
+					log.error(e); // authentication failed
+					throw e;
+					
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+				throw e;
+			}
+		}
+		else
+		{
+			if(usernamePassword == null) throw new AuthenticationException("");
+			else
+				throw new Exception("Authentication module does not support authentication protocol [HTTP Basic]");
+		}
+		
+	}
+	private Principal handleSecurityToken(Message message,IAuthenticationProvider authenticationProvider) throws Exception
+	{
+		String securityToken = extractSecurityToken(message);
+		if(securityToken!=null && authenticationProvider.isAuthenticationBySecurityTokenSupported())
+		{
+			try {
+				Principal authenticatedUser = authenticationProvider.login(securityToken );
+				return authenticatedUser;
+			} catch (AuthenticationException e) {
+					log.error(e); // authentication failed
+					throw e;
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+				throw e;
+			}
+		
+		}
+		else
+		{
+			throw new Exception("Security Token must be provided for authentication");
+		}
+			
+	}
+	
+	private Principal handleAPI_KEY(Message message,IAuthenticationProvider authenticationProvider) throws Exception
+	{
+		MultivaluedMap<String, String> queryMap =  JAXRSUtils.getStructuredParams((String) message.get(Message.QUERY_STRING), "&", true , true);
+		if(queryMap!=null && queryMap.getFirst(API_KEY)!=null)
+		{
+			try {
+				Principal authenticatedUser = authenticationProvider.loginUsingAPIKey(queryMap.getFirst(API_KEY) ); // TODO
+				return authenticatedUser;
+			} catch (AuthenticationException e) {
+					log.error(e); // authentication failed
+					throw e;
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+				throw e;
+			}
+		}
+		else
+		{
+			throw new Exception("API_KEY must be provided for authentication");
+		}
+		
+		
+	}
+	
 	
 
 	@Override
@@ -67,50 +157,29 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 				return Response.serverError().entity("Error communicating with Authentication Module").build();
 			}
 			
-			String[] usernamePassword = extractUsernamePassword(message);
+			try {
 			
-			if(usernamePassword != null && authenticationProvider.isAuthenticationByUsernamePasswordSupported())
+				switch(authenticationProtocol)
+				{
+						default : 
+						case HTTP_BASIC : authenticatedUser = handleHTTP_BASIC(message, authenticationProvider); break;
+						case SECURITY_TOKEN : authenticatedUser = handleSecurityToken(message, authenticationProvider); break;
+						case API_KEY :authenticatedUser = handleAPI_KEY(message, authenticationProvider); break;		
+				}
+				
+			} 
+			catch(AuthenticationException authException)
 			{
-				try {
-					authenticatedUser = authenticationProvider.login(usernamePassword[0], usernamePassword[1], authenticationProps);
-				} catch (AuthenticationException e) {
-						log.error(e); // authentication failed
-						return Response.status(401).header("WWW-Authenticate", "Basic")
-								.build();
-				}
-				catch(Exception e)
-				{
-					log.error(e);
-					return Response.serverError().entity("Error in Authentication Module").build();
-				}
+				if(authenticationProtocol.equals(AuthenticationProtocol.HTTP_BASIC))
+					return Response.status(401).header("WWW-Authenticate", "Basic").build();
+				else
+					return Response.status(401).build();
 			}
-			else
+			catch(Exception e)
 			{
-				String securityToken = extractSecurityToken(message);
-				if(securityToken!=null && authenticationProvider.isAuthenticationBySecurityTokenSupported())
-				{
-					try {
-						authenticatedUser = authenticationProvider.login(securityToken, authenticationProps);
-					} catch (AuthenticationException e) {
-							log.error(e); // authentication failed
-							return Response.status(401).header("WWW-Authenticate", "Basic")
-									.build();
-					}
-					catch(Exception e)
-					{
-						log.error(e);
-						return Response.serverError().entity("Error in Authentication Module").build();
-					}
-				}
-				else if(usernamePassword == null && securityToken == null)
-				{
-					return Response.status(401).header("WWW-Authenticate", "Basic")
-							.build();
-				}
-				else{
-					return Response.serverError().entity("Authentication Module not configured correctly").build();
-				}
+				return Response.serverError().entity("Error in Authentication Module").build();
 			}
+			
 			
 			// at this stage user is authenticated and principal is set
 			
@@ -140,7 +209,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 				
 			}
 		}		
-
+		
 		setSecurityContext(message , authenticatedUser);
 		
 		return null;
@@ -165,25 +234,6 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		this.enableAuthentication = enableAuthentication;
 	}
 
-
-	public Properties getAuthenticationProps() {
-		return authenticationProps;
-	}
-
-
-	public void setAuthenticationProps(Properties authenticationProps) {
-		this.authenticationProps = authenticationProps;
-	}
-
-
-	public Properties getAuthorizationProps() {
-		return authorizationProps;
-	}
-
-
-	public void setAuthorizationProps(Properties authorizationProps) {
-		this.authorizationProps = authorizationProps;
-	}
 
 
 	
@@ -246,7 +296,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		
 		String actionId = request.getMethod();
 		
-		boolean result = authorizationProvider.isAuthorized(userAttributes, authenticatedUser.getName(), pathInfo, actionId, authorizationProps);
+		boolean result = authorizationProvider.isAuthorized(userAttributes, authenticatedUser.getName(), pathInfo, actionId);
 		
 		
 		return result;
@@ -255,8 +305,8 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 
 	private String extractSecurityToken(Message message) {
 		Map protocolHeaders = (Map) message.get(Message.PROTOCOL_HEADERS);
-		if (protocolHeaders.get("token") != null) {
-			List listOfValues = (List) protocolHeaders.get("token");
+		if (protocolHeaders.get(TOKEN) != null) {
+			List listOfValues = (List) protocolHeaders.get(TOKEN);
 			String token = (String) listOfValues.get(0);
 			return token;
 		}

@@ -97,7 +97,7 @@
     		<ul class="breadcrumbs">
   				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
   				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
-  				<li><a href="/dashboard/administration/manageUserRegistration"><strong>Administration</strong></a></li>
+  				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
   			</ul>
     </div>
     	

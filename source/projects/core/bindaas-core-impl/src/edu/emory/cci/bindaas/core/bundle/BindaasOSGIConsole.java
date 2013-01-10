@@ -68,7 +68,7 @@ public class BindaasOSGIConsole implements CommandProvider {
 	
 	public void _bindaas(CommandInterpreter ci)
 	{
-		
+		//TODO
 	}
 
 	public void _version(CommandInterpreter ci) {

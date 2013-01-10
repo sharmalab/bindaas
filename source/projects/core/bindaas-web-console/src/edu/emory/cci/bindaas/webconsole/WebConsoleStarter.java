@@ -24,6 +24,8 @@ import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
 import edu.emory.cci.bindaas.framework.api.IProvider;
+import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.PostSignupServlet;
+import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserRegistrationServlet;
 
 public class WebConsoleStarter {
 
@@ -31,6 +33,7 @@ public class WebConsoleStarter {
 	private MainController mainController;
 	private LoginAction loginAction;
 	private Log log = LogFactory.getLog(getClass());
+	private boolean initialized = false;
 	
 	
 	public MainController getMainController() {
@@ -55,74 +58,61 @@ public class WebConsoleStarter {
 
 	public void init() throws Exception
 	{
-//		Hashtable<String,String> mainControllerprops = new Hashtable<String,String>();
-//		mainControllerprops.put("alias", "/dashboard");
-//		mainControllerprops.put("init.message", "Dashboard");
-////		mainControllerprops.put("contextId", "web-console");
-//		
-//		Hashtable<String,String> loginServletprops = new Hashtable<String,String>();
-//		loginServletprops.put("alias", "/authenticate");
-//		loginServletprops.put("init.message", "Login Servlet");
-////		loginServletprops.put("contextId", "web-console");
-//		
 		Hashtable<String,String> loginFilterprops = new Hashtable<String,String>();
 		loginFilterprops.put("pattern", "/dashboard/.*");
 		loginFilterprops.put("init.message", "Login Filter");
-////		loginFilterprops.put("contextId", "web-console");
-//		
-//		Hashtable<String,String> servletContextProps = new Hashtable<String,String>();
-//		servletContextProps.put("contextId", "web-console");
-//
-////		Activator.addServiceRegistration( Activator.getContext().registerService(org.osgi.service.http.HttpContext.class.getName(), new CustomHttpContext() , servletContextProps));
-//		Activator.addServiceRegistration( Activator.getContext().registerService(Servlet.class.getName(), mainController , mainControllerprops));
-//	    Activator.addServiceRegistration( Activator.getContext().registerService(Servlet.class.getName(), loginAction , loginServletprops));
-//	    Activator.addServiceRegistration( Activator.getContext().registerService(Filter.class.getName(), loginAction , loginFilterprops));
-//	    registerStaticResources();
-		
+
 		String filter = "(objectclass=" + HttpService.class.getName() + ")";
 		final BundleContext context = Activator.getContext();
 		ServiceListener httpServiceListener = new ServiceListener() {
 			
 			@Override
 			public void serviceChanged(ServiceEvent sv) {
-				ServiceReference serviceRef = sv.getServiceReference();
-				      switch(sv.getType()) {
-				        case ServiceEvent.REGISTERED:
-				        case ServiceEvent.MODIFIED:
-				          {
-				        	  HttpService  service  = (HttpService) context.getService(serviceRef);
-				        	  // register
-				        	  HttpContext defaultContext = service.createDefaultHttpContext();
-								try {
-									service.registerResources("/foundation", "/foundation", defaultContext);
-									service.registerServlet("/dashboard", mainController, null, defaultContext);
-									service.registerServlet("/authenticate", loginAction, null, defaultContext);
+				if(!initialized)
+				{
+
+					ServiceReference serviceRef = sv.getServiceReference();
+					      switch(sv.getType()) {
+					        case ServiceEvent.REGISTERED:
+					        case ServiceEvent.MODIFIED:
+					          {
+					        	  HttpService  service  = (HttpService) context.getService(serviceRef);
+					        	  // register
+					        	  HttpContext defaultContext = service.createDefaultHttpContext();
+									try {
+										service.registerResources("/foundation", "/foundation", defaultContext);
+										service.registerServlet("/dashboard", mainController, null, defaultContext);
+										service.registerServlet("/authenticate", loginAction, null, defaultContext);
+										service.registerServlet("/postSignup", new PostSignupServlet(), null, defaultContext);
+										service.registerServlet("/userRegistration", new UserRegistrationServlet(), null, defaultContext);
+										
+										((org.apache.felix.http.api.ExtHttpService) service) .registerFilter(loginAction, "/dashboard/.*", null, 0 ,  defaultContext);
+										
+										
+										OpenIDAuth openIdAuth = new OpenIDAuth();
+										service.registerServlet(openIdAuth.getServletLocation(), openIdAuth, null, defaultContext);
+										
+										
+									} catch (Exception e) {
+											log.error(e);
+									}
 									
-									((org.apache.felix.http.api.ExtHttpService) service) .registerFilter(loginAction, "/dashboard/.*", null, 0 ,  defaultContext);
-									
-									
-									OpenIDAuth openIdAuth = new OpenIDAuth();
-									service.registerServlet(openIdAuth.getServletLocation(), openIdAuth, null, defaultContext);
-									
-									
-								} catch (Exception e) {
-										log.error(e);
-								}
-								
-				        	  
-				        	  break;
-				          }
-				         
-				        case ServiceEvent.UNREGISTERING :
-				        {
-				        	// do unregistration;
-				        	break;
-				        }
-				        
-				       default:
-				          break;
-				     }
-				   
+					        	  
+					        	  break;
+					          }
+					         
+					        case ServiceEvent.UNREGISTERING :
+					        {
+					        	// do unregistration;
+					        	break;
+					        }
+					        
+					       default:
+					          break;
+					     }
+					      
+					initialized = true;
+				}
 				
 			}
 		};

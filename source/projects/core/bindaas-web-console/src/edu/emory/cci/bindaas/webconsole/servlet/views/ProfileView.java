@@ -25,6 +25,7 @@ import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
@@ -78,7 +79,7 @@ public class ProfileView extends AbstractRequestHandler {
 	public void generateView(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters) throws Exception
 	{
-		IManagementTasks managementTasks = Activator.getManagementTasksBean();
+		IManagementTasks managementTasks = Activator.getService(IManagementTasks.class);
 		if(managementTasks!=null)
 		{
 			String workspace = pathParameters.get("workspace");
@@ -88,8 +89,9 @@ public class ProfileView extends AbstractRequestHandler {
 			VelocityContext context = new VelocityContext(pathParameters);
 			context.put("esc", Activator.getEscapeTool());
 			context.put("profile", profile);
+			context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 			
-			IProviderRegistry providerRegistry = Activator.getProviderRegistry();
+			IProviderRegistry providerRegistry = Activator.getService(IProviderRegistry.class);
 			if(providerRegistry!=null)
 			{
 				IProvider provider = providerRegistry.lookupProvider(profile.getProviderId(), profile.getProviderVersion());
@@ -119,7 +121,7 @@ public class ProfileView extends AbstractRequestHandler {
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getManagementTasksBean();
+		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
 			if(managementTask!=null){ 
 				Profile profile = managementTask.updateProfile(profileName, workspace, jsonObject, createdBy);
@@ -146,7 +148,7 @@ public void deleteProfile(HttpServletRequest request,
 	String workspace = pathParameters.get("workspace");
 	String profileName = pathParameters.get("profile");
 	
-	IManagementTasks managementTask = Activator.getManagementTasksBean();
+	IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 	try {
 		if(managementTask!=null){
 			managementTask.deleteProfile(workspace,profileName);

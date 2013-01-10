@@ -3,10 +3,41 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-<bean id="authenticationProvider" class="edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider" init-method="init"></bean>
-<bean id="authorizationProvider" class="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider" init-method="init"></bean>
-<bean id="auditProvider" class="edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider" init-method="init"></bean>
+	<bean id="authenticationProvider"
+		class="edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider"
+		init-method="init">
+		<property name="defaultProperties">
+			<props>
+				<prop key="admin">password</prop>
+			</props>
+		</property>
 
+	</bean>
+	<bean id="authorizationProvider"
+		class="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider"
+		init-method="init">
+		<property name="defaultProperties">
+			<props>
+				<prop key="user.admin">admin</prop>
+				<prop key="user.nadir">admin</prop>
+				<prop key="resource.http://localhost">admin</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="auditProvider"
+		class="edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider"
+		init-method="init">
+
+		<property name="defaultProperties">
+			<props>
+				<prop key="audit.file">audit.data</prop>
+			</props>
+		</property>
+
+	</bean>
+	<bean id="dbAuthenticationProvider"
+		class="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"
+		init-method="init"></bean>
 
 </beans>
 

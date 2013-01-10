@@ -23,9 +23,6 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("class", LDAPAuthenticationProvider.class.getName());
-		context.registerService(IAuthenticationProvider.class.getName()	, new LDAPAuthenticationProvider()	, props);
 	}
 
 	/*

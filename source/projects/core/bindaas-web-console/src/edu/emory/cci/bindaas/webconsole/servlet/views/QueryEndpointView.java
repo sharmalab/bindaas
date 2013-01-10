@@ -18,6 +18,7 @@ import com.google.gson.JsonObject;
 import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
+import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
 import edu.emory.cci.bindaas.framework.api.IQueryModifier;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
@@ -26,6 +27,7 @@ import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
@@ -79,7 +81,7 @@ public class QueryEndpointView extends AbstractRequestHandler {
 	public void generateView(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters) throws Exception
 	{
-		IManagementTasks managementTasks = Activator.getManagementTasksBean();
+		IManagementTasks managementTasks = Activator.getService(IManagementTasks.class);
 		if(managementTasks!=null)
 		{
 			String workspace = pathParameters.get("workspace");
@@ -90,8 +92,9 @@ public class QueryEndpointView extends AbstractRequestHandler {
 			VelocityContext context = new VelocityContext(pathParameters);
 			context.put("esc", Activator.getEscapeTool());
 			context.put("queryEndpoint", queryEndpoint);
+			context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 			
-			IModifierRegistry modifierRegistry = Activator.getModifierRegistry();
+			IModifierRegistry modifierRegistry = Activator.getService(IModifierRegistry.class);
 			Collection<IQueryModifier> queryModifiers = modifierRegistry.findAllQueryModifier();
 			Collection<IQueryResultModifier> queryResultModifiers = modifierRegistry.findAllQueryResultModifiers();
 			context.put("queryModifiers" , queryModifiers);
@@ -99,13 +102,15 @@ public class QueryEndpointView extends AbstractRequestHandler {
 			
 			
 			Profile prof = managementTasks.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
-			JsonObject documentation = Activator.getProviderRegistry().lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			JsonObject documentation = Activator.getService(IProviderRegistry.class).lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
 			context.put("documentation" , documentation);
 			
-			IBindaasAdminService adminService = Activator.getBindaasAdminService();
+			IBindaasAdminService adminService = Activator.getService(IBindaasAdminService.class);
 			String serviceUrl = adminService.getProperty(BindaasConstants
 					.SERVICE_URL);
 			context.put("serviceUrl", serviceUrl);
+			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
+			context.put("apiKey", admin.getProperty("apiKey"));
 			
 			template.merge(context, response.getWriter());
 		}
@@ -126,7 +131,7 @@ public class QueryEndpointView extends AbstractRequestHandler {
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getManagementTasksBean();
+		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
 			if(managementTask!=null){
 				QueryEndpoint queryEndpoint = managementTask.updateQueryEndpoint(queryEndpointName, workspace, profile, jsonObject, createdBy);
@@ -154,7 +159,7 @@ public void deleteQueryEndpoint(HttpServletRequest request,
 	String profile = pathParameters.get("profile");
 	String queryEndpointName = pathParameters.get("queryEndpoint");
 	
-	IManagementTasks managementTask = Activator.getManagementTasksBean();
+	IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 	try {
 		if(managementTask!=null){
 			QueryEndpoint queryEndpoint = managementTask.deleteQueryEndpoint(workspace, profile, queryEndpointName);

@@ -55,52 +55,34 @@
 <!-- Security Handlers -->
 
 <bean id="securityHandler" class="edu.emory.cci.bindaas.core.rest.security.SecurityHandler" init-method="init" >
-	<property name="authenticationProps">
-		<props>
-			<prop key="admin" >password</prop>
-		</props>
-	</property>
-	
-	<property name="authorizationProps">
-		<props>
-			<prop key="user.admin" >admin</prop>
-			<prop key="user.nadir" >admin</prop>
-			<prop key="resource.http://localhost" >admin</prop>
-		</props>
-	</property>
-	
+
 </bean>
 
 <bean id="auditLogger" class="edu.emory.cci.bindaas.core.rest.security.AuditInLogger" >
-	<property name="auditProviderProps">
-		<props>
-			<prop key="audit.file">audit.data</prop>
-		</props>
-	</property>
 </bean>
 
 <!-- Bindaas Initializer -->
 
 <bean id="bindaasInitializer" class="edu.emory.cci.bindaas.core.bundle.BindaasInitializer" init-method="init" >
 	<property name="auditModule" ref="auditLogger"></property>
-	<property name="bindaasAuditPropsFileName" value="bindaas.audit.properties"></property>
-	<property name="bindaasAuthenticationPropsFileName" value="bindaas.authentication.properties"></property>
-	<property name="bindaasAuthorizationPropsFileName" value="bindaas.authorization.properties"></property>
-	<property name="bindaasPropertyFileName" value="bindaas.properties"></property>
 	
-	<property name="bindaasProperties" >
+	<property name="defaultBindaasProperties" >
 		<props>
 			<prop key="host">localhost</prop>
 			<prop key="port">9099</prop>
 			<prop key="protocol">http</prop>
 			<prop key="authentication.status">false</prop>
-			<prop key="authentication.provider.class">edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider</prop> <!--  Set correct providers -->
+			<prop key="authentication.provider.class">edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider</prop> <!--  Set correct providers -->
 			<prop key="authorization.status">false</prop>
 			<prop key="authorization.provider.class">edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider</prop>
 			<prop key="audit.status">false</prop>
 			<prop key="audit.provider.class">edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider</prop>
+			<prop key="service.ui.url">http://127.0.0.1:8080</prop>
+			<prop key="webconsole.security.admin">admin</prop>
+			<prop key="webconsole.security.userRegistration.notification.enable">true</prop>
+			<prop key="webconsole.security.userRegistration.notification.recepient">admin@mycompany.org</prop>
+			<prop key="webconsole.security.method">default</prop> <!--  choose from default/ldap -->
 			
-		
 		</props>
 	
 	</property>

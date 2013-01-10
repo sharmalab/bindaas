@@ -30,7 +30,7 @@ public interface IAuthenticationProvider {
 	 * @return
 	 * @throws Exception when authentication fails
 	 */
-	public BindaasUser login(String username , String password , Properties props) throws AuthenticationException;
+	public BindaasUser login(String username , String password ) throws AuthenticationException;
 	
 	/**
 	 * 
@@ -39,12 +39,19 @@ public interface IAuthenticationProvider {
 	 * @return Username of the authentication user
 	 * @throws Exception when authentication fails
 	 */
-	public BindaasUser login(String securityToken , Properties props) throws AuthenticationException;
+	public BindaasUser login(String securityToken ) throws AuthenticationException;
 	
 	/**
 	 * Return description of properties required to configure this auth provider. key = property name , value = description
 	 * @return
 	 */
 	public Map<String,String> getPropertyDescription() ;
+	
+	/**
+	 * Support for API Key
+	 * @return
+	 */
+	public boolean isAuthenticationByAPIKeySupported();
+	public BindaasUser loginUsingAPIKey(String securityToken ) throws AuthenticationException;
 	
 }
