@@ -92,6 +92,9 @@ public class WebConsoleStarter {
 										OpenIDAuth openIdAuth = new OpenIDAuth();
 										service.registerServlet(openIdAuth.getServletLocation(), openIdAuth, null, defaultContext);
 										
+										CILogonAuth ciLogonAuth = new CILogonAuth();
+										service.registerServlet("/cilogon", ciLogonAuth, null, defaultContext);
+										
 										
 									} catch (Exception e) {
 											log.error(e);

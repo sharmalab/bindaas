@@ -96,6 +96,7 @@
    	 	<div class="row">
    	 		<fieldset>
     			<legend><h3>Submit Endpoint : $submitEndpoint.getName()</h3></legend>
+    				<a data-reveal-id="trySubmit" class="radius small button" href="#">Try Me !!</a>
     				<h6 class="subheader">Last Modified : $submitEndpoint.getTimeCreated()</h6>
     				<h6 class="subheader">Modified By : $submitEndpoint.getCreatedBy()</h6>
     				<form class="custom">
@@ -265,8 +266,8 @@
     				</form>		
     			</fieldset>
     		</div>
-   	 	<div class="row">
-   	 	</div>
+   	 	
+
     </div>
 	<div class="four columns">
 		#if ($documentation.get("submitEndpointHelp"))
@@ -274,7 +275,60 @@
 		#end
 	</div>
   </div>
-
+<div id="trySubmit" class="reveal-modal xlarge">
+ 		<ul class="accordion">
+	  			<li>
+	    			<div class="title">
+	  					<div class="row">
+	    					<div class="two columns"><a class="radius button">POST</a></div>
+	    					<div class="ten columns left-align" ><h4>$submitEndpoint.getName()</h4><h4 class="subheader">$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()</h4></div>
+	    				</div>
+	    	
+	         
+	    			</div>
+	    			<div class="content">
+	    				<div class="row">$submitEndpoint.getDescription()</div>
+							<div class="row">
+								
+								#if ($submitEndpoint.getType().toString().equals('MULTIPART'))
+									
+									<form action="$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()?api_key=$apiKey" method="post" enctype="multipart/form-data" target="_blank">
+    											<label>File:</label>
+    											<input name="myfile" type="file" />
+          							<input type="submit" name="submitBtn" value="Upload" />
+									</form>
+									 
+									
+									
+								#else
+									<textarea id="inputText"></textarea>
+									<a class="button secondary" onclick="executeAPI()" >Submit</a>
+								#end
+								
+									
+								<script>
+									function executeAPI()
+									{
+										var url = '$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()' + "?api_key=$apiKey&";
+										
+										
+											var text = $("#inputText").attr("value");
+											$.post(url , text , function (data , status , response){
+												alert(response.responseText);
+												
+											} );
+									}
+									
+									
+								</script>
+						</div>
+							
+					
+	    			</div>
+	  			</li>
+	  	</ul>	
+  <a class="close-reveal-modal">&#215;</a>
+  </div>
   
 </body>
 </html>

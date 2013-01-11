@@ -115,6 +115,14 @@
 				<img src="http://www.ige4.com/images/openid/yahoo.png" width="143" height="39" border="0" alt="Submit this form" name="sub_but" />
 			</a>
 	</form>
+	
+	<form action="/cilogon?loginTarget=/postSignup&attribute2set=newUserSignup" method="post">
+<input type="image" name="cisubmit2" id="cisubmit2" 
+src="https://cilogon.org/images/cilogon-ci-32-g.png" 
+alt="CILogon Service" 
+title="Click to get a certificate via the CILogon Service."
+style="cursor:help;" />
+</form>
 	  </fieldset>
 	
     </div>

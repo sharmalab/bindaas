@@ -15,9 +15,11 @@ import org.apache.velocity.tools.generic.EscapeTool;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
+import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
 import edu.emory.cci.bindaas.framework.api.ISubmitPayloadModifier;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
@@ -98,6 +100,13 @@ public class SubmitEndpointView extends AbstractRequestHandler {
 			Profile prof = managementTasks.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
 			JsonObject documentation = Activator.getService(IProviderRegistry.class).lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
 			context.put("documentation" , documentation);
+			
+			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
+			context.put("apiKey", admin.getProperty("apiKey"));
+			IBindaasAdminService adminService = Activator.getService(IBindaasAdminService.class);
+			String serviceUrl = adminService.getProperty(BindaasConstants
+					.SERVICE_URL);
+			context.put("serviceUrl", serviceUrl);
 			template.merge(context, response.getWriter());
 		}
 		else
