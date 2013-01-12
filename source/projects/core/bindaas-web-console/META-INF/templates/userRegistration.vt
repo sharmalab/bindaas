@@ -103,26 +103,26 @@
 	
 	 	 <fieldset>
 	
-		    <legend><h4>Sign Up using following Accounts</h4></legend>
+		    <legend><h4>Sign Up using OpenID</h4></legend>
 	<form action="/openidlogin?loginTarget=/postSignup&attribute2set=newUserSignup&identifier=https://www.google.com/accounts/o8/id" method="post" name="google">
 			<a href="javascript:document.google.submit()">
-				<img src="http://beta.clickhint.com/assets/images/google-openid.png" width="143" height="39" border="0" alt="Submit this form" name="sub_but" />
+				<img src="http://beta.clickhint.com/assets/images/google-openid.png" width="143" height="39" border="0" alt="Google" name="sub_but" />
 			</a>
 	</form>
 	
 	<form action="/openidlogin?loginTarget=/postSignup&attribute2set=newUserSignup&identifier=https://me.yahoo.com" method="post" name="yahoo">
 			<a href="javascript:document.yahoo.submit()">
-				<img src="http://www.ige4.com/images/openid/yahoo.png" width="143" height="39" border="0" alt="Submit this form" name="sub_but" />
+				<img src="http://www.holistickey.com/wp-content/uploads/2012/09/Yahoo-icon1.jpg" width="143" height="39" border="0" alt="Yahoo!" name="sub_but" />
 			</a>
 	</form>
-	
+<!-- 
 	<form action="/cilogon?loginTarget=/postSignup&attribute2set=newUserSignup" method="post">
 <input type="image" name="cisubmit2" id="cisubmit2" 
 src="https://cilogon.org/images/cilogon-ci-32-g.png" 
 alt="CILogon Service" 
 title="Click to get a certificate via the CILogon Service."
 style="cursor:help;" />
-</form>
+</form>  -->
 	  </fieldset>
 	
     </div>
