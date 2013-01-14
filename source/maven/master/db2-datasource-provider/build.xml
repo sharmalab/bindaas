@@ -16,7 +16,7 @@
 
 	<property name="project.home" value="../../../projects/plugins/data_providers/db2-datasource-provider"></property>
 	<property name="build.src" value="src/main/java"></property>
-	<property name="build.resources" value="src/main/resources"></property>
+	<property name="build.resources" value="src/main/resources"></property><property name="build.target" value="target"></property>
 	<property name="dist.placeholder.dir" value="../dist"></property>
     <!-- ================================= 
           target: copyProject              
@@ -42,8 +42,10 @@
     <target name="clean">
     	<delete verbose="true" dir="${build.src}" />
     	<delete verbose="true" dir="${build.resources}" />
+    	    	<delete verbose="true" dir="${build.target}" />
     	<mkdir dir="${build.src}"/>
     	<mkdir dir="${build.resources}"/>
+    	    	<mkdir dir="${build.target}"/>
     	
     </target>
 	<target name="dist">

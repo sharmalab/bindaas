@@ -46,7 +46,7 @@
 					</execution>
 					<execution>
 						<id>copy-source</id>
-						<phase>prepare-package</phase>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -175,5 +175,6 @@
 		<module>bindaas-commons-h2-hibernate</module>
 		<module>bindaas-commons-mail</module>
 		<module>bindaas-commons-openid-helper</module>
+		<module>bindaas-commons-cilogon-helper</module>
 	</modules>
 </project>
