@@ -80,7 +80,7 @@
 	#foreach ($profile in $workspace.getProfiles().values())
 		
 	<div class="row">
-	<h3 class="subheader">/workspace:$workspace.getName()/profile:$profile.getName()</h3>
+	<h3 class="subheader">/Project:$workspace.getName()/Database Profile:$profile.getName()</h3>
 	    <div class="twelve columns">
 			<ul class="accordion">
 	  			#foreach ($queryEndpoint in $profile.getQueryEndpoints().values())

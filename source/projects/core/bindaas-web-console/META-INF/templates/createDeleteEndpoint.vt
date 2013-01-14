@@ -11,7 +11,7 @@
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width" />
 
-  <title>Create Delete Endpoint</title>
+  <title>Create Delete API</title>
   
   <!-- Included CSS Files (Uncompressed) -->
   <!--
@@ -135,10 +135,10 @@
   		
   		<ul class="four side-nav">
 			  
-			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Profile</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query Endpoint</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete Endpoint</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createSubmitEndpoint.action">Create Submit Endpoint</a></li>
+			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Database Profile</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query API</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete API</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createSubmitEndpoint.action">Create Submit API</a></li>
 		</ul>	
   		</div>
   		
@@ -153,15 +153,15 @@
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/Workspace:$workspace/Profile:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
+    		<h3 class="subheader">/Project:$workspace/Database Profile:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
     	</div>
     	<div class="row">
    	 		<fieldset>
-    			<legend><h3>Create Delete Endpoint</h3></legend>
+    			<legend><h3>Create Delete API</h3></legend>
     				<form class="custom" action="createDeleteTemplate.action" method="get">
     					<input type="hidden" value="$profile" name="profileName" />
     					<input type="hidden" value="$workspace" name="workspaceName" />
-    					<label>Delete Endpoint Name</label>
+    					<label>Delete API Name</label>
     					<input type="text" placeholder="name" id="deleteEndpointName"/>
     					<label>Description</label>
     					<input type="text" placeholder="description" id="deDescription"/>

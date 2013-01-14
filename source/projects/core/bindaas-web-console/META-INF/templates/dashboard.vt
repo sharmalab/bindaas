@@ -79,7 +79,7 @@
     	
    	 	<div class="row">
    	 		<fieldset>
-    			<legend><h3>Workspaces</h3></legend>
+    			<legend><h3>Projects</h3></legend>
     			
     			<ul class="accordion">
     				
@@ -93,16 +93,16 @@
     						<p>Created by <kbd>$workspace.getCreatedBy()</kbd></p>
     						<p>Metadata <kbd>$workspace.getParams().toString()</kbd></p>
     						
-    						<h6>Profiles</h6>
+    						<h6>Database Profiles</h6>
     						<table>
     							<thead>
     								<tr>
     									<th>Name</th>
     									<th>Date Created</th>
     									<th>Created By</th>
-    									<th>Query Endpoints</th>
-    									<th>Submit Endpoints</th>
-    									<th>Delete Endpoints</th>
+    									<th>Query APIs</th>
+    									<th>Submit APIs</th>
+    									<th>Delete APIs</th>
     								</tr>
     							</thead>
     							<tbody>
@@ -151,9 +151,9 @@
     		</fieldset>
      	</div>
      	<div class="row" id="cw_container">
-     		<a class="button medium" onclick="$('div.reveal-modal').reveal()" >Create Workspace >> </a>
+     		<a class="button medium" onclick="$('div.reveal-modal').reveal()" >Create Project >> </a>
      		<div class="reveal-modal large">
-     			<label>Workspace Name</label>
+     			<label>Project Name</label>
      			<input type="text" id="cw_workspaceName" />
      			<a class="button" onclick="createWorkspaceAction()" >Submit</a>
      			<a class="close-reveal-modal" onclick="$('#cw_workspaceName').attr('value', '');">&#215;</a>

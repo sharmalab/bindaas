@@ -11,7 +11,7 @@
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width" />
 
-  <title>Create Query Endpoint</title>
+  <title>Create Query API</title>
   
   <!-- Included CSS Files (Uncompressed) -->
   <!--
@@ -135,10 +135,10 @@
   		
   		<ul class="four side-nav">
 			  
-			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Profile</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query Endpoint</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete Endpoint</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createSubmitEndpoint.action">Create Submit Endpoint</a></li>
+			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Database Profile</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query API</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete API</a></li>
+			  <li ><a href="/dashboard/$workspace/$profile/createSubmitEndpoint.action">Create Submit API</a></li>
 		</ul>	
   		</div>
   		
@@ -153,16 +153,16 @@
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/Workspace:$workspace/Profile:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
+    		<h3 class="subheader">/Project:$workspace/Database Profile:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
     	</div>
    	 	<div class="row">
    	 		<fieldset>
-    			<legend><h3>Create Query Endpoint</h3></legend>
+    			<legend><h3>Create Query API</h3></legend>
     				<form class="custom"  >
     					<input type="hidden" value="$profile" name="profileName" />
     					<input type="hidden" value="$workspace" name="workspaceName" />
     					<input type="hidden" name="jsonRequest" id="jsonRequest"/>
-    					<label>Query Endpoint Name</label>
+    					<label>Query API Name</label>
     					<input type="text" placeholder="name" name="qeName" id="qeName"/>
     					<label>Description</label>
     					<input type="text" placeholder="description" id="qeDescription"/>

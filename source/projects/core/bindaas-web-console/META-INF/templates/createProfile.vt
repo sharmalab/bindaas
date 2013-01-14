@@ -11,7 +11,7 @@
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width" />
 
-  <title>Create Profile</title>
+  <title>Create Database Profile</title>
   
   <!-- Included CSS Files (Uncompressed) -->
   <!--
@@ -73,7 +73,7 @@
   		
   		<ul class="four side-nav">
 			  
-			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Profile</a></li>
+			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Database Profile</a></li>
 		</ul>	
   		</div>
   		
@@ -88,11 +88,11 @@
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/Workspace:${workspace}/</h3>
+    		<h3 class="subheader">/Project:${workspace}/</h3>
     	</div>
    	 	<div class="row">
    	 		<fieldset>
-    			<legend><h3>Create Profile</h3></legend>
+    			<legend><h3>Create Database Profile</h3></legend>
     				<form class="custom" action="createProfile.action" method="get">
     					<input type="hidden" value="${workspace}"  name="workspace"/>
     					<input type="hidden"  name="jsonRequest"/>
