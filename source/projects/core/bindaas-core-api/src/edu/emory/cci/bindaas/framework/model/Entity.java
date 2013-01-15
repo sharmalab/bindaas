@@ -16,10 +16,19 @@ public class Entity implements Cloneable{
 	@Expose private String name;
 	@Expose private String timeCreated; // TODO : change to DATE later
 	@Expose private String createdBy;
+	@Expose private String description;
 	
+	
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	public Entity()
 	{
 		timeCreated = GregorianCalendar.getInstance().getTime().toString();
+		description = "";
 	}
 	public String getName() {
 		return name;

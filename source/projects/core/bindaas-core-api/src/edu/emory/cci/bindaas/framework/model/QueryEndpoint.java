@@ -18,15 +18,8 @@ public class QueryEndpoint extends Entity {
 	@Expose private JsonObject outputFormat;
 	@Expose private ModifierEntry queryModifiers;
 	@Expose private ModifierEntry queryResultModifiers;
-	@Expose private String description;
 	
 	
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
 	public String getQueryTemplate() {
 		return queryTemplate;
 	}

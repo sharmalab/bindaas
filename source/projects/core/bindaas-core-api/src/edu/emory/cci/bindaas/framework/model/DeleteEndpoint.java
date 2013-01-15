@@ -13,14 +13,9 @@ public class DeleteEndpoint extends Entity{
 	@Expose private List<String> tags;
 	@Expose private Map<String,BindVariable> bindVariables;
 	@Expose private Stage stage;
-	@Expose private String description;
 	
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+	
+	
 	public String getQueryTemplate() {
 		return queryTemplate;
 	}
