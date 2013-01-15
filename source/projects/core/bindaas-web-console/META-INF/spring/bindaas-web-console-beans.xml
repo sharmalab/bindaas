@@ -13,6 +13,10 @@
 	<property name="uriTemplate" value="/createWorkspace/{workspace}"></property>
 </bean>
 
+<bean id="workspaceView" class="edu.emory.cci.bindaas.webconsole.servlet.views.WorkspaceView" >
+	<property name="uriTemplate" value="/workspace/{workspace}"></property>
+</bean>
+
 
 <bean id="createProfile" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateProfile" >
 	<property name="uriTemplate" value="/{workspace}/createProfile.action"></property>
@@ -87,6 +91,7 @@
 	<property name="requestHandlers">
 		<list>
 			<ref bean="dashboard"/>
+			<ref bean="workspaceView"/>
 			<ref bean="createWorkspace"/>
 			<ref bean="createProfile"/>
 			<ref bean="createQueryEndpoint"/>

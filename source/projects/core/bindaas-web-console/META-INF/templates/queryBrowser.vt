@@ -4,143 +4,177 @@
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8" />
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
 
-  <!-- Set the viewport width to device width for mobile -->
-  <meta name="viewport" content="width=device-width" />
+		<!-- Set the viewport width to device width for mobile -->
+		<meta name="viewport" content="width=device-width" />
 
-  <title>Bindaas Query API Browser</title>
-  
-  <!-- Included CSS Files (Uncompressed) -->
-  <!--
-  <link rel="stylesheet" href="stylesheets/foundation.css">
-  -->
-  
-  <!-- Included CSS Files (Compressed) -->
-  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
-  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+		<title>Bindaas Query API Browser</title>
 
-  <script type="text/javascript" src="/foundation/media/js/jquery.dataTables.js"></script>
-  
-  <!-- IE Fix for HTML5 Tags -->
-  <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+		<!-- Included CSS Files (Uncompressed) -->
+		<!--
+		<link rel="stylesheet" href="stylesheets/foundation.css">
+		-->
 
-</head>
-<body>
-	<!-- Latest version of jQuery -->
-  <script src="/foundation/javascripts/jquery.js"></script>
+		<!-- Included CSS Files (Compressed) -->
+		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
 
-  <!-- Included JS Files (Unminified) -->
-  <!-- [JS Files] -->
-  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+		<script type="text/javascript" src="/foundation/media/js/jquery.dataTables.js"></script>
 
-  <!-- Included JS Files (Minified) -->
-  <script src="/foundation/javascripts/foundation.min.js"></script>
+		<!-- IE Fix for HTML5 Tags -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
 
-  <!-- Initialize JS Plugins -->
-  <script src="/foundation/javascripts/app.js"></script>
+	</head>
+	<body>
+		<!-- Latest version of jQuery -->
+		<script src="/foundation/javascripts/jquery.js"></script>
 
-  <div class="row">
-    <div class="six columns">
-      <h2>Bindaas</h2>
-      <p><strong>Be worry free!</strong></p>
-      <p>This is version <strong>2.0.0 Beta</strong></p>
-      <hr />
-    </div>
-    <div class="six columns">
-    	<ul class="inline-list">
-    		<li><h6>Welcome $bindaasUser</h6></li>
-    		<li><h6><a href="/dashboard/logout">logout</a></h6></li>
-    	</ul>
-      
-    </div>
-    
-    
-  </div>
-<div class="row">
-	<div class="twelve columns">
+		<!-- Included JS Files (Unminified) -->
+		<!-- [JS Files] -->
+		<!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+		<!-- Included JS Files (Minified) -->
+		<script src="/foundation/javascripts/foundation.min.js"></script>
+
+		<!-- Initialize JS Plugins -->
+		<script src="/foundation/javascripts/app.js"></script>
+
 		<div class="row">
-    		<ul class="breadcrumbs">
-  				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
-  				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
-  				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
-  			</ul>
-    </div>
-    <div class="row"><h2>Query API Browser</h2></div>
-		
-	</div>
-	
-</div>
+			<div class="six columns">
+				<h2>Bindaas</h2>
+				<p>
+					<strong>Be worry free!</strong>
+				</p>
+				<p>
+					This is version <strong>2.0.0 Beta</strong>
+				</p>
+				<hr />
+			</div>
+			<div class="six columns">
+				<ul class="inline-list">
+					<li>
+						<h6>Welcome $bindaasUser</h6>
+					</li>
+					<li>
+						<h6><a href="/dashboard/logout">logout</a></h6>
+					</li>
+				</ul>
 
-#foreach ($workspace in $workspaces)
-	#foreach ($profile in $workspace.getProfiles().values())
-		
-	<div class="row">
-	<h3 class="subheader">/Project:$workspace.getName()/Database Profile:$profile.getName()</h3>
-	    <div class="twelve columns">
-			<ul class="accordion">
-	  			#foreach ($queryEndpoint in $profile.getQueryEndpoints().values())
-	  			<li>
-	    			<div class="title">
-	  					<div class="row">
-	    					<div class="two columns"><a class="radius button">GET</a></div>
-	    					<div class="ten columns left-align" ><h4>$queryEndpoint.getName()</h4><h4 class="subheader">$serviceUrl/services/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()</h4></div>
-	    				</div>
-	    	
-	         
-	    			</div>
-	    			<div class="content">
-	    				<div class="row">$queryEndpoint.getDescription()</div>
-							<div class="row" >
-								<table>
-									<thead>
-										<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
-									</thead>
-									<tbody>
-										#foreach ($bindVar in $queryEndpoint.getBindVariables().values())
-											<tr><td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td><input type="text" id="$bindVar.getName()" /></td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td></tr>
-										#end
-										
-									</tbody>
-								</table>
-								<a class="button secondary" onclick="executeAPI('$serviceUrl/services/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()' , this)" >Submit</a>	
-								<script>
-									function executeAPI(url , buttonClicked)
-									{
-										var queryString = "?api_key=$apiKey&";
-										$(buttonClicked).parent().find("input").each ( function () {
-											
-											if( $(this).attr("value") && $(this).attr("value") != "" )
-											{
-												queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';	
-											}
-											
-											
-										});
-										url = url + queryString;
-										window.open(encodeURI(url));
-									}
-									
-									
-								</script>
-						</div>
-							
-					
-	    			</div>
-	  			</li>
-	  			#end
-	  	</ul>	
-	 	</div>
+			</div>
 
-   </div>
-		
-		
-	#end
-#end  
-  
-  </body>
+		</div>
+		<div class="row">
+			<div class="twelve columns">
+				<div class="row">
+					<ul class="breadcrumbs">
+						<li>
+							<a href="/dashboard/"><strong>Dashboard</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/administration"><strong>Administration</strong></a>
+						</li>
+					</ul>
+				</div>
+				<div class="row">
+					<h2>Query API Browser</h2>
+				</div>
+
+			</div>
+
+		</div>
+
+		#foreach ($workspace in $workspaces)
+		<div class="row">
+			<fieldset>
+				<legend>
+					<h3>Project: <a href="/dashboard/workspace/$workspace.getName()" >$workspace.getName()</a></h3>
+				</legend>
+				<h5 class="subheader">Description:$workspace.getDescription()</h5>
+				#foreach ($profile in $workspace.getProfiles().values())
+				<div class="panel">
+					<h5>Database Profile: <a href="/dashboard/$workspace.getName()/profile/$profile.getName()">$profile.getName()</a></h5>
+					<h6 class="subheader">Description : $profile.getDescription()</h6>
+					<ul class="accordion">
+						#foreach ($queryEndpoint in $profile.getQueryEndpoints().values())
+						<li>
+							<div class="title">
+								<div class="row">
+									<div class="two columns">
+										<a class="radius button">GET</a>
+									</div>
+									<div class="ten columns left-align" >
+										<h4>$queryEndpoint.getName()</h4>
+									</div>
+								</div>
+
+							</div>
+							<div class="content">
+								<div class="row">
+									<div class="twelve columns">
+										<h5 class="subheader">Description : $queryEndpoint.getDescription()</h5>
+										<h5 class="subheader">URL : $serviceUrl/services/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()</h5>
+									</div>
+
+								</div>
+								<div class="row" >
+									<div class="twelve columns">
+										<table>
+											<thead>
+												<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
+											</thead>
+											<tbody>
+												#foreach ($bindVar in $queryEndpoint.getBindVariables().values())
+												<tr>
+													<td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td>
+													<input type="text" id="$bindVar.getName()" />
+													</td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td>
+												</tr>
+												#end
+
+											</tbody>
+										</table>
+									<a class="button secondary" onclick="executeAPI('$serviceUrl/services/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()' , this)" >Submit</a>
+									</div>
+									
+									<script>
+										function executeAPI(url, buttonClicked) {
+											var queryString = "?api_key=$apiKey&";
+											$(buttonClicked).parent().find("input").each(function() {
+
+												if ($(this).attr("value") && $(this).attr("value") != "") {
+													queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';
+												}
+
+											});
+											url = url + queryString;
+											window.open(encodeURI(url));
+										}
+
+									</script>
+								</div>
+
+							</div>
+						</li>
+						#end
+					</ul>
+
+				</div>
+
+				#end
+			</fieldset>
+		</div>
+
+		#end
+
+	</body>
 </html>

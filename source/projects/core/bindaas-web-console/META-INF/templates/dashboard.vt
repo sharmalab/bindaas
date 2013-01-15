@@ -4,185 +4,180 @@
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8" />
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
 
-  <!-- Set the viewport width to device width for mobile -->
-  <meta name="viewport" content="width=device-width" />
+		<!-- Set the viewport width to device width for mobile -->
+		<meta name="viewport" content="width=device-width" />
 
-  <title>Bindaas Dashboard</title>
-  
-  <!-- Included CSS Files (Uncompressed) -->
-  <!--
-  <link rel="stylesheet" href="stylesheets/foundation.css">
-  -->
-  
-  <!-- Included CSS Files (Compressed) -->
-  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
-  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+		<title>Bindaas Dashboard</title>
 
-  <script src="/foundation/javascripts/modernizr.foundation.js"></script>
-	
-	
-  
-  <!-- IE Fix for HTML5 Tags -->
-  <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+		<!-- Included CSS Files (Uncompressed) -->
+		<!--
+		<link rel="stylesheet" href="stylesheets/foundation.css">
+		-->
 
-</head>
-<body>
- <!-- Page Layout HTML here -->
+		<!-- Included CSS Files (Compressed) -->
+		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
 
-  <!-- Latest version of jQuery -->
-  <script src="/foundation/javascripts/jquery.js"></script>
+		<script src="/foundation/javascripts/modernizr.foundation.js"></script>
 
-  <!-- Included JS Files (Unminified) -->
-  <!-- [JS Files] -->
-  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+		<!-- IE Fix for HTML5 Tags -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
 
-  <!-- Included JS Files (Minified) -->
-  <script src="/foundation/javascripts/foundation.min.js"></script>
+	</head>
+	<body>
+		<!-- Page Layout HTML here -->
 
-  <!-- Initialize JS Plugins -->
-  <script src="/foundation/javascripts/app.js"></script>
-  
-  <div class="row">
-    <div class="six columns">
-      <h2>Bindaas</h2>
-      <p><strong>Be worry free!</strong></p>
-      <p>This is version <strong>2.0.0 Beta</strong></p>
-      <hr />
-    </div>
-    <div class="six columns">
-    	<ul class="inline-list">
-    		<li><h6>Welcome $bindaasUser</h6></li>
-    		<li><h6><a href="/dashboard/logout">logout</a></h6></li>
-    	</ul>
-      
-    </div>
-    
-    
-  </div>
+		<!-- Latest version of jQuery -->
+		<script src="/foundation/javascripts/jquery.js"></script>
 
-  <div class="row">
-    <div class="tweleve columns">
-    	
-    	<div class="row">
-    		<ul class="breadcrumbs">
-  				<li class="current"><a href="/dashboard/"><strong>Dashboard</strong></a></li>
-  				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
-  				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
-  			</ul>
-    </div>
-    	
-   	 	<div class="row">
-   	 		<fieldset>
-    			<legend><h3>Projects</h3></legend>
-    			
-    			<ul class="accordion">
-    				
-    				#foreach ($workspace in $workspaces)
-    				<li>
-    					<div class="title">
-    						<h5>$workspace.getName()</h5>
-    					</div>
-    					<div class="content">
-    						<p>Time created <kbd>$workspace.getTimeCreated()</kbd></p>
-    						<p>Created by <kbd>$workspace.getCreatedBy()</kbd></p>
-    						<p>Metadata <kbd>$workspace.getParams().toString()</kbd></p>
-    						
-    						<h6>Database Profiles</h6>
-    						<table>
-    							<thead>
-    								<tr>
-    									<th>Name</th>
-    									<th>Date Created</th>
-    									<th>Created By</th>
-    									<th>Query APIs</th>
-    									<th>Submit APIs</th>
-    									<th>Delete APIs</th>
-    								</tr>
-    							</thead>
-    							<tbody>
-    								#foreach ($profile in $workspace.getProfiles().values())
-    								<tr>
-    									<td><a href="/dashboard/$workspace.getName()/profile/$profile.getName()">$profile.getName()</a></td>
-    									<td>$profile.getTimeCreated()</td>
-    									<td>$profile.getCreatedBy()</td>
-    									<td>
-    										<ul>
-    											#foreach ($queryEndpoint in $profile.getQueryEndpoints().values())
-    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()" class="small">$queryEndpoint.getName()</a></li>
-    											#end
-    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/createQueryEndpoint.action" class="medium">Create New >>> </a></li>
-    										</ul>
-    									</td>
-    									<td>
-    										<ul>
-    											#foreach ($submitEndpoint in $profile.getSubmitEndpoints().values())
-    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()" class="small">$submitEndpoint.getName()</a></li>
-    											#end
-    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/createSubmitEndpoint.action" class="medium">Create New >>> </a></li>
-    										</ul>
-    									</td>
-    									<td>
-    										<ul>
-    											#foreach ($deleteEndpoint in $profile.getDeleteEndpoints().values())
-    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/delete/$deleteEndpoint.getName()" class="small">$deleteEndpoint.getName()</a></li>
-    											#end
-    											<li><a href="/dashboard/$workspace.getName()/$profile.getName()/createDeleteEndpoint.action" class="medium">Create New >>> </a></li>
-    										</ul>
-    									</td>
-    								</tr>
-    								#end
-    								<tr>
-    									<td><a href="/dashboard/$workspace.getName()/createProfile.action" class="medium">Create New Profile >>> </a></td>
-    								</tr>
-    							</tbody>
-    						</table>
-    				</div>
-    				</li>
+		<!-- Included JS Files (Unminified) -->
+		<!-- [JS Files] -->
+		<!-- We include all the unminified JS as well. Uncomment to use them instead -->
 
-    				#end
-    				
-    			</ul>
-    		</fieldset>
-     	</div>
-     	<div class="row" id="cw_container">
-     		<a class="button medium" onclick="$('div.reveal-modal').reveal()" >Create Project >> </a>
-     		<div class="reveal-modal large">
-     			<label>Project Name</label>
-     			<input type="text" id="cw_workspaceName" />
-     			<a class="button" onclick="createWorkspaceAction()" >Submit</a>
-     			<a class="close-reveal-modal" onclick="$('#cw_workspaceName').attr('value', '');">&#215;</a>
-     		<div>
-     		
-     		<script>
-     			function createWorkspaceAction()
-     			{
-     				var req = {};
-     				req.jsonRequest = "{}";
-     				var workspace = $("#cw_workspaceName").attr("value");
-     				$("#cw_workspaceName").attr("value", "");
-     				
-     				$.post("/dashboard/createWorkspace/" + workspace , req , function(data) {
-     					
-     					window.location.reload(true);
-     				}  );
-     			}
-     			
-     			$("#cw_container").ajaxError(function(e, jqxhr, settings, exception){
-  										alert(exception);
-						});
-     		</script>
-     	</div>
-   	 	
-    </div>
+		<!-- Included JS Files (Minified) -->
+		<script src="/foundation/javascripts/foundation.min.js"></script>
 
-  </div>
+		<!-- Initialize JS Plugins -->
+		<script src="/foundation/javascripts/app.js"></script>
 
-   
-</body>
+		<div class="row">
+			<div class="six columns">
+				<h2>Bindaas</h2>
+				<p>
+					<strong>Be worry free!</strong>
+				</p>
+				<p>
+					This is version <strong>2.0.0 Beta</strong>
+				</p>
+				<hr />
+			</div>
+			<div class="six columns">
+				<ul class="inline-list">
+					<li>
+						<h6>Welcome $bindaasUser</h6>
+					</li>
+					<li>
+						<h6><a href="/dashboard/logout">logout</a></h6>
+					</li>
+				</ul>
+
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="tweleve columns">
+
+				<div class="row">
+					<ul class="breadcrumbs">
+						<li class="current">
+							<a href="/dashboard/"><strong>Dashboard</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/administration"><strong>Administration</strong></a>
+						</li>
+					</ul>
+				</div>
+
+				<div class="row">
+					<fieldset>
+						<legend>
+							<h3>Projects</h3>
+						</legend>
+
+						<table>
+							<thead>
+								<tr>
+									<th>Date Created</th>
+									<th>Name</th>
+									<th>Description</th>
+									<th>Created By</th>
+									
+
+								</tr>
+							</thead>
+							<tbody>
+								#foreach ($workspace in $workspaces)
+								<tr>
+									<td><kbd>$workspace.getTimeCreated()</kbd></td>
+									<td><a href="/dashboard/workspace/$workspace.getName()">$workspace.getName()</a></td>
+									<td>$workspace.getDescription()</td>
+									<td><kbd>$workspace.getCreatedBy()</kbd></td>
+								</tr>
+								#end
+							</tbody>
+						</table>
+
+					</fieldset>
+				</div>
+
+				<div class="row" id="cw_container">
+					<a class="button medium" onclick="$('div.reveal-modal').reveal()" >Create Project >> </a>
+					<div class="reveal-modal large">
+						<label>Project Name</label>
+						<input type="text" id="cw_workspaceName" />
+						<label>Description</label>
+						<textarea id="cw_description"></textarea>
+						<input type="button" class="button" disabled="true" onclick="createWorkspaceAction()" id="cw_button" value="Submit">
+						<a class="close-reveal-modal" onclick="$('#cw_workspaceName').attr('value', '');$('#cw_description').attr('value', '');">&#215;</a>
+						<div>
+
+							<script>
+								$("#cw_workspaceName").keyup(function() {
+									validateCWInput();
+								});
+
+								$("#cw_description").keyup(function() {
+									validateCWInput();
+								});
+
+								function validateCWInput() {
+									if ($("#cw_description").attr("value") != "" && $("#cw_workspaceName").attr("value") != "") {
+
+										$("#cw_button").removeAttr("disabled");
+									} else {
+										$("#cw_button").attr("disabled", "true");
+									}
+								}
+
+								function createWorkspaceAction() {
+									var jsonRequest = {};
+									jsonRequest.description = $("#cw_description").attr("value");
+									var req = {};
+									req.jsonRequest = JSON.stringify(jsonRequest);
+									var workspace = $("#cw_workspaceName").attr("value");
+									$("#cw_workspaceName").attr("value", "");
+									$("#cw_description").attr("value", "");
+
+									$.post("/dashboard/createWorkspace/" + workspace, req, function(data) {
+
+										window.location.reload(true);
+									});
+								}
+
+
+								$("#cw_container").ajaxError(function(e, jqxhr, settings, exception) {
+									alert(exception);
+								});
+							</script>
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</body>
 </html>

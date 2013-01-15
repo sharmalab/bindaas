@@ -67,21 +67,7 @@
   </div>
 
   <div class="row">
-  	<div class="two columns">
-  		
-  		<div class="row">
-  		
-  		<ul class="four side-nav">
-			  
-			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Database Profile</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query API</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete API</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createSubmitEndpoint.action">Create Submit API</a></li>
-		</ul>	
-  		</div>
-  		
-  	</div>
-    <div class="six columns">
+  	<div class="eight columns">
     	
     	<div class="row">
     		<ul class="breadcrumbs">
@@ -91,7 +77,7 @@
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/Project:$workspace/Database Profile:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
+    		<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a>/Database Profile:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
     	</div>
    	 	<div class="row">
    	 		<fieldset>
@@ -144,7 +130,7 @@
     						$.post("/dashboard/$workspace/$profile/createSubmitEndpoint.action" , req , function (data){
 								
 								//alert("Server Returned :\n" + JSON.stringify(data));
-								window.location = "/dashboard/$workspace/$profile/submit/" + req.submitEndpointName;
+								window.location = "/dashboard/workspace/$workspace";
 								
 								});
     						}

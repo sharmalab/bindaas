@@ -67,18 +67,8 @@
   </div>
 
   <div class="row">
-  	<div class="two columns">
-  		
-  		<div class="row">
-  		
-  		<ul class="four side-nav">
-			  
-			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Database Profile</a></li>
-		</ul>	
-  		</div>
-  		
-  	</div>
-    <div class="ten columns">
+  	
+    <div class="twelve columns">
     	
     	<div class="row">
     		<ul class="breadcrumbs">
@@ -88,7 +78,7 @@
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/Project:${workspace}/</h3>
+    		<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a></h3>
     	</div>
    	 	<div class="row">
    	 		<fieldset>
@@ -208,7 +198,7 @@
 							req.jsonRequest = JSON.stringify(jsonRequest,null); 
 							
 							$.post("/dashboard/$workspace/createProfile.action" , req , function (data){
-								window.location = "/dashboard/$workspace/profile/" + profileName;
+								window.location = "/dashboard/workspace/$workspace";
 							});
 							
 						}catch(e){

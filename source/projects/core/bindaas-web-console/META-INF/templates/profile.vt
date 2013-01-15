@@ -67,18 +67,7 @@
   </div>
 
   <div class="row">
-    <div class="two columns">
-  		
-  		<div class="row">
-  		
-  		<ul class="four side-nav">
-			  
-			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Database Profile</a></li>
-		</ul>	
-  		</div>
-  		
-  	</div>
-    <div class="ten columns">
+    <div class="twelve columns">
     	
     	<div class="row">
     		<ul class="breadcrumbs">
@@ -88,7 +77,7 @@
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/Project:${workspace}/</h3>
+    		<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a></h3>
     	</div>
    	 	<div class="row">
    	 		<fieldset>
@@ -152,8 +141,8 @@
   						</div>
   						<input type="button" class="button" value="Edit"  id="editButton" onclick="edit()" />
   						<input type="button" class="button" value="Save"  id="saveButton" onclick="save()" />
-  						<input type="button" class="button" value="Cancel"  id="cancelButton" onclick="cancel()"/>
   						<input type="button" class="button" value="Delete" onclick="deleteEndpoint()" />
+  						<input type="button" class="button" value="Cancel"  id="cancelButton" onclick="cancel()"/>
     				</form>		
     			</fieldset>
     			
@@ -179,7 +168,7 @@
 							req.jsonRequest = JSON.stringify(jsonRequest,null); 
 							
 							$.post("/dashboard/$workspace/profile/$profile.getName()" , req , function (data){
-								location.reload(true);
+								window.location = "/dashboard/workspace/$workspace";
 							});
 							
 						}catch(e){
@@ -203,7 +192,7 @@
   							{
   								$("#editButton").show();
   								$("#saveButton").hide();
-  								$("#cancelButton").hide();
+  								
   								submitForm();
   								
   								
@@ -213,10 +202,10 @@
   							{
   								$("#editButton").show();
   								$("#saveButton").hide();
-  								$("#cancelButton").hide();
+  								
   								
   								// referesh
-  								location.reload(true);
+  								window.location = "/dashboard/workspace/$workspace";
   							}
   							
   							
@@ -246,7 +235,7 @@
 				  										type : "DELETE",
 				  										success : function(data){
 				  											console.log(JSON.stringify(data));
-				  											window.location = "/dashboard/";
+				  											window.location = "/dashboard/workspace/$workspace";
 				  										}
 				  									}
 				  								);
@@ -258,7 +247,7 @@
     			<script>
   						
   							$("#saveButton").hide();
-  							$("#cancelButton").hide();
+  							
   							disableForm();
   						
   				</script>

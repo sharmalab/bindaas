@@ -167,21 +167,7 @@
   </div>
 
   <div class="row">
-   <div class="two columns">
-  		
-  		<div class="row">
-  		
-  		<ul class="four side-nav">
-			  
-			  <li ><a href="/dashboard/$workspace/createProfile.action">Create Database Profile</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createQueryEndpoint.action">Create Query API</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createDeleteEndpoint.action">Create Delete API</a></li>
-			  <li ><a href="/dashboard/$workspace/$profile/createSubmitEndpoint.action">Create Submit API</a></li>
-		</ul>	
-  		</div>
-  		
-  	</div>
-    <div class="six columns">
+   <div class="eight columns">
     	
     	<div class="row">
     		<ul class="breadcrumbs">
@@ -191,7 +177,7 @@
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/Project:$workspace/Database Profile:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
+    		<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a>/Database Profile:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
     	</div>
    	 	<div class="row">
    	 		<fieldset>
@@ -265,7 +251,7 @@
   								
   								$.post("/dashboard/$workspace/$profile/delete/" + req.deleteEndpointName , req , function (data){
 								
-									window.location = "/dashboard/$workspace/$profile/delete/" + req.deleteEndpointName;
+									window.location = "/dashboard/workspace/$workspace";
 								});
   								
   								}
@@ -289,7 +275,7 @@
   							{
   								$("#editButton").show();
   								$("#saveButton").hide();
-  								$("#cancelButton").hide();
+  								
   								submitForm();
   								
   								
@@ -299,7 +285,7 @@
   							{
   								$("#editButton").show();
   								$("#saveButton").hide();
-  								$("#cancelButton").hide();
+  								
   								
   								// referesh
   								location.reload(true);
@@ -371,24 +357,25 @@
   						</script>
   						<input type="button" class="button" value="Edit"  id="editButton" onclick="edit()" />
   						<input type="button" class="button" value="Save"  id="saveButton" onclick="save()" />
-  						<input type="button" class="button" value="Cancel"  id="cancelButton" onclick="cancel()"/>
+  			
   						<input type="button" class="button" value="Delete"  onclick="deleteEndpoint()" />
   						<input type="button" class="button" value="Clone"  id="cloneButton" onclick="cloneEndpoint()"/>
+  						<input type="button" class="button" value="Cancel"  id="cancelButton" onclick="cancel()"/>
   						<script>
   							function cloneEndpoint()
   							{
   								$("#cloneButton").hide();
   								edit();
-  								$("#qeName").removeAttr("disabled");
-  								$("#qeName").attr("value" , $("#qeName").attr('value') + "Clone");
-  								$("#qeName").focus();
+  								$("#deleteEndpointName").removeAttr("disabled");
+  								$("#deleteEndpointName").attr("value" , $("#deleteEndpointName").attr('value') + "Clone");
+  								$("#deleteEndpointName").focus();
   							}
   								
   						</script>
   						<script>
   						
   							$("#saveButton").hide();
-  							$("#cancelButton").hide();
+  							
   							
   							
   							$("#deleteEndpointName").attr("value" , "$deleteEndpoint.getName()");
