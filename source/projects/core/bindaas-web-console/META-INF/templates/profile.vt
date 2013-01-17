@@ -11,7 +11,7 @@
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width" />
 
-  <title>Profile : $profile.getName()</title>
+  <title>Data Provider : $profile.getName()</title>
   
   <!-- Included CSS Files (Uncompressed) -->
   <!--
@@ -24,7 +24,33 @@
 
   <script src="/foundation/javascripts/modernizr.foundation.js"></script>
 	
-	
+<script>
+			var ValidationObject = {};
+			ValidationObject.constraints = {};
+			ValidationObject.addConstraint = function(name, value, errorCallback) {
+				var obj = {};
+				obj.value = value;
+				obj.errorCallback = errorCallback;
+				ValidationObject.constraints[name] = obj;
+			};
+			ValidationObject.removeConstraint = function(name) {
+				
+				delete ValidationObject.constraints[name];
+			}; 
+			ValidationObject.validate = function() {
+				for (var key in ValidationObject.constraints) {
+					var obj = ValidationObject.constraints[key];
+					if (obj && obj.value) {
+						continue;
+					} else {
+						obj.errorCallback();
+						return false;
+					}
+				}
+				return true;
+			};
+
+</script>
   
   <!-- IE Fix for HTML5 Tags -->
   <!--[if lt IE 9]>
@@ -81,15 +107,15 @@
     	</div>
    	 	<div class="row">
    	 		<fieldset>
-    			<legend><h3>Profile : $profile.getName()</h3></legend>
+    			<legend><h3>Data Provider : $profile.getName()</h3></legend>
     				<h6 class="subheader">Last Modified : $profile.getTimeCreated()</h6>
     				<h6 class="subheader">Modified By : $profile.getCreatedBy()</h6>
     				<form class="custom" action="createProfile.action" method="get">
     					<input type="hidden" value="${workspace}"  name="workspace"/>
     					<input type="hidden"  name="jsonRequest"/>
-    					<label>Profile Name</label>
+    					<label>Name</label>
     					<input type="text" placeholder="name" name="profileName" id="profileName" value="$profile.getName()"/>
-    					<label for="providerTitle">Data Provider</label>
+    					<label for="providerTitle">Database</label>
     					<input type="text" disabled="true" id="providerTitle" />
     					<script>
     						
@@ -103,7 +129,7 @@
   						</script>
   						<br> </br>
   						<div class="panel">
-  							<h6 class="subheader">Provider Description</h6>
+  							<h6 class="subheader">Description</h6>
   							<div id="providerDescription">
   									<div >
   										#if ($provider.getDocumentation().get('providerDescription'))
@@ -113,17 +139,18 @@
   							</div>
   						</div>
   						<div class="panel">
-  							<label for="dataSource">Data Source Configuration <a onclick="enableDataSource()">(Click to edit)</a></label>
+  							<label for="dataSource">Data Source Configuration</label>
   							<textarea name="dataSource" id="dataSource" disabled="true">$profile.getDataSource().toString()</textarea>
   							<script>
   								function enableDataSource()
   								{
   									$("#dataSource").removeAttr("disabled");
   								}
+  								$("#dataSource").hide();
   							</script>
   							
   							<div id="dataSourceContainer">
-  									<div>
+  									<div id="$provider.getDocumentation().get('simpleName').getAsString()">
   										#if ($provider.getDocumentation().get('dataSourceView'))
   											$provider.getDocumentation().get('dataSourceView').getAsString()
   										#end
@@ -135,10 +162,7 @@
   							
   						</div>
   						
-  						<div class="panel">
-  							<h6 class="subheader">Data Source JSON Schema</h6>
-  							<div id="dataSourceSchema"></div>
-  						</div>
+  				
   						<input type="button" class="button" value="Edit"  id="editButton" onclick="edit()" />
   						<input type="button" class="button" value="Save"  id="saveButton" onclick="save()" />
   						<input type="button" class="button" value="Delete" onclick="deleteEndpoint()" />
@@ -151,10 +175,13 @@
   										alert(exception);
 						});
     				
+    				
     				function submitForm()
     				{
-    					
-    					var jsonRequest = {};
+						
+						if(ValidationObject.validate())
+						{
+							var jsonRequest = {};
 		
 						var profileName = $('#profileName').attr("value");
 		
@@ -175,7 +202,8 @@
 							alert(e);
 							alert("DataSource must be a valid JSON object");
 						}
-						
+		
+						}								
 						
     				}
     			
@@ -190,12 +218,7 @@
   							
   							function save()
   							{
-  								$("#editButton").show();
-  								$("#saveButton").hide();
-  								
-  								submitForm();
-  								
-  								
+  								submitForm();	
   							}
   							
   							function cancel()
@@ -213,6 +236,7 @@
   							{
   								$("#provider").removeAttr("disabled");
   								$("#dataSource").removeAttr("disabled" );
+  								$("#$provider.getDocumentation().get('simpleName').getAsString() *").removeAttr("disabled","disabled");
   							}
   							
   							function disableForm()
@@ -220,6 +244,8 @@
   								$("#profileName").attr("disabled" , "disabled");
   								$("#provider").attr("disabled" , "disabled");
   								$("#dataSource").attr("disabled" , "disabled");
+  								$("#$provider.getDocumentation().get('simpleName').getAsString() *").attr("disabled","disabled");
+  								
   								
   							}
   							

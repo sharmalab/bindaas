@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.framework.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.JsonObject;
@@ -11,6 +13,16 @@ public class SubmitEndpoint extends Entity {
 		FORM_DATA , MULTIPART
 	}
 	
+	@Override
+	public void validate() throws Exception {
+		super.validate();
+		
+		if(type == null)
+			throw new Exception("Type field cannot be null");
+		if(properties == null)
+			properties = new JsonObject();
+		
+	}
 	
 	@Expose private Type type;
 	@Expose private JsonObject properties;

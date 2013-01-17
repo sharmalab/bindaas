@@ -8,7 +8,7 @@
 		<label for="aime_table">Collection Name</label>
 		<span class="has-tip tip-left" data-width="210" title="Name of the MongoDB database collection"><input type="text" id="mongo_collection" /></span>
 		
-		<span class="has-tip tip-left" data-width="210" title="This option will generate submit API to upload data in CSV and JSON formats"><label for="mongo_auto_init"><input type="checkbox" CHECKED id="mongo_auto_init">  Auto Initialize</label></span>
+		<span class="has-tip tip-left" data-width="210" title="This option will generate submit API to upload data in CSV and JSON formats"><label for="mongo_auto_init"><input type="checkbox" CHECKED id="mongo_auto_init">  Generate Default API</label></span>
 		
 		<script>
 			
@@ -52,15 +52,17 @@
 		   	 dataSourceJson.collection = $("#mongo_collection").attr("value");
 		   	 
 		   	 if($('#mongo_auto_init').attr('checked')) {
-					  dataSourceJson.autoInitialize = true;
+					  dataSourceJson.initialize = true;
 					 
 					} else {
-					  dataSourceJson.autoInitialize = false;
+					  dataSourceJson.initialize = false;
 					 
 					}
 		   	 
 		   	 
 		   	 $("#dataSource").attr("value" , JSON.stringify(dataSourceJson));
+		   	
+		   	mongoValidate();
 		   }    
 		   
 		   function reverseUpdateDataSourceViewMongo()
@@ -73,7 +75,7 @@
 				   $("#mongo_db").attr("value", dataSourceJson.db);
 				   $("#mongo_collection").attr("value", dataSourceJson.collection);
 				   
-				   if(dataSourceJson.autoInitialize == true) {
+				   if(dataSourceJson.initialize == true) {
 						  $('#mongo_auto_init').attr('checked' , "true");
 						  
 						} else {
@@ -84,6 +86,51 @@
 			   }catch(e){}
 			   
 		   }
+
+			function mongoValidate() {
+				var status = true;
+				if ($("#MongoDBProvider").is(":visible")) {
+					ValidationObject.addConstraint("mongo_host", $("#mongo_host").attr("value") && $("#mongo_host").attr("value") != "", function() {
+						alert("Hostname not specified");
+						 $("#mongo_host").focus();
+					});
+
+					ValidationObject.addConstraint("mong_port", $("#mong_port").attr("value") && $("#mong_port").attr("value") != "", function() {
+						alert("Port not specified");
+						$("#mong_port").focus();
+					});
+
+					ValidationObject.addConstraint("mongo_db", $("#mongo_db").attr("value") && $("#mongo_db").attr("value") != "", function() {
+						alert("Database not specified");
+						$("#mongo_db").focus();
+					});
+					
+					ValidationObject.addConstraint("mongo_collection", $("#mongo_collection").attr("mongo_collection") && $("#mongo_collection").attr("value") != "", function() {
+						alert("Collection not specified");
+						$("#mongo_collection").focus();
+					});
+
+				} else {
+
+					ValidationObject.removeConstraint("mongo_host");
+
+					ValidationObject.removeConstraint("mong_port");
+
+					ValidationObject.removeConstraint("mongo_db");
+					
+					ValidationObject.removeConstraint("mongo_collection");
+
+				}
+
+			}
+
+
 		   
 		   reverseUpdateDataSourceViewMongo();
+		   $("#MongoDBProvider").bind("onaftershow" , function(e){
+			   mongoValidate(); 	
+			});
+			$("#MongoDBProvider").bind("onafterhide" , function(e){
+				mongoValidate(); 	
+			});
 		</script>

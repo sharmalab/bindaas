@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.framework.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +17,21 @@ public class DeleteEndpoint extends Entity{
 	@Expose private Stage stage;
 	
 	
+	@Override
+	public void validate() throws Exception {
+		super.validate();
+		
+		if(queryTemplate == null)
+			throw new Exception("QueryTemplate not specified");
+		
+		if(tags == null)
+			tags = new ArrayList<String>();
+		
+		if(bindVariables == null)
+			bindVariables = new HashMap<String, BindVariable>();
 	
+		
+	}
 	public String getQueryTemplate() {
 		return queryTemplate;
 	}

@@ -107,7 +107,7 @@
 								Description <kbd>$workspace.getDescription()</kbd>
 							</p>
 
-							<h6>Database Profiles</h6>
+							<h6>Data Providers</h6>
 							<table>
 								<thead>
 									<tr>

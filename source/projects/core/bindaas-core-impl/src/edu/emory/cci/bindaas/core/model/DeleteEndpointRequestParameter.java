@@ -6,12 +6,14 @@ import java.util.Map;
 import com.google.gson.annotations.Expose;
 
 import edu.emory.cci.bindaas.framework.model.BindVariable;
+import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 
 public class DeleteEndpointRequestParameter {
 	@Expose private String queryTemplate;
 	@Expose private List<String> tags;
 	@Expose private Map<String,BindVariable> bindVariables;
 	@Expose private String description;
+	
 	
 	public String getDescription() {
 		return description;
@@ -36,5 +38,16 @@ public class DeleteEndpointRequestParameter {
 	}
 	public void setBindVariables(Map<String, BindVariable> bindVariables) {
 		this.bindVariables = bindVariables;
+	}
+	
+	
+	public DeleteEndpoint getDeleteEndpoint(DeleteEndpoint deleteEndpoint) throws Exception
+	{		
+		deleteEndpoint.setBindVariables(getBindVariables());
+		deleteEndpoint.setQueryTemplate(getQueryTemplate());
+		deleteEndpoint.setTags(getTags());
+		deleteEndpoint.setDescription(getDescription());
+		
+		return deleteEndpoint;
 	}
 }

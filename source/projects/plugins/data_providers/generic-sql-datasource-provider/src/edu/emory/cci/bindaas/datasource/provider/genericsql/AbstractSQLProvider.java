@@ -117,7 +117,11 @@ public abstract class AbstractSQLProvider implements IProvider {
 		connectionProps.put("user", username);
 		connectionProps.put("password", password);
 		Connection connection = this.driver.connect(url, connectionProps);
-		return connection;
+		if(connection!=null)
+			return connection;
+		else
+			throw new Exception("Connection could not be established with the given parameters :\n" + connectionProps);
+		
 	}
 	
 	@Override

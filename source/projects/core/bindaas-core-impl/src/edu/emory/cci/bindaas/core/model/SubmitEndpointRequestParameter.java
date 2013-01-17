@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
 import edu.emory.cci.bindaas.framework.model.ModifierEntry;
+import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 
 public class SubmitEndpointRequestParameter {
 
@@ -15,6 +16,13 @@ public class SubmitEndpointRequestParameter {
 	}
 	@Expose private JsonObject properties;
 	@Expose private ModifierEntry submitPayloadModifiers;
+	@Expose private String description;
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	public JsonObject getProperties() {
 		return properties;
 	}
@@ -22,4 +30,11 @@ public class SubmitEndpointRequestParameter {
 		this.properties = properties;
 	}
 	
+	public SubmitEndpoint getSubmitEndpoint(SubmitEndpoint submitEndpoint) throws Exception
+	{
+		submitEndpoint.setProperties(getProperties());
+		submitEndpoint.setSubmitPayloadModifiers(getSubmitPayloadModifiers());
+		submitEndpoint.setDescription(getDescription());
+		return submitEndpoint;
+	}
 }

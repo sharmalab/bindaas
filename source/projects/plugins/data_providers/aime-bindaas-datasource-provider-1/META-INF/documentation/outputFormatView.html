@@ -24,7 +24,9 @@
 		
 		
 		<script>
+			// validation stuff
 			
+		
 			$("#aime_qe_of_queryLang").change(function ()
 			{
 				updateOutputFormatField();
@@ -76,6 +78,13 @@
 		   	 
 		   	 
 		   	 $("#qeOutputFormat").attr("value" , JSON.stringify(outputFormatJson));
+		   	ValidationObject.addConstraint("Query Language", $("#aime_qe_of_queryLang option:selected").attr("value") && $("#aime_qe_of_queryLang option:selected").attr("value") != "" , function(){
+				alert("Query Language not specified");
+				});
+			ValidationObject.addConstraint("Output Format", $("#aime_qe_of_outputFormat option:selected").attr("value") && $("#aime_qe_of_outputFormat option:selected").attr("value") != "" , function(){
+				alert("Output Format not specified");
+				});
+
 		   }
 		   
 		   function reverseUpdateOutputFormatField()
@@ -95,6 +104,7 @@
 				   filter( function () {  return $(this).attr('value') == outputFormatJson.outputFormat; })
 				   .attr("selected" , "true");
 				   $("#aime_qe_of_csvColumns").attr("value" , JSON.stringify(outputFormatJson.csvHeader));
+				   
 			   	    
 			   }
 			   catch(e){
@@ -102,4 +112,11 @@
 			   }
 		   }
 		   reverseUpdateOutputFormatField();
+		   ValidationObject.addConstraint("Query Language", $("#aime_qe_of_queryLang option:selected").attr("value") && $("#aime_qe_of_queryLang option:selected").attr("value") != "" , function(){
+				alert("Query Language not specified");
+				});
+			ValidationObject.addConstraint("Output Format", $("#aime_qe_of_outputFormat option:selected").attr("value") && $("#aime_qe_of_outputFormat option:selected").attr("value") != "" , function(){
+				alert("Output Format not specified");
+				});
+
 		</script>

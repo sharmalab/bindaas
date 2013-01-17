@@ -8,6 +8,7 @@ import com.google.gson.annotations.Expose;
 
 import edu.emory.cci.bindaas.framework.model.BindVariable;
 import edu.emory.cci.bindaas.framework.model.ModifierEntry;
+import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 
 
 public class QueryEndpointRequestParameter {
@@ -73,5 +74,17 @@ public class QueryEndpointRequestParameter {
 		this.queryResultModifiers = queryResultModifiers;
 	}
 	
-	
+	public QueryEndpoint getQueryEndpoint(QueryEndpoint queryEndpoint) throws Exception
+	{
+		queryEndpoint.setBindVariables(getBindVariables());
+		queryEndpoint.setMetaData(getMetaData());
+		queryEndpoint.setOutputFormat(getOutputFormat());
+		queryEndpoint.setQueryModifiers(getQueryModifiers());
+		queryEndpoint.setQueryResultModifiers(getQueryResultModifiers());
+		queryEndpoint.setTags(getTags());
+		queryEndpoint.setQueryTemplate(getQueryTemplate());
+		queryEndpoint.setDescription(getDescription());
+		
+		return queryEndpoint;
+	}
 }

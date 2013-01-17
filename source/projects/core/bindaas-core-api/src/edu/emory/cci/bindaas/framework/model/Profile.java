@@ -17,6 +17,17 @@ public class Profile extends Entity{
 	@Expose private int providerVersion;
 	
 	
+	@Override
+	public void validate() throws Exception {
+		super.validate();
+		
+		if(providerId == null || providerId.equals(""))
+			throw new Exception("ProviderId not specified");
+		if(dataSource == null)
+			throw new Exception("DataSource configuration not specified");
+	}
+
+
 	public Profile()
 	{
 		queryEndpoints = new HashMap<String, QueryEndpoint>();

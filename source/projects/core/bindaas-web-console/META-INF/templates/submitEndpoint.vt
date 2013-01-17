@@ -77,7 +77,7 @@
   			</ul>
     </div>
     	<div class="row">
-    		<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a>/Database Profile:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
+    		<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a>/Data Provider:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
     	</div>
    	 	<div class="row">
    	 		<fieldset>

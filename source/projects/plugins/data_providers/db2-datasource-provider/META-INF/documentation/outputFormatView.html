@@ -30,6 +30,9 @@
 		   	 var outputFormatJson = {};
 		   	 outputFormatJson.outputFormat = $("#qe_of_outputFormat option:selected").attr("value");
 		   	 $("#qeOutputFormat").attr("value" , JSON.stringify(outputFormatJson));
+		     ValidationObject.addConstraint("Output Format", $("#qe_of_outputFormat option:selected").attr("value") && $("#qe_of_outputFormat option:selected").attr("value") != "" , function(){
+					alert("Output Format not specified");
+					});
 		   }    
 		   
 		   function reverseUpdateOutputFormatField()
@@ -52,5 +55,8 @@
 		   }
 		   
 		   reverseUpdateOutputFormatField();
+		   ValidationObject.addConstraint("Output Format", $("#qe_of_outputFormat option:selected").attr("value") && $("#qe_of_outputFormat option:selected").attr("value") != "" , function(){
+				alert("Output Format not specified");
+				});
 
 		</script>

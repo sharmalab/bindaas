@@ -102,7 +102,7 @@
 				<h5 class="subheader">Description:$workspace.getDescription()</h5>
 				#foreach ($profile in $workspace.getProfiles().values())
 				<div class="panel">
-					<h5>Database Profile: <a href="/dashboard/$workspace.getName()/profile/$profile.getName()">$profile.getName()</a></h5>
+					<h5>Data Provider: <a href="/dashboard/$workspace.getName()/profile/$profile.getName()">$profile.getName()</a></h5>
 					<h6 class="subheader">Description : $profile.getDescription()</h6>
 					<ul class="accordion">
 						#foreach ($queryEndpoint in $profile.getQueryEndpoints().values())

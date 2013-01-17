@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.framework.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,25 @@ public class QueryEndpoint extends Entity {
 	@Expose private ModifierEntry queryModifiers;
 	@Expose private ModifierEntry queryResultModifiers;
 	
+	@Override
+	public void validate() throws Exception {
+		super.validate();
+		
+		if(queryTemplate == null)
+			throw new Exception("QueryTemplate not specified");
+		if(outputFormat == null)
+			throw new Exception("OutputFormat not specified");
+		if(metaData == null)
+			metaData = new JsonObject();
+		
+		if(tags == null)
+			tags = new ArrayList<String>();
+		
+		if(bindVariables == null)
+			bindVariables = new HashMap<String, BindVariable>();
+	
+		
+	}
 	
 	public String getQueryTemplate() {
 		return queryTemplate;

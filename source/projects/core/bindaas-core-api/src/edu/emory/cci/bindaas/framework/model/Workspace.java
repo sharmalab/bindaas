@@ -12,6 +12,14 @@ public class Workspace extends Entity
 	 @Expose private Map<String,Profile> profiles;
 	 @Expose private JsonObject params;
 	
+	 
+	 public void validate() throws Exception
+	 {
+		 super.validate();
+		 
+		 if(params == null)
+			 params = new JsonObject();
+	 }
 	public JsonObject getParams() {
 		return params;
 	}

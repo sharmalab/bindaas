@@ -19,6 +19,14 @@ public class Entity implements Cloneable{
 	@Expose private String description;
 	
 	
+	public void validate() throws Exception
+	{
+		if(name == null || "".equals(name))
+			throw new Exception("name attribute cannot be null");
+		
+		if(description == null)
+			description = "";
+	}
 	public String getDescription() {
 		return description;
 	}
@@ -28,7 +36,6 @@ public class Entity implements Cloneable{
 	public Entity()
 	{
 		timeCreated = GregorianCalendar.getInstance().getTime().toString();
-		description = "";
 	}
 	public String getName() {
 		return name;

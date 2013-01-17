@@ -566,7 +566,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 	@Override
 	public Profile updateProfile(String profileName, String workspaceName,
 			JsonObject parameters, String updatedBy) throws Exception {
-		Profile prof = null;
+		
 		synchronized (persistenceDriver) {
 			Profile oldProfile = getProfile(workspaceName, profileName);
 			deleteProfile(workspaceName, profileName);
@@ -577,17 +577,17 @@ public class ManagementTasksImpl implements IManagementTasks {
 			profile.setSubmitEndpoints(oldProfile.getSubmitEndpoints());
 			persistenceDriver.saveProfile(workspaceName, profile);
 			EventHelper.createEntityEvent(profile, EntityEventType.UPDATE).emitAsynchronously();
-			prof = profile;
+			return profile;
 			}
 			catch(Exception e)
 			{
 				log.error(e);
 				log.debug("Restoring old profile");
 				persistenceDriver.saveProfile(workspaceName, oldProfile);
-				prof = oldProfile;
+				throw e;
 			}
 			
-			return prof;	
+				
 		}
 		
 	}
@@ -596,23 +596,23 @@ public class ManagementTasksImpl implements IManagementTasks {
 	public QueryEndpoint updateQueryEndpoint(String queryEndpointName, String workspaceName,
 			String profileName, JsonObject parameters, String updatedBy)
 			throws Exception {
-		QueryEndpoint qe = null;
+		
 		synchronized (persistenceDriver) {
 			QueryEndpoint oldQueryEndpoint = deleteQueryEndpoint(workspaceName, profileName, queryEndpointName);
 			try{
 				QueryEndpoint queryEndpoint = this.createQueryEndpoint(queryEndpointName, workspaceName, profileName, parameters, updatedBy);
 				EventHelper.createEntityEvent(queryEndpoint, EntityEventType.UPDATE).emitAsynchronously();
-				qe = queryEndpoint;
+				return queryEndpoint;
 			}
 			catch(Exception e)
 			{
 				log.error(e);
 				log.debug("Restoring old QueryEndpoint");
-				qe = oldQueryEndpoint;
 				persistenceDriver.saveQueryEndpoint(workspaceName, profileName, oldQueryEndpoint);
+				throw e;
 			}
 			
-			return qe;	
+			
 		}
 		
 	}
@@ -635,7 +635,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 				log.debug("Restoring old DeleteEndpoint");
 				
 				persistenceDriver.saveDeleteEndpoint(workspaceName, profileName, oldDeleteEndpoint);
-				return oldDeleteEndpoint;
+				throw e;
 			}
 	
 		}
@@ -659,7 +659,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 				log.error(e);
 				log.debug("Restoring old SubmitEndpoint");
 				persistenceDriver.saveSubmitEndpoint(workspaceName, profileName, oldSubmitEndpoint);
-				return oldSubmitEndpoint;
+				throw e;
 			}
 				
 		}
