@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,8 +27,10 @@ import edu.emory.cci.bindaas.core.exception.ProviderNotFoundException;
 import edu.emory.cci.bindaas.core.exception.FrameworkEntityException.Type;
 import edu.emory.cci.bindaas.core.model.DeleteEndpointRequestParameter;
 import edu.emory.cci.bindaas.core.model.EntityEventType;
+import edu.emory.cci.bindaas.core.model.ProfileRequestParameter;
 import edu.emory.cci.bindaas.core.model.QueryEndpointRequestParameter;
 import edu.emory.cci.bindaas.core.model.SubmitEndpointRequestParameter;
+import edu.emory.cci.bindaas.core.model.WorkspaceRequestParameter;
 import edu.emory.cci.bindaas.core.util.EventHelper;
 import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.framework.api.IQueryHandler;
@@ -135,7 +139,19 @@ public class ManagementTasksImpl implements IManagementTasks {
 					Workspace workspace = new Workspace();
 					workspace.setName(name);
 					workspace.setCreatedBy(createdBy);
-					workspace.setParams(parameters);
+					
+					WorkspaceRequestParameter werp = GSONUtil.getGSONInstance().fromJson(parameters, WorkspaceRequestParameter.class);
+					
+					if(werp!=null)
+					{
+						workspace = werp.getWorkspace(workspace);
+					}
+					else
+					{
+						throw new Exception("Workspace request cannot be deserialized");
+					}
+					
+					workspace.validate();
 					persistenceDriver.saveWorkspace(workspace);
 					log.debug("Workspace created\n" + workspace);
 					EventHelper.createEntityEvent(workspace, EntityEventType.CREATE).emitAsynchronously();
@@ -165,12 +181,16 @@ public class ManagementTasksImpl implements IManagementTasks {
 					profile.setName(name);
 					
 					// locate provider
-					if(parameters.has("providerId") && parameters.has("providerVersion"))
+					
+					ProfileRequestParameter perp = GSONUtil.getGSONInstance().fromJson(parameters, ProfileRequestParameter.class);
+					
+					if(perp!=null)
 					{
 						try{
-							String providerId = parameters.getAsJsonPrimitive("providerId").getAsString();
-							int providerVersion = parameters.getAsJsonPrimitive("providerVersion").getAsInt();
-							profile.setDataSource(parameters.getAsJsonObject("dataSource"));
+							profile = perp.getProfile(profile);
+							
+							String providerId = profile.getProviderId();
+							int providerVersion = profile.getProviderVersion();
 							
 							log.debug("Locating Provider id=[" + providerId + "] and version=[" + providerVersion + "]");
 							IProvider provider = providerRegistry.lookupProvider(providerId, providerVersion);
@@ -178,8 +198,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 							{
 								log.debug("Provider found. Performing validation and initialization");
 								profile = provider.validateAndInitializeProfile(profile);
-								profile.setProviderId(provider.getId());
-								profile.setProviderVersion(provider.getVersion());
+								profile.validate();
 								persistenceDriver.saveProfile(workspaceName, profile);
 								EventHelper.createEntityEvent(profile, EntityEventType.CREATE).emitAsynchronously();
 								return profile;
@@ -254,7 +273,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 							validator.validateQueryResultModifierRequestChain(queryEndpoint.getQueryResultModifiers());
 							// perform provider validation
 							queryEndpoint = queryHandler.validateAndInitializeQueryEndpoint(queryEndpoint);
-							
+							queryEndpoint.validate();
 							// register queryEndpoint
 							persistenceDriver.saveQueryEndpoint(workspaceName, profileName, queryEndpoint);
 							EventHelper.createEntityEvent(queryEndpoint, EntityEventType.CREATE).emitAsynchronously();
@@ -299,21 +318,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 	private QueryEndpoint constructQueryEndpointFromProps(QueryEndpoint queryEndpoint , JsonObject parameters) throws Exception {
 		
 		QueryEndpointRequestParameter qerp = GSONUtil.getGSONInstance().fromJson(parameters, QueryEndpointRequestParameter.class);
-		check(qerp!=null, "QueryEndpoints params cannot be null");
-		check(qerp.getBindVariables()!=null, "BindVariables  cannot be null");
-		check(qerp.getQueryTemplate()!=null, "QueryTemplate cannot be null");
-		
-		
-		queryEndpoint.setBindVariables(qerp.getBindVariables());
-		queryEndpoint.setMetaData(qerp.getMetaData());
-		queryEndpoint.setOutputFormat(qerp.getOutputFormat());
-		queryEndpoint.setQueryModifiers(qerp.getQueryModifiers());
-		queryEndpoint.setQueryResultModifiers(qerp.getQueryResultModifiers());
-		queryEndpoint.setTags(qerp.getTags());
-		queryEndpoint.setQueryTemplate(qerp.getQueryTemplate());
-		queryEndpoint.setDescription(qerp.getDescription());
-		
-		
+		queryEndpoint = qerp.getQueryEndpoint(queryEndpoint);
 		return queryEndpoint;
 	}
 
@@ -346,6 +351,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 							deleteEndpoint.setStage(Stage.UNVERIFIED);
 							
 							deleteEndpoint = constructDeleteEndpointFromProps(deleteEndpoint, parameters);
+							deleteEndpoint.validate();
 							persistenceDriver.saveDeleteEndpoint(workspaceName, profileName, deleteEndpoint);
 							EventHelper.createEntityEvent(deleteEndpoint, EntityEventType.CREATE).emitAsynchronously();
 							return deleteEndpoint;
@@ -391,14 +397,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 			JsonObject parameters) throws Exception {
 		
 		DeleteEndpointRequestParameter derp = GSONUtil.getGSONInstance().fromJson(parameters, DeleteEndpointRequestParameter.class);
-		check(derp!=null, "DeleteEndpoint params cannot be null");
-		check(derp.getBindVariables()!=null, "BindVariables  cannot be null");
-		check(derp.getQueryTemplate()!=null, "QueryTemplate cannot be null");
-		
-		deleteEndpoint.setBindVariables(derp.getBindVariables());
-		deleteEndpoint.setQueryTemplate(derp.getQueryTemplate());
-		deleteEndpoint.setTags(derp.getTags());
-		deleteEndpoint.setDescription(derp.getDescription());
+		deleteEndpoint = derp.getDeleteEndpoint(deleteEndpoint);
 		return deleteEndpoint;
 	}
 
@@ -438,6 +437,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 
 							// perform provider validation
 							submitEndpoint = submitHandler.validateAndInitializeSubmitEndpoint(submitEndpoint);
+							submitEndpoint.validate();
 							persistenceDriver.saveSubmitEndpoint(workspaceName, profileName, submitEndpoint);
 							EventHelper.createEntityEvent(submitEndpoint, EntityEventType.CREATE).emitAsynchronously();
 							return submitEndpoint;
@@ -478,10 +478,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 			JsonObject parameters) throws Exception {
 
 		SubmitEndpointRequestParameter serp = GSONUtil.getGSONInstance().fromJson(parameters, SubmitEndpointRequestParameter.class);
-		check(serp!=null, "SubmitEndpoint params cannot be null");
-		
-		submitEndpoint.setProperties(serp.getProperties());
-		submitEndpoint.setSubmitPayloadModifiers(serp.getSubmitPayloadModifiers());
+		submitEndpoint = serp.getSubmitEndpoint(submitEndpoint);
 		return submitEndpoint;
 	}
 	
@@ -569,18 +566,28 @@ public class ManagementTasksImpl implements IManagementTasks {
 	@Override
 	public Profile updateProfile(String profileName, String workspaceName,
 			JsonObject parameters, String updatedBy) throws Exception {
-		
+		Profile prof = null;
 		synchronized (persistenceDriver) {
 			Profile oldProfile = getProfile(workspaceName, profileName);
 			deleteProfile(workspaceName, profileName);
-			
+			try{
 			Profile profile = this.createProfile(profileName, workspaceName, parameters, updatedBy);
 			profile.setQueryEndpoints(oldProfile.getQueryEndpoints());
 			profile.setDeleteEndpoints(oldProfile.getDeleteEndpoints());
 			profile.setSubmitEndpoints(oldProfile.getSubmitEndpoints());
 			persistenceDriver.saveProfile(workspaceName, profile);
 			EventHelper.createEntityEvent(profile, EntityEventType.UPDATE).emitAsynchronously();
-			return profile;	
+			prof = profile;
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+				log.debug("Restoring old profile");
+				persistenceDriver.saveProfile(workspaceName, oldProfile);
+				prof = oldProfile;
+			}
+			
+			return prof;	
 		}
 		
 	}
@@ -589,12 +596,23 @@ public class ManagementTasksImpl implements IManagementTasks {
 	public QueryEndpoint updateQueryEndpoint(String queryEndpointName, String workspaceName,
 			String profileName, JsonObject parameters, String updatedBy)
 			throws Exception {
-		
+		QueryEndpoint qe = null;
 		synchronized (persistenceDriver) {
-			deleteQueryEndpoint(workspaceName, profileName, queryEndpointName);
-			QueryEndpoint queryEndpoint = this.createQueryEndpoint(queryEndpointName, workspaceName, profileName, parameters, updatedBy);
-			EventHelper.createEntityEvent(queryEndpoint, EntityEventType.UPDATE).emitAsynchronously();
-			return queryEndpoint;	
+			QueryEndpoint oldQueryEndpoint = deleteQueryEndpoint(workspaceName, profileName, queryEndpointName);
+			try{
+				QueryEndpoint queryEndpoint = this.createQueryEndpoint(queryEndpointName, workspaceName, profileName, parameters, updatedBy);
+				EventHelper.createEntityEvent(queryEndpoint, EntityEventType.UPDATE).emitAsynchronously();
+				qe = queryEndpoint;
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+				log.debug("Restoring old QueryEndpoint");
+				qe = oldQueryEndpoint;
+				persistenceDriver.saveQueryEndpoint(workspaceName, profileName, oldQueryEndpoint);
+			}
+			
+			return qe;	
 		}
 		
 	}
@@ -605,10 +623,21 @@ public class ManagementTasksImpl implements IManagementTasks {
 			String updatedBy) throws Exception {
 		
 		synchronized (persistenceDriver) {
-			deleteDeleteEndpoint(workspaceName, profileName, deleteEndpointName);
-			DeleteEndpoint deleteEndpoint = this.createDeleteEndpoint(deleteEndpointName, workspaceName, profileName, parameters, updatedBy);
-			EventHelper.createEntityEvent(deleteEndpoint, EntityEventType.UPDATE).emitAsynchronously();
-			return deleteEndpoint;	
+			DeleteEndpoint oldDeleteEndpoint = deleteDeleteEndpoint(workspaceName, profileName, deleteEndpointName);
+			try{
+				DeleteEndpoint deleteEndpoint = this.createDeleteEndpoint(deleteEndpointName, workspaceName, profileName, parameters, updatedBy);
+				EventHelper.createEntityEvent(deleteEndpoint, EntityEventType.UPDATE).emitAsynchronously();
+				return deleteEndpoint;
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+				log.debug("Restoring old DeleteEndpoint");
+				
+				persistenceDriver.saveDeleteEndpoint(workspaceName, profileName, oldDeleteEndpoint);
+				return oldDeleteEndpoint;
+			}
+	
 		}
 		
 	}
@@ -619,10 +648,20 @@ public class ManagementTasksImpl implements IManagementTasks {
 			String updatedBy) throws Exception {
 		
 		synchronized (persistenceDriver) {
-			deleteSubmitEndpoint(workspaceName, profileName, submitEndpointName);
-			SubmitEndpoint submitEndpoint = this.createSubmitEndpoint(submitEndpointName, workspaceName, profileName, parameters, updatedBy);
-			EventHelper.createEntityEvent(submitEndpoint, EntityEventType.UPDATE).emitAsynchronously();
-			return submitEndpoint;	
+			SubmitEndpoint oldSubmitEndpoint = deleteSubmitEndpoint(workspaceName, profileName, submitEndpointName);
+			try{
+				SubmitEndpoint submitEndpoint = this.createSubmitEndpoint(submitEndpointName, workspaceName, profileName, parameters, updatedBy);
+				EventHelper.createEntityEvent(submitEndpoint, EntityEventType.UPDATE).emitAsynchronously();
+				return submitEndpoint;
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+				log.debug("Restoring old SubmitEndpoint");
+				persistenceDriver.saveSubmitEndpoint(workspaceName, profileName, oldSubmitEndpoint);
+				return oldSubmitEndpoint;
+			}
+				
 		}
 		
 	}
@@ -630,6 +669,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 	@Override
 	public Workspace getWorkspace(String workspaceName) throws Exception {
 			Workspace workspace = persistenceDriver.getWorkspace(workspaceName);
+			workspace.validate();
 			return workspace;	
 		}
 		
@@ -643,6 +683,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 			Profile profile = workspace.getProfiles().get(profileName);
 			if(profile!=null)
 			{
+				validateProfile(profile);
 				return profile;
 			}
 			else
@@ -662,7 +703,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 			QueryEndpoint queryEndpoint = profile.getQueryEndpoints().get(queryEndpointName);
 			if(queryEndpoint!=null)
 			{
-				
+				queryEndpoint.validate();
 				return queryEndpoint;
 			}
 				
@@ -681,7 +722,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 			DeleteEndpoint deleteEndpoint = profile.getDeleteEndpoints().get(deleteEndpointName);
 			if(deleteEndpoint!=null)
 			{
-				
+				deleteEndpoint.validate();
 				return deleteEndpoint;
 			}
 				
@@ -698,7 +739,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 			SubmitEndpoint submitEndpoint = profile.getSubmitEndpoints().get(submitEndpointName);
 			if(submitEndpoint!=null)
 			{
-				
+				submitEndpoint.validate();
 				return submitEndpoint;
 			}
 				
@@ -736,13 +777,97 @@ public class ManagementTasksImpl implements IManagementTasks {
 
 	@Override
 	public Collection<Workspace> listWorkspaces() throws Exception {
-		return persistenceDriver.loadAllWorkspaces();
+		List<Workspace> listOfWorkspaces = persistenceDriver.loadAllWorkspaces();
+		
+		Iterator<Workspace> iterator = listOfWorkspaces.iterator();
+		while(iterator.hasNext())
+		{
+			Workspace workspace = iterator.next();
+			
+			try{
+				validateWorkspace(workspace);
+			}
+			catch(Exception e)
+			{
+				log.error("Failed to load workspace [" + workspace + "]", e);
+				iterator.remove();
+			}	
+			
+		}
+		
+		return listOfWorkspaces;
 	}
 	
-	private static void check(boolean condition , String errorMessage) throws Exception
+	private void validateWorkspace(Workspace workspace) throws Exception
 	{
-		if(!condition) throw new Exception(errorMessage);
+		workspace.validate();
+		Iterator<Entry<String,Profile>> iterator = workspace.getProfiles().entrySet().iterator();
+		while(iterator.hasNext())
+		{
+			Profile profile = iterator.next().getValue();
+			
+			try{
+				validateProfile(profile);
+			}
+			catch(Exception e)
+			{
+				log.error("Failed to profile [" + profile + "] from workspace [" + workspace.getName() + "]", e);
+				iterator.remove();
+			}	
+			
+		}
+		
 	}
+	
+	private void validateProfile(Profile profile) throws Exception
+	{
+		profile.validate();
+		
+		Iterator<Entry<String,QueryEndpoint>> qeIterator = profile.getQueryEndpoints().entrySet().iterator();
+		while(qeIterator.hasNext())
+		{
+			QueryEndpoint qe = qeIterator.next().getValue();
+			try {
+				qe.validate();
+			}
+			catch(Exception e)
+			{
+				log.error("Failed to QueryEndpoint [" + qe + "] from profile [" + profile.getName() + "]", e);
+				qeIterator.remove();
+			}
+		}
+		
+		Iterator<Entry<String,SubmitEndpoint>> seIterator = profile.getSubmitEndpoints().entrySet().iterator();
+		while(seIterator.hasNext())
+		{
+			SubmitEndpoint se = seIterator.next().getValue();
+			try {
+				se.validate();
+			}
+			catch(Exception e)
+			{
+				log.error("Failed to SubmitEndpoint [" + se + "] from profile [" + profile.getName() + "]", e);
+				qeIterator.remove();
+			}
+		}
+		
+		Iterator<Entry<String,DeleteEndpoint>> deIterator = profile.getDeleteEndpoints().entrySet().iterator();
+		while(deIterator.hasNext())
+		{
+			DeleteEndpoint de = deIterator.next().getValue();
+			try {
+				de.validate();
+			}
+			catch(Exception e)
+			{
+				log.error("Failed to DeleteEndpoint [" + de + "] from profile [" + profile.getName() + "]", e);
+				qeIterator.remove();
+			}
+		}
+		
+		
+	}
+	
 	
 
 }
