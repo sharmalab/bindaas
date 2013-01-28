@@ -12,6 +12,15 @@ import edu.emory.cci.bindaas.datasource.provider.aime.model.OutputFormatProps.Qu
 
 public class SqlHTMLHandler implements IFormatHandler {
 	
+	private String headSectionContent;
+	public String getHeadSectionContent() {
+		return headSectionContent;
+	}
+
+	public void setHeadSectionContent(String headSectionContent) {
+		this.headSectionContent = headSectionContent;
+	}
+
 	public SqlHTMLHandler()
 	{
 		Activator.getContext().registerService(IFormatHandler.class.getName(), this, null);
@@ -42,8 +51,8 @@ public class SqlHTMLHandler implements IFormatHandler {
 		    throws Exception {
 		 
 		 StringBuilder builder = new StringBuilder();
-		 builder.append("<HTML><BODY>");
-		 builder.append("<P ALIGN='center'><TABLE BORDER=1>").append("\n");
+		 builder.append("<HTML><BODY>").append(headSectionContent);
+		 builder.append("<P ALIGN='center'><TABLE id='data' BORDER=1>").append("\n");
 		 ResultSetMetaData rsmd = rs.getMetaData();
 		 int columnCount = rsmd.getColumnCount();
 		 // table header
