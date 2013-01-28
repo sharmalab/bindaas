@@ -105,6 +105,35 @@ public class ExecutionServiceImpl implements IExecutionService{
 		}
 		
 	}
+	public Response queryResultToResponse(QueryResult queryResult , QueryEndpoint queryEndpoint , long responseTime) throws Exception
+	{
+		if(queryResult.isCallback())
+		{
+			queryResult.callback(getMessageContext().getHttpServletResponse(), null); // TODO here instead of null a context should be passed
+			return Response.ok().build();
+		}
+		else if(queryResult.isError())
+		{
+			return RestUtils.createErrorResponse(queryResult.getErrorMessage());
+		}
+		else if(queryResult.isMime())
+		{
+			Map<String,Object> headers = new HashMap<String, Object>();
+			headers.put("metadata", queryEndpoint.getMetaData());
+			headers.put("tags", queryEndpoint.getTags());
+			headers.put("responseTime(ms)", responseTime+ "");
+			return RestUtils.createMimeResponse(queryResult.getData(), queryResult.getMimeType() , headers);
+		}
+		else
+		{
+			Map<String,Object> headers = new HashMap<String, Object>();
+			headers.put("metadata", queryEndpoint.getMetaData());
+			headers.put("tags", queryEndpoint.getTags());
+			headers.put("responseTime(ms)",responseTime+ "");
+			return RestUtils.createSuccessResponse(new String(queryResult.getData()) , queryResult.getMimeType() ,headers);
+		}
+		
+	}
 	
 	private String getUser()
 	{
@@ -239,7 +268,7 @@ public class ExecutionServiceImpl implements IExecutionService{
 			@PathParam("workspace") String workspaceName,
 			@PathParam("profile") String profileName,
 			@PathParam("queryEndpoint") String queryEndpointName) {
-		
+		long startTime = System.currentTimeMillis();
 		try {
 			Profile profile = managementTask.getProfile(workspaceName, profileName);
 			if(profile.getQueryEndpoints().containsKey(queryEndpointName) )
@@ -248,7 +277,7 @@ public class ExecutionServiceImpl implements IExecutionService{
 				
 				QueryResult queryResult = executionTask.executeQueryEndpoint(getUser(), getRuntimeQueryParameters() , profile, queryEndpoint);
 				
-				return queryResultToResponse(queryResult);
+				return queryResultToResponse(queryResult , queryEndpoint , System.currentTimeMillis() - startTime);
 			}
 			else
 			{

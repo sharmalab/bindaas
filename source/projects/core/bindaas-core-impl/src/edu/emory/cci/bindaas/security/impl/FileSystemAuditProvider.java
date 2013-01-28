@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -95,10 +96,11 @@ public class FileSystemAuditProvider implements IAuditProvider{
 			if(file.exists() && file.canRead())
 			{
 				JsonArray array = parser.parse(new FileReader(filename)).getAsJsonArray();
-				while(array.iterator().hasNext())
+				Iterator<JsonElement> iterator = array.iterator(); 
+				while(iterator.hasNext())
 				{
 					Map<String,String> auditMessage = new HashMap<String, String>();
-					JsonObject jsonObj = array.iterator().next().getAsJsonObject();
+					JsonObject jsonObj = iterator.next().getAsJsonObject();
 					
 					for(Entry<String,JsonElement> entry : jsonObj.entrySet())
 					{

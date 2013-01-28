@@ -37,11 +37,15 @@ import edu.emory.cci.bindaas.core.api.ISecurityHandler;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.rest.security.AuthenticationProtocol;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.core.util.DynamicProperties;
 
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
+import edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider;
+import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
+import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.AdminConfiguration.AuthenticationMethod;
 
 
 public class LoginAction extends HttpServlet implements Filter{
@@ -53,6 +57,8 @@ public class LoginAction extends HttpServlet implements Filter{
 	private static final long serialVersionUID = 1370274434730700069L;
 	private String defaultLoginTarget ;
 	private Log log = LogFactory.getLog(getClass());
+	private String postLoginActionTarget = "/postAuthenticate";
+	
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -62,42 +68,36 @@ public class LoginAction extends HttpServlet implements Filter{
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
-		IAuthenticationProvider authenticationProvider = getAuthenticationProvider() ;
+		//IAuthenticationProvider authenticationProvider = getAuthenticationProvider() ;
+		
+		DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
 		
 		
-		if(authenticationProvider!=null && authenticationProvider.isAuthenticationByUsernamePasswordSupported() )
+		if(dynamicAdminConsoleConfiguration!=null )
 		{
 			try {
-				BindaasUser principal = authenticationProvider.login(username, password);
-				DynamicProperties bindaasProperties = Activator.getService(DynamicProperties.class , "(name=bindaas)");
-				String[] admins = bindaasProperties.get("webconsole.security.admin").toString().split(",");
-				Set<String> setOfAllowedAdmins = new HashSet<String>(Arrays.asList(admins));
-				if(setOfAllowedAdmins.contains(username))
+//				edu.emory.cci.bindaas.security.impl.
+				BindaasUser principal = null;
+				if(dynamicAdminConsoleConfiguration.getObject().getAdminConfiguration().getAuthenticationMethod().equals(AuthenticationMethod.ldap))
+				{
+					principal = LDAPAuthenticationProvider.login(username, password , dynamicAdminConsoleConfiguration.getObject().getAdminConfiguration().getLdapUrl() ,dynamicAdminConsoleConfiguration.getObject().getAdminConfiguration().getLdapDNPattern());
+				}
+				else if(dynamicAdminConsoleConfiguration.getObject().getAdminConfiguration().getAuthenticationMethod().equals(AuthenticationMethod.defaultMethod))
+				{
+					IAuthenticationProvider authenticationProvider = Activator.getService(IAuthenticationProvider.class , "(class=edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider)");
+					principal = authenticationProvider.login(username, password);
+				}
+				
+				if(principal!=null)
 				{
 					request.getSession(true).setAttribute("loggedInUser", principal);
-					
-					// generate a api_key for this user if doesnt exist
-					
-					generateApiKey(principal);
-					
-					response.sendRedirect(loginTarget);
-					
+					request.getSession().setAttribute("loginTarget", loginTarget);
+					response.sendRedirect(postLoginActionTarget);
 				}
 				else
 				{
-					
-					try {
-						
-						LoginView.generateLoginView(request , response , loginTarget, "You are not authorized to access this resource");
-
-					} catch (Exception e1) {
-							log.error(e1);
-							ErrorView.handleError(response, new Exception("Authentication System unavailable"));
-					}
-
+					ErrorView.handleError(response, new Exception("Autentication Method not supported"));
 				}
-				
-				
 				
 			} catch (AuthenticationException e) {
 				log.error(e);
@@ -119,87 +119,6 @@ public class LoginAction extends HttpServlet implements Filter{
 		}
 	}
 
-
-	
-	private void generateApiKey(BindaasUser principal) {
-		
-		
-		
-		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
-		if(sessionFactory!=null)
-		{
-			Session session = sessionFactory.openSession();
-			try {
-				session.beginTransaction();
-				
-				String emailAddress =  principal.getProperty(BindaasUser.EMAIL_ADDRESS) != null ? principal.getProperty(BindaasUser.EMAIL_ADDRESS).toString() : principal.getName() + "@" + principal.getDomain();
-				String firstName =  principal.getProperty(BindaasUser.FIRST_NAME) != null ? principal.getProperty(BindaasUser.FIRST_NAME).toString() : principal.getName();
-				String lastName =  principal.getProperty(BindaasUser.LAST_NAME) != null ? principal.getProperty(BindaasUser.LAST_NAME).toString() : principal.getName() ;
-				
-				
-				List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).add(Restrictions.eq("stage",	"accepted")).add(Restrictions.eq("emailAddress", emailAddress)).list();
-				
-				if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
-				{
-					UserRequest request = listOfValidKeys.get(0);
-					if(request.getDateExpires().after(new Date()))
-					{
-						principal.addProperty("apiKey", request.getApiKey());
-						return;
-					}
-					else
-					{
-						log.warn("The API Key of user [" + principal + "] has expired");
-					}
-				}
-				else
-				{
-					// generate api key for first time user
-
-					
-					GregorianCalendar calendar = new GregorianCalendar();
-					calendar.add(Calendar.YEAR, 40);
-					UserRequest userRequest = new UserRequest();
-					userRequest.setStage("accepted");
-					userRequest.setApiKey( URLEncoder.encode( UUID.randomUUID().toString() ));
-					userRequest.setDateExpires(calendar.getTime());
-					
-					
-					userRequest.setEmailAddress( emailAddress);
-					userRequest.setFirstName( firstName);
-					userRequest.setLastName(lastName);
-					
-					session.save(userRequest);
-					
-					HistoryLog historyLog = new HistoryLog();
-					historyLog.setActivityType("system-approve");
-					historyLog.setComments("System generated API Key for the user");
-					historyLog.setInitiatedBy("system");
-					historyLog.setUserRequest(userRequest);
-					
-					session.save(historyLog);
-					session.getTransaction().commit();
-					
-					principal.addProperty("apiKey", userRequest.getApiKey());
-				}
-				
-				
-			}
-			catch(Exception e)
-			{
-				log.error(e);
-				session.getTransaction().rollback();
-			}
-			finally
-			{
-				session.close();
-			}
-			
-		}
-		
-		
-		
-	}
 
 
 
@@ -243,30 +162,30 @@ public class LoginAction extends HttpServlet implements Filter{
 		
 	}
 	
-	public IAuthenticationProvider getAuthenticationProvider()
-	{
-		// code for setting authentication provider
-		final BundleContext context = Activator.getContext();
-		DynamicProperties bindaasProperties = Activator.getService(DynamicProperties.class , "(name=bindaas)");
-		String classname = bindaasProperties.get("webconsole.security.method")!=null && bindaasProperties.get("webconsole.security.method").equals("ldap") ? "edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider" : "edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider";
-		ServiceReference[] serviceReferences;
-		try {
-			
-			serviceReferences = context.getAllServiceReferences(IAuthenticationProvider.class.getName(), "(class=" + classname + ")");
-			if(serviceReferences.length > 0)
-			{
-				Object service = context.getService(serviceReferences[0]);
-				if(service!=null)
-				{
-					IAuthenticationProvider authProvider  =  (IAuthenticationProvider) service; 
-					return authProvider; 
-				}
-			}
-		} catch (InvalidSyntaxException e) {
-			log.error(e);
-		}
-		return null;
-	}
+//	public IAuthenticationProvider getAuthenticationProvider()
+//	{
+//		// code for setting authentication provider
+//		final BundleContext context = Activator.getContext();
+//		DynamicProperties bindaasProperties = Activator.getService(DynamicProperties.class , "(name=bindaas)");
+//		String classname = bindaasProperties.get("webconsole.security.method")!=null && bindaasProperties.get("webconsole.security.method").equals("ldap") ? "edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider" : "edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider";
+//		ServiceReference[] serviceReferences;
+//		try {
+//			
+//			serviceReferences = context.getAllServiceReferences(IAuthenticationProvider.class.getName(), "(class=" + classname + ")");
+//			if(serviceReferences.length > 0)
+//			{
+//				Object service = context.getService(serviceReferences[0]);
+//				if(service!=null)
+//				{
+//					IAuthenticationProvider authProvider  =  (IAuthenticationProvider) service; 
+//					return authProvider; 
+//				}
+//			}
+//		} catch (InvalidSyntaxException e) {
+//			log.error(e);
+//		}
+//		return null;
+//	}
 
 	
 	

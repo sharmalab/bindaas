@@ -43,7 +43,7 @@ public interface IExecutionService {
 		
 		
 	// get meta-data
-		@Path("{workspace}/{profile}/query/{stage}/{queryEndpoint}/metadata")
+		@Path("{workspace}/{profile}/query/{queryEndpoint}/metadata")
 		@GET
 		public Response getQueryMetadata(@PathParam("workspace") String workspace , @PathParam("profile") String profile , @PathParam("queryEndpoint") String queryEndpoint);
 		

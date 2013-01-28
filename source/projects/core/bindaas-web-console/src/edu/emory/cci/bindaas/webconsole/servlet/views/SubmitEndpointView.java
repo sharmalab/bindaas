@@ -19,7 +19,9 @@ import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.framework.api.ISubmitPayloadModifier;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
@@ -103,9 +105,8 @@ public class SubmitEndpointView extends AbstractRequestHandler {
 			
 			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
 			context.put("apiKey", admin.getProperty("apiKey"));
-			IBindaasAdminService adminService = Activator.getService(IBindaasAdminService.class);
-			String serviceUrl = adminService.getProperty(BindaasConstants
-					.SERVICE_URL);
+			DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
+			String serviceUrl = bindaasConfiguration.getObject().getProxyUrl();
 			context.put("serviceUrl", serviceUrl);
 			template.merge(context, response.getWriter());
 		}

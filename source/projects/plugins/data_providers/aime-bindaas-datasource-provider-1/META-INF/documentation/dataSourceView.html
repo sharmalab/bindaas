@@ -17,15 +17,15 @@ title="JDBC URL example: jdbc:db2://localhost:50000/XMLDB">
 	type="text" id="aime_url" />
 </span>
 <span class="has-tip tip-left" data-width="210"
-title="This option will generate some basic query,submit and delete API if checked"><label
+title="This option will generate a submit API if checked"><label
 	for="aime_auto_init">
 		<input type="checkbox" CHECKED
 		id="aime_auto_init">
-		Auto Initialize</label></span>
+		Auto Generate Submit API</label></span>
 <br>
 <label for="aime_table">Database Table to store annotations</label>
 <span class="has-tip tip-left" data-width="210"
-title="Mandatory if Auto Initialize is checked">
+title="Mandatory if Auto Generate Submit API is checked">
 	<input
 	type="text" id="aime_table" />
 </span>
@@ -63,10 +63,10 @@ title="Mandatory if Auto Initialize is checked">
 
 		if ($('#aime_auto_init').attr('checked')) {
 			dataSourceJson.autoInitialize = true;
-			$("#aime_table").removeAttr("disabled");
+			$("#aime_table,label[for=aime_table]").show();
 		} else {
 			dataSourceJson.autoInitialize = false;
-			$("#aime_table").attr("disabled", "true");
+			$("#aime_table,label[for=aime_table]").hide();
 		}
 
 		$("#dataSource").attr("value", JSON.stringify(dataSourceJson));
@@ -84,10 +84,10 @@ title="Mandatory if Auto Initialize is checked">
 			if (dataSourceJson.autoInitialize == true) {
 
 				$('#aime_auto_init').attr('checked', "true");
-				$("#aime_table").removeAttr("disabled");
+				$("#aime_table,label[for=aime_table]").show();
 			} else {
 				$('#aime_auto_init').removeAttr('checked');
-				$("#aime_table").attr("disabled", "true");
+				$("#aime_table,label[for=aime_table]").hide();
 			}
 
 		} catch (e) {

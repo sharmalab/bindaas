@@ -1,5 +1,90 @@
 {
-  "profiles": {},
+  "profiles": {
+    "test": {
+      "dataSource": {
+        "host": "hudson.cci.emory.edu",
+        "port": "27017",
+        "db": "test",
+        "collection": "test",
+        "initialize": true
+      },
+      "queryEndpoints": {
+        "test": {
+          "queryTemplate": "{}",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {},
+          "stage": "UNVERIFIED",
+          "outputFormat": {
+            "outputFormat": "JSON"
+          },
+          "name": "test",
+          "timeCreated": "Wed Jan 16 16:49:19 EST 2013",
+          "createdBy": "admin",
+          "description": ""
+        }
+      },
+      "deleteEndpoints": {},
+      "submitEndpoints": {
+        "csvFile": {
+          "type": "MULTIPART",
+          "properties": {
+            "inputType": "CSV_FILE"
+          },
+          "name": "csvFile",
+          "timeCreated": "Wed Jan 16 16:45:40 EST 2013",
+          "createdBy": "admin"
+        },
+        "mongoFile": {
+          "type": "MULTIPART",
+          "properties": {
+            "inputType": "JSON_FILE"
+          },
+          "name": "mongoFile",
+          "timeCreated": "Wed Jan 16 16:45:40 EST 2013",
+          "createdBy": "admin"
+        },
+        "csv": {
+          "type": "FORM_DATA",
+          "properties": {
+            "inputType": "CSV"
+          },
+          "name": "csv",
+          "timeCreated": "Wed Jan 16 16:45:40 EST 2013",
+          "createdBy": "admin"
+        },
+        "mongo": {
+          "type": "FORM_DATA",
+          "properties": {
+            "inputType": "JSON"
+          },
+          "name": "mongo",
+          "timeCreated": "Wed Jan 16 16:45:40 EST 2013",
+          "createdBy": "admin"
+        }
+      },
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider",
+      "providerVersion": 1,
+      "name": "test",
+      "timeCreated": "Wed Jan 16 16:45:34 EST 2013",
+      "createdBy": "admin",
+      "description": ""
+    },
+    "test5": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "test5",
+      "timeCreated": "Thu Jan 17 18:11:20 EST 2013",
+      "createdBy": "admin",
+      "description": ""
+    }
+  },
   "params": {},
   "name": "test",
   "timeCreated": "Thu Jan 10 12:29:30 EST 2013",

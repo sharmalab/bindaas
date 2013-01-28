@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+
+		<!-- Set the viewport width to device width for mobile -->
+		<meta name="viewport" content="width=device-width" />
+
+		<title>Bindaas Audit Logs</title>
+
+		<!-- Included CSS Files (Uncompressed) -->
+		<!--
+		<link rel="stylesheet" href="stylesheets/foundation.css">
+		-->
+
+		<!-- Included CSS Files (Compressed) -->
+		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+		<!--<link rel="stylesheet" href="/foundation/stylesheets/app.css"> -->
+
+		<!--<script type="text/javascript" src="/foundation/media/js/jquery.dataTables.js"></script> -->
+		<script src="/foundation/javascripts/jquery.js"></script>
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript">
+			google.load('visualization', '1', {
+				packages : ['table']
+			});
+		</script>
+		<script type="text/javascript">
+						var visualization;
+			var data;
+
+			var options = {'showRowNumber': true};
+			function drawVisualization() {
+			// Create and populate the data table.
+			var dataAsJson =
+			{
+			cols:[
+			{id:'A',label:'Timestamp',type:'string'},
+			{id:'B',label:'Request URL',type:'string'},
+			{id:'C',label:'Query Parameters',type:'string'},
+			{id:'D',label:'Requester',type:'string'},
+			{id:'E',label:'Source IP',type:'string'},
+			{id:'F',label:'Event',type:'string'},
+			{id:'G',label:'HTTP Response Code',type:'string'}
+
+			],
+			rows:[
+			#foreach ($message in $auditMessages)
+			{
+
+			c:[
+			#if ($message.get('timestamp'))
+			{v:$message.get('timestamp').toString()},
+			#else
+			{v:''},
+			#end
+
+			#if ($message.get('requestUri'))
+			{v:$message.get('requestUri').toString()},
+			#else
+			{v:''},
+			#end
+
+			#if ($message.get('queryString'))
+			{v:$message.get('queryString').toString()},
+			#else
+			{v:''},
+			#end
+
+			#if ($message.get('subject'))
+			{v:$message.get('subject').toString()},
+			#else
+			{v:''},
+			#end
+
+			#if ($message.get('source'))
+			{v:$message.get('source').toString()},
+			#else
+			{v:''},
+			#end
+
+			#if ($message.get('event'))
+			{v:$message.get('event').toString()},
+			#else
+			{v:''},
+			#end
+
+			#if ($message.get('outcome'))
+			{v:$message.get('outcome').toString()}
+			#else
+			{v:''}
+			#end
+
+			],
+
+			},
+			#end
+			{ c:[
+			{v:''},
+			{v:''},
+			{v:''},
+			{v:''},
+			{v:''},
+			{v:''},
+			{v:''}
+			] }
+
+			]};
+			data = new google.visualization.DataTable(dataAsJson);
+
+			// Set paging configuration options
+			// Note: these options are changed by the UI controls in the example.
+			options['page'] = 'enable';
+			options['pageSize'] = 10;
+			options['pagingSymbols'] = {prev: 'prev', next: 'next'};
+			options['pagingButtonsConfiguration'] = 'auto';
+
+			// Create and draw the visualization.
+			visualization = new google.visualization.Table(document.getElementById('table'));
+			draw();
+			}
+
+			function draw() {
+			visualization.draw(data, options);
+			}
+
+			google.setOnLoadCallback(drawVisualization);
+
+			// sets the number of pages according to the user selection.
+			function setNumberOfPages(value) {
+			if (value) {
+			options['pageSize'] = parseInt(value, 10);
+			options['page'] = 'enable';
+			} else {
+			options['pageSize'] = null;
+			options['page'] = null;
+			}
+			draw();
+			}
+
+			// Sets custom paging symbols "Prev"/"Next"
+			function setCustomPagingButtons(toSet) {
+			options['pagingSymbols'] = toSet ? {next: 'next', prev: 'prev'} : null;
+			draw();
+			}
+
+			function setPagingButtonsConfiguration(value) {
+			options['pagingButtonsConfiguration'] = value;
+			draw();
+			}
+
+		</script>
+		<!--<script  src="http://datatables.net/download/build/jquery.dataTables.nightly.js"></script>
+		<script>
+		$(document).ready(function(){
+		$('#auditTable').dataTable();
+		});
+		</script> -->
+
+		<!-- IE Fix for HTML5 Tags -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+	</head>
+	<body>
+		<!-- Latest version of jQuery -->
+
+		<!-- Included JS Files (Unminified) -->
+		<!-- [JS Files] -->
+		<!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+		<!-- Included JS Files (Minified) -->
+
+		<!-- Initialize JS Plugins -->
+
+		<div class="row">
+			<div class="six columns">
+				<h2>Bindaas</h2>
+				<p>
+					<strong>Be worry free!</strong>
+				</p>
+				<p>
+					This is version <strong>2.0.0 Beta</strong>
+				</p>
+				<hr />
+			</div>
+			<div class="six columns">
+				<ul class="inline-list">
+					<li>
+						<h6>Welcome $bindaasUser</h6>
+					</li>
+					<li>
+						<h6><a href="/dashboard/logout">logout</a></h6>
+					</li>
+				</ul>
+
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="twelve columns">
+				<div class="row">
+					<ul class="breadcrumbs">
+						<li>
+							<a href="/dashboard/"><strong>Dashboard</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/administration"><strong>Administration</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/audit"><strong>Audit</strong></a>
+						</li>
+					</ul>
+				</div>
+				<div class="row">
+					<h2>Audit Logs</h2>
+				</div>
+				<div style="margin-bottom: 10px; padding: 5px; border: 1px solid gray; background-color: buttonface;">
+					
+					<br />
+					<form action="">
+						<span style="font-size: 12px;">Number of rows:</span>
+						<select style="font-size: 12px" onchange="setNumberOfPages(this.value)">
+							<option value="">No paging</option>
+							<option value="3">3</option>
+							<option value="5">5</option>
+							<option value="9">9</option>
+							<option selected="selected" value="10">10</option>
+							<option value="100">100</option>
+						</select>
+						
+					</form>
+				</div>
+				<div id="table"></div>
+			</div>
+
+		</div>
+
+	</body>
+</html>

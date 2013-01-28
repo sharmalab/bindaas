@@ -57,8 +57,8 @@
 
   <div class="row">
     <div class="twelve columns">
-      <form action="/postSignup" method="post">
-	 	 <h4 class="subheader">Account Verified</h4>
+      <form action="/user/postAuthenticate" method="post">
+	 	 <h4 class="subheader">Login Success !</h4>
 	 	 <fieldset>
 			
 		    <legend><h4>Please provide following information</h4></legend>
@@ -68,7 +68,8 @@
 			      <label class="right inline">Email Address:</label>
 			    </div>
 			    <div class="eight mobile-three columns">
-			      <label>$emailAddress</label>
+			      <input type="text" value="$emailAddress" disabled="true"></input>
+			      <input type="hidden" name="emailAddress" value="$emailAddress" ></input>
 			    </div>
 			  </div>
 			  <div class="row">
@@ -76,7 +77,7 @@
 			      <label class="right inline">First Name :</label>
 			    </div>
 			    <div class="eight mobile-three columns">
-			      <label>$firstName</label>
+			      <input type="text" name="firstName" value="$firstName"></input>
 			    </div>
 			  </div>
 			  <div class="row">
@@ -84,12 +85,12 @@
 			      <label class="right inline">Last Name :</label>
 			    </div>
 			    <div class="eight mobile-three columns">
-			      <label>$lastName</label>
+			      <input type="text" name="lastName" value="$lastName"></input>
 			    </div>
 			  </div>
 			  <div class="row">
 			    <div class="four mobile-one columns">
-			      <label class="right inline">Reason for requesting API Key :</label>
+			      <label class="right inline">Reason for requesting Access :</label>
 			    </div>
 			    <div class="eight mobile-three columns">
 			      <textarea name="reason" placeholder="I want to evaluate Bindaas"></textarea>

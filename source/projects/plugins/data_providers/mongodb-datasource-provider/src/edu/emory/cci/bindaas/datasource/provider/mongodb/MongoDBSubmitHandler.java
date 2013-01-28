@@ -73,8 +73,8 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				collection.insert(object);
 				
 				QueryResult queryResult = new QueryResult();
-				String savedObjectString = collection.findOne(object).toString();
-				queryResult.setData(savedObjectString.toString().getBytes());
+				
+				queryResult.setData("{ 'count':'1'}".getBytes());
 				queryResult.setMimeType(StandardMimeType.JSON.toString());
 				return queryResult;
 			}
@@ -87,15 +87,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				collection.insert(object);
 				QueryResult queryResult = new QueryResult();
 				StringBuffer buffer = new StringBuffer();
-				buffer.append("[");
-				for(DBObject obj : object)
-				{
-					String savedObjectString = collection.findOne(obj).toString();
-					buffer.append(savedObjectString).append(",");
-				}
-				if(buffer.toString().contains(","))
-				buffer.replace(buffer.lastIndexOf(","), buffer.length(), "]");
-				
+				buffer.append("{ 'count':'" + object.length + "'}");
 				queryResult.setData(buffer.toString().getBytes());
 				queryResult.setMimeType(StandardMimeType.JSON.toString());
 				return queryResult;

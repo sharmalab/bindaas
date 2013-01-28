@@ -14,6 +14,7 @@ import org.osgi.framework.launch.Framework;
 
 import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.ISecurityHandler;
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.rest.security.AuditInLogger;
 import edu.emory.cci.bindaas.core.rest.security.SecurityHandler;
 import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
@@ -23,6 +24,7 @@ import edu.emory.cci.bindaas.core.rest.service.api.IManagementService;
 import edu.emory.cci.bindaas.core.rest.service.impl.ExecutionServiceImpl;
 import edu.emory.cci.bindaas.core.rest.service.impl.InformationServiceImpl;
 import edu.emory.cci.bindaas.core.rest.service.impl.ManagementServiceImpl;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.core.util.DynamicProperties;
 
 /**
@@ -33,8 +35,18 @@ import edu.emory.cci.bindaas.core.util.DynamicProperties;
 public class BindaasInitializer implements IBindaasAdminService{
 
 	
-	private Properties defaultBindaasProperties;
+	private BindaasConfiguration defaultBindaasConfiguration;
 	
+	public BindaasConfiguration getDefaultBindaasConfiguration() {
+		return defaultBindaasConfiguration;
+	}
+
+
+	public void setDefaultBindaasConfiguration(
+			BindaasConfiguration defaultBindaasConfiguration) {
+		this.defaultBindaasConfiguration = defaultBindaasConfiguration;
+	}
+
 	private ManagementServiceImpl managementService;
 	private InformationServiceImpl informationService;
 	private ExecutionServiceImpl executionService;
@@ -46,7 +58,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 	
 	private Log log = LogFactory.getLog(getClass());
 	
-	private DynamicProperties bindaasProperties;
+	private DynamicObject<BindaasConfiguration> bindaasConfiguration;
 	
 	
 	public BindaasInitializer()
@@ -113,32 +125,32 @@ public class BindaasInitializer implements IBindaasAdminService{
 		BundleContext context = Activator.getContext();
 		context.registerService(CommandProvider.class.getName(), new BindaasOSGIConsole(this), null);
 		context.registerService(IBindaasAdminService.class.getName(), this , null);
-		bindaasProperties = new DynamicProperties("bindaas", defaultBindaasProperties , context);
+		bindaasConfiguration = new DynamicObject<BindaasConfiguration>("bindaas", defaultBindaasConfiguration , context);
 		
 		
 		// load authentication & authorization props
 
-		if(bindaasProperties.get(BindaasConstants.AUTHENTICATION_STATUS).equals(Boolean.TRUE.toString()))
+		if(bindaasConfiguration.getObject().getEnableAuthentication())
 		{
 			securityModule.setEnableAuthentication(true);
-			securityModule.setAuthenticationProviderClass((String) bindaasProperties.get(BindaasConstants.AUTHENTICATION_PROVIDER));
+			securityModule.setAuthenticationProviderClass(bindaasConfiguration.getObject().getAuthenticationProviderClass());
 			
 			// authorization 
 			
-			if(bindaasProperties.get(BindaasConstants.AUTHORIZATION_STATUS).equals(Boolean.TRUE.toString()))
+			if(bindaasConfiguration.getObject().getEnableAuthorization())
 			{
 				securityModule.setEnableAuthorization(true);
-				securityModule.setAuthorizationProviderClass((String) bindaasProperties.get(BindaasConstants.AUTHORIZATION_PROVIDER));
+				securityModule.setAuthorizationProviderClass(bindaasConfiguration.getObject().getAuthorizationProviderClass());
 				
 			}
 			
 		}
 		
 		// configure audit
-		if(bindaasProperties.get(BindaasConstants.AUDIT_STATUS).equals(Boolean.TRUE.toString()))
+		if(bindaasConfiguration.getObject().getEnableAudit())
 		{
 			auditModule.setEnableAudit(true);
-			auditModule.setAuditProviderClass((String) bindaasProperties.get(BindaasConstants.AUDIT_PROVIDER));
+			auditModule.setAuditProviderClass(bindaasConfiguration.getObject().getAuditProviderClass());
 		}
 		
 		// start server
@@ -151,16 +163,20 @@ public class BindaasInitializer implements IBindaasAdminService{
 	
 	public void start() throws Exception
 	{
-		String protocol = (String) bindaasProperties.get(BindaasConstants.PROTOCOL);
-		String host = (String) bindaasProperties.get(BindaasConstants.HOST);
-		String port = (String) bindaasProperties.get(BindaasConstants.PORT);
+		String protocol = bindaasConfiguration.getObject().getProtocol();
+		String host = bindaasConfiguration.getObject().getHost();
+		String port = bindaasConfiguration.getObject().getPort().toString();
 		String publishUrl = protocol + "://" + host + ":" + port  ; // construct it !
 		
-		Object serviceUrl = bindaasProperties.get(BindaasConstants.SERVICE_URL);
+		Object serviceUrl = bindaasConfiguration.getObject().getProxyUrl();
 		
 		if(serviceUrl == null)
 		{
-			bindaasProperties.put(BindaasConstants.SERVICE_URL, publishUrl);
+			synchronized (bindaasConfiguration.getObject()) {
+				bindaasConfiguration.getObject().setProxyUrl(publishUrl);
+				bindaasConfiguration.saveObject();
+			}
+			
 		}
 		
 		
@@ -195,7 +211,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 	@Override
 	public void enableAuthentication() throws Exception {
 	
-		this.bindaasProperties.put(BindaasConstants.AUTHENTICATION_STATUS, Boolean.TRUE.toString());
+		// TODO : deprecate 
 		
 		
 	}
@@ -204,14 +220,14 @@ public class BindaasInitializer implements IBindaasAdminService{
 	@Override
 	public void disableAuthentication() throws Exception {
 		
-		this.bindaasProperties.put(BindaasConstants.AUTHENTICATION_STATUS, Boolean.FALSE.toString());
+		// TODO : deprecate 
 		
 		
 	}
 
 	@Override
 	public void enableMethodLevelAuthorization() throws Exception {
-		this.bindaasProperties.put(BindaasConstants.AUTHORIZATION_STATUS, Boolean.TRUE.toString());
+		// TODO : deprecate 
 		
 		
 		
@@ -219,7 +235,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 
 	@Override
 	public void disableMethodLevelAuthorization() throws Exception {
-		this.bindaasProperties.put(BindaasConstants.AUTHORIZATION_STATUS, Boolean.FALSE.toString());
+		// TODO : deprecate 
 		
 		
 		
@@ -227,14 +243,14 @@ public class BindaasInitializer implements IBindaasAdminService{
 
 	@Override
 	public void setPort(int port) throws Exception {
-		this.bindaasProperties.put(BindaasConstants.PORT, port + "");
+		// TODO : deprecate 
 		
 		
 	}
 
 	@Override
 	public void setHost(String host) throws Exception {
-		this.bindaasProperties.put(BindaasConstants.HOST, host);
+		// TODO : deprecate 
 		
 		
 	}
@@ -258,26 +274,16 @@ public class BindaasInitializer implements IBindaasAdminService{
 	}
 
 	@Override
-	public void addProperty(String key, String value) throws IOException {
-		this.bindaasProperties.put(key, value);
-		
-		
-	}
-
-	@Override
 	public String displayProperties() {
 		StringBuffer str = new StringBuffer();
 		str.append("Bindaas Service Properties\n");
-		for(Object key : this.bindaasProperties.keySet())
-		{
-			str.append(key + "\t=\t" + this.bindaasProperties.get(key.toString()));
-		}
+		str.append(bindaasConfiguration.getObject().toString());
 		return str.toString();
 	}
 
 	@Override
 	public void enableHttps() throws Exception {
-		this.bindaasProperties.put(BindaasConstants.PROTOCOL, "https");
+		// TODO : depricate
 		
 		
 	}
@@ -285,7 +291,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 
 	@Override
 	public void disableHttps() throws Exception {
-		this.bindaasProperties.put(BindaasConstants.PROTOCOL, "http");
+		// TODO : depricate
 		
 		
 		
@@ -295,7 +301,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 	@Override
 	public void enableAudit() throws Exception {
 		
-		this.bindaasProperties.put(BindaasConstants.AUDIT_STATUS, Boolean.TRUE.toString());
+		// TODO : depricate
 		
 		
 	}
@@ -303,7 +309,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 
 	@Override
 	public void disableAudit() throws Exception {
-		this.bindaasProperties.put(BindaasConstants.AUDIT_STATUS, Boolean.FALSE.toString());
+		// TODO : depricate
 		
 		
 		
@@ -318,7 +324,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 	public String showStatus() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Bindaas Version \t" + getVersion()).append("\n");
-		buffer.append(bindaasProperties).append("\n");
+		buffer.append(bindaasConfiguration.getObject().toString()).append("\n");
 		buffer.append("Registered Data Providers " + informationService.listProviders().getEntity()).append("\n");
 		buffer.append("Registered Query Modifiers " + informationService.listQueryModifiers().getEntity()).append("\n");
 		buffer.append("Registered QueryResult Modifiers " + informationService.listQueryResultModifiers().getEntity());
@@ -326,23 +332,6 @@ public class BindaasInitializer implements IBindaasAdminService{
 		return buffer.toString();
 	}
 
-	public Properties getDefaultBindaasProperties() {
-		return defaultBindaasProperties;
-	}
-
-
-	public void setDefaultBindaasProperties(Properties defaultBindaasProperties) {
-		this.defaultBindaasProperties = defaultBindaasProperties;
-	}
-
-
-	@Override
-	public String getProperty(String key) throws Exception {
-		return (String) bindaasProperties.get(key);
-		
-	}
-	
- // set properties
 	
 	
 

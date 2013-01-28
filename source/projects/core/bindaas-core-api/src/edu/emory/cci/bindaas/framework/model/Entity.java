@@ -78,4 +78,9 @@ public class Entity implements Cloneable{
 		return GSONUtil.getGSONInstance().fromJson(toString(), getClass());
 	}
 	
+//	public void finalize()
+//	{
+//		System.out.println("-------------- GC [" + getClass() + "]--------------------");
+//	}
+	
 }

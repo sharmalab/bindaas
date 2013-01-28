@@ -100,6 +100,7 @@
   				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
   				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
   				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+				<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
   			</ul>
     </div>
     	<div class="row">
@@ -150,13 +151,19 @@
   							</script>
   							
   							<div id="dataSourceContainer">
+  								#if($provider.getDocumentation().get('simpleName').getAsString())
   									<div id="$provider.getDocumentation().get('simpleName').getAsString()">
   										#if ($provider.getDocumentation().get('dataSourceView'))
   											$provider.getDocumentation().get('dataSourceView').getAsString()
   										#end
   									</div>
-  								
-  								
+  								#else
+  								<div id="defaultProviderPanel">
+										<script>
+											 $("#dataSource").show();
+										</script>
+								</div>
+								#end
   							</div>
   							
   							

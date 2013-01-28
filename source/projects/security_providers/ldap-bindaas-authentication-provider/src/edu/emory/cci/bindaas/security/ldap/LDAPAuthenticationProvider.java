@@ -85,6 +85,30 @@ public class LDAPAuthenticationProvider implements IAuthenticationProvider {
 		return new BindaasUser(username);
 	}
 
+	public static BindaasUser login(final String username, String password , String ldapServer , String dnPattern)
+			throws AuthenticationException {
+		
+		
+		String dn =  String.format(dnPattern, username);
+		Properties env = new Properties();
+		env.put(Context.INITIAL_CONTEXT_FACTORY,
+				"com.sun.jndi.ldap.LdapCtxFactory");
+		env.put(Context.PROVIDER_URL, ldapServer);
+		env.put(Context.SECURITY_PRINCIPAL, dn);
+		env.put(Context.SECURITY_CREDENTIALS, password);
+
+		try {
+			DirContext ctx = new InitialDirContext(env);
+			log.debug("LDAP Auth succeeded for [" + dn + "]");
+		} catch (NamingException e) {
+			log.error("Failed LDAP Auth using DN [" + dn  +"]",e);
+			throw new AuthenticationException(username);
+		}
+
+		
+		return new BindaasUser(username);
+	}
+
 	@Override
 	public BindaasUser login(String securityToken)
 			throws AuthenticationException {

@@ -11,7 +11,7 @@ import com.google.gson.annotations.Expose;
 import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.webconsole.Activator;
-import edu.emory.cci.bindaas.webconsole.admin.EmailAction.Request;
+import edu.emory.cci.bindaas.webconsole.admin.EmailConfigurationPanelAction.Request;
 
 public class SecurityAction implements IAdminAction{
 

@@ -13,7 +13,9 @@ import org.apache.velocity.VelocityContext;
 
 import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
@@ -44,16 +46,15 @@ public class QueryBrowserView extends AbstractRequestHandler {
 			HttpServletResponse response, Map<String, String> pathParameters)
 			throws Exception {
 		IManagementTasks managementTasks = Activator.getService(IManagementTasks.class);
-		IBindaasAdminService adminService = Activator.getService(IBindaasAdminService.class);
-		if(managementTasks!=null && adminService!=null)
+		DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
+		if(managementTasks!=null && bindaasConfiguration!=null)
 		{
 			Collection<Workspace> workspaces = managementTasks.listWorkspaces();
 			VelocityContext context = new VelocityContext();
 			context.put("workspaces", workspaces);
 			context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 			
-			String serviceUrl = adminService.getProperty(BindaasConstants
-					.SERVICE_URL);
+			String serviceUrl = bindaasConfiguration.getObject().getProxyUrl();
 			context.put("serviceUrl", serviceUrl);
 			
 			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");

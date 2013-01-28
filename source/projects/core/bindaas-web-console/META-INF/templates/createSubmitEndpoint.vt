@@ -23,6 +23,38 @@
   <link rel="stylesheet" href="/foundation/stylesheets/app.css">
 
   <script src="/foundation/javascripts/modernizr.foundation.js"></script>
+  <script src="/foundation/javascripts/jquery.hook.js"></script>
+		<script>
+			$.hook("show hide");
+			
+		</script>
+		<script>
+			var ValidationObject = {};
+			ValidationObject.constraints = {};
+			ValidationObject.addConstraint = function(name, value, errorCallback) {
+				var obj = {};
+				obj.value = value;
+				obj.errorCallback = errorCallback;
+				ValidationObject.constraints[name] = obj;
+			};
+			ValidationObject.removeConstraint = function(name) {
+				
+				delete ValidationObject.constraints[name];
+			}; 
+			ValidationObject.validate = function() {
+				for (var key in ValidationObject.constraints) {
+					var obj = ValidationObject.constraints[key];
+					if (obj && obj.value) {
+						continue;
+					} else {
+						obj.errorCallback();
+						return false;
+					}
+				}
+				return true;
+			};
+
+		</script>
 	
 	
   
@@ -74,6 +106,7 @@
   				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
   				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
   				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
   			</ul>
     </div>
     	<div class="row">
@@ -86,11 +119,16 @@
     					<label>Submit API Name</label>
     					<input type="text" placeholder="name" id="submitEndpointName"/>
     					
-    					<label>Endpoint Properties</label>
+    					<label for="seProps">Endpoint Properties</label>
     					<textarea id="seProps" placeholder="{}"></textarea>
     					<br> </br>
     					<div class="panel">
-    						<h6 class="subheader">Endpoint Properties JSON Schema</h6>
+    						#if ($documentation && $documentation.get('submitEndpointPropertiesView'))
+								$documentation.get('submitEndpointPropertiesView').getAsString()
+								<script>
+									$("#seProps,label[for='seProps']").hide();
+								</script>
+								#end
     					</div>
     					<div class="panel" id="submitPayloadModifierPanel">
 	    					<label for="submitPayloadModifier">Submit Payload Modifier</label>
@@ -103,50 +141,56 @@
 	  						<label for="submitPayloadModifierProperties">Submit Payload Modifier Properties</label>
   							<textarea id="submitPayloadModifierProperties" placeholder="{}"></textarea>	
     					</div>
-	    					<script>
-    									$("form").ajaxError(function(e, jqxhr, settings, exception){
-  										alert(exception);
-						});
+	    				<script>
+    								$("form").ajaxError(function(e, jqxhr, settings, exception){
+  												alert(exception);
+									});
 						
-						
-    					function submitForm()
-    					{
-    						var jsonRequest = {};
-    						try {
-    						jsonRequest.properties = jQuery.parseJSON( $("#seProps").attr("value") ); //
-    						var spmId = $("#submitPayloadModifierPanel").find("select option:selected").attr("value");
-    						if(spmId != "null")
-    						{
-    							var submitPayloadModifierProp = jQuery.parseJSON( $("#submitPayloadModifierProperties").attr("value") );
-    							jsonRequest.submitPayloadModifiers = {};
-    							jsonRequest.submitPayloadModifiers.name = spmId;
-    							jsonRequest.submitPayloadModifiers.properties = submitPayloadModifierProp;
-    							
-    						}
-    						
-    						var req = {};
-    						req.submitEndpointName = $("#submitEndpointName").attr("value");
-    						req.jsonRequest = JSON.stringify(jsonRequest ,  null );
-    						$.post("/dashboard/$workspace/$profile/createSubmitEndpoint.action" , req , function (data){
-								
-								//alert("Server Returned :\n" + JSON.stringify(data));
-								window.location = "/dashboard/workspace/$workspace";
-								
-								});
-    						}
-    						catch(e){
-    							alert(e);
-    							}
-    							
-    						
-  								
-  							}
-    						
-    					
-    				
+						function performValidation() {
+							ValidationObject.addConstraint("Name", $("#submitEndpointName").attr("value") && $("#submitEndpointName").attr("value") != "", function() {
+								alert("Name field is empty");
+								$("#submitEndpointName"
+									).focus();
+									});
+
+									return ValidationObject.validate();
+
+									}
+									function submitForm() {
+										if (performValidation()) {
+											var jsonRequest = {};
+											try {
+												jsonRequest.properties = jQuery.parseJSON($("#seProps").attr("value"));
+												//
+												var spmId = $("#submitPayloadModifierPanel").find("select option:selected").attr("value");
+												if (spmId != "null") {
+													var submitPayloadModifierProp = jQuery.parseJSON($("#submitPayloadModifierProperties").attr("value"));
+													jsonRequest.submitPayloadModifiers = {};
+													jsonRequest.submitPayloadModifiers.name = spmId;
+													jsonRequest.submitPayloadModifiers.properties = submitPayloadModifierProp;
+
+												}
+
+												var req = {};
+												req.submitEndpointName = $("#submitEndpointName").attr("value");
+												req.jsonRequest = JSON.stringify(jsonRequest, null);
+												$.post("/dashboard/$workspace/$profile/createSubmitEndpoint.action", req, function(data) {
+
+													//alert("Server Returned :\n" + JSON.stringify(data));
+													window.location = "/dashboard/workspace/$workspace";
+
+												});
+											} catch(e) {
+												alert(e);
+											}
+
+										}
+
+									}
+
     			</script>
 
-  						<input onclick="submitForm()" class="button" value="Submit" />
+  						<input onclick="submitForm()" class="button" value="Save" />
     				</form>		
     			</fieldset>
     			    	</div>

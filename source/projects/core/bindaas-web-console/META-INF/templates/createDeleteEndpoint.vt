@@ -137,6 +137,7 @@
   				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
   				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
   				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
   			</ul>
     </div>
     	<div class="row">
@@ -218,7 +219,7 @@
   								
   							}
   						  </script>
-  						<input onclick="submitForm()" class="button" value="Submit" />
+  						<input onclick="submitForm()" class="button" value="Save" />
     				</form>		
     			</fieldset>
     	</div>

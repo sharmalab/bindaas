@@ -9,6 +9,10 @@
 	<property name="uriTemplate" value="/"></property>
 </bean>
 
+<bean id="auditView" class="edu.emory.cci.bindaas.webconsole.servlet.views.AuditView">
+	<property name="uriTemplate" value="/audit"></property>
+</bean>
+
 <bean id="createWorkspace" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateWorkspace" >
 	<property name="uriTemplate" value="/createWorkspace/{workspace}"></property>
 </bean>
@@ -58,26 +62,31 @@
 	<property name="uriTemplate" value="/administration/manageUserRegistration"></property>
 </bean>
 
+<bean id="serverAdministrationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.ServerAdministrationPanelAction"></bean>
+<bean id="securityConfigurationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.SecurityConfigurationPanelAction"></bean>
+<bean id="userManagementNotificationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.UserManagementNotificationPanelAction"></bean>
+
+
+
 <bean id="administration" class="edu.emory.cci.bindaas.webconsole.admin.AdminServlet">
 	<property name="uriTemplate" value="/administration"></property>
 	<property name="adminActionMap">
 		<map>
-			<entry key="serverAdministration" value-ref="serverAdminAction"></entry>
+			<entry key="ServerAdministrationPanelAction" value-ref="serverAdministrationPanelAction"></entry>
 			<entry key="userManagement" value-ref="userMgmtAction"></entry>
-			<entry key="securityConfig" value-ref="securityAction"></entry>
+			<entry key="SecurityConfigurationPanelAction" value-ref="securityConfigurationPanelAction"></entry>
 			<entry key="emailConfig" value-ref="emailAction"></entry>
 			<entry key="checkLDAPConnection" value-ref="checkLDAPConnectionAction"></entry>
+			<entry key="UserManagementNotificationPanelAction" value-ref="userManagementNotificationPanelAction"></entry>
 		</map>
 	</property>
 </bean>
 
-<bean id="securityAction" class="edu.emory.cci.bindaas.webconsole.admin.SecurityAction">
+
+<bean id="emailAction" class="edu.emory.cci.bindaas.webconsole.admin.EmailConfigurationPanelAction">
 </bean>
-<bean id="emailAction" class="edu.emory.cci.bindaas.webconsole.admin.EmailAction">
-</bean>
-<bean id="serverAdminAction" class="edu.emory.cci.bindaas.webconsole.admin.ServerAdminAction">
-</bean>
-<bean id="userMgmtAction" class="edu.emory.cci.bindaas.webconsole.admin.UserManagementAction">
+
+<bean id="userMgmtAction" class="edu.emory.cci.bindaas.webconsole.admin.UserManagementPanelAction">
 </bean>
 <bean id="checkLDAPConnectionAction" class="edu.emory.cci.bindaas.webconsole.admin.CheckLDAPConnectionAction"></bean>
 
@@ -92,6 +101,7 @@
 		<list>
 			<ref bean="dashboard"/>
 			<ref bean="workspaceView"/>
+			<ref bean="auditView"/>
 			<ref bean="createWorkspace"/>
 			<ref bean="createProfile"/>
 			<ref bean="createQueryEndpoint"/>
@@ -112,10 +122,69 @@
 <bean id="loginAction" class="edu.emory.cci.bindaas.webconsole.LoginAction">
 </bean>
 
+<bean id="postLoginAction" class="edu.emory.cci.bindaas.webconsole.PostLoginAction">
+	<property name="defaultLoginTarget" value="/dashboard/"></property>
+</bean>
+
+
+
 <bean id="webConsoleStarter" class="edu.emory.cci.bindaas.webconsole.WebConsoleStarter" init-method="init">
 	<property name="loginAction" ref="loginAction"></property>
 	<property name="mainController" ref="mainController"></property>
+	<property name="defaultBindaasAdminConsoleConfiguration" ref="defaultBindaasAdminConsoleConfiguration"></property>
+	<property name="postLoginAction" ref="postLoginAction"></property>
 </bean>
+
+<bean id="defaultBindaasAdminConsoleConfiguration" class="edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration">
+	<property name="adminAccounts">
+		<set>
+			<value>admin</value>
+			<value>nadirsaghar@gmail.com</value>
+		</set>
+	</property>
+	<property name="enableProxy" value="false"></property>
+	<property name="host" value="localhost"></property>
+	<property name="port" value="8080"></property>
+	<property name="proxyUrl" value="http://localhost:8080"></property>
+	<property name="adminConfiguration" ref="adminConfiguration"></property>
+	<property name="userConfiguration" ref="userConfiguration"></property>
+	<property name="userAccountManagement" ref="userManagementNotification" ></property>
+	
+</bean>
+
+<bean id="adminConfiguration" class="edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.AdminConfiguration">
+	<property name="authenticationMethod" value="defaultMethod"></property>
+	<property name="ldapDNPattern" value="cn=%s,cn=Users,dc=ccibmi,dc=cci,dc=emory,dc=edu"></property>
+	<property name="ldapUrl" value="ldap://ad1.ccibmi.cci.emory.edu:389"></property>
+	<property name="openIdProviders">
+		<map>
+			<entry key="google" value="true"></entry>
+			<entry key="yahoo" value="true"></entry>
+		</map>
+	</property>
+</bean>
+
+<bean id="userConfiguration" class="edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.UserConfiguration">
+	<property name="authenticationMethod" value="openid"></property>
+	<property name="ldapDNPattern" value="cn=%s,cn=Users,dc=ccibmi,dc=cci,dc=emory,dc=edu"></property>
+	<property name="ldapUrl" value="ldap://ad1.ccibmi.cci.emory.edu:389"></property>
+	<property name="openIdProviders">
+		<map>
+			<entry key="google" value="true"></entry>
+			<entry key="yahoo" value="true"></entry>
+		</map>
+	</property>
+</bean>
+
+<bean id="userManagementNotification" class="edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.UserAccountManagement">
+	<property name="enableUserSignupNotification" value="false"></property>
+	<property name="notificationRecepients">
+		<list>
+			<value>admin@example.com</value>
+		</list>
+	</property>
+</bean>
+
 
 </beans>
 

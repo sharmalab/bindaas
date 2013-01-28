@@ -18,7 +18,8 @@ import edu.emory.cci.bindaas.security.api.BindaasUser;
 
 public class OpenIDAuth extends HttpServlet {
 	private String servletLocation = "/openidlogin" ;
-	private String defaultLoginTarget  = "";
+	private String defaultLoginTarget  = "/dashboard/";
+	private String postLoginActionTarget = "/postAuthenticate";
 	
 	private String defaultAttribute2Set = "loggedInUser";
 	
@@ -65,9 +66,9 @@ public class OpenIDAuth extends HttpServlet {
 			BindaasUser principal = openIdHelper.verifyResponse(request);
 			if(principal!=null)
 			{
-				
 				request.getSession(true).setAttribute(attribute2set, principal);
-				response.sendRedirect(loginTarget);
+				request.getSession().setAttribute("loginTarget", loginTarget);
+				response.sendRedirect(postLoginActionTarget);
 				// auth success
 			}
 			else

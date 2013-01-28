@@ -118,10 +118,10 @@
 						<li>
 							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
 						</li>
-						<li>
-							<a href="/dashboard/administration"><strong>Administration</strong></a>
-						</li>
-					</ul>
+						<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
+</ul>
+
 				</div>
 				<div class="row">
 					<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a></h3>
@@ -140,11 +140,12 @@
 							<select  name="provider" id="provider">
 								<option value="">--- Select ---</option>
 								#foreach ($provider in $providers)
-								<option value="$provider.getId()#$provider.getVersion()" ref="$provider.getDocumentation().get('simpleName').getAsString()" > #if ($provider.getDocumentation().get('title'))
-									$provider.getDocumentation().get('title').getAsString()
+								
+									#if ($provider.getDocumentation().get('title'))
+									<option value="$provider.getId()#$provider.getVersion()" ref="$provider.getDocumentation().get('simpleName').getAsString()" >$provider.getDocumentation().get('title').getAsString()</option>
 									#else
-									ID = $provider.getId() version = $provider.getVersion()
-									#end </option>
+									<option value="$provider.getId()#$provider.getVersion()" ref="defaultProviderPanel" >ID = $provider.getId() version = $provider.getVersion()</option>
+									#end 
 								#end
 
 							</select>
@@ -167,7 +168,7 @@
 							</div>
 							<div class="panel">
 								<label for="dataSource">Data Source Configuration</label>
-								<textarea name="dataSource" id="dataSource" disabled="true"></textarea>
+								<textarea name="dataSource" id="dataSource"></textarea>
 								<script>
 									function enableDataSource() {
 										$("#dataSource").show();
@@ -185,6 +186,13 @@
 									</div>
 									#end
 									#end
+									<div id="defaultProviderPanel">
+										<script>
+											$("#defaultProviderPanel").bind("onaftershow" , function(e){ $("#dataSource").show(); } );
+											$("#defaultProviderPanel").bind("onafterhide" , function(e){ $("#dataSource").hide(); } );
+										</script>
+									</div>
+									
 								</div>
 
 								<script>
@@ -214,7 +222,7 @@
 								</script>
 							</div>
 
-							<input type="button" class="button" value="Submit" id="submitForm"/>
+							<input type="button" class="button" value="Save" id="submitForm"/>
 						</form>
 					</fieldset>
 

@@ -112,12 +112,13 @@
           "createdBy": "junit"
         },
         "csv": {
-          "type": "FORM_DATA",
+          "type": "MULTIPART",
           "properties": {
             "inputType": "CSV",
             "csvHeader" : ["requestUri","timestamp","source","subject","event","outcome"]
           },
           "name": "csv",
+          "description" : "submit  docs",
           "timeCreated": "Tue Oct 30 13:02:42 EDT 2012",
           "createdBy": "junit"
         },

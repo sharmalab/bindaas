@@ -126,8 +126,8 @@
 			<input type="text" placeholder="description" name="bvDescription" />
 			<label for="customDropdown">Required</label>
 			<select  id="customDropdown" name="bvRequired">
-				<option value="Y">Yes</option>
-				<option value="N">No</option>
+				<option value="true">Yes</option>
+				<option value="false">No</option>
 			</select>
 			<br>
 			</br>
@@ -171,9 +171,8 @@
 						<li>
 							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
 						</li>
-						<li>
-							<a href="/dashboard/administration"><strong>Administration</strong></a>
-						</li>
+						<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+						<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
 					</ul>
 				</div>
 				<div class="row">
@@ -346,7 +345,7 @@
 
 								}
 							</script>
-							<input type="button" class="button" value="Submit" onclick="submitForm()" />
+							<input type="button" class="button" value="Save" onclick="submitForm()" />
 						</form>
 					</fieldset>
 				</div>

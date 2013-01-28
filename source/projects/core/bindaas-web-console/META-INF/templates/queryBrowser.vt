@@ -23,16 +23,6 @@
 		<!-- Included CSS Files (Compressed) -->
 		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
 		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
-
-		<script type="text/javascript" src="/foundation/media/js/jquery.dataTables.js"></script>
-
-		<!-- IE Fix for HTML5 Tags -->
-		<!--[if lt IE 9]>
-		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-
-	</head>
-	<body>
 		<!-- Latest version of jQuery -->
 		<script src="/foundation/javascripts/jquery.js"></script>
 
@@ -41,10 +31,20 @@
 		<!-- We include all the unminified JS as well. Uncomment to use them instead -->
 
 		<!-- Included JS Files (Minified) -->
-		<script src="/foundation/javascripts/foundation.min.js"></script>
-
+		
+		<!-- <script src="/foundation/javascripts/foundation.min.js"></script> -->
+		<script  src="/foundation/javascripts/jquery.foundation.accordion.js"></script>	
+		<script>
+			$(document).foundationAccordion();
+		</script>
 		<!-- Initialize JS Plugins -->
-		<script src="/foundation/javascripts/app.js"></script>
+		<!-- <script src="/foundation/javascripts/app.js"></script> -->
+	
+		
+
+	</head>
+	<body>
+		
 
 		<div class="row">
 			<div class="six columns">
@@ -80,10 +80,10 @@
 						<li>
 							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
 						</li>
-						<li>
-							<a href="/dashboard/administration"><strong>Administration</strong></a>
-						</li>
-					</ul>
+						<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
+</ul>
+
 				</div>
 				<div class="row">
 					<h2>Query API Browser</h2>

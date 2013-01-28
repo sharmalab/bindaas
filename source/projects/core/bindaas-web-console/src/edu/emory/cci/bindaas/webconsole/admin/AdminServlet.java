@@ -15,12 +15,15 @@ import org.hibernate.SessionFactory;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 
 
 public class AdminServlet extends AbstractRequestHandler{
@@ -90,18 +93,19 @@ public class AdminServlet extends AbstractRequestHandler{
 					velocityContext.put("acceptedRequests", acceptedRequests);
 					velocityContext.put("historyLog", historyLog);
 					
-					DynamicProperties bindaasProps = Activator.getService(DynamicProperties.class, "(name=bindaas)");
-					DynamicProperties ldapProps = Activator.getService(DynamicProperties.class, "(name=bindaas.authentication.ldap)");
+				
 					DynamicProperties mailServiceProps = Activator.getService(DynamicProperties.class, "(name=mailService)");
-
-					// set server admin props
-					velocityContext.put("serverConfig", ServerAdminAction.Request.fromDynamicProperties(bindaasProps));
+					DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
+					DynamicObject<BindaasConfiguration> dynamicConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas)");
 					
-					// set security props
-					velocityContext.put("securityConfig", SecurityAction.Request.fromDynamicProperties(bindaasProps , ldapProps));
+					// set middleware props
+					velocityContext.put("middlewareConfiguration",dynamicConfiguration.getObject().clone());
+					
+					// set adminconsole props
+					velocityContext.put("adminconsoleConfiguration",dynamicAdminConsoleConfiguration.getObject().clone());
 					
 					// set mail service props
-					velocityContext.put("mailServiceConfig", EmailAction.Request.fromDynamicProperties(mailServiceProps));
+					velocityContext.put("mailServiceConfig", EmailConfigurationPanelAction.Request.fromDynamicProperties(mailServiceProps));
 					velocityContext.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 					
 					template.merge(velocityContext, response.getWriter());

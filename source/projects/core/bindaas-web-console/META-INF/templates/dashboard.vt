@@ -84,10 +84,10 @@
 						<li>
 							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
 						</li>
-						<li>
-							<a href="/dashboard/administration"><strong>Administration</strong></a>
-						</li>
-					</ul>
+						<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
+</ul>
+
 				</div>
 
 				<div class="row">
@@ -129,7 +129,7 @@
 						<input type="text" id="cw_workspaceName" />
 						<label>Description</label>
 						<textarea id="cw_description"></textarea>
-						<input type="button" class="button" disabled="true" onclick="createWorkspaceAction()" id="cw_button" value="Submit">
+						<input type="button" class="button" disabled="true" onclick="createWorkspaceAction()" id="cw_button" value="Save">
 						<a class="close-reveal-modal" onclick="$('#cw_workspaceName').attr('value', '');$('#cw_description').attr('value', '');">&#215;</a>
 						<div>
 

@@ -191,13 +191,16 @@ public class OpenIDHelper {
                 			  FetchResponse fetchResp = (FetchResponse) authSuccess
                                       .getExtension(AxMessage.OPENID_NS_AX);
                               principal = new BindaasUser(fetchResp.getAttributeValue(BindaasUser.EMAIL_ADDRESS) );
-                              
+                              principal.addProperty(BindaasUser.FIRST_NAME, "");
+                              principal.addProperty(BindaasUser.LAST_NAME, "");
                               Properties attributes = openIdProvider.getAttributes();
                         	  if(attributes!=null)
                         	  {
                         		  for(Object attr : attributes.keySet())
                         		  {
-                        			  principal.addProperty(attr.toString(), fetchResp.getAttributeValue(attr.toString()));
+                        			  String openIdAttr = fetchResp.getAttributeValue(attr.toString());
+                        			  if(openIdAttr!=null)
+                        			  principal.addProperty(attr.toString(), openIdAttr );
                         		  }
                         	  }
                               

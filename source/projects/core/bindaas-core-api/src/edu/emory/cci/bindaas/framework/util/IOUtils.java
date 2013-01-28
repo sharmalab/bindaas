@@ -3,9 +3,11 @@ package edu.emory.cci.bindaas.framework.util;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -56,4 +58,35 @@ public class IOUtils {
 	     }
 	     return new String[]{ keyBuilder.toString() , valueBuilder.toString()};
 	 }
+
+	public static void copyAndCloseInput(InputStream is,
+			OutputStream outputStream) throws IOException {
+		copy(is,outputStream , 2048);
+		outputStream.close();
+		is.close();
+	}
+	
+	 public static int copy(final InputStream input, final OutputStream output,
+	            int bufferSize) throws IOException {
+	        int avail = input.available();
+	        if (avail > 262144) {
+	            avail = 262144;
+	        }
+	        if (avail > bufferSize) {
+	            bufferSize = avail;
+	        }
+	        final byte[] buffer = new byte[bufferSize];
+	        int n = 0;
+	        n = input.read(buffer);
+	        int total = 0;
+	        while (-1 != n) {
+	            if (n == 0) {
+	                throw new IOException("0 bytes read in violation of InputStream.read(byte[])");
+	            }
+	            output.write(buffer, 0, n);
+	            total += n;
+	            n = input.read(buffer);
+	        }
+	        return total;
+	    }
 }

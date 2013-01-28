@@ -105,7 +105,7 @@
 						$("#mongo_db").focus();
 					});
 					
-					ValidationObject.addConstraint("mongo_collection", $("#mongo_collection").attr("mongo_collection") && $("#mongo_collection").attr("value") != "", function() {
+					ValidationObject.addConstraint("mongo_collection", $("#mongo_collection").attr("value") && $("#mongo_collection").attr("value") != "", function() {
 						alert("Collection not specified");
 						$("#mongo_collection").focus();
 					});

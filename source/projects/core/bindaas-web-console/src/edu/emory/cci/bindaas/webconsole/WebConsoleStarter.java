@@ -23,19 +23,51 @@ import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.framework.api.IProvider;
+import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
+import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.LogoutServlet;
 import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.PostSignupServlet;
+import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.PostUserLoginServlet;
+import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserLoginServlet;
+import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserOpenIDAuthServlet;
+import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserQueryBrowserServlet;
 import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserRegistrationServlet;
 
 public class WebConsoleStarter {
 
+	public PostLoginAction getPostLoginAction() {
+		return postLoginAction;
+	}
+
+
+	public void setPostLoginAction(PostLoginAction postLoginAction) {
+		this.postLoginAction = postLoginAction;
+	}
+
+
+
 	// Start the web-console for bindaas
 	private MainController mainController;
 	private LoginAction loginAction;
+	private PostLoginAction postLoginAction;
 	private Log log = LogFactory.getLog(getClass());
 	private boolean initialized = false;
+	private DynamicObject<BindaasAdminConsoleConfiguration> bindaasAdminConsoleConfiguration;
+	private BindaasAdminConsoleConfiguration defaultBindaasAdminConsoleConfiguration;
 	
 	
+	public BindaasAdminConsoleConfiguration getDefaultBindaasAdminConsoleConfiguration() {
+		return defaultBindaasAdminConsoleConfiguration;
+	}
+
+
+	public void setDefaultBindaasAdminConsoleConfiguration(
+			BindaasAdminConsoleConfiguration defaultBindaasAdminConsoleConfiguration) {
+		this.defaultBindaasAdminConsoleConfiguration = defaultBindaasAdminConsoleConfiguration;
+	}
+
+
 	public MainController getMainController() {
 		return mainController;
 	}
@@ -58,12 +90,16 @@ public class WebConsoleStarter {
 
 	public void init() throws Exception
 	{
+		final BundleContext context = Activator.getContext();
+		// set config
+		bindaasAdminConsoleConfiguration = new DynamicObject<BindaasAdminConsoleConfiguration>("bindaas.adminconsole", defaultBindaasAdminConsoleConfiguration, context);
+		
 		Hashtable<String,String> loginFilterprops = new Hashtable<String,String>();
 		loginFilterprops.put("pattern", "/dashboard/.*");
 		loginFilterprops.put("init.message", "Login Filter");
 
 		String filter = "(objectclass=" + HttpService.class.getName() + ")";
-		final BundleContext context = Activator.getContext();
+		
 		ServiceListener httpServiceListener = new ServiceListener() {
 			
 			@Override
@@ -83,6 +119,7 @@ public class WebConsoleStarter {
 										service.registerResources("/foundation", "/foundation", defaultContext);
 										service.registerServlet("/dashboard", mainController, null, defaultContext);
 										service.registerServlet("/authenticate", loginAction, null, defaultContext);
+										service.registerServlet("/postAuthenticate", postLoginAction, null, defaultContext);
 										service.registerServlet("/postSignup", new PostSignupServlet(), null, defaultContext);
 										service.registerServlet("/userRegistration", new UserRegistrationServlet(), null, defaultContext);
 										
@@ -95,6 +132,15 @@ public class WebConsoleStarter {
 										CILogonAuth ciLogonAuth = new CILogonAuth();
 										service.registerServlet("/cilogon", ciLogonAuth, null, defaultContext);
 										
+										/**
+										 * User portal
+										 */
+										
+										service.registerServlet("/user/login", new UserLoginServlet(), null, defaultContext);
+										service.registerServlet("/user/dashboard/queryBrowser", new UserQueryBrowserServlet(), null, defaultContext);
+										service.registerServlet("/user/openid", new UserOpenIDAuthServlet(), null, defaultContext);
+										service.registerServlet("/user/postAuthenticate", new PostUserLoginServlet(), null, defaultContext);
+										service.registerServlet("/user/logout", new LogoutServlet(), null, defaultContext);
 										
 									} catch (Exception e) {
 											log.error(e);

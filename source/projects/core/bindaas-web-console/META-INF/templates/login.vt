@@ -11,7 +11,7 @@
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width" />
 
-  <title>Bindaas Login</title>
+  <title>Bindaas Admin Login</title>
   
   <!-- Included CSS Files (Uncompressed) -->
   <!--
@@ -53,13 +53,22 @@
     </div> 
     
   </div>
-
+<div class="row">
+	<div class="twelve columns">
+		<h4 class="subheader">Log in</h4>
+		<hr />
+		<label class="error">  $errorMessage </label>
+	</div>
+</div>
   <div class="row">
     <div class="twelve columns">
+  	
+  
+    #if ($adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("ldap") || $adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("defaultMethod"))
       <form action="/authenticate" method="post">
 	 	 <fieldset>
 	
-		    <legend><h4>Admin Zone. Please login!</h4></legend>
+		    <legend><h4>Admin Zone</h4></legend>
 		
 		    <div class="row">
 			    <div class="two mobile-one columns">
@@ -81,7 +90,9 @@
 			  <div class="row">
 			  	<div class="two columns"></div>
 			  	<div class="ten mobile-one columns">
-			    	<label class="error">${errorMessage}</label>
+			
+			    	  
+			
 			    </div>
 			    
 			  	
@@ -99,29 +110,44 @@
 	  </fieldset>
 	</form>
 	
-	<a href="/userRegistration">Sign Up for an API-Key</a>
-	<!--
-	<h3>Or</h3>
+#end
+
+#if ($adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("openid"))
 	
 	 	 <fieldset>
-	
-		    <legend><h4>Login using one of the following</h4></legend>
-	<form action="/openidlogin?loginTarget=$loginTarget&identifier=https://www.google.com/accounts/o8/id" method="post" name="google">
-			<a href="javascript:document.google.submit()">
-				<img src="http://beta.clickhint.com/assets/images/google-openid.png" width="143" height="39" border="0" alt="Submit this form" name="sub_but" />
+			<legend><h4>Admin Zone</h4></legend>
+			
+			<div class="eight columns">
+			#if ($adminconsoleConfiguration.getAdminConfiguration().getOpenIdProviders().get("google"))
+				<form action="/openidlogin?loginTarget=$loginTarget&identifier=https://www.google.com/accounts/o8/id" method="post" name="google">
+				<a href="javascript:document.google.submit()">
+				<img src="/foundation/images/GoogleButton.png" width="100" height="40" border="0" alt="Google" name="sub_but" />
 			</a>
-	</form>
-	
-	<form action="/openidlogin?loginTarget=$loginTarget&identifier=https://me.yahoo.com" method="post" name="yahoo">
-			<a href="javascript:document.yahoo.submit()">
-				<img src="http://www.holistickey.com/wp-content/uploads/2012/09/Yahoo-icon1.jpg" width="143" height="39" border="0" alt="Submit this form" name="sub_but" />
-			</a>
-	</form>
+	</form>		
+			#end
+			#if ($adminconsoleConfiguration.getAdminConfiguration().getOpenIdProviders().get("yahoo"))
+				<form action="/openidlogin?loginTarget=$loginTarget&identifier=https://me.yahoo.com" method="post" name="yahoo">
+				<a href="javascript:document.yahoo.submit()">
+					<img src="/foundation/images/YahooButton.png" width="100" height="40" border="0" alt="Yahoo" name="sub_but" />
+				</a>
+	</form>		
+			#end	
+			</div>
+			<div class="four columns">
+				
+			</div>    	 
+			 
+			
+			
+			
+			
 	  </fieldset>
-	
+	   
+	  #end
+	<a href="/user/login"><strong>Switch to Query Browser</strong></a>	
     </div>
 
    </div>
--->
+
 </body>
 </html>

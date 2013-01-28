@@ -163,8 +163,8 @@
 			<input type="text" placeholder="description" name="bvDescription" />
 			<label for="customDropdown">Required</label>
 			<select  id="customDropdown" name="bvRequired">
-				<option value="Y">Yes</option>
-				<option value="N">No</option>
+				<option value="true">Yes</option>
+				<option value="false">No</option>
 			</select>
 			<br>
 			</br>
@@ -208,10 +208,10 @@
 						<li>
 							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
 						</li>
-						<li>
-							<a href="/dashboard/administration"><strong>Administration</strong></a>
-						</li>
-					</ul>
+						<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
+</ul>
+
 				</div>
 				<div class="row">
 					<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a>/Data Provider:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
@@ -542,10 +542,7 @@
 		</div>
 
 		<div id="tryQuery" class="reveal-modal xlarge">
-			<ul class="accordion">
-				<li>
-					<div class="title">
-						<div class="row">
+					<div class="row">
 							<div class="two columns">
 								<a class="radius button">GET</a>
 							</div>
@@ -554,8 +551,6 @@
 							</div>
 						</div>
 
-					</div>
-					<div class="content">
 						<div class="row">
 							$queryEndpoint.getDescription()
 						</div>
@@ -588,14 +583,12 @@
 									});
 									url = url + queryString;
 									window.open(encodeURI(url));
+									$("#tryQuery").trigger('reveal:close');
 								}
 
 							</script>
 						</div>
 
-					</div>
-				</li>
-			</ul>
 			<a class="close-reveal-modal">&#215;</a>
 		</div>
 	</body>

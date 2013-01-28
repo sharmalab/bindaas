@@ -60,7 +60,7 @@
 						$("#db2_password").focus();
 					});
 
-					ValidationObject.addConstraint("db2_url", $("#db2_url").attr("db2_url") && $("#db2_url").attr("value") != "", function() {
+					ValidationObject.addConstraint("db2_url", $("#db2_url").attr("value") && $("#db2_url").attr("value") != "", function() {
 						alert("URL not specified");
 						$("#db2_url").focus();
 					});

@@ -20,10 +20,13 @@ import org.hibernate.Transaction;
 
 import edu.emory.cci.bindaas.commons.mail.api.IMailService;
 import edu.emory.cci.bindaas.core.api.BindaasConstants;
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail;
 import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 
 /**
  * Registered at /userRegistration
@@ -81,14 +84,14 @@ public class UserRegistrationServlet extends HttpServlet {
 				session.save(verifyEmail);
 				
 				IMailService mailService = Activator.getService(IMailService.class);
-				IBindaasAdminService adminService = Activator.getService(IBindaasAdminService.class);
-				if(mailService!=null && adminService!=null)
+				DynamicObject<BindaasAdminConsoleConfiguration> bindaasAdminConsoleConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas.adminconsole)");
+				if(mailService!=null && bindaasAdminConsoleConfiguration!=null)
 				{
 					VelocityContext context = new VelocityContext();
 					context.put("firstName", firstName);
 					context.put("lastName", lastName);
 					
-					String serviceUIUrl = adminService.getProperty(BindaasConstants.SERVICE_UI_URL);
+					String serviceUIUrl = bindaasAdminConsoleConfiguration.getObject().getProxyUrl(); 
 					String verificationUrl = String.format("%s%s?verificationCode=%s", serviceUIUrl , servletLocation2VerifyEmailAccount , URLEncoder.encode(verifyEmail.getVerificationCode()));
 					
 					context.put("verificationUrl" , verificationUrl);

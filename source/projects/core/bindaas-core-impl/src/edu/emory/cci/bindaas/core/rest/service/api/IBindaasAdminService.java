@@ -13,9 +13,6 @@ public interface IBindaasAdminService {
 	
 	public void restart() throws Exception;
 	
-	public void addProperty(String key, String value) throws Exception;
-	public String getProperty(String key) throws Exception;
-	
 	
 	public String displayProperties() throws Exception;
 	

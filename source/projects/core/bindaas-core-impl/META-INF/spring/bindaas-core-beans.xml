@@ -63,16 +63,31 @@
 
 <!-- Bindaas Initializer -->
 
+<bean id="defaultBindaasConfiguration" class="edu.emory.cci.bindaas.core.config.BindaasConfiguration">
+	<property name="host" value="localhost"></property>
+	<property name="port" value="9099"></property>
+	<property name="protocol" value="http"></property>
+	<property name="enableAuthentication" value="true"></property>
+	<property name="authenticationProviderClass" value="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"></property>
+	<property name="enableAuthorization" value="false"></property>
+	<property name="authorizationProviderClass" value="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider"></property>
+	<property name="enableAudit" value="true"></property>
+	<property name="auditProviderClass" value="edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider"></property>
+	
+</bean>
 <bean id="bindaasInitializer" class="edu.emory.cci.bindaas.core.bundle.BindaasInitializer" init-method="init" >
 	<property name="auditModule" ref="auditLogger"></property>
 	
-	<property name="defaultBindaasProperties" >
+	<property name="defaultBindaasConfiguration" ref="defaultBindaasConfiguration">
+		
+	</property>
+	<!-- property name="defaultBindaasProperties" >
 		<props>
 			<prop key="host">localhost</prop>
 			<prop key="port">9099</prop>
 			<prop key="protocol">http</prop>
 			<prop key="authentication.status">false</prop>
-			<prop key="authentication.provider.class">edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider</prop> <!--  Set correct providers -->
+			<prop key="authentication.provider.class">edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider</prop> 
 			<prop key="authorization.status">false</prop>
 			<prop key="authorization.provider.class">edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider</prop>
 			<prop key="audit.status">false</prop>
@@ -81,11 +96,11 @@
 			<prop key="webconsole.security.admin">admin</prop>
 			<prop key="webconsole.security.userRegistration.notification.enable">true</prop>
 			<prop key="webconsole.security.userRegistration.notification.recepient">admin@mycompany.org</prop>
-			<prop key="webconsole.security.method">default</prop> <!--  choose from default/ldap -->
+			<prop key="webconsole.security.method">default</prop> 
 			
 		</props>
 	
-	</property>
+	</property -->
 	
 	<property name="executionService" ref="executionService"></property>
 	<property name="managementService" ref="managementService"></property>
