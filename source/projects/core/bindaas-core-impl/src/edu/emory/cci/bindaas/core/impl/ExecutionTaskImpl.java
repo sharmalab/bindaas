@@ -265,6 +265,7 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 			Profile profile, SubmitEndpoint submitEndpoint)
 			throws ExecutionTaskException {
 		try{
+			log.debug(data);
 			String finalData = executeSubmitPayloadModifierChain(user, data, submitEndpoint.getSubmitPayloadModifiers(), submitEndpoint);
 			// execute handler
 			

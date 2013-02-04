@@ -247,11 +247,41 @@
 								<select  name="queryResultModifier" id="queryResultModifier">
 									<option selected="true" value="null">--select--</option>
 									#foreach ($qrm in $queryResultModifiers)
-									<option value="$qrm.getClass().getName()">$qrm.getClass().getName()</option>
+									<option value="$qrm.getClass().getName()">$qrm.getClass().getName().substring($qrm.getClass().getName())</option>
 									#end
 								</select>
 								<label for="queryResultModifierProperties">Query Result Modifier Properties</label>
 								<textarea id="queryResultModifierProperties" placeholder="{}"></textarea>
+								<!-- New Code -->
+								<div id="queryResultModifierPropertiesPanel"></div>
+								<script>
+									$("#queryResultModifier").change(
+									function (){
+										var className = $("#queryResultModifier option:selected").attr("value");
+										if(className && className != "null")
+										{
+											var url = "/fetchDocumentation?type=IQueryResultModifier&class=" + className ;
+										try {
+										$.get(url , function(documentation) {
+											$("#queryResultModifierPropertiesPanel").html( documentation.view );
+										} );
+										}catch(e){
+										console.log(e);
+										}	
+										}
+										else
+										{
+											$("#queryResultModifierPropertiesPanel").html("");
+										}
+										
+									}
+									);
+									
+									$("#queryResultModifierProperties,label[for='queryResultModifierProperties']").hide();
+								</script>
+								<!-- New Code ends -->
+								
+								
 							</div>
 
 							<script>
@@ -320,7 +350,7 @@
 											var queryResultModId = $("#queryResultModifierPanel").find("select option:selected").attr("value");
 											if (queryResultModId != "null") {
 												var queryResultModProp = jQuery.parseJSON($("#queryResultModifierProperties").attr("value"));
-												jsonRequest.queryResulModifiers = {};
+												jsonRequest.queryResultModifiers = {};
 												jsonRequest.queryResultModifiers.name = queryResultModId;
 												jsonRequest.queryResultModifiers.properties = queryResultModProp;
 											}

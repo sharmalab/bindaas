@@ -25,7 +25,9 @@
 <bean id="providerRegistry" class="edu.emory.cci.bindaas.core.impl.ProviderRegistryImpl" init-method="init" />
 	
 <!-- Validator Bean -->
-<bean id="validator" class="edu.emory.cci.bindaas.core.impl.ValidatorImpl" />
+<bean id="validator" class="edu.emory.cci.bindaas.core.impl.ValidatorImpl" >
+	<property name="modifierRegistry" ref="modifierRegistry"></property>
+</bean>
 
 <!-- FileSystem Persistence Driver -->
 <bean id="fileSystemPersistenceDriver" class="edu.emory.cci.bindaas.core.impl.FileSystemPersistenceDriverImpl" init-method="init">

@@ -89,6 +89,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				if (connection != null) {
 					try {
 						connection.close();
+						
 					} catch (SQLException e) {
 						log.error(e);
 						throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
@@ -234,6 +235,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 	private int insertRecords(List<Map<String, String>> records,
 			Connection conn , String tableName) throws Exception {
 		int total = 0;
+		conn.setAutoCommit(false);
 		
 		for(Map<String,String> record : records)
 		{
@@ -248,17 +250,34 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 			}
 			
 			preparedStatement.replace(preparedStatement.lastIndexOf(","), preparedStatement.length(), ")");
-			PreparedStatement ps = conn.prepareStatement(preparedStatement.toString());
-			
-			for(int index = 0 ; index < columns.length ; index++)
+		
+			PreparedStatement ps = null;
+			try{
+				ps = conn.prepareStatement(preparedStatement.toString());
+				
+				for(int index = 0 ; index < columns.length ; index++)
+				{
+					ps.setObject(index + 1, record.get(columns[index]));
+				}
+				
+				total += ps.executeUpdate(); // TODO bug. If exception is thrown here , the connection.close() fails leaving the connection open.
+
+			}catch(Exception e)
 			{
-				ps.setObject(index, record.get(columns[index]));
+				log.error(e);
+				throw e;
 			}
-			
-			total += ps.executeUpdate();
-			
+			finally{
+				if(ps !=null)
+				{
+					ps.close();
+				}
+			}
+ 			
 			
 		}
+		
+		conn.commit();
 		
 		
 		

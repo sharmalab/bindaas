@@ -3,6 +3,8 @@ package edu.emory.cci.bindaas.core.util;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Date;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Set;
 
@@ -30,7 +32,7 @@ public class DynamicProperties {
 	{
 		this.name = name;
 		this.defaultProperties = defaultProperties;
-		Properties prop = new Properties();
+		Dictionary<String, String> prop = new Hashtable<String, String>();
 		prop.put("name", name);
 		context.registerService(DynamicProperties.class.getName(), this, prop);
 		init();

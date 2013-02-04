@@ -72,14 +72,17 @@ public class PostUserLoginServlet extends HttpServlet {
 						bindaasUser.addProperty("apiKey", userRequest.getApiKey());
 						resp.sendRedirect(loginTarget);
 					}
+					else
+					{
+						// seek reason
+						VelocityContext context = new VelocityContext();
+						context.put("firstName" , bindaasUser.getProperty(BindaasUser.FIRST_NAME).toString() );
+						context.put("lastName" , bindaasUser.getProperty(BindaasUser.LAST_NAME).toString() );
+						context.put("emailAddress" , bindaasUser.getProperty(BindaasUser.EMAIL_ADDRESS).toString() );
+						newRegistrationTemplate.merge(context, resp.getWriter());
+					}
 				}
 			
-			// seek reason
-			VelocityContext context = new VelocityContext();
-			context.put("firstName" , bindaasUser.getProperty(BindaasUser.FIRST_NAME).toString() );
-			context.put("lastName" , bindaasUser.getProperty(BindaasUser.LAST_NAME).toString() );
-			context.put("emailAddress" , bindaasUser.getProperty(BindaasUser.EMAIL_ADDRESS).toString() );
-			newRegistrationTemplate.merge(context, resp.getWriter());
 			
 			}
 			catch(Exception e)

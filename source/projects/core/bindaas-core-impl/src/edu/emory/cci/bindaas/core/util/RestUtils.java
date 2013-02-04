@@ -123,6 +123,16 @@ public class RestUtils {
 		 	return createResponse(builder);
 	}
 	
+	public static Response createResponse(int code, StandardMimeType mime,  Map<String,Object> headers)
+	{
+		ResponseBuilder builder = Response.status(code).type(mime.toString());
+		for(String key : headers.keySet())
+		{
+			builder = builder.header(key, headers.get(key));
+		}
+		 	return createResponse(builder);
+	}
+	
 	
 	public static Response createResponse(ResponseBuilder builder)
 	{

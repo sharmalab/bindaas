@@ -1,6 +1,10 @@
 package edu.emory.cci.bindaas.framework.model;
 
+import java.io.OutputStream;
 import java.util.Properties;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 
 public class QueryResult {
@@ -11,7 +15,22 @@ public class QueryResult {
 	private String mimeType; 
 	private byte[] data;
 	private boolean isCallback;
-	public void callback(Object httpResponse , Properties context){}
+	private JsonElement intermediateResult;
+	private Callback callback;
+	
+	public JsonElement getIntermediateResult() {
+		return intermediateResult;
+	}
+	public void setIntermediateResult(JsonElement intermediateResult) {
+		this.intermediateResult = intermediateResult;
+	}
+	
+	public Callback getCallback() {
+		return callback;
+	}
+	public void setCallback(Callback callback) {
+		this.callback = callback;
+	}
 	public boolean isError() {
 		return isError;
 	}
@@ -50,5 +69,9 @@ public class QueryResult {
 		this.isCallback = isCallback;
 	}
 	
+	public static interface Callback
+	{
+		public void callback(OutputStream servletOutputStream , Properties context); 
+	}
 	
 }

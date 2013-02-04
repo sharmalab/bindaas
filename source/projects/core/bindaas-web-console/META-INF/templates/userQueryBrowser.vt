@@ -146,6 +146,73 @@
 							</div>
 						</li>
 						#end
+						#foreach ($submitEndpoint in $profile.getSubmitEndpoints().values())
+						<li>
+							<div class="title">
+								<div class="row">
+									<div class="two columns">
+										<a class="radius button alert">POST</a>
+									</div>
+									<div class="ten columns left-align" >
+										<h4>$submitEndpoint.getName()</h4>
+									</div>
+								</div>
+
+							</div>
+							<div class="content">
+								<div class="row">
+									<div class="twelve columns">
+										<h5 class="subheader">Description : $submitEndpoint.getDescription()</h5>
+										<h5 class="subheader">URL : $serviceUrl/services/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()</h5>
+									</div>
+
+								</div>
+								<div class="row" >
+									<div class="twelve columns">
+										<div class="row">
+
+											#if ($submitEndpoint.getType().toString().equals('MULTIPART'))
+
+											<form class="custom" id="tryUploadForm" action="$serviceUrl/services/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()?api_key=$apiKey" method="post" enctype="multipart/form-data" target="_blank">
+												<label>File:</label>
+												<input name="myfile" type="file"  />
+												<a class='small button radius' onclick="uploadFile()">Upload</a>
+												<script>
+													function uploadFile() {
+													
+														$("#tryUploadForm").submit();
+													}
+												</script>
+
+											</form>
+
+											#else
+											<textarea id="inputText"></textarea>
+											<a class="button secondary" onclick="executeSubmitAPI()" >Submit</a>
+											#end
+
+											<script>
+												function executeSubmitAPI() {
+													var url = '$serviceUrl/services/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()' + "?api_key=$apiKey&";
+
+													var text = $("#inputText").attr("value");
+													$.post(url, text, function(data, status, response) {
+														alert(response.responseText);
+
+													});
+
+												}
+
+											</script>
+										</div>
+
+									</div>
+
+								</div>
+							</div>
+						</li>
+						#end
+						
 					</ul>
 
 				</div>

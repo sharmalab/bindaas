@@ -8,7 +8,7 @@ Bundle-Vendor: CCI Emory University
 Spring-Context: *
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: edu.emory.cci.bindaas.core.util,
- javax.activation,
+ javax.activation;resolution:=optional,
  org.osgi.framework;version="1.3.0"
 Export-Package: edu.emory.cci.bindaas.commons.mail.api
 Bundle-ClassPath: mail.jar,

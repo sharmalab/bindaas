@@ -311,14 +311,17 @@
 		<div id="trySubmit" class="reveal-modal xlarge">
 			<div class="row">
 				<div class="two columns">
-					<a class="radius button">POST</a>
+					<a class="radius button alert">POST</a>
 				</div>
 				<div class="ten columns left-align" >
-					<h4>$submitEndpoint.getName()</h4><h4 class="subheader">$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()</h4>
+					<h4>$submitEndpoint.getName()</h4>
 				</div>
 			</div>
 			<div class="row">
-				$submitEndpoint.getDescription()
+				<div class="twelve columns">
+				<h5 class="subheader">Description : $submitEndpoint.getDescription()</h5>
+				<h5 class="subheader">URL : $serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()</h5>
+				</div>
 			</div>
 			<div class="row">
 

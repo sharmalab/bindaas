@@ -33,6 +33,7 @@ import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserLoginServlet;
 import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserOpenIDAuthServlet;
 import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserQueryBrowserServlet;
 import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserRegistrationServlet;
+import edu.emory.cci.bindaas.webconsole.servlet.util.DocumentationFetcherServlet;
 
 public class WebConsoleStarter {
 
@@ -131,6 +132,9 @@ public class WebConsoleStarter {
 										
 										CILogonAuth ciLogonAuth = new CILogonAuth();
 										service.registerServlet("/cilogon", ciLogonAuth, null, defaultContext);
+										
+										DocumentationFetcherServlet documentationFetcher = new DocumentationFetcherServlet();
+										service.registerServlet("/fetchDocumentation", documentationFetcher, null, defaultContext);
 										
 										/**
 										 * User portal

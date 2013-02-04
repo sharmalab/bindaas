@@ -30,6 +30,7 @@ public class XqueryCSVHandler implements IFormatHandler{
 			{
 				buff.append(header).append(",");
 			}
+			if(buff.lastIndexOf(",")  >= 0 )
 			buff.replace(buff.lastIndexOf(","), buff.length() , "\n");
 			
 		}

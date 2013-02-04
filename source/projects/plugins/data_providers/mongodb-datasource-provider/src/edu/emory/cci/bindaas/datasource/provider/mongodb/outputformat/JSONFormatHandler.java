@@ -31,6 +31,7 @@ public class JSONFormatHandler extends AbstractFormatHandler{
 		QueryResult queryResult = new QueryResult();
 		queryResult.setData(array.toString().getBytes());
 		queryResult.setMimeType(StandardMimeType.JSON.toString());
+		queryResult.setIntermediateResult(array);
 		return queryResult;
 	}
 

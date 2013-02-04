@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -40,6 +41,7 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.Stage;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
+import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
 public class ExecutionServiceImpl implements IExecutionService{
 
@@ -88,7 +90,7 @@ public class ExecutionServiceImpl implements IExecutionService{
 	{
 		if(queryResult.isCallback())
 		{
-			queryResult.callback(getMessageContext().getHttpServletResponse(), null); // TODO here instead of null a context should be passed
+			queryResult.getCallback().callback(getMessageContext().getHttpServletResponse().getOutputStream(), null); // TODO here instead of null a context should be passed
 			return Response.ok().build();
 		}
 		else if(queryResult.isError())
@@ -109,7 +111,17 @@ public class ExecutionServiceImpl implements IExecutionService{
 	{
 		if(queryResult.isCallback())
 		{
-			queryResult.callback(getMessageContext().getHttpServletResponse(), null); // TODO here instead of null a context should be passed
+			HttpServletResponse response = getMessageContext().getHttpServletResponse(); 
+			response.setContentType(queryResult.getMimeType());
+			response.setHeader("metadata", queryEndpoint.getMetaData().toString());
+			response.setHeader("tags", queryEndpoint.getTags().toString());
+			response.setHeader("responseTime(ms)", responseTime+ "");
+			if(queryResult.getMimeType().equals(StandardMimeType.ZIP.toString()))
+			{
+				response.setHeader("Content-Disposition","attachment;filename=\"" + queryEndpoint.getName() + ".zip\"");
+			}
+			
+			queryResult.getCallback().callback(getMessageContext().getHttpServletResponse().getOutputStream(), null); // TODO here instead of null a context should be passed
 			return Response.ok().build();
 		}
 		else if(queryResult.isError())

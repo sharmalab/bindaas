@@ -149,7 +149,7 @@
 														<tr>
 															<td>$pendingRequest.getRequestDate().toString()</td><td>$pendingRequest.getFirstName()</td><td>$pendingRequest.getLastName()</td><td>$pendingRequest.getEmailAddress()</td><td>$pendingRequest.getReason()</td><td>
 															<div>
-																<a onclick="showGetExpirationDialog('approve','$pendingRequest.getId()')" class="foundicon-checkmark"> Approve </a>
+																<a href="#" onclick="showGetExpirationDialog('approve','$pendingRequest.getId()')" class="foundicon-checkmark"> Approve </a>
 															</div>
 															<div>
 																<a href="#" class="foundicon-remove" onclick="showCommentsExpirationDialog('deny' , '$pendingRequest.getId()')"> Deny </a>
