@@ -106,7 +106,7 @@
 			bindVariable.className = "panel callout radius";
 			bindVariable.innerHTML = $("#bindVarTemplate").html();
 			var removeLink = document.createElement("a");
-			removeLink.className = "alert round small button";
+			removeLink.href = "#";
 			removeLink.text = "remove";
 			bindVariable.appendChild(removeLink);
 			removeLink.onclick = function(event)
@@ -142,7 +142,7 @@
 			bindVariable.innerHTML = bindVariable.innerHTML + "<label>Default Value</label><input type=\"text\" placeholder=\"default value\" name=\"defaultValue\"  value='" + defaultValue +  "' />";
 
 			var removeLink = document.createElement("a");
-			removeLink.className = "alert round small button";
+			removeLink.href = "#";
 			removeLink.text = "remove";
 			bindVariable.appendChild(removeLink);
 			removeLink.onclick = function(event)
@@ -157,20 +157,19 @@
 
 		</script>
 		<div id="bindVarTemplate" class="hide">
-			<label >Name</label>
-			<input type="text" placeholder="name" name="bvName" />
-			<label >Description</label>
-			<input type="text" placeholder="description" name="bvDescription" />
-			<label for="customDropdown">Required</label>
-			<select  id="customDropdown" name="bvRequired">
-				<option value="true">Yes</option>
-				<option value="false">No</option>
-			</select>
-			<br>
-			</br>
-			<label>Default Value</label>
-			<input type="text" placeholder="default value" name="defaultValue" />
-		</div>
+  	<label >Name</label>
+  	<input type="text" placeholder="name" name="bvName" />
+  	<label >Description</label>
+    <input type="text" placeholder="description" name="bvDescription" />
+    								<label >Required</label>
+  										<select   name="bvRequired">
+    										<option value="true">Yes</option>
+    										<option value="false">No</option>
+  										</select>
+  										<br></br>
+    								<label>Default Value</label>
+    								<input type="text" placeholder="default value" name="defaultValue" />
+  </div>
 
 		<div class="row">
 			<div class="six columns">

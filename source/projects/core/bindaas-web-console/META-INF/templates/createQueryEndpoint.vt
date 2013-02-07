@@ -106,7 +106,7 @@
 			bindVariable.className = "panel callout radius";
 			bindVariable.innerHTML = $("#bindVarTemplate").html();
 			var removeLink = document.createElement("a");
-			removeLink.className = "alert round small button";
+			removeLink.href = "#";
 			removeLink.text = "remove";
 			bindVariable.appendChild(removeLink);
 			removeLink.onclick = function(event)
@@ -121,20 +121,20 @@
 			}
 
 		</script>
-		<div id="bindVarTemplate" class="hide">
-			<input type="text" placeholder="name" name="bvName" />
-			<input type="text" placeholder="description" name="bvDescription" />
-			<label for="customDropdown">Required</label>
-			<select  id="customDropdown" name="bvRequired">
-				<option value="true">Yes</option>
-				<option value="false">No</option>
-			</select>
-			<br>
-			</br>
-
-			<input type="text" placeholder="default value" name="defaultValue" />
-		</div>
-
+<div id="bindVarTemplate" class="hide">
+  	<label >Name</label>
+  	<input type="text" placeholder="name" name="bvName" />
+  	<label >Description</label>
+    <input type="text" placeholder="description" name="bvDescription" />
+    								<label >Required</label>
+  										<select   name="bvRequired">
+    										<option value="true">Yes</option>
+    										<option value="false">No</option>
+  										</select>
+  										<br></br>
+    								<label>Default Value</label>
+    								<input type="text" placeholder="default value" name="defaultValue" />
+  </div>
 		<div class="row">
 			<div class="six columns">
 				<h2>Bindaas</h2>
@@ -223,7 +223,7 @@
 									<!--     							<a  href="javascript:validateQueryTempalate()" class="round small button"><i>auto detect</i></a> -->
 									<script>
 										$("#qeTemplate").keyup(function() {
-											validateQueryTempalate()
+											validateQueryTempalate();
 										});
 									</script>
 								</fieldset>
