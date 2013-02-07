@@ -67,7 +67,7 @@ public class OutputFormatRegistry {
 		
 		// listen for new providers
 		context.addServiceListener(serviceListener, filter);
-		//context.registerService(OutputFormatRegistry.class.getName(), this, null);
+		context.registerService(OutputFormatRegistry.class.getName(), this, null);
 	}
 	
 	

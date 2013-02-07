@@ -72,6 +72,7 @@ public class ProviderRegistryImpl implements IProviderRegistry{
 		// listen for new providers
 		context.addServiceListener(providerServiceListener, filter);
 		context.registerService(IProviderRegistry.class.getName(), this, null);
+		
 	}
 	
 	@Override

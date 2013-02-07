@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -49,7 +51,12 @@ public class AIMEProvider implements IProvider{
 	public void init() {
 		
 		dbDriver = new DB2Driver();
-		Activator.getContext().registerService(IProvider.class.getName(), this, null);
+		Dictionary<String, Object> props = new Hashtable<String, Object>();
+		
+		props.put("class", getClass().getName());
+		props.put("driver", dbDriver.getClass().getName());
+		props.put("driver-version(major/minor)", dbDriver.getMajorVersion() + "/" + dbDriver.getMinorVersion());
+		Activator.getContext().registerService(IProvider.class.getName(), this, props);
 		
 		// initialize documentation object
 		

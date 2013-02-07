@@ -45,7 +45,7 @@ public class Activator implements BundleActivator {
 	}
 
 	
-	private SessionFactory searchAndInitializeHibernateEntities(BundleContext context) throws Exception
+	private SessionFactory searchAndInitializeHibernateEntities(BundleContext context) 
 	{
 		Configuration config = new AnnotationConfiguration().configure();
 		final Map<String,Class> discoveredEntitiesMap = new HashMap<String, Class>();
@@ -95,10 +95,16 @@ public class Activator implements BundleActivator {
 			 
 		};
 		
-		 Thread.currentThread().setContextClassLoader(proxyClassLoader);
-		 SessionFactory sessionFactory = config.buildSessionFactory();
+		Thread.currentThread().setContextClassLoader(proxyClassLoader);
+		SessionFactory sessionFactory = config.buildSessionFactory();
 		return sessionFactory; 
-		}finally {
+		}
+		catch(RuntimeException e)
+		{
+			log.error(e);
+			return null;
+		}
+		finally {
 			Thread.currentThread().setContextClassLoader(cl);  // restore the original class loader
 		}
 		

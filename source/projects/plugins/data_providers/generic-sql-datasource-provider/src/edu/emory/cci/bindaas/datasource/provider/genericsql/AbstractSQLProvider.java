@@ -3,10 +3,13 @@ package edu.emory.cci.bindaas.datasource.provider.genericsql;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
 
 import com.google.gson.JsonObject;
 
@@ -29,7 +32,13 @@ public abstract class AbstractSQLProvider implements IProvider {
 	public void init() throws Exception
 	{
 		driver = getDatabaseDriver();
-		Activator.getContext().registerService(IProvider.class.getName(), this, null);
+		
+		Dictionary<String, String> props = new Hashtable<String, String>();
+		props.put("class", getClass().getName());
+		props.put("driver", driver.getClass().getName());
+		props.put("driver-version(major/minor)", driver.getMajorVersion() + "/" + driver.getMinorVersion());
+		
+		getBundleContext().registerService(IProvider.class.getName(), this, props);
 		queryHandler.setProvider(this);
 		deleteHandler.setProvider(this);
 		submitHandler.setProvider(this);
@@ -130,6 +139,7 @@ public abstract class AbstractSQLProvider implements IProvider {
 		return new JsonObject();
 	}
 	
+	public abstract BundleContext getBundleContext();
 	
 	
 }

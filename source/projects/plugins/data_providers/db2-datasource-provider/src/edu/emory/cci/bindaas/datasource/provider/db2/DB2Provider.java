@@ -4,6 +4,7 @@ import java.sql.Driver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
 
 import com.google.gson.JsonObject;
 import com.ibm.db2.jcc.DB2Driver;
@@ -52,6 +53,11 @@ public class DB2Provider extends AbstractSQLProvider{
 			driver = new DB2Driver();
 		}
 		return driver;
+	}
+
+	@Override
+	public BundleContext getBundleContext() {
+		return DB2Activator.getContext();
 	}
 
 }

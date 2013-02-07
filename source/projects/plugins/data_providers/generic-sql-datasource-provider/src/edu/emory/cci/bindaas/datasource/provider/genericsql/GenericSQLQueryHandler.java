@@ -23,15 +23,13 @@ import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
 public class GenericSQLQueryHandler implements IQueryHandler {
 	private AbstractSQLProvider provider;
-	private OutputFormatRegistry outputFormatRegistry;
+	
 	private Log log = LogFactory.getLog(getClass());
 	
 	public OutputFormatRegistry getOutputFormatRegistry() {
-		return outputFormatRegistry;
+		return Activator.getService(OutputFormatRegistry.class);
 	}
-	public void setOutputFormatRegistry(OutputFormatRegistry outputFormatRegistry) {
-		this.outputFormatRegistry = outputFormatRegistry;
-	}
+	
 	public AbstractSQLProvider getProvider() {
 		return provider;
 	}
@@ -51,7 +49,7 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 			
 			OutputFormat outputFormat = props.getOutputFormat();
 
-			IFormatHandler formatHandler = outputFormatRegistry.getHandler(outputFormat);
+			IFormatHandler formatHandler = getOutputFormatRegistry().getHandler(outputFormat);
 			if (formatHandler != null) {
 				Connection connection = null;
 				try {
@@ -93,7 +91,7 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 			
 			OutputFormat outputFormat = props.getOutputFormat();
 
-			IFormatHandler formatHandler = outputFormatRegistry.getHandler(outputFormat);
+			IFormatHandler formatHandler = getOutputFormatRegistry().getHandler(outputFormat);
 			if (formatHandler != null) {
 				formatHandler.validate(props);
 			} else {

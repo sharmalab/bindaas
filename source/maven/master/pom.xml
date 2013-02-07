@@ -176,5 +176,6 @@
 		<module>bindaas-commons-mail</module>
 		<module>bindaas-commons-openid-helper</module>
 		<module>bindaas-commons-cilogon-helper</module>
+		<module>image-download-query-result-modifier</module>
 	</modules>
 </project>

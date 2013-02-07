@@ -56,11 +56,14 @@ public class SqlHTMLHandler implements IFormatHandler {
 		 ResultSetMetaData rsmd = rs.getMetaData();
 		 int columnCount = rsmd.getColumnCount();
 		 // table header
+		 builder.append("<thead>");
 		 builder.append("<TR>").append("\n");
 		 for (int i = 0; i < columnCount; i++) {
 		   builder.append("<TH>" + rsmd.getColumnLabel(i + 1) + "</TH>");
 		   }
 		 builder.append("</TR>").append("\n");
+		 builder.append("</thead>");
+		 builder.append("<tbody>");
 		 // the data
 		 while (rs.next()) {
 		 
@@ -70,10 +73,12 @@ public class SqlHTMLHandler implements IFormatHandler {
 		    }
 		  builder.append("</TR>").append("\n");
 		  }
+		 builder.append("</tbody>");
 		 builder.append("</TABLE></P>");
 		 builder.append("</BODY></HTML");
 		 return builder.toString();
 		}
+
 	@Override
 	public void validate(OutputFormatProps outputFormatProps) throws Exception {
 		if(outputFormatProps.getOutputFormat()!=OutputFormat.HTML || outputFormatProps.getQueryType() != QueryType.SQL)

@@ -2,6 +2,8 @@ package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,10 +43,13 @@ public class MongoDBProvider implements IProvider{
 	private JsonObject documentation;
 	
 	public void init() {
-		Activator.getContext().registerService(IProvider.class.getName(), this, null);
+		Dictionary<String, Object> props = new Hashtable<String, Object>();
+		props.put("class", getClass().getName());
+		Activator.getContext().registerService(IProvider.class.getName(), this, props);
+		
 		// initialize documentation object
 		
-				documentation = DocumentationUtil.getProviderDocumentation(Activator.getContext(), DOCUMENTATION_RESOURCES_LOCATION);
+		documentation = DocumentationUtil.getProviderDocumentation(Activator.getContext(), DOCUMENTATION_RESOURCES_LOCATION);
 	}
 	public void setQueryHandler(IQueryHandler queryHandler) {
 		this.queryHandler = queryHandler;

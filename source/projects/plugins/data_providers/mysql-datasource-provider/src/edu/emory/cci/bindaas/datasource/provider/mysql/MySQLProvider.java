@@ -4,6 +4,7 @@ import java.sql.Driver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
 
 import com.google.gson.JsonObject;
 
@@ -50,5 +51,10 @@ public class MySQLProvider extends AbstractSQLProvider{
 			driver = new com.mysql.jdbc.Driver();
 		}
 		return driver;
+	}
+
+	@Override
+	public BundleContext getBundleContext() {
+		return Activator.getContext();
 	}
 }

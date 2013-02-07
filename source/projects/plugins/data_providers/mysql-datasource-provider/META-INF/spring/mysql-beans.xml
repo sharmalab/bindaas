@@ -15,17 +15,13 @@
 	<property name="submitHandler" ref="submitHandler"></property>
 </bean>
 
-<bean id="queryHandler" class="edu.emory.cci.bindaas.datasource.provider.genericsql.GenericSQLQueryHandler">
-	<property name="outputFormatRegistry" ref="outputFormatRegistry"></property>
+<bean id="queryHandler" class="edu.emory.cci.bindaas.datasource.provider.genericsql.GenericSQLQueryHandler">	
 </bean>
 
 <bean id="deleteHandler" class="edu.emory.cci.bindaas.datasource.provider.genericsql.GenericSQLDeleteHandler">
 </bean>
 
 <bean id="submitHandler" class="edu.emory.cci.bindaas.datasource.provider.genericsql.GenericSQLSubmitHandler">
-</bean>
-
-<bean id="outputFormatRegistry" class="edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.OutputFormatRegistry" init-method="init">
 </bean>
 
 

@@ -15,19 +15,13 @@
 </bean>
 
 <bean id="queryHandler" class="edu.emory.cci.bindaas.datasource.provider.genericsql.GenericSQLQueryHandler">
-	<property name="outputFormatRegistry" ref="outputFormatRegistry"></property>  
+	  
 </bean>
 
 <bean id="deleteHandler" class="edu.emory.cci.bindaas.datasource.provider.genericsql.GenericSQLDeleteHandler">
 </bean>
 
 <bean id="submitHandler" class="edu.emory.cci.bindaas.datasource.provider.genericsql.GenericSQLSubmitHandler">
-</bean>
-
-<!-- 
-<osgi:reference id="outputFormatRegistry" interface="edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.OutputFormatRegistry" />
- -->
-<bean id="outputFormatRegistry" class="edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.OutputFormatRegistry" init-method="init">
 </bean>
 
 </beans>
