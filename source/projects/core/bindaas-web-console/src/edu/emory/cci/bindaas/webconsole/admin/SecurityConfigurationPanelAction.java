@@ -20,6 +20,7 @@ import edu.emory.cci.bindaas.webconsole.admin.SecurityAction.Request;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.AdminConfiguration;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.UserConfiguration;
+import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.UserConfiguration.AuthenticationMethod;
 
 public class SecurityConfigurationPanelAction implements IAdminAction{
 
@@ -79,6 +80,7 @@ public class SecurityConfigurationPanelAction implements IAdminAction{
 			BindaasConfiguration bindaasConfiguration = dynamicConfiguration.getObject();
 			synchronized (bindaasConfiguration) {
 				bindaasConfiguration.setEnableAudit(this.audit.enable);
+				bindaasConfiguration.setEnableAuthentication(adminConsoleConfiguration.getUserConfiguration().getAuthenticationMethod() == AuthenticationMethod.none ? false : true);
 				dynamicConfiguration.saveObject();
 			}
 			
