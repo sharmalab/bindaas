@@ -14,8 +14,7 @@
 			<prop key="mail.smtp.host">smtp.gmail.com</prop>
 			<prop key="mail.smtp.port">587</prop>
 			<prop key="username">bindaas.app@gmail.com</prop>
-			<prop key="password">bindaas@emory.edu</prop>
-			
+			<prop key="password">*****</prop>			
 		</props>
 	</property>
 </bean>
