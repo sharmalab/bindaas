@@ -5,13 +5,34 @@
   <appender name="console" class="org.apache.log4j.ConsoleAppender"> 
     <param name="Target" value="System.out"/> 
     <layout class="org.apache.log4j.PatternLayout"> 
-      <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/> 
+      <param name="ConversionPattern" value="%d %t %-5p %c{2} - %m%n"/>
     </layout> 
   </appender> 
 
+  <appender name="ROLL" class="org.apache.log4j.rolling.RollingFileAppender">
+                <!-- The active file to log to -->
+                <param name="file" value="bindaas.log" />
+                <param name="append" value="true" />
+                <param name="encoding" value="UTF-8" />
+
+                <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+                        <!-- The file to roll to, this is a fairly intelligent parameter, if the file
+                        ends in .gz, it gzips it, based on the date stamp it rolls at that time, 
+                        default is yyyy-MM-dd, (rolls at midnight)
+                        See: http://logging.apache.org/log4j/companions/extras/apidocs/org/apache/log4j/rolling/TimeBasedRollingPolicy.html -->
+                        <param name="FileNamePattern" value="bindaas.%d.log.gz" />
+                </rollingPolicy>
+
+                <layout class="org.apache.log4j.PatternLayout">
+                        <!-- The log message pattern -->
+                         <param name="ConversionPattern" value="%d %t %-5p %c{2} - %m%n"/>
+                </layout>
+        </appender>
+  
   <root> 
     <priority value ="info" /> 
-    <appender-ref ref="console" /> 
+    <appender-ref ref="console" />
+    <appender-ref ref="ROLL" /> 
   </root>
   
 </log4j:configuration> 
