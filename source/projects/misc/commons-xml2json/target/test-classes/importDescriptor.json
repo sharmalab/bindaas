@@ -1,0 +1,46 @@
+{
+	"namespaceAware" : "true" ,
+	"url" : "directory:///Users/Nadir/dev/TCGA-GBM Clinical Data" ,
+	"urlProperties" : {
+		"patternContains" : "_clinical",
+		"recursiveScan" : "true"
+	},
+	"prefixMapping" : {
+		"gbm" : "http://tcga.nci/bcr/xml/clinical/gbm/2.5" ,
+		"shared" : "http://tcga.nci/bcr/xml/clinical/shared/2.5",
+		"admin" : "http://tcga.nci/bcr/xml/administration/2.5"
+	 } ,
+	
+	"mappings" : [
+	{
+		"name" : "patientId" ,
+		"type"  : "SIMPLE" ,
+		"xpath" : "/gbm:tcga_bcr/gbm:patient/shared:bcr_patient_barcode/text()"
+	},
+	{
+		"name" : "site" ,
+		"type"  : "SIMPLE" ,
+		"xpath" : "/gbm:tcga_bcr/admin:admin/admin:bcr/text()"
+	},
+	{
+		"name" : "gender" ,
+		"type"  : "SIMPLE" ,
+		"xpath" : "/gbm:tcga_bcr/gbm:patient/shared:gender/text()"
+	},
+	{
+		"name" : "age" ,
+		"type"  : "SIMPLE" ,
+		"xpath" : "/gbm:tcga_bcr/gbm:patient/shared:days_to_birth/text()"
+	},
+	{
+		"name" : "survival" ,
+		"type"  : "SIMPLE" ,
+		"xpath" : "/gbm:tcga_bcr/gbm:patient/shared:days_to_death/text()"
+	},
+	{
+		"name" : "karnofsky_score" ,
+		"type"  : "SIMPLE" ,
+		"xpath" : "/gbm:tcga_bcr/gbm:patient/shared:karnofsky_performance_score/text()"
+	}
+  ]
+}
