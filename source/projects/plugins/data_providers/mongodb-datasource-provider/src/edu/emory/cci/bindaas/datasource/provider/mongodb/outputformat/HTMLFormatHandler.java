@@ -57,7 +57,7 @@ public class HTMLFormatHandler extends AbstractFormatHandler{
 			Map<String,String> map = new HashMap<String, String>();
 			for(String key : dbObject.keySet())
 			{
-				map.put(key, dbObject.get(key).toString());
+				map.put(key, dbObject.get(key) != null ? dbObject.get(key).toString() : "");
 				uniqueColumns.add(key);
 			}
 			listOfValues.add(map);

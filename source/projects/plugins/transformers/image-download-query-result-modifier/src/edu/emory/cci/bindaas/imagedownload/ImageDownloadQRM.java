@@ -1,14 +1,9 @@
 package edu.emory.cci.bindaas.imagedownload;
 
-import java.beans.Encoder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -17,17 +12,20 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
+import org.springframework.util.StopWatch;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.Expose;
-import com.google.gson.stream.JsonWriter;
 
+import edu.emory.cci.bindaas.core.util.ProfilerService;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
@@ -43,6 +41,7 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 	private Log log = LogFactory.getLog(getClass());
 	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
 	private JsonObject documentation;
+	private final static String IMAGE_INSTANCE_UID = "Image";
 	
 	@Override
 	public JsonObject getDocumentation() {
@@ -80,12 +79,22 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 			
 			@Override
 			public void callback(OutputStream servletOutputStream, Properties context) {
+				ProfilerService profiler = Activator.getProfilerService();
+				boolean enableProfiling = profiler!=null && profiler.isEnabled();
+				StopWatch stopWatch = null;
+				if(enableProfiling)
+					 stopWatch = profiler.getThreadLocalStopWatch();
+				
+				enableProfiling = enableProfiling && stopWatch!=null;
+				
 				try{
+					if(enableProfiling)
+						stopWatch.start("Packaging [" + results.size() + "] Images");
 					MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 					ZipOutputStream zos = new ZipOutputStream(servletOutputStream);
 					ZipEntry imagedDirectory = new ZipEntry(IMAGE_LOCATION + "/");
 					zos.putNextEntry(imagedDirectory);
-					
+					int counter = 0;
 					while(iterator.hasNext())
 					{
 						JsonObject currentRecord = iterator.next().getAsJsonObject();
@@ -95,10 +104,9 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 							File file = new File(imageLink);
 							if(file.isFile() && file.canRead())
 							{
-								String name = file.getName();
-								byte[] bytes = messageDigest.digest(file.getAbsolutePath().getBytes());
-								BigInteger bigInt = new BigInteger(bytes);
-								String locationToSave = IMAGE_LOCATION + "/" + bigInt.toString(64) + "-" + name  ;
+								String name = counter++  + ".dcm";
+								
+								String locationToSave = IMAGE_LOCATION + "/"  + name  ;
 								// do your magic here
 								packImage(file, zos, locationToSave);
 								currentRecord.add(props.imageLinkAttribute, new JsonPrimitive(locationToSave));
@@ -106,12 +114,21 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 						}
 					}
 					zos.closeEntry();
+					
+					
 					writeBytes(results.toString(), zos, "results.json");
 					zos.close();
 				}catch(Exception e)
 				{
 					log.error(e);
-					// send error stream to servlet
+					// TODO send error stream to servlet
+				}
+				finally{
+					if(enableProfiling && stopWatch.isRunning())
+					{
+						stopWatch.stop();
+						log.debug(stopWatch.prettyPrint());
+					}
 				}
 
 				
@@ -160,5 +177,11 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 	public static class ImageDownloadQRMProperties
 	{
 		@Expose private String imageLinkAttribute;
+	}
+
+	@Override
+	public String getDescriptiveName() {
+		
+		return "Stream DICOM images from ResultSet";
 	}
 }
