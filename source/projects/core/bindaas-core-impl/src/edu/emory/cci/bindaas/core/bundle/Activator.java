@@ -4,6 +4,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import edu.emory.cci.bindaas.core.util.ProfilerService;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -41,5 +43,16 @@ public class Activator implements BundleActivator {
 	}
 
 
+	public static ProfilerService getProfilerService()
+	{
+		ServiceReference sr = (ServiceReference) context.getServiceReference(ProfilerService.class.getName());
+		if(sr!=null)
+		{
+			ProfilerService serviceObj = ProfilerService.class.cast(context.getService(sr) ) ;
+			return serviceObj;
+		}
+		else
+			return null;
+	}
 
 }

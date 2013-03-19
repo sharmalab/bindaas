@@ -48,13 +48,13 @@ public class DynamicObject<T extends ThreadSafe> {
 				}
 				catch(Exception e)
 				{
-					log.warn("Reading default properties",e);
+					log.warn("Reading default properties for [" + this.name + "]",e);
 					currentObject = (T) defaultObject.clone();
 				}
 			}
 			else
 			{
-				log.warn("Reading default properties");
+				log.warn("Reading default properties for [" + this.name + "]");
 				currentObject = (T) defaultObject.clone();
 			}
 		}

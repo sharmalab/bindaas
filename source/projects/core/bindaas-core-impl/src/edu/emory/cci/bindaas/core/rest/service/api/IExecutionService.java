@@ -9,6 +9,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 
@@ -21,6 +23,11 @@ public interface IExecutionService {
 		@Path("{workspace}/{profile}/query/{queryEndpoint}")
 		@GET
 		public Response executeQueryEndpoint(@PathParam("workspace") String workspace , @PathParam("profile") String profile , @PathParam("queryEndpoint") String queryEndpoint) ;
+		
+		@Path("{workspace}/{profile}/query/{queryEndpoint}")
+		@POST
+		@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+		public Response executeQueryEndpointPost(@PathParam("workspace") String workspace , @PathParam("profile") String profile , @PathParam("queryEndpoint") String queryEndpoint ,  MultivaluedMap<String, String> postParams) ;
 		
 		
 

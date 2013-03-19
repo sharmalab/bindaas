@@ -8,5 +8,5 @@ public interface IModifier {
 	
 	public JsonObject getDocumentation();
 	public void validate() throws ModifierException;
-
+	public String getDescriptiveName();
 }

@@ -71,7 +71,7 @@ public class QueryResult {
 	
 	public static interface Callback
 	{
-		public void callback(OutputStream servletOutputStream , Properties context); 
+		public void callback(OutputStream servletOutputStream , Properties context) throws Exception; 
 	}
 	
 }

@@ -17,6 +17,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -327,6 +328,45 @@ public class ExecutionServiceImpl implements IExecutionService{
 			log.error(e);
 			return RestUtils.createErrorResponse(e.getMessage());
 		}
+	}
+
+	@Override
+	@Path("{workspace}/{profile}/query/{queryEndpoint}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@POST
+	public Response executeQueryEndpointPost(
+			@PathParam("workspace") String workspaceName,
+			@PathParam("profile") String profileName,
+			@PathParam("queryEndpoint") String queryEndpointName , MultivaluedMap<String, String> postParams) {
+		long startTime = System.currentTimeMillis();
+		try {
+			Profile profile = managementTask.getProfile(workspaceName, profileName);
+			if(profile.getQueryEndpoints().containsKey(queryEndpointName) )
+			{
+				QueryEndpoint queryEndpoint = profile.getQueryEndpoints().get(queryEndpointName);
+				
+				QueryResult queryResult = executionTask.executeQueryEndpoint(getUser(), getMapFromMultivaluedMap(postParams) , profile, queryEndpoint);
+				
+				return queryResultToResponse(queryResult , queryEndpoint , System.currentTimeMillis() - startTime);
+			}
+			else
+			{
+				throw new Exception("QueryEndpoint [" + queryEndpointName + "] not found");
+			}
+		} catch (Exception e) {
+			log.error(e);
+			return RestUtils.createErrorResponse(e.getMessage());
+		}
+	}
+
+	
+	private Map<String, String> getMapFromMultivaluedMap(MultivaluedMap<String, String> mm) {
+		Map<String,String> params = new HashMap<String, String>();
+		
+		for(String key : mm.keySet()){
+			params.put(key, mm.getFirst(key));
+		}
+		return params;
 	}
 
 }

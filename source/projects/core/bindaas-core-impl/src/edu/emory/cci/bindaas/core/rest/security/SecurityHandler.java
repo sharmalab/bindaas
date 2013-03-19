@@ -117,11 +117,36 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	
 	private Principal handleAPI_KEY(Message message,IAuthenticationProvider authenticationProvider) throws Exception
 	{
+		String apiKey = null;
+		
+		// get apiKey from the query parameters
 		MultivaluedMap<String, String> queryMap =  JAXRSUtils.getStructuredParams((String) message.get(Message.QUERY_STRING), "&", true , true);
+		
 		if(queryMap!=null && queryMap.getFirst(API_KEY)!=null)
+			apiKey = queryMap.getFirst(API_KEY);
+		
+		// if not present in query param , then look into http header
+		
+		if(apiKey == null)
 		{
+			Map protocolHeaders = (Map) message.get(Message.PROTOCOL_HEADERS);
+			if(protocolHeaders!=null && protocolHeaders.get(API_KEY)!=null)
+			{
+				List values = (List) protocolHeaders.get(API_KEY);
+				if(values!=null && values.size() > 0)
+				{
+					apiKey = values.get(0).toString();
+				}
+				
+			}
+		}
+			
+		if(apiKey != null)
+		{
+			
+			
 			try {
-				Principal authenticatedUser = authenticationProvider.loginUsingAPIKey(queryMap.getFirst(API_KEY) ); // TODO
+				Principal authenticatedUser = authenticationProvider.loginUsingAPIKey(apiKey ); // TODO
 				return authenticatedUser;
 			} catch (AuthenticationException e) {
 					log.error(e); // authentication failed
@@ -135,7 +160,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		}
 		else
 		{
-			throw new Exception("API_KEY must be provided for authentication");
+			throw new AuthenticationException();
 		}
 		
 		
