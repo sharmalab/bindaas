@@ -23,3 +23,6 @@ Import-Package: au.com.bytecode.opencsv,
  org.osgi.framework;version="1.3.0"
 Bundle-ClassPath: db2jcc4-9.7-osgi.jar,
  .
+Export-Package: edu.emory.cci.bindaas.datasource.provider.aime,
+ edu.emory.cci.bindaas.datasource.provider.aime.model,
+ edu.emory.cci.bindaas.datasource.provider.aime.outputformat

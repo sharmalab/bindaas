@@ -249,7 +249,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 		return new JsonObject(); // TODO : return json schema
 	}
 
-	private AIMBean createAIMBeanFromDocument(String annotationContent)
+	public AIMBean createAIMBeanFromDocument(String annotationContent)
 			throws Exception {
 		AIMBean aimBean = new AIMBean();
 
