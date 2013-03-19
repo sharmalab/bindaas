@@ -4,25 +4,37 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.osgi.framework.BundleContext;
+import org.springframework.util.StopWatch;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
@@ -30,6 +42,7 @@ import edu.emory.cci.bindaas.aim2dicom.bundle.Activator;
 import edu.emory.cci.bindaas.commons.xml2json.XML2JSON;
 import edu.emory.cci.bindaas.commons.xml2json.model.Mapping;
 import edu.emory.cci.bindaas.commons.xml2json.model.Type;
+import edu.emory.cci.bindaas.core.util.ProfilerService;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
@@ -70,6 +83,8 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 	public QueryResult modifyQueryResult(final QueryResult queryResult,
 			JsonObject dataSource, String user, JsonObject modifierProperties)
 			throws Exception {
+		
+		
 		final AIM2DicomQRMProperties props = GSONUtil.getGSONInstance()
 				.fromJson(modifierProperties, AIM2DicomQRMProperties.class);
 		if (props != null && props.imageURL != null) {
@@ -81,16 +96,24 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 				@Override
 				public void callback(OutputStream servletOutputStream,
 						Properties context) throws Exception {
-
+					ProfilerService profiler = Activator.getProfilerService();
+					boolean enableProfiling = profiler!=null && profiler.isEnabled();
+					StopWatch stopWatch = null;
+					if(enableProfiling)
+						 stopWatch = profiler.getThreadLocalStopWatch();
+					
+					enableProfiling = enableProfiling && stopWatch!=null;
+					
 					try {
-						ZipOutputStream zos = new ZipOutputStream(
-								servletOutputStream);
 						
+						if(enableProfiling)
+							stopWatch.start("parseAnnotations");
 						List<JsonObject> annotations = parseAnnotations(queryResult
 								.getData());
 						
 						// Create a set of URLs from where to download images
-						Map<String, String> setOfImagesToDownload = new HashMap<String, String>();
+						
+						Set<String> setOfUniqueSeries = new HashSet<String>();
 						
 						for (JsonObject annotation : annotations) {
 						
@@ -98,91 +121,63 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 							{
 								String seriesUID = annotation.get("seriesUID")
 										.getAsString();
-								String imageUrlToFetchDicom = props
-										.getImageUrl(seriesUID);
-								setOfImagesToDownload.put(seriesUID,
-										imageUrlToFetchDicom);	
+								setOfUniqueSeries.add(seriesUID);	
 							}
 							else
 							{
 								log.warn("Encountered annotation missing seriesUID");
 							}
 							
-
 						}
 
-						// Iterate over all imageURL , download ZIP streams and
-						// put them in the final ZIP file
+						// create json array
+						
+						JsonArray arrayOfSeries = GSONUtil.getGSONInstance().toJsonTree(setOfUniqueSeries,HashSet.class).getAsJsonArray();
 
-						for (String seriesUID : setOfImagesToDownload.keySet()) {
-							String imageURL = setOfImagesToDownload
-									.get(seriesUID);
-							log.debug("Fetching Dicom objects from ["
-									+ imageURL + "]");
-							try {
-								
-								try {
-								
-								InputStream dicomImageStream = getDicomImage(
-										imageURL, props.apiKey);
-								ZipEntry entry = new ZipEntry(seriesUID
-										+ ".zip");
-
-								zos.putNextEntry(entry);
-								byte[] buffer = new byte[1024 * 5];
-
-								int bytesRead = -1;
-								while ((bytesRead = dicomImageStream
-										.read(buffer)) != -1) {
-									zos.write(buffer, 0, bytesRead);
-								}
-
-								zos.closeEntry();
-								zos.flush();
-								dicomImageStream.close();
-
-								}
-								catch(Exception e)
-								{
-									String errorMessage = "Unable to fetch images from ["
-											+ imageURL + "]";
-									log.error( errorMessage , e);
-									
-									// write error file to the zip stream
-									
-									ZipEntry errorEntry = new ZipEntry(seriesUID + ".error.log");
-									zos.putNextEntry(errorEntry);
-									zos.write(errorMessage.getBytes());
-									zos.closeEntry();
-									
-								}
-
-								
-
-								
-							} catch (Exception e) {
-								log.error(e);
+						// download and stream image
+						if(enableProfiling)
+							{
+								stopWatch.stop();
+								stopWatch.start("Download and Stream [" + setOfUniqueSeries.size() + "] series");
 							}
-						}
-
-						zos.close();
+						String seriesJson = arrayOfSeries.toString().trim();
+						writeDicomImage(props.imageURL, props.apiKey,seriesJson.substring(1, seriesJson.length() - 1) ,  servletOutputStream);
+						
 					} catch (Exception e) {
 						log.error(e);
 						throw e;
 					}
+					finally{
+						if(enableProfiling && stopWatch.isRunning())
+						{
+							stopWatch.stop();
+							log.info(stopWatch.prettyPrint());
+						}
+					}
 				}
 
-				private InputStream getDicomImage(String imageUrlToFetchDicom,
-						String apiKey) throws ClientProtocolException,
+				private void writeDicomImage(String imageUrlToFetchDicom,
+						String apiKey , String series , OutputStream zos) throws ClientProtocolException,
 						IOException {
-					HttpGet get = new HttpGet(imageUrlToFetchDicom);
-					get.addHeader("api_key", apiKey);
+					HttpPost post = new HttpPost(imageUrlToFetchDicom);
+					post.addHeader("api_key", apiKey);
+					
+					List <NameValuePair> nvps = new ArrayList <NameValuePair>();
+			        nvps.add(new BasicNameValuePair("series", series)) ;
+			        post.setEntity(new UrlEncodedFormEntity(nvps));
+			        
 					HttpClient httpClient = new DefaultHttpClient();
-					HttpResponse response = httpClient.execute(get);
-					if (response != null && response.getEntity() != null) {
-						return response.getEntity().getContent();
+					HttpResponse response = httpClient.execute(post);
+					if (response != null && response.getStatusLine().getStatusCode() == 200 && response.getEntity() != null) {
+						response.getEntity().writeTo(zos);
 					}
-					return null;
+					else
+					{
+						if(response!=null)
+							log.warn("Request to url [" + imageUrlToFetchDicom + "] failed. Reason=[" + response.getStatusLine().toString() + "]");
+						else
+							log.warn("Request to url [" + imageUrlToFetchDicom + "] failed");
+					}
 				}
 
 				private List<JsonObject> parseAnnotations(byte[] dataBytes)
