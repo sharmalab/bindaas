@@ -177,5 +177,8 @@
 		<module>bindaas-commons-openid-helper</module>
 		<module>bindaas-commons-cilogon-helper</module>
 		<module>image-download-query-result-modifier</module>
+		<module>postgres-datasource-provider</module>
+		<module>aim-to-dicom-query-result-modifier</module>
+		<module>../../projects/misc/commons-xml2json</module>
 	</modules>
 </project>
