@@ -2,11 +2,9 @@ package edu.emory.cci.bindaas.webconsole;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -25,8 +23,6 @@ import org.hibernate.criterion.Restrictions;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
-import edu.emory.cci.bindaas.core.util.DynamicProperties;
-import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 

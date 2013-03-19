@@ -133,7 +133,17 @@
 	<property name="mainController" ref="mainController"></property>
 	<property name="defaultBindaasAdminConsoleConfiguration" ref="defaultBindaasAdminConsoleConfiguration"></property>
 	<property name="postLoginAction" ref="postLoginAction"></property>
+	<property name="openIdAuth" ref="openIdAuth"></property>
+	<property name="documentationFetcher" ref="documentationFetcherServlet"></property>
 </bean>
+
+
+<bean id="openIdAuth" class="edu.emory.cci.bindaas.webconsole.OpenIDAuth">
+</bean>
+
+<bean id="documentationFetcherServlet" class="edu.emory.cci.bindaas.webconsole.servlet.util.DocumentationFetcherServlet">
+</bean>
+
 
 <bean id="defaultBindaasAdminConsoleConfiguration" class="edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration">
 	<property name="adminAccounts">

@@ -1,16 +1,6 @@
 package edu.emory.cci.bindaas.webconsole;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Hashtable;
-import java.util.List;
-
-import javax.servlet.Filter;
-import javax.servlet.HttpConstraintElement;
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,21 +8,16 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
 
 import edu.emory.cci.bindaas.core.util.DynamicObject;
-import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.LogoutServlet;
-import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.PostSignupServlet;
 import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.PostUserLoginServlet;
 import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserLoginServlet;
 import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserOpenIDAuthServlet;
 import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserQueryBrowserServlet;
-import edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserRegistrationServlet;
 import edu.emory.cci.bindaas.webconsole.servlet.util.DocumentationFetcherServlet;
 
 public class WebConsoleStarter {
@@ -56,6 +41,31 @@ public class WebConsoleStarter {
 	private boolean initialized = false;
 	private DynamicObject<BindaasAdminConsoleConfiguration> bindaasAdminConsoleConfiguration;
 	private BindaasAdminConsoleConfiguration defaultBindaasAdminConsoleConfiguration;
+	private OpenIDAuth openIdAuth;
+	
+	public OpenIDAuth getOpenIdAuth() {
+		return openIdAuth;
+	}
+
+
+	public void setOpenIdAuth(OpenIDAuth openIdAuth) {
+		this.openIdAuth = openIdAuth;
+	}
+
+
+	public DocumentationFetcherServlet getDocumentationFetcher() {
+		return documentationFetcher;
+	}
+
+
+	public void setDocumentationFetcher(
+			DocumentationFetcherServlet documentationFetcher) {
+		this.documentationFetcher = documentationFetcher;
+	}
+
+
+
+	private DocumentationFetcherServlet documentationFetcher;
 	
 	
 	public BindaasAdminConsoleConfiguration getDefaultBindaasAdminConsoleConfiguration() {
@@ -121,19 +131,17 @@ public class WebConsoleStarter {
 										service.registerServlet("/dashboard", mainController, null, defaultContext);
 										service.registerServlet("/authenticate", loginAction, null, defaultContext);
 										service.registerServlet("/postAuthenticate", postLoginAction, null, defaultContext);
-										service.registerServlet("/postSignup", new PostSignupServlet(), null, defaultContext);
-										service.registerServlet("/userRegistration", new UserRegistrationServlet(), null, defaultContext);
+										
 										
 										((org.apache.felix.http.api.ExtHttpService) service) .registerFilter(loginAction, "/dashboard/.*", null, 0 ,  defaultContext);
 										
 										
-										OpenIDAuth openIdAuth = new OpenIDAuth();
+										
 										service.registerServlet(openIdAuth.getServletLocation(), openIdAuth, null, defaultContext);
 										
-										CILogonAuth ciLogonAuth = new CILogonAuth();
-										service.registerServlet("/cilogon", ciLogonAuth, null, defaultContext);
 										
-										DocumentationFetcherServlet documentationFetcher = new DocumentationFetcherServlet();
+										
+										
 										service.registerServlet("/fetchDocumentation", documentationFetcher, null, defaultContext);
 										
 										/**
@@ -187,72 +195,6 @@ public class WebConsoleStarter {
 		// listen for new providers
 		context.addServiceListener( httpServiceListener , filter);
 		
-//		ServiceReference ref =  Activator.getContext().getServiceReference(HttpService.class.getName());
-//		if(ref!=null)
-//		{
-//			HttpService service = (HttpService) Activator.getContext().getService(ref);
-//			if(service!=null)
-//			{
-//				try {
-//					HttpContext defaultContext = new CustomHttpContext();
-//					service.registerResources("/dashboard/foundation", "/foundation", defaultContext);
-//					service.registerServlet("/dashboard", mainController, null, defaultContext);
-//					service.registerServlet("/authenticate", loginAction, null, defaultContext);
-//					((org.apache.felix.http.api.ExtHttpService) service) .registerFilter(loginAction, "/dashboard/.*", null, 0 ,  defaultContext);
-//					
-//				} catch (NamespaceException e) {
-//					log.error(e);
-//				}
-//			}
-//		}
-//		else
-//		{
-//			log.error("HttpService not available. No servlets were registered");
-//		}
-		
-		
-	}
-	
-	
-	
-	private static class CustomHttpContext implements org.osgi.service.http.HttpContext 
-	{
-
-		@Override
-		public boolean handleSecurity(HttpServletRequest request,
-				HttpServletResponse response) throws IOException {
-			
-			return true;
-		}
-
-		@Override
-		public URL getResource(String name) {
-
-			try {
-				return new URL(name);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-		}
-
-		@Override
-		public String getMimeType(String name) {
-			 if (name.endsWith(".jpg"))
-					  {  
-					    return "image/jpeg";  
-					  } 
-					  else if (name.endsWith(".png")) 
-					  {  
-					    return "image/png";  
-					  } 
-					  else 
-					  {  
-					    return "text/html";  
-					  }  
-					  
-		}
 		
 	}
 	

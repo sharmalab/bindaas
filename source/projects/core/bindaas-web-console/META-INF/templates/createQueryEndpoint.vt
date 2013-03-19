@@ -247,7 +247,7 @@
 								<select  name="queryResultModifier" id="queryResultModifier">
 									<option selected="true" value="null">--select--</option>
 									#foreach ($qrm in $queryResultModifiers)
-									<option value="$qrm.getClass().getName()">$qrm.getClass().getName().substring($qrm.getClass().getName())</option>
+									<option value="$qrm.getClass().getName()">$qrm.getDescriptiveName()</option>
 									#end
 								</select>
 								<label for="queryResultModifierProperties">Query Result Modifier Properties</label>

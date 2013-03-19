@@ -2,15 +2,20 @@ package edu.emory.cci.bindaas.security.api;
 
 public class AuthenticationException  extends Exception {
 
-	private String userOrToken;
+	
+	private String message;
+		public AuthenticationException()
+		{
+			this.message = "Authentication Failed. Please provide api_key in the HTTP Header";
+		}
 		public AuthenticationException(String userOrToken)
 		{
 			super();
-			this.userOrToken = userOrToken;
+			this.message = "Authentication Failed for  [" + userOrToken + "]";
 		}
 		@Override
 		public String getMessage() {
-			return "Authentication Failed for  [" + userOrToken + "]";
+			return message;
 		}
 		@Override
 		public String toString() {

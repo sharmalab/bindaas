@@ -97,9 +97,18 @@ public class UserManagementPanelAction implements IAdminAction {
 						
 						IMailService mailService = Activator.getService(IMailService.class);
 					
-						if(mailService == null) throw new Exception("Mail Service not available");
+						if(mailService != null) 
+						{
+							try{
+							mailService.sendMail(userRequest.getEmailAddress() , "Your Bindaas API Key status" , emailMessage);
+							}catch(Exception e)
+							{
+								log.error(String.format("Unable send mail notification. Message [%s] not sent to [%s]" , emailMessage ,userRequest.getEmailAddress() ));
+							}
+						}
 						else
-						mailService.sendMail(userRequest.getEmailAddress() , "Your Bindaas API Key status" , emailMessage);
+							log.error(String.format("Mail Service not available. Message [%s] not sent to [%s]" , emailMessage ,userRequest.getEmailAddress() ));
+						
 						
 					}
 					else

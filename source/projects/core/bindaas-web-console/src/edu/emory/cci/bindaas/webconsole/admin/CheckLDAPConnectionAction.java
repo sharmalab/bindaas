@@ -10,11 +10,9 @@ import org.apache.commons.logging.LogFactory;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
-import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider;
-import edu.emory.cci.bindaas.webconsole.Activator;
-import edu.emory.cci.bindaas.webconsole.admin.SecurityAction.Request;
+
 
 public class CheckLDAPConnectionAction implements IAdminAction {
 	private String actionName;

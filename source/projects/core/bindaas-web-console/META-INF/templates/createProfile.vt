@@ -223,12 +223,15 @@
 							</div>
 
 							<input type="button" class="button" value="Save" id="submitForm"/>
+							<input type="button" class="button" value="Cancel" onclick="window.location = '/dashboard/workspace/$workspace'"/>
 						</form>
 					</fieldset>
 
 					<script>
 						$("#submitForm").ajaxError(function(e, jqxhr, settings, exception) {
 							alert(exception);
+							$(this).attr("value", "Save");
+							$(this).removeAttr("disabled", "true");
 						});
 
 						function performValidation() {
@@ -268,6 +271,11 @@
 									$.post("/dashboard/$workspace/createProfile.action", req, function(data) {
 										window.location = "/dashboard/workspace/$workspace";
 									});
+									
+									// change label of the button
+									$(this).attr("value", "please wait ....");
+									$(this).attr("disabled", "true");
+									
 
 								} catch(e) {
 									alert(e);

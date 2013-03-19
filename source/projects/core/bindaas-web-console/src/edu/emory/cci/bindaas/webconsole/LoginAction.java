@@ -1,16 +1,6 @@
 package edu.emory.cci.bindaas.webconsole;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.UUID;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -22,24 +12,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 
-import edu.emory.cci.bindaas.core.api.ISecurityHandler;
-import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
-import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
-import edu.emory.cci.bindaas.core.rest.security.AuthenticationProtocol;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
-import edu.emory.cci.bindaas.core.util.DynamicProperties;
-
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
@@ -68,7 +45,7 @@ public class LoginAction extends HttpServlet implements Filter{
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
-		//IAuthenticationProvider authenticationProvider = getAuthenticationProvider() ;
+		
 		
 		DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
 		
@@ -76,7 +53,7 @@ public class LoginAction extends HttpServlet implements Filter{
 		if(dynamicAdminConsoleConfiguration!=null )
 		{
 			try {
-//				edu.emory.cci.bindaas.security.impl.
+
 				BindaasUser principal = null;
 				if(dynamicAdminConsoleConfiguration.getObject().getAdminConfiguration().getAuthenticationMethod().equals(AuthenticationMethod.ldap))
 				{
@@ -161,34 +138,7 @@ public class LoginAction extends HttpServlet implements Filter{
 		log.info("LoginAction Filter  Initialized");
 		
 	}
-	
-//	public IAuthenticationProvider getAuthenticationProvider()
-//	{
-//		// code for setting authentication provider
-//		final BundleContext context = Activator.getContext();
-//		DynamicProperties bindaasProperties = Activator.getService(DynamicProperties.class , "(name=bindaas)");
-//		String classname = bindaasProperties.get("webconsole.security.method")!=null && bindaasProperties.get("webconsole.security.method").equals("ldap") ? "edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider" : "edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider";
-//		ServiceReference[] serviceReferences;
-//		try {
-//			
-//			serviceReferences = context.getAllServiceReferences(IAuthenticationProvider.class.getName(), "(class=" + classname + ")");
-//			if(serviceReferences.length > 0)
-//			{
-//				Object service = context.getService(serviceReferences[0]);
-//				if(service!=null)
-//				{
-//					IAuthenticationProvider authProvider  =  (IAuthenticationProvider) service; 
-//					return authProvider; 
-//				}
-//			}
-//		} catch (InvalidSyntaxException e) {
-//			log.error(e);
-//		}
-//		return null;
-//	}
 
-	
-	
 
 	private boolean checkIfUserLoggedIn(HttpServletRequest request)
 	{

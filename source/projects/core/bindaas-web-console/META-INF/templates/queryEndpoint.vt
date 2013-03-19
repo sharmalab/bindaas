@@ -302,21 +302,65 @@
 							<div class="panel" id="queryResultModifierPanel">
 								<label for="queryResultModifier">Query Result Modifier</label>
 								<select  name="queryResultModifier" id="queryResultModifier" disabled="true">
+									
+									
+									
 									#if (!$queryEndpoint.getQueryResultModifiers())
-									<option selected="true" value="null">--select--</option>
+											<option selected="true" value="null">--select--</option>
+											#foreach ($qrm in $queryResultModifiers)
+											<option value="$qrm.getClass().getName()">$qrm.getDescriptiveName()</option>
+											#end
+									
 									#else
-									<option selected="true" value="$queryEndpoint.getQueryResultModifiers().getName()">$queryEndpoint.getQueryResultModifiers().getName()</option>
+									
+											#foreach ($qrm in $queryResultModifiers)
+												#if ( $qrm.getClass().getName() == $queryEndpoint.getQueryResultModifiers().getName()  )
+													<option value="$qrm.getClass().getName()" selected="true" >$qrm.getDescriptiveName()</option>
+												#else
+													<option value="$qrm.getClass().getName()">$qrm.getDescriptiveName()</option>
+												#end
+											
+											#end
+									
 									#end
-									#foreach ($qrm in $queryResultModifiers)
-									<option value="$qrm.getClass().getName()">$qrm.getClass().getName()</option>
-									#end
+									
 								</select>
+								
 								<label for="queryResultModifierProperties">Query Result Modifier Properties</label>
-								#if (!$queryEndpoint.getQueryResultModifiers())
-								<textarea id="queryResultModifierProperties" placeholder="{}" disabled="true" value="" ></textarea>																
+							#if (!$queryEndpoint.getQueryResultModifiers())
+								<textarea id="queryResultModifierProperties" placeholder="{}" disabled="true" ></textarea>																
   							#else
- 								<textarea id="queryResultModifierProperties" placeholder="{}" disabled="true" value="$queryEndpoint.getQueryResultModifiers().getProperties().toString()" ></textarea>
+ 								<textarea id="queryResultModifierProperties" placeholder="{}" disabled="true"  >$queryEndpoint.getQueryResultModifiers().getProperties().toString()</textarea>
   							#end
+  								<!-- New Code -->
+								<div id="queryResultModifierPropertiesPanel"></div>
+								<script>
+									$("#queryResultModifier").change(
+									function (){
+										var className = $("#queryResultModifier option:selected").attr("value");
+										if(className && className != "null")
+										{
+											var url = "/fetchDocumentation?type=IQueryResultModifier&class=" + className ;
+										try {
+										$.get(url , function(documentation) {
+											$("#queryResultModifierPropertiesPanel").html( documentation.view );
+										} );
+										}catch(e){
+										console.log(e);
+										}	
+										}
+										else
+										{
+											$("#queryResultModifierPropertiesPanel").html("");
+										}
+										
+									}
+									);
+									
+									$("#queryResultModifierProperties,label[for='queryResultModifierProperties']").hide();
+									$("#queryResultModifier").trigger("change");
+								</script>
+								<!-- New Code ends -->
 
 
 							</div>
@@ -385,7 +429,7 @@
 											var queryResultModId = $("#queryResultModifierPanel").find("select option:selected").attr("value");
 											if (queryResultModId != "null") {
 												var queryResultModProp = jQuery.parseJSON($("#queryResultModifierProperties").attr("value"));
-												jsonRequest.queryResulModifiers = {};
+												jsonRequest.queryResultModifiers = {};
 												jsonRequest.queryResultModifiers.name = queryResultModId;
 												jsonRequest.queryResultModifiers.properties = queryResultModProp;
 											}
