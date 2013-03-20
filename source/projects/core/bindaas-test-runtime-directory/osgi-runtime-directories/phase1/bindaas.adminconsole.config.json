@@ -1,0 +1,35 @@
+{
+  "host": "localhost",
+  "port": 8080,
+  "proxyUrl": "http://localhost:8080",
+  "adminAccounts": [
+    "admin",
+    "nadirsaghar@gmail.com",
+    "nadirsaghar@yahoo.com"
+  ],
+  "enableProxy": false,
+  "adminConfiguration": {
+    "authenticationMethod": "openid",
+    "openIdProviders": {
+      "google": true,
+      "yahoo": true
+    },
+    "ldapUrl": "ldap://ad1.ccibmi.cci.emory.edu:389",
+    "ldapDNPattern": "cn\u003d%s,cn\u003dUsers,dc\u003dccibmi,dc\u003dcci,dc\u003demory,dc\u003dedu"
+  },
+  "userConfiguration": {
+    "authenticationMethod": "openid",
+    "openIdProviders": {
+      "google": true,
+      "yahoo": true
+    },
+    "ldapUrl": "ldap://ad1.ccibmi.cci.emory.edu:389",
+    "ldapDNPattern": "cn\u003d%s,cn\u003dUsers,dc\u003dccibmi,dc\u003dcci,dc\u003demory,dc\u003dedu"
+  },
+  "userAccountManagement": {
+    "enableUserSignupNotification": false,
+    "notificationRecepients": [
+      "admin@example.com"
+    ]
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "profiles": {
+    "testProfile": {
+      "dataSource": {
+        "validated": true
+      },
+      "queryEndpoints": {
+        "testQ": {
+          "queryTemplate": "{$r$} ",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {
+            "r": {
+              "name": "r",
+              "required": true,
+              "defaultValue": "",
+              "description": ""
+            }
+          },
+          "stage": "UNVERIFIED",
+          "outputFormat": {},
+          "name": "testQ",
+          "timeCreated": "Thu Jan 24 15:38:04 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": "testverified verified"
+        },
+        "x": {
+          "queryTemplate": "$r$",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {
+            "r": {
+              "name": "r",
+              "required": true,
+              "defaultValue": "",
+              "description": ""
+            }
+          },
+          "stage": "UNVERIFIED",
+          "outputFormat": {},
+          "name": "x",
+          "timeCreated": "Thu Jan 24 15:39:27 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": "verified"
+        }
+      },
+      "deleteEndpoints": {
+        "test": {
+          "queryTemplate": "{}",
+          "tags": [],
+          "bindVariables": {},
+          "stage": "UNVERIFIED",
+          "name": "test",
+          "timeCreated": "Tue Jan 15 17:42:56 EST 2013",
+          "createdBy": "admin",
+          "description": "test"
+        }
+      },
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
+      "providerVersion": 1,
+      "name": "testProfile",
+      "timeCreated": "Tue Jan 15 17:41:11 EST 2013",
+      "createdBy": "admin",
+      "description": ""
+    }
+  },
+  "params": {},
+  "name": "test2",
+  "timeCreated": "Tue Jan 15 17:40:48 EST 2013",
+  "createdBy": "admin",
+  "description": "test"
+}

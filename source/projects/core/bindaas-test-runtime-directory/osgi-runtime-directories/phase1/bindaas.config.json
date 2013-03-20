@@ -1,0 +1,12 @@
+{
+  "host": "localhost",
+  "port": 9099,
+  "protocol": "http",
+  "enableAuthentication": true,
+  "enableAuthorization": false,
+  "enableAudit": true,
+  "authenticationProviderClass": "edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider",
+  "authorizationProviderClass": "edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider",
+  "auditProviderClass": "edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider",
+  "proxyUrl": "http://localhost:9099"
+}
