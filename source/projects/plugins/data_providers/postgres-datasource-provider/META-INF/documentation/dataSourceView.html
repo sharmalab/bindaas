@@ -1,7 +1,7 @@
 <label>Username</label>
-		<span class="has-tip tip-left" data-width="210" title="username for connecting to MySQL database"> <input type="text" id="postgres_username" /></span>
+		<span class="has-tip tip-left" data-width="210" title="username for connecting to Postgres database"> <input type="text" id="postgres_username" /></span>
 		<label>Password</label>
-		<span class="has-tip tip-left" data-width="210" title="password for connecting to MySQL database"><input type="password" id="postgres_password" /></span>
+		<span class="has-tip tip-left" data-width="210" title="password for connecting to Postgres database"><input type="password" id="postgres_password" /></span>
 		<label>JDBC Url</label>
 		<span class="has-tip tip-left" data-width="210" title="JDBC URL example: jdbc:postgresql://localhost:5432/mydb"><input type="text" id="postgres_url" /></span>
 				
@@ -9,22 +9,22 @@
 			
 			$("#postgres_username").keyup(function ()
 			{
-				updateProviderFieldMySql();
+				updateProviderFieldPostgres();
 			});
 			$("#postgres_password").keyup(function ()
 			{
-				updateProviderFieldMySql();
+				updateProviderFieldPostgres();
 			});
 			
 			$("#postgres_url").keyup(function ()
 			{
-				updateProviderFieldMySql();
+				updateProviderFieldPostgres();
 			});
 			
 			
 						
 			   
-		   function updateProviderFieldMySql()
+		   function updateProviderFieldPostgres()
 		   {
 		   	 var dataSourceJson = {};
 		   	 dataSourceJson.username = $("#postgres_username").attr("value");
@@ -34,7 +34,7 @@
 		   	postgresValidate();
 		   }    
 		   
-		   function reverseUpdateDataSourceViewMySQL()
+		   function reverseUpdateDataSourceViewPostgres()
 		   {
 			   try{
 				   var dataSourceJson =  $("#dataSource").attr("value");
@@ -49,7 +49,7 @@
 		   
 		   function postgresValidate() {
 				
-				if ($("#MySQLProvider").is(":visible")) {
+				if ($("#PostgresProvider").is(":visible")) {
 					ValidationObject.addConstraint("postgres_username", $("#postgres_username").attr("value") && $("#postgres_username").attr("value") != "", function() {
 						alert("Username not specified");
 						 $("#postgres_username").focus();
@@ -79,12 +79,12 @@
 
 			}
 		   
-		   reverseUpdateDataSourceViewMySQL();
+		   reverseUpdateDataSourceViewPostgres();
 		   
-		   $("#MySQLProvider").bind("onaftershow" , function(e){
+		   $("#PostgresProvider").bind("onaftershow" , function(e){
 			   postgresValidate(); 	
 			});
-			$("#MySQLProvider").bind("onafterhide" , function(e){
+			$("#PostgresProvider").bind("onafterhide" , function(e){
 				postgresValidate(); 	
 			});
 		</script>
