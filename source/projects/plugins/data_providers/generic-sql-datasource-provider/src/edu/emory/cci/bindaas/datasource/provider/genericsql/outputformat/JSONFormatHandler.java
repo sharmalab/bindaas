@@ -40,7 +40,9 @@ public class JSONFormatHandler extends AbstractFormatHandler {
 		// }
 
 		QueryResult qr = new QueryResult();
-		qr.setData(convert(queryResult).toString().getBytes());
+		JsonArray intermediateResult = convert(queryResult);
+		qr.setData(intermediateResult.toString().getBytes());
+		qr.setIntermediateResult(intermediateResult);
 		qr.setMimeType(StandardMimeType.JSON.toString());
 		return qr;
 	}

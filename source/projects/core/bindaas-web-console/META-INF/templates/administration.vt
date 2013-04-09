@@ -231,7 +231,7 @@
 
 										function initUserManagementNotificationPanelAction()
 										{
-										#if ($adminconsoleConfiguration.getUserAccountManaement().getEnableUserSignupNotification())
+										#if ($adminconsoleConfiguration.getUserAccountManagement().getEnableUserSignupNotification())
 										$("#security_webconsole_newuser_notification_enable").attr("checked" , true);
 										$("#security_webconsole_newuser_notification_disable").removeAttr("checked");
 										#else

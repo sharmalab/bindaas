@@ -112,18 +112,19 @@ public class ExecutionServiceImpl implements IExecutionService{
 	{
 		if(queryResult.isCallback())
 		{
+			
 			HttpServletResponse response = getMessageContext().getHttpServletResponse(); 
 			response.setContentType(queryResult.getMimeType());
 			response.setHeader("metadata", queryEndpoint.getMetaData().toString());
 			response.setHeader("tags", queryEndpoint.getTags().toString());
-			response.setHeader("responseTime(ms)", responseTime+ "");
+			response.setHeader("responseTime", responseTime+ "");
 			if(queryResult.getMimeType().equals(StandardMimeType.ZIP.toString()))
 			{
 				response.setHeader("Content-Disposition","attachment;filename=\"" + queryEndpoint.getName() + ".zip\"");
 			}
 			
 			queryResult.getCallback().callback(getMessageContext().getHttpServletResponse().getOutputStream(), null); // TODO here instead of null a context should be passed
-			return Response.ok().build();
+			return Response.ok().type(queryResult.getMimeType()).build();
 		}
 		else if(queryResult.isError())
 		{
@@ -134,7 +135,7 @@ public class ExecutionServiceImpl implements IExecutionService{
 			Map<String,Object> headers = new HashMap<String, Object>();
 			headers.put("metadata", queryEndpoint.getMetaData());
 			headers.put("tags", queryEndpoint.getTags());
-			headers.put("responseTime(ms)", responseTime+ "");
+			headers.put("responseTime", responseTime+ "");
 			return RestUtils.createMimeResponse(queryResult.getData(), queryResult.getMimeType() , headers);
 		}
 		else
