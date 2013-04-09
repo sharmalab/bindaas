@@ -20,8 +20,14 @@
 		</layout>
 	</appender>
 
-	<root>
+	<category name="edu" additivity="false">
 		<priority value="debug" />
+
+		<appender-ref ref="CONSOLE" />
+
+	</category>
+	<root>
+		<priority value="info" />
 		<appender-ref ref="console" />
 		<appender-ref ref="R" />
 		
