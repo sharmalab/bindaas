@@ -5,4 +5,7 @@
 
 	<bean class="edu.emory.cci.bindaas.aim2dicom.AIM2DicomQRM" init-method="init">
 	</bean>
+	
+	<bean class="edu.emory.cci.bindaas.dicom2aim.Dicom2AIMQRM" init-method="init">
+	</bean>
 </beans>

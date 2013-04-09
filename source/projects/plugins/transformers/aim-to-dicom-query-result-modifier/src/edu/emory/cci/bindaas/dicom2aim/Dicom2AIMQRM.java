@@ -1,23 +1,15 @@
-package edu.emory.cci.bindaas.aim2dicom;
+package edu.emory.cci.bindaas.dicom2aim;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,23 +18,17 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.osgi.framework.BundleContext;
-import org.springframework.util.StopWatch;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
 import edu.emory.cci.bindaas.aim2dicom.bundle.Activator;
-import edu.emory.cci.bindaas.commons.xml2json.XML2JSON;
-import edu.emory.cci.bindaas.commons.xml2json.model.Mapping;
-import edu.emory.cci.bindaas.commons.xml2json.model.Type;
-import edu.emory.cci.bindaas.core.util.ProfilerService;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
@@ -51,10 +37,10 @@ import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
-public class AIM2DicomQRM implements IQueryResultModifier {
+public class Dicom2AIMQRM implements IQueryResultModifier {
 
 	private Log log = LogFactory.getLog(getClass());
-	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
+	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation-dicom2aim";
 	private JsonObject documentation;
 	private final static String seriesUIDAttributeName ="seriesUID";
 
@@ -86,41 +72,29 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 			throws Exception {
 		
 		
-		final AIM2DicomQRMProperties props = GSONUtil.getGSONInstance()
-				.fromJson(modifierProperties, AIM2DicomQRMProperties.class);
-		if (props != null && props.imageURL != null) {
+		final Dicom2AIMQRMProperties props = GSONUtil.getGSONInstance()
+				.fromJson(modifierProperties, Dicom2AIMQRMProperties.class);
+		if (props != null && props.aimURL != null) {
 			queryResult.setCallback(true);
 			queryResult.setMime(true);
-			queryResult.setMimeType(StandardMimeType.ZIP.toString());
+			queryResult.setMimeType(StandardMimeType.XML.toString());
 			queryResult.setCallback(new Callback() {
 
 				@Override
 				public void callback(OutputStream servletOutputStream,
 						Properties context) throws Exception {
-					ProfilerService profiler = Activator.getProfilerService();
-					boolean enableProfiling = profiler!=null && profiler.isEnabled();
-					StopWatch stopWatch = null;
-					if(enableProfiling)
-						 stopWatch = profiler.getThreadLocalStopWatch();
 					
-					enableProfiling = enableProfiling && stopWatch!=null;
-					
-					try {
+					try{
+						// get array of raw dicom objects
 						
-						if(enableProfiling)
-							stopWatch.start("parseAnnotations");
-						List<JsonObject> annotations = parseAnnotations(queryResult
-								.getData());
-						
-						// Create a set of URLs from where to download images
-						
+						JsonArray dicomArray = queryResult.getIntermediateResult().getAsJsonArray();
 						Set<String> setOfUniqueSeries = new HashSet<String>();
-						
-						for (JsonObject annotation : annotations) {
-						
-							if(annotation.get(seriesUIDAttributeName)!=null)
+						Iterator<JsonElement> dicomArrayIterator = dicomArray.iterator();
+						while(dicomArrayIterator.hasNext()) {
+							JsonObject dicomObj = dicomArrayIterator.next().getAsJsonObject();
+							if(dicomObj.get(seriesUIDAttributeName)!=null)
 							{
-								String seriesUID = annotation.get(seriesUIDAttributeName)
+								String seriesUID = dicomObj.get(seriesUIDAttributeName)
 										.getAsString();
 								setOfUniqueSeries.add(seriesUID);	
 							}
@@ -135,32 +109,22 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 						
 						JsonArray arrayOfSeries = GSONUtil.getGSONInstance().toJsonTree(setOfUniqueSeries,HashSet.class).getAsJsonArray();
 
-						// download and stream image
-						if(enableProfiling)
-							{
-								stopWatch.stop();
-								stopWatch.start("Download and Stream [" + setOfUniqueSeries.size() + "] series");
-							}
+						// download and stream objects
+						
 						String seriesJson = arrayOfSeries.toString().trim();
-						writeDicomImage(props.imageURL, props.apiKey,seriesJson.substring(1, seriesJson.length() - 1) ,  servletOutputStream);
+						writeDicomImage(props.aimURL, props.apiKey,seriesJson.substring(1, seriesJson.length() - 1) ,  servletOutputStream);
 						
 					} catch (Exception e) {
 						log.error(e);
 						throw e;
 					}
-					finally{
-						if(enableProfiling && stopWatch.isRunning())
-						{
-							stopWatch.stop();
-							log.info(stopWatch.prettyPrint());
-						}
-					}
+					
 				}
 
-				private void writeDicomImage(String imageUrlToFetchDicom,
+				private void writeDicomImage(String imageUrlToFetchAIM,
 						String apiKey , String series , OutputStream zos) throws ClientProtocolException,
 						IOException {
-					HttpPost post = new HttpPost(imageUrlToFetchDicom);
+					HttpPost post = new HttpPost(imageUrlToFetchAIM);
 					post.addHeader("api_key", apiKey);
 					
 					List <NameValuePair> nvps = new ArrayList <NameValuePair>();
@@ -175,35 +139,12 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 					else
 					{
 						if(response!=null)
-							log.warn("Request to url [" + imageUrlToFetchDicom + "] failed. Reason=[" + response.getStatusLine().toString() + "]");
+							log.warn("Request to url [" + imageUrlToFetchAIM + "] failed. Reason=[" + response.getStatusLine().toString() + "]");
 						else
-							log.warn("Request to url [" + imageUrlToFetchDicom + "] failed");
+							log.warn("Request to url [" + imageUrlToFetchAIM + "] failed");
 					}
 				}
 
-				private List<JsonObject> parseAnnotations(byte[] dataBytes)
-						throws Exception {
-					log.debug("Parsing Annotations");
-					Mapping seriesUID = new Mapping();
-					seriesUID.setName(seriesUIDAttributeName);
-					seriesUID.setType(Type.SIMPLE);
-					seriesUID
-							.setXpath("/ns1:ImageAnnotation/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries/@instanceUID");
-
-					XML2JSON xml2json = new XML2JSON();
-					Map<String, String> prefixes = xml2json.getPrefixes();
-					prefixes.put("ns1",
-							"gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM");
-					xml2json.setNamespaceAware(true);
-					xml2json.setMappings(Arrays
-							.asList(new Mapping[] { seriesUID }));
-					xml2json.setRootElementSelector("/results/ns1:ImageAnnotation");
-					xml2json.init();
-
-					InputStream is = new ByteArrayInputStream(dataBytes);
-
-					return xml2json.parseXML(is);
-				}
 			});
 
 		} else {
@@ -214,17 +155,17 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 		return queryResult;
 	}
 
-	public static class AIM2DicomQRMProperties {
+	public static class Dicom2AIMQRMProperties {
 		@Expose
-		private String imageURL;
+		private String aimURL;
 		@Expose
 		private String apiKey;
 
-		public String getImageUrl(String seriesInstanceUID) {
-			if (imageURL != null) {
-				String imageUrl = this.imageURL + "?seriesUID="
+		public String getAimURL(String seriesInstanceUID) {
+			if (aimURL != null) {
+				String aimURL = this.aimURL + "?seriesUID="
 						+ seriesInstanceUID;
-				return imageUrl;
+				return aimURL;
 			} else
 				return null;
 
@@ -234,7 +175,7 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 	@Override
 	public String getDescriptiveName() {
 
-		return "Fetch DICOM Images for AIM annotations";
+		return "Fetch Annotations for Images";
 	}
 
 }
