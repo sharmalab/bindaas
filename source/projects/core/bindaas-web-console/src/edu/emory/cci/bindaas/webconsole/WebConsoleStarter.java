@@ -195,6 +195,7 @@ public class WebConsoleStarter {
 		// listen for new providers
 		context.addServiceListener( httpServiceListener , filter);
 		
+		log.info("Bindaas WebConsole Started");
 		
 	}
 	

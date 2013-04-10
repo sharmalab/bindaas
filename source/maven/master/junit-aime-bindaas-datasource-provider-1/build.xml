@@ -49,7 +49,7 @@
     	
     </target>
 	<target name="dist">
-					<copy todir="${dist.placeholder.dir}/dependencies">
+					<copy todir="${dist.placeholder.dir}/bundles/optional">
 						<fileset dir="target">
 							<include name="*.jar"/>
 						</fileset>

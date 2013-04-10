@@ -50,7 +50,7 @@
     </target>
 	
 	<target name="dist">
-		<copy todir="${dist.placeholder.dir}">
+		<copy todir="${dist.placeholder.dir}/bundles/system">
 			<fileset dir="target">
 				<include name="*.jar"/>
 			</fileset>

@@ -83,6 +83,297 @@
       "timeCreated": "Thu Jan 17 18:11:20 EST 2013",
       "createdBy": "admin",
       "description": ""
+    },
+    "mydb2": {
+      "dataSource": {
+        "username": "db2inst1",
+        "password": "aim03@cci",
+        "url": "jdbc:db2://ivi02.cci.emory.edu:50000/XMLDB"
+      },
+      "queryEndpoints": {},
+      "deleteEndpoints": {},
+      "submitEndpoints": {
+        "testSubmit": {
+          "type": "MULTIPART",
+          "properties": {
+            "inputType": "CSV",
+            "tableName": "MYTEST"
+          },
+          "name": "testSubmit",
+          "timeCreated": "Wed Jan 30 19:10:20 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": ""
+        }
+      },
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.db2.DB2Provider",
+      "providerVersion": 1,
+      "name": "mydb2",
+      "timeCreated": "Wed Jan 30 19:09:44 EST 2013",
+      "createdBy": "nadirsaghar@gmail.com",
+      "description": ""
+    },
+    "localMongo": {
+      "dataSource": {
+        "host": "127.0.0.1",
+        "port": "27017",
+        "db": "tcia",
+        "collection": "gbm",
+        "initialize": true
+      },
+      "queryEndpoints": {
+        "malePatients": {
+          "queryTemplate": "{ \"PatientSex\" : \"M\"  }",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {},
+          "stage": "UNVERIFIED",
+          "outputFormat": {
+            "outputFormat": "JSON"
+          },
+          "name": "malePatients",
+          "timeCreated": "Wed Jan 30 21:15:58 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": ""
+        },
+        "malePatients2": {
+          "queryTemplate": "{ \"PatientSex\" : \"M\"  }  ",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {},
+          "stage": "UNVERIFIED",
+          "outputFormat": {
+            "outputFormat": "JSON"
+          },
+          "queryResultModifiers": {
+            "name": "edu.emory.cci.bindaas.imagedownload.ImageDownloadQRM",
+            "properties": {
+              "imageLinkAttribute": "filepath"
+            }
+          },
+          "name": "malePatients2",
+          "timeCreated": "Thu Mar 14 16:08:30 EDT 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": " "
+        },
+        "getImageBySeries": {
+          "queryTemplate": "{ \"SeriesInstanceUID\" : \"$seriesUID$\"  }   ",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {
+            "seriesUID": {
+              "name": "seriesUID",
+              "required": true,
+              "defaultValue": "",
+              "description": ""
+            }
+          },
+          "stage": "UNVERIFIED",
+          "outputFormat": {
+            "outputFormat": "JSON"
+          },
+          "queryResultModifiers": {
+            "name": "edu.emory.cci.bindaas.imagedownload.ImageDownloadQRM",
+            "properties": {
+              "imageLinkAttribute": "filepath"
+            }
+          },
+          "name": "getImageBySeries",
+          "timeCreated": "Thu Mar 14 16:16:50 EDT 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": "  "
+        }
+      },
+      "deleteEndpoints": {},
+      "submitEndpoints": {
+        "csvFile": {
+          "type": "MULTIPART",
+          "properties": {
+            "inputType": "CSV_FILE"
+          },
+          "name": "csvFile",
+          "timeCreated": "Wed Jan 30 20:56:42 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com"
+        },
+        "mongoFile": {
+          "type": "MULTIPART",
+          "properties": {
+            "inputType": "JSON_FILE"
+          },
+          "name": "mongoFile",
+          "timeCreated": "Wed Jan 30 20:56:42 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com"
+        },
+        "csv": {
+          "type": "FORM_DATA",
+          "properties": {
+            "inputType": "CSV"
+          },
+          "name": "csv",
+          "timeCreated": "Wed Jan 30 20:56:42 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com"
+        },
+        "mongo": {
+          "type": "FORM_DATA",
+          "properties": {
+            "inputType": "JSON"
+          },
+          "name": "mongo",
+          "timeCreated": "Wed Jan 30 20:56:42 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com"
+        }
+      },
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider",
+      "providerVersion": 1,
+      "name": "localMongo",
+      "timeCreated": "Wed Jan 30 20:56:42 EST 2013",
+      "createdBy": "nadirsaghar@gmail.com",
+      "description": ""
+    },
+    "db2": {
+      "dataSource": {
+        "username": "db2inst1",
+        "password": "aim03@cci",
+        "url": "jdbc:db2://ivi02.cci.emory.edu:50000/XMLDB"
+      },
+      "queryEndpoints": {
+        "test": {
+          "queryTemplate": "select * from XMLDS.XMLTABLE     ",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {},
+          "stage": "UNVERIFIED",
+          "outputFormat": {
+            "outputFormat": "HTML"
+          },
+          "name": "test",
+          "timeCreated": "Thu Feb 07 14:00:33 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": "         "
+        }
+      },
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.db2.DB2Provider",
+      "providerVersion": 1,
+      "name": "db2",
+      "timeCreated": "Thu Feb 07 13:17:50 EST 2013",
+      "createdBy": "nadirsaghar@gmail.com",
+      "description": ""
+    },
+    "hudson": {
+      "dataSource": {
+        "host": "hudson.cci.emory.edu",
+        "port": "27017",
+        "db": "gbm",
+        "collection": "gbm",
+        "initialize": true
+      },
+      "queryEndpoints": {
+        "getByPatients": {
+          "queryTemplate": "{ \"PatientID\" : \"$id$\" }",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {
+            "id": {
+              "name": "id",
+              "required": true,
+              "defaultValue": "",
+              "description": "some desc"
+            }
+          },
+          "stage": "UNVERIFIED",
+          "outputFormat": {
+            "outputFormat": "HTML"
+          },
+          "name": "getByPatients",
+          "timeCreated": "Mon Feb 11 11:25:05 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": ""
+        }
+      },
+      "deleteEndpoints": {},
+      "submitEndpoints": {
+        "csvFile": {
+          "type": "MULTIPART",
+          "properties": {
+            "inputType": "CSV_FILE"
+          },
+          "name": "csvFile",
+          "timeCreated": "Mon Feb 11 11:24:03 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com"
+        },
+        "mongoFile": {
+          "type": "MULTIPART",
+          "properties": {
+            "inputType": "JSON_FILE"
+          },
+          "name": "mongoFile",
+          "timeCreated": "Mon Feb 11 11:24:03 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com"
+        },
+        "csv": {
+          "type": "FORM_DATA",
+          "properties": {
+            "inputType": "CSV"
+          },
+          "name": "csv",
+          "timeCreated": "Mon Feb 11 11:24:03 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com"
+        },
+        "mongo": {
+          "type": "FORM_DATA",
+          "properties": {
+            "inputType": "JSON"
+          },
+          "name": "mongo",
+          "timeCreated": "Mon Feb 11 11:24:03 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com"
+        }
+      },
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider",
+      "providerVersion": 1,
+      "name": "hudson",
+      "timeCreated": "Mon Feb 11 11:24:00 EST 2013",
+      "createdBy": "nadirsaghar@gmail.com",
+      "description": ""
+    },
+    "http": {
+      "dataSource": {},
+      "queryEndpoints": {
+        "google": {
+          "queryTemplate": " { \"url\" : \"$url$\" , \n \t\"method\" : \"GET\" ,\n \t \"queryParameters\" : { \"q\" : \"$query$\"  },\n \t  \"headers\" : { }\n } ",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {
+            "url": {
+              "name": "url",
+              "required": false,
+              "defaultValue": "https://www.google.com/",
+              "description": ""
+            },
+            "query": {
+              "name": "query",
+              "required": false,
+              "defaultValue": "nothing",
+              "description": ""
+            }
+          },
+          "stage": "UNVERIFIED",
+          "outputFormat": {},
+          "name": "google",
+          "timeCreated": "Fri Apr 05 14:21:13 EDT 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": ""
+        }
+      },
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.http.HTTPProvider",
+      "providerVersion": 1,
+      "name": "http",
+      "timeCreated": "Fri Apr 05 14:08:44 EDT 2013",
+      "createdBy": "nadirsaghar@gmail.com",
+      "description": ""
     }
   },
   "params": {},

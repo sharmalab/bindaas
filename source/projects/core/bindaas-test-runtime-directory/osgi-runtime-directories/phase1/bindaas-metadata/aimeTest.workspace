@@ -4,7 +4,26 @@
       "dataSource": {
         "validated": true
       },
-      "queryEndpoints": {},
+      "queryEndpoints": {
+        "testM": {
+          "queryTemplate": "P",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {},
+          "stage": "UNVERIFIED",
+          "outputFormat": {},
+          "queryResultModifiers": {
+            "name": "edu.emory.cci.bindaas.imagedownload.ImageDownloadQRM",
+            "properties": {
+              "imageLinkAttribute": "imageLink"
+            }
+          },
+          "name": "testM",
+          "timeCreated": "Mon Feb 04 13:49:02 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": "verified"
+        }
+      },
       "deleteEndpoints": {},
       "submitEndpoints": {},
       "providerId": "edu.emory.cci.bindaas.junit.mock.MockProvider",
@@ -93,6 +112,37 @@
       "providerVersion": 1,
       "name": "test",
       "timeCreated": "Sat Jan 26 15:02:05 EST 2013",
+      "createdBy": "nadirsaghar@gmail.com",
+      "description": ""
+    },
+    "Postgres": {
+      "dataSource": {
+        "username": "admin",
+        "password": "password",
+        "url": "jdbc:postgresql://localhost:5432/csmdb"
+      },
+      "queryEndpoints": {
+        "helloWorld": {
+          "queryTemplate": "SELECT user_id, premgrt_login_name, migrated_flag, login_name, first_name, \n       last_name, organization, department, title, phone_number, \"password\", \n       email_id, start_date, end_date, update_date\n  FROM csm_user\n   ",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {},
+          "stage": "UNVERIFIED",
+          "outputFormat": {
+            "outputFormat": "HTML"
+          },
+          "name": "helloWorld",
+          "timeCreated": "Fri Feb 08 15:56:30 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": "   "
+        }
+      },
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.postgres.PostgresProvider",
+      "providerVersion": 1,
+      "name": "Postgres",
+      "timeCreated": "Fri Feb 08 15:26:39 EST 2013",
       "createdBy": "nadirsaghar@gmail.com",
       "description": ""
     }

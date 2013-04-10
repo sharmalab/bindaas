@@ -41,9 +41,48 @@
           "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
           "createdBy": "junit",
           "description": "Get Audit Logs in JSON format."
+        },
+        "newFind": {
+          "queryTemplate": "{ \u0027_operation\u0027 : \u0027find\u0027 , \u0027_operation_args\u0027 : {\u0027query\u0027 : {}, \u0027fields\u0027 : {\u0027_id\u0027 : $flag$ }}} ",
+          "metaData": {},
+          "tags": [],
+          "bindVariables": {
+            "flag": {
+              "name": "flag",
+              "required": true,
+              "defaultValue": "someval",
+              "description": "flag desc"
+            }
+          },
+          "stage": "UNVERIFIED",
+          "outputFormat": {
+            "outputFormat": "JSON"
+          },
+          "name": "newFind",
+          "timeCreated": "Thu Feb 07 17:54:55 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": ""
         }
       },
-      "deleteEndpoints": {},
+      "deleteEndpoints": {
+        "del": {
+          "queryTemplate": "{ \"Sample_Name\": \"$case$\" }",
+          "tags": [],
+          "bindVariables": {
+            "case": {
+              "name": "case",
+              "required": false,
+              "defaultValue": "TCGA-28-1755",
+              "description": ""
+            }
+          },
+          "stage": "UNVERIFIED",
+          "name": "del",
+          "timeCreated": "Thu Feb 07 17:58:00 EST 2013",
+          "createdBy": "nadirsaghar@gmail.com",
+          "description": ""
+        }
+      },
       "submitEndpoints": {
         "csvFile": {
           "type": "MULTIPART",

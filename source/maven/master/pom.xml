@@ -159,9 +159,6 @@
 	<modules>
 		<module>bindaas-installer-updater</module>
 		<module>bindaas-security-api</module>
-		<module>bindaas.log4j.config</module>
-		<module>db2-datasource-provider</module>
-		<module>generic-sql-datasource-provider</module>
 		<module>junit-aime-bindaas-datasource-provider-1</module>
 		<module>junit-bindaas-core</module>
 		<module>junit-mongodb-datasource-provider</module>
@@ -175,10 +172,13 @@
 		<module>bindaas-commons-h2-hibernate</module>
 		<module>bindaas-commons-mail</module>
 		<module>bindaas-commons-openid-helper</module>
-		<module>bindaas-commons-cilogon-helper</module>
 		<module>image-download-query-result-modifier</module>
 		<module>postgres-datasource-provider</module>
 		<module>aim-to-dicom-query-result-modifier</module>
 		<module>../../projects/misc/commons-xml2json</module>
+		<module>db2-datasource-provider</module>
+		<module>log4j.config</module>
+		<module>generic-sql-datasource-provider</module>
+		<module>http-datasource-provider</module>
 	</modules>
 </project>

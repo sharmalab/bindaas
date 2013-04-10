@@ -16,72 +16,67 @@
 	<property name="dist.placeholder.dir" value="dist">
 	</property>
 
-	<property name="equinoxBundle" value="org.eclipse.osgi-3.5.1.R35x_v20091005.jar" />
-	<property name="gsonBundle" value="com.google.gson_2.1.0.v201203072145.jar" />
-	<property name="felixEventAdminBundle" value="org.apache.felix.eventadmin-1.3.2.jar" />
-	<property name="dist.location" value="../../../binaries/"></property>
-	<property name="tmp.location" value ="tmp"></property>
-	<property name="build.configuration" value="build-configuration"></property>
-
-
-	<property name="mandatory.bundle.repo" value="../../dependencies/mandatory">
+	<property name="equinoxBundle" value="org.eclipse.osgi_3.8.2.v20130124-134944.jar" />
+	<property name="dist.location" value="../../../binaries/">
 	</property>
+	<property name="tmp.location" value ="tmp">
+	</property>
+	<property name="build.configuration" value="build-configuration">
+	</property>
+
+
+	<property name="core.bundle.repo" value="../../dependencies/core" />
+	<property name="mandatory.bundle.repo" value="../../dependencies/mandatory" />
+	<property name="optional.bundle.repo" value="../../dependencies/optional" />
+
 	<target name="copyProject"  description="default build file">
 
 	</target>
 
 	<target name="dist" depends="dist-clean">
-		<echo>Copying mandatory dependencies</echo>
+
+		<echo>Copying Core Bundles</echo>
 		<copy todir="${dist.placeholder.dir}">
-			<fileset dir="${mandatory.bundle.repo}">
+			<fileset dir="${core.bundle.repo}">
 				<include name="${equinoxBundle}"/>
-				<include name="${gsonBundle}"/>
-				<include name="${felixEventAdminBundle}"/>
 			</fileset>
 			<fileset dir="../../dependencies">
 				<include name="**/configuration/*"/>
 			</fileset>
 		</copy>
+		
+		<copy todir="${dist.placeholder.dir}/bundles/core">
+					<fileset dir="${core.bundle.repo}">
+						<include name="*.jar"/>
+						<exclude name="${equinoxBundle}"/>
+					</fileset>
+		</copy>
 
-		<copy todir="${dist.placeholder.dir}/dependencies">
+		<echo>Copying mandatory dependencies</echo>
+		<copy todir="${dist.placeholder.dir}/bundles/mandatory">
 			<fileset dir="${mandatory.bundle.repo}">
-				<exclude name="${equinoxBundle}"/>
-				<exclude name="${gsonBundle}"/>
-				<exclude name="${felixEventAdminBundle}"/>
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
-	</target>
-	
-	<target name="deploy">
-			<tstamp/>
-			<tar basedir="${dist.placeholder.dir}"  tarfile="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar" />
-			<gzip destfile="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar.gz" src="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar"/>
-			<delete file="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar"></delete>
-	</target>
-	
-	<target name="deploy-build" >
-		<tstamp/>
-		<foreach target="loopAndBuildPackages" param="build.property.file">  
-		      <dirset dir="${build.configuration}" />  
-		 </foreach>	
+
+		<echo>Copying optional dependencies</echo>
+		<copy todir="${dist.placeholder.dir}/bundles/optional">
+			<fileset dir="${optional.bundle.repo}">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+
+
 	</target>
 
-	
-    <target name="loopAndBuildPackages" >
-		<loadproperties srcFile="${build.property.file}" prefix="build"/>
-    	<delete dir="${tmp.location}" failonerror="false"></delete>
-    	<mkdir dir="${tmp.location}"/>
-    			<copy todir="${tmp.location}" >
-    				<fileset dir="${dist.placeholder.dir}">	
-    	  			  	<include name="**/*"/>
-    					<exclude name="${build.exclude}" />
-    				</fileset>
-    			</copy>	
-    	<tar basedir="${tmp.location}"  tarfile="${dist.location}/bindaas-dist-${build.name}-${DSTAMP}${TSTAMP}.tar" />
-    	<gzip destfile="${dist.location}/bindaas-dist-${build.name}-${DSTAMP}${TSTAMP}.tar.gz" src="${dist.location}/bindaas-dist-${build.name}-${DSTAMP}${TSTAMP}.tar"/>
-    	<delete file="bindaas-dist-${build.name}-${DSTAMP}${TSTAMP}.tar"></delete>
+	<target name="deploy">
+		<tstamp/>
+		<tar basedir="${dist.placeholder.dir}"  tarfile="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar" />
+		<gzip destfile="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar.gz" src="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar"/>
+		<delete file="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar">
+		</delete>
 	</target>
+
 
 	<target name="clean" depends="dist-clean">
 	</target>
@@ -89,7 +84,13 @@
 		<delete dir="${dist.placeholder.dir}">
 		</delete>
 		<mkdir dir="${dist.placeholder.dir}"/>
-		<mkdir dir="${dist.placeholder.dir}/dependencies"/>
+		<mkdir dir="${dist.placeholder.dir}/bundles"/>
+		<mkdir dir="${dist.placeholder.dir}/bundles/core"/>
+		<mkdir dir="${dist.placeholder.dir}/bundles/mandatory"/>
+		<mkdir dir="${dist.placeholder.dir}/bundles/system"/>
+		<mkdir dir="${dist.placeholder.dir}/bundles/optional"/>
+		<mkdir dir="${dist.placeholder.dir}/bundles/pickup"/>
+
 	</target>
 
 </project>

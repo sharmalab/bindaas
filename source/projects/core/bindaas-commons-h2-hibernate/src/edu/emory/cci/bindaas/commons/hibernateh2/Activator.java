@@ -11,8 +11,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.internal.SessionFactoryRegistry;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -47,7 +49,8 @@ public class Activator implements BundleActivator {
 	
 	private SessionFactory searchAndInitializeHibernateEntities(BundleContext context) 
 	{
-		Configuration config = new AnnotationConfiguration().configure();
+		 
+		@SuppressWarnings("rawtypes")
 		final Map<String,Class> discoveredEntitiesMap = new HashMap<String, Class>();
 		
 		Bundle[] bundles = context.getBundles();
@@ -62,7 +65,6 @@ public class Activator implements BundleActivator {
 					for(String testClass : testClasses)
 					{
 						Class clazz = bundle.loadClass(testClass);
-						config.addAnnotatedClass(clazz);
 						discoveredEntitiesMap.put(testClass, clazz);
 						log.debug("Discovered Hibernate-Entity class [" + clazz.getName() + "] in bundle [" + bundle.getSymbolicName() + "]");
 					}
@@ -96,7 +98,20 @@ public class Activator implements BundleActivator {
 		};
 		
 		Thread.currentThread().setContextClassLoader(proxyClassLoader);
-		SessionFactory sessionFactory = config.buildSessionFactory();
+		Configuration config = new Configuration();
+		
+		
+		for(@SuppressWarnings("rawtypes") Class clzz : discoveredEntitiesMap.values())
+		{
+			config.addAnnotatedClass(clzz);
+		}
+		
+		
+		config = config.configure();
+		
+		ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(config.getProperties()).buildServiceRegistry();        
+		SessionFactory sessionFactory = config.buildSessionFactory(serviceRegistry); 
+		
 		return sessionFactory; 
 		}
 		catch(RuntimeException e)

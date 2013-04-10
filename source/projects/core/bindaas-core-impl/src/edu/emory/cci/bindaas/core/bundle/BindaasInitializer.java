@@ -204,7 +204,8 @@ public class BindaasInitializer implements IBindaasAdminService{
 		// configure auditModule : read props enable audit
 		
 		context.registerService(ISecurityHandler.class.getName(), securityModule, null);
-		       
+		
+		log.info("Bindaas Middleware Started");
 	}
 	
 	
