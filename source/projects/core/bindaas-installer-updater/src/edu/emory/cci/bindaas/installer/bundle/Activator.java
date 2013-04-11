@@ -1,4 +1,4 @@
-package edu.emory.cci.bindaas.installer;
+package edu.emory.cci.bindaas.installer.bundle;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -10,6 +10,8 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+
+import edu.emory.cci.bindaas.installer.InstallerConsole;
 
 public class Activator implements BundleActivator {
 

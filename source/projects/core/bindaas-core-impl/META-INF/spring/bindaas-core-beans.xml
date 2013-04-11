@@ -115,6 +115,7 @@
 <bean id="profiler" class="edu.emory.cci.bindaas.core.util.ProfilerService" init-method="init">
 </bean>
 
+
 </beans>
 
 

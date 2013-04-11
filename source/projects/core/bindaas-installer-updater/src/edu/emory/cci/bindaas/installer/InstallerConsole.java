@@ -14,6 +14,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+import edu.emory.cci.bindaas.installer.bundle.Activator;
 
 public class InstallerConsole implements CommandProvider {
 	private String bundleDirectory = "dependencies";
