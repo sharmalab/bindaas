@@ -19,7 +19,7 @@
 	<property name="equinoxBundle" value="org.eclipse.osgi_3.8.2.v20130124-134944.jar" />
 	<property name="dist.location" value="../../../binaries/">
 	</property>
-	<property name="tmp.location" value ="tmp">
+	<property name="tmp.location" value="tmp">
 	</property>
 	<property name="build.configuration" value="build-configuration">
 	</property>
@@ -29,7 +29,7 @@
 	<property name="mandatory.bundle.repo" value="../../dependencies/mandatory" />
 	<property name="optional.bundle.repo" value="../../dependencies/optional" />
 
-	<target name="copyProject"  description="default build file">
+	<target name="copyProject" description="default build file">
 
 	</target>
 
@@ -38,42 +38,45 @@
 		<echo>Copying Core Bundles</echo>
 		<copy todir="${dist.placeholder.dir}">
 			<fileset dir="${core.bundle.repo}">
-				<include name="${equinoxBundle}"/>
+				<include name="${equinoxBundle}" />
 			</fileset>
 			<fileset dir="../../dependencies">
-				<include name="**/configuration/*"/>
+				<include name="**/configuration/*" />
 			</fileset>
 		</copy>
-		
+
 		<copy todir="${dist.placeholder.dir}/bundles/core">
-					<fileset dir="${core.bundle.repo}">
-						<include name="*.jar"/>
-						<exclude name="${equinoxBundle}"/>
-					</fileset>
+			<fileset dir="${core.bundle.repo}">
+				<include name="*.jar" />
+				<exclude name="${equinoxBundle}" />
+			</fileset>
 		</copy>
 
 		<echo>Copying mandatory dependencies</echo>
 		<copy todir="${dist.placeholder.dir}/bundles/mandatory">
 			<fileset dir="${mandatory.bundle.repo}">
-				<include name="*.jar"/>
+				<include name="*.jar" />
 			</fileset>
 		</copy>
 
 		<echo>Copying optional dependencies</echo>
 		<copy todir="${dist.placeholder.dir}/bundles/optional">
 			<fileset dir="${optional.bundle.repo}">
-				<include name="*.jar"/>
+				<include name="*.jar" />
 			</fileset>
 		</copy>
 
 
 	</target>
 
-	<target name="deploy">
-		<tstamp/>
-		<tar basedir="${dist.placeholder.dir}"  tarfile="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar" />
-		<gzip destfile="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar.gz" src="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar"/>
-		<delete file="${dist.location}/bindaas-dist-${DSTAMP}${TSTAMP}.tar">
+	<target name="deploy" depends="incVersion">
+		<loadproperties srcfile="build-configuration/bindaas-framework-info.properties">
+		</loadproperties>
+		<copy todir="${dist.placeholder.dir}" file="build-configuration/bindaas-framework-info.properties" />
+		<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}.${bindaas.webconsole.version.major}.${bindaas.webconsole.version.minor}.${bindaas.webconsole.version.revision}-${bindaas.build.date}"></property>
+		<tar basedir="${dist.placeholder.dir}" tarfile="${dist.location}/${filename}.tar" />
+		<gzip destfile="${dist.location}/${filename}.tar.gz" src="${dist.location}/${filename}.tar" />
+		<delete file="${dist.location}/${filename}.tar">
 		</delete>
 	</target>
 
@@ -83,14 +86,95 @@
 	<target name="dist-clean">
 		<delete dir="${dist.placeholder.dir}">
 		</delete>
-		<mkdir dir="${dist.placeholder.dir}"/>
-		<mkdir dir="${dist.placeholder.dir}/bundles"/>
-		<mkdir dir="${dist.placeholder.dir}/bundles/core"/>
-		<mkdir dir="${dist.placeholder.dir}/bundles/mandatory"/>
-		<mkdir dir="${dist.placeholder.dir}/bundles/system"/>
-		<mkdir dir="${dist.placeholder.dir}/bundles/optional"/>
-		<mkdir dir="${dist.placeholder.dir}/bundles/pickup"/>
+		<mkdir dir="${dist.placeholder.dir}" />
+		<mkdir dir="${dist.placeholder.dir}/bundles" />
+		<mkdir dir="${dist.placeholder.dir}/bundles/core" />
+		<mkdir dir="${dist.placeholder.dir}/bundles/mandatory" />
+		<mkdir dir="${dist.placeholder.dir}/bundles/system" />
+		<mkdir dir="${dist.placeholder.dir}/bundles/optional" />
+		<mkdir dir="${dist.placeholder.dir}/bundles/pickup" />
 
+	</target>
+
+	<property file="build-configuration/build-descriptor.properties">
+	</property>
+
+	<target name="incVersion">
+		<tstamp />
+
+		<condition property="increment-framework-revision">
+			<equals arg1="${inc.framework.revision}" arg2="true"/>
+		</condition>
+
+		<condition property="increment-framework-major">
+			<equals arg1="${inc.framework.major}" arg2="true"/>
+		</condition>
+
+		<condition property="increment-framework-minor">
+			<equals arg1="${inc.framework.minor}" arg2="true"/>
+		</condition>
+
+		<condition property="increment-webconsole-revision">
+			<equals arg1="${inc.webconsole.revision}" arg2="true"/>
+		</condition>
+
+		<condition property="increment-webconsole-major">
+			<equals arg1="${inc.webconsole.major}" arg2="true"/>
+		</condition>
+
+		<condition property="increment-webconsole-minor">
+			<equals arg1="${inc.webconsole.minor}" arg2="true"/>
+		</condition>
+
+		<antcall target="incFrameworkMajor">
+		</antcall>
+		<antcall target="incFrameworkMinor">
+		</antcall>
+		<antcall target="incFrameworkRevision">
+		</antcall>
+		<antcall target="incWebconsoleMajor">
+		</antcall>
+		<antcall target="incWebconsoleMinor">
+		</antcall>
+		<antcall target="incWebconsoleRevision">
+		</antcall>
+		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+			<entry key="bindaas.build.date" operation="=" type="string" value="${DSTAMP}${TSTAMP}"/>
+		</propertyfile>
+
+
+	</target>
+	<target name="incFrameworkRevision" if="increment-framework-revision" >
+		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+			<entry key="bindaas.framework.version.revision" operation="+" type="int" default="0"/>
+		</propertyfile>
+	</target>
+	<target name="incFrameworkMinor" if="increment-framework-minor">
+		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+			<entry key="bindaas.framework.version.minor" operation="+" type="int" default="0"/>
+		</propertyfile>
+	</target>
+	<target name="incFrameworkMajor" if="increment-framework-major">
+		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+			<entry key="bindaas.framework.version.major" operation="+" type="int" default="1"/>
+		</propertyfile>
+	</target>
+
+	<target name="incWebconsoleRevision" if="increment-webconsole-revision">
+		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+			<entry key="bindaas.webconsole.version.revision" operation="+" type="int" default="1"/>
+		</propertyfile>
+	</target>
+	<target name="incWebconsoleMinor" if="increment-webconsole-minor">
+		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+			<entry key="bindaas.webconsole.version.minor" operation="+" type="int" default="0"/>
+		</propertyfile>
+	</target>
+	<target name="incWebconsoleMajor" if="increment-webconsole-major">
+		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+			<entry key="bindaas.webconsole.version.major" operation="+" type="int" default="0"/>
+		</propertyfile>
+		
 	</target>
 
 </project>
