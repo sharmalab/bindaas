@@ -1,12 +1,14 @@
 package edu.emory.cci.bindaas.commons.mail;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
-
+	private Log log = LogFactory.getLog(getClass());
 	public static BundleContext getContext() {
 		return context;
 	}
@@ -16,6 +18,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
+		log.debug("Starting Bundle [bindaas-commons-mail]");
 		Activator.context = bundleContext;
 	}
 

@@ -1,6 +1,7 @@
 package edu.emory.cci.bindaas.webconsole.servlet.usermgmt;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,26 +14,38 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
 import edu.emory.cci.bindaas.core.util.DynamicObject;
+import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
-import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 import edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
-import edu.emory.cci.bindaas.webconsole.LoginView;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.UserConfiguration.AuthenticationMethod;
+import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class UserLoginServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
 	public static final String servletLocation = "/user/login";
 	private static String userLoginTemplateName = "userLogin.vt";
-	private static Template userLoginTemplate;
+	private Template userLoginTemplate;
 	private String loginTarget = "/user/dashboard/queryBrowser";
 	private String postLoginActionTarget = "/user/postAuthenticate";
-	static {
-		userLoginTemplate = Activator.getVelocityTemplateByName(userLoginTemplateName);
+	private VelocityEngineWrapper velocityEngineWrapper;
 	
-		
+	public VelocityEngineWrapper getVelocityEngineWrapper() {
+		return velocityEngineWrapper;
+	}
+
+	public void setVelocityEngineWrapper(VelocityEngineWrapper velocityEngineWrapper) {
+		this.velocityEngineWrapper = velocityEngineWrapper;
+	}
+
+	
+	public void init() 
+	{
+		userLoginTemplate = velocityEngineWrapper.getVelocityTemplateByName(userLoginTemplateName);
 	}
 	
 	private Log log = LogFactory.getLog(getClass());
@@ -40,8 +53,38 @@ public class UserLoginServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		@SuppressWarnings("unchecked")
 		DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
 		VelocityContext context = new VelocityContext();
+		
+		/**
+		 * Add version information
+		 */
+		String versionHeader = "";
+		VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+		if(versionCommand!=null)
+		{
+			String frameworkBuilt = "";
+		
+			String buildDate = "";
+			try{
+				Properties versionProperties = versionCommand.getProperties();
+				frameworkBuilt = String.format("%s.%s.%s", versionProperties.get("bindaas.framework.version.major") , versionProperties.get("bindaas.framework.version.minor") , versionProperties.get("bindaas.framework.version.revision") );
+		
+				buildDate = versionProperties.getProperty("bindaas.build.date");
+			}catch(NullPointerException e)
+			{
+				log.warn("Version Header not set");
+			}
+			versionHeader = String.format("System built <strong>%s</strong>  Build date <strong>%s<strong>", frameworkBuilt,buildDate);
+		}
+		else
+		{
+			log.warn("Version Header not set");
+		}
+		context.put("versionHeader", versionHeader);
+		
+		
 		context.put("loginTarget", loginTarget);
 		context.put("adminconsoleConfiguration", dynamicAdminConsoleConfiguration.getObject().clone());
 		context.put("errorMessage", 
@@ -58,6 +101,7 @@ public class UserLoginServlet extends HttpServlet {
 		
 		//IAuthenticationProvider authenticationProvider = getAuthenticationProvider() ;
 		
+		@SuppressWarnings("unchecked")
 		DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
 		
 		

@@ -21,7 +21,7 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import edu.emory.cci.bindaas.junit.core.Activator;
+import edu.emory.cci.bindaas.junit.bundle.Activator;
 
 public class JunitRunner implements CommandProvider {
 
@@ -47,7 +47,7 @@ public class JunitRunner implements CommandProvider {
 					String[] testClasses = testClassNames.split(",");
 					for(String testClass : testClasses)
 					{
-						Class clazz = bundle.loadClass(testClass);
+						Class<?> clazz = bundle.loadClass(testClass);
 						Object obj = clazz.newInstance();
 						if(obj instanceof Test)
 						{

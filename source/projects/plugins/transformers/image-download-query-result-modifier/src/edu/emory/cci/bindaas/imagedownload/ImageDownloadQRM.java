@@ -4,15 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.MessageDigest;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,7 +38,7 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 	private Log log = LogFactory.getLog(getClass());
 	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
 	private JsonObject documentation;
-	private final static String IMAGE_INSTANCE_UID = "Image";
+	
 	
 	@Override
 	public JsonObject getDocumentation() {
@@ -90,7 +87,7 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 				try{
 					if(enableProfiling)
 						stopWatch.start("Packaging [" + results.size() + "] Images");
-					MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+					
 					ZipOutputStream zos = new ZipOutputStream(servletOutputStream);
 					ZipEntry imagedDirectory = new ZipEntry(IMAGE_LOCATION + "/");
 					zos.putNextEntry(imagedDirectory);

@@ -1,7 +1,5 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -9,14 +7,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
 
-
-
+import edu.emory.cci.bindaas.datasource.provider.mongodb.bundle.Activator;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.SubmitEndpointProperties;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.SubmitEndpointProperties.InputType;
@@ -27,10 +22,8 @@ import edu.emory.cci.bindaas.framework.api.ISubmitHandler;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
-
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
-import edu.emory.cci.bindaas.framework.util.IOUtils;
 
 public class MongoDBProvider implements IProvider{
 

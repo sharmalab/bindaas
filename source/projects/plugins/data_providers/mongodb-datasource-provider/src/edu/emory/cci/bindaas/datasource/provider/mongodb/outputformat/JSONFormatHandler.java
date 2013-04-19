@@ -9,7 +9,6 @@ import com.mongodb.DBObject;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
-import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
 public class JSONFormatHandler extends AbstractFormatHandler{

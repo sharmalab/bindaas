@@ -1,18 +1,14 @@
 package edu.emory.cci.bindaas.core.bundle;
 
-import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 
-import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.ISecurityHandler;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.rest.security.AuditInLogger;
@@ -25,7 +21,6 @@ import edu.emory.cci.bindaas.core.rest.service.impl.ExecutionServiceImpl;
 import edu.emory.cci.bindaas.core.rest.service.impl.InformationServiceImpl;
 import edu.emory.cci.bindaas.core.rest.service.impl.ManagementServiceImpl;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
-import edu.emory.cci.bindaas.core.util.DynamicProperties;
 
 /**
  *  Entry point for the application. Register services , set properties . 
@@ -123,7 +118,6 @@ public class BindaasInitializer implements IBindaasAdminService{
 	public void init() throws Exception
 	{
 		BundleContext context = Activator.getContext();
-		context.registerService(CommandProvider.class.getName(), new BindaasOSGIConsole(this), null);
 		context.registerService(IBindaasAdminService.class.getName(), this , null);
 		bindaasConfiguration = new DynamicObject<BindaasConfiguration>("bindaas", defaultBindaasConfiguration , context);
 		

@@ -51,7 +51,7 @@ public class SubmitHandlerTestCase extends TestCase {
 	private IExecutionTasks getExecutionTaskBean()
 	{
 		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IExecutionTasks.class.getName());
+		ServiceReference<?> sf = context.getServiceReference(IExecutionTasks.class.getName());
 		if(sf!=null)
 		{
 			Object service = context.getService(sf);
@@ -69,7 +69,7 @@ public class SubmitHandlerTestCase extends TestCase {
 	private IManagementTasks getManagementTaskBean()
 	{
 		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IManagementTasks.class.getName());
+		ServiceReference<?> sf = context.getServiceReference(IManagementTasks.class.getName());
 		if(sf!=null)
 		{
 			Object service = context.getService(sf);
@@ -107,7 +107,7 @@ public class SubmitHandlerTestCase extends TestCase {
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy(), "");
 			
 			// 3. Create a new SubmitEndpoint
 			
@@ -148,7 +148,7 @@ public class SubmitHandlerTestCase extends TestCase {
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy(), "");
 			
 			// 3. Create a new SubmitEndpoint
 			
@@ -187,7 +187,7 @@ public class SubmitHandlerTestCase extends TestCase {
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy(), "");
 		
 			// 3. Create a new SubmitEndpoint
 			
@@ -254,7 +254,7 @@ public class SubmitHandlerTestCase extends TestCase {
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy(), "");
 		
 			// 3. Create a new SubmitEndpoint
 						
@@ -310,7 +310,7 @@ public class SubmitHandlerTestCase extends TestCase {
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy(), "");
 		
 			// 3. Create a new SubmitEndpoint
 						

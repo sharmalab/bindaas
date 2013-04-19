@@ -5,61 +5,74 @@
 
 <!-- Request Handlers -->
 
-<bean id="dashboard" class="edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView" >
+<bean id="dashboard" class="edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView" init-method="init">
 	<property name="uriTemplate" value="/"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
-<bean id="auditView" class="edu.emory.cci.bindaas.webconsole.servlet.views.AuditView">
+<bean id="auditView" class="edu.emory.cci.bindaas.webconsole.servlet.views.AuditView" init-method="init">
 	<property name="uriTemplate" value="/audit"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
 <bean id="createWorkspace" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateWorkspace" >
 	<property name="uriTemplate" value="/createWorkspace/{workspace}"></property>
 </bean>
 
-<bean id="workspaceView" class="edu.emory.cci.bindaas.webconsole.servlet.views.WorkspaceView" >
+<bean id="workspaceView" class="edu.emory.cci.bindaas.webconsole.servlet.views.WorkspaceView" init-method="init">
 	<property name="uriTemplate" value="/workspace/{workspace}"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
 
-<bean id="createProfile" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateProfile" >
+<bean id="createProfile" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateProfile" init-method="init">
 	<property name="uriTemplate" value="/{workspace}/createProfile.action"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
-<bean id="createQueryEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateQueryEndpoint" >
+<bean id="createQueryEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateQueryEndpoint" init-method="init">
 	<property name="uriTemplate" value="/{workspace}/{profile}/createQueryEndpoint.action"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
-<bean id="createSubmitEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateSubmitEndpoint" >
+<bean id="createSubmitEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateSubmitEndpoint" init-method="init">
 	<property name="uriTemplate" value="/{workspace}/{profile}/createSubmitEndpoint.action"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
-<bean id="createDeleteEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateDeleteEndpoint" >
+<bean id="createDeleteEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateDeleteEndpoint" init-method="init" >
 	<property name="uriTemplate" value="/{workspace}/{profile}/createDeleteEndpoint.action"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
-<bean id="queryEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryEndpointView" >
+<bean id="queryEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryEndpointView" init-method="init">
 	<property name="uriTemplate" value="/{workspace}/{profile}/query/{queryEndpoint}"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
-<bean id="deleteEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.DeleteEndpointView" >
+<bean id="deleteEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.DeleteEndpointView" init-method="init">
 	<property name="uriTemplate" value="/{workspace}/{profile}/delete/{deleteEndpoint}"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
-<bean id="submitEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.SubmitEndpointView" >
+<bean id="submitEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.SubmitEndpointView" init-method="init">
 	<property name="uriTemplate" value="/{workspace}/{profile}/submit/{submitEndpoint}"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
-<bean id="profileView" class="edu.emory.cci.bindaas.webconsole.servlet.views.ProfileView" >
+<bean id="profileView" class="edu.emory.cci.bindaas.webconsole.servlet.views.ProfileView" init-method="init">
 	<property name="uriTemplate" value="/{workspace}/profile/{profile}"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
-<bean id="queryBrowserView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryBrowserView" >
+<bean id="queryBrowserView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryBrowserView" init-method="init">
 	<property name="uriTemplate" value="/queryBrowser"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
-<bean id="manageUserRegistration" class="edu.emory.cci.bindaas.webconsole.servlet.action.ManageUserRegistration">
+<bean id="manageUserRegistration" class="edu.emory.cci.bindaas.webconsole.servlet.action.ManageUserRegistration" init-method="init">
 	<property name="uriTemplate" value="/administration/manageUserRegistration"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
 <bean id="serverAdministrationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.ServerAdministrationPanelAction"></bean>
@@ -68,7 +81,7 @@
 
 
 
-<bean id="administration" class="edu.emory.cci.bindaas.webconsole.admin.AdminServlet">
+<bean id="administration" class="edu.emory.cci.bindaas.webconsole.admin.AdminServlet" init-method="init">
 	<property name="uriTemplate" value="/administration"></property>
 	<property name="adminActionMap">
 		<map>
@@ -80,6 +93,7 @@
 			<entry key="UserManagementNotificationPanelAction" value-ref="userManagementNotificationPanelAction"></entry>
 		</map>
 	</property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 </bean>
 
 
@@ -135,6 +149,13 @@
 	<property name="postLoginAction" ref="postLoginAction"></property>
 	<property name="openIdAuth" ref="openIdAuth"></property>
 	<property name="documentationFetcher" ref="documentationFetcherServlet"></property>
+	
+	<property name="logoutServlet" ref="logoutServlet"></property>
+	<property name="userLoginServlet" ref="userLoginServlet"></property>
+	<property name="userOpenIDAuthServlet" ref="userOpenIDAuthServlet"></property>
+	<property name="userQueryBrowserServlet" ref="userQueryBrowserServlet"></property>
+	<property name="postUserLoginServlet" ref="postUserLoginServlet"></property>
+	
 </bean>
 
 
@@ -143,6 +164,25 @@
 
 <bean id="documentationFetcherServlet" class="edu.emory.cci.bindaas.webconsole.servlet.util.DocumentationFetcherServlet">
 </bean>
+
+<bean id="userQueryBrowserServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserQueryBrowserServlet">
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+</bean>
+
+<bean id="userOpenIDAuthServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserOpenIDAuthServlet">
+</bean>
+
+<bean id="postUserLoginServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.PostUserLoginServlet">
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+</bean>
+
+<bean id="userLoginServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserLoginServlet">
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+</bean>
+
+<bean id="logoutServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.LogoutServlet">
+</bean>
+
 
 
 <bean id="defaultBindaasAdminConsoleConfiguration" class="edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration">
@@ -195,6 +235,16 @@
 	</property>
 </bean>
 
+<!-- Velocity Beans -->
+<bean id="velocityWrapper" class="edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper" init-method="init">
+	<property name="props">
+		<props>
+			<prop key="resource.loader">class</prop>
+			<prop key="class.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</prop>
+			<prop key="runtime.log.logsystem.class">edu.emory.cci.bindaas.webconsole.util.VelocityLogger</prop>
+		</props>
+	</property>
+</bean>
 
 </beans>
 

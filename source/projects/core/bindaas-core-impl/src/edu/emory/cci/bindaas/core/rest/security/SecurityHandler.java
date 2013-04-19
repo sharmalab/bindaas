@@ -89,6 +89,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		}
 		
 	}
+	
 	private Principal handleSecurityToken(Message message,IAuthenticationProvider authenticationProvider) throws Exception
 	{
 		String securityToken = extractSecurityToken(message);
@@ -129,10 +130,10 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		
 		if(apiKey == null)
 		{
-			Map protocolHeaders = (Map) message.get(Message.PROTOCOL_HEADERS);
+			Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
 			if(protocolHeaders!=null && protocolHeaders.get(API_KEY)!=null)
 			{
-				List values = (List) protocolHeaders.get(API_KEY);
+				List<?> values = (List<?>) protocolHeaders.get(API_KEY);
 				if(values!=null && values.size() > 0)
 				{
 					apiKey = values.get(0).toString();
@@ -329,9 +330,9 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 
 
 	private String extractSecurityToken(Message message) {
-		Map protocolHeaders = (Map) message.get(Message.PROTOCOL_HEADERS);
+		Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
 		if (protocolHeaders.get(TOKEN) != null) {
-			List listOfValues = (List) protocolHeaders.get(TOKEN);
+			List<?> listOfValues = (List<?>) protocolHeaders.get(TOKEN);
 			String token = (String) listOfValues.get(0);
 			return token;
 		}
@@ -357,11 +358,13 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	{
 		
 		final BundleContext context = Activator.getContext();
+		@SuppressWarnings("rawtypes")
 		ServiceReference[] serviceReferences;
 		try {
 			serviceReferences = context.getAllServiceReferences(IAuthenticationProvider.class.getName(), "(class=" +  authenticationProviderClass +")");
 			if(serviceReferences!=null && serviceReferences.length > 0)
 			{
+				@SuppressWarnings("unchecked")
 				Object service = context.getService(serviceReferences[0]);
 				if(service!=null)
 				{
@@ -380,11 +383,13 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	public IAuthorizationProvider locateAuthorizationProvider()
 	{
 		final BundleContext context = Activator.getContext();
+		@SuppressWarnings("rawtypes")
 		ServiceReference[] serviceReferences;
 		try {
 			serviceReferences = context.getAllServiceReferences(IAuthorizationProvider.class.getName(), "(class=" +  authorizationProviderClass +")");
 			if(serviceReferences.length > 0)
 			{
+				@SuppressWarnings("unchecked")
 				Object service = context.getService(serviceReferences[0]);
 				if(service!=null)
 				{

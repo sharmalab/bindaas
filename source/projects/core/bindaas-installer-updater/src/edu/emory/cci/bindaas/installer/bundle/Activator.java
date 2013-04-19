@@ -1,22 +1,17 @@
 package edu.emory.cci.bindaas.installer.bundle;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import org.eclipse.osgi.framework.console.CommandProvider;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import edu.emory.cci.bindaas.installer.InstallerConsole;
+
 
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
-	
+	private Log log = LogFactory.getLog(getClass());
 
 	public static BundleContext getContext() {
 		return context;
@@ -27,12 +22,8 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
+		log.debug("Starting Bundle [bindaas-installer-updater]");
 		Activator.context = bundleContext;
-		
-		// Add installer console
-		
-		bundleContext.registerService(CommandProvider.class.getName(), new InstallerConsole(), null);
-		
 			
 	}
 

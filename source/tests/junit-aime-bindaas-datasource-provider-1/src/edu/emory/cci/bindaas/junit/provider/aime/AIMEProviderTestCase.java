@@ -2,8 +2,8 @@ package edu.emory.cci.bindaas.junit.provider.aime;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import junit.framework.TestCase;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.osgi.framework.BundleContext;
@@ -12,15 +12,12 @@ import org.osgi.framework.ServiceReference;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import edu.emory.cci.bindaas.core.api.IExecutionTasks;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.exception.ProviderNotFoundException;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
-
-
-import junit.framework.TestCase;
+import edu.emory.cci.bindaas.junit.provider.aime.bundle.Activator;
 
 public class AIMEProviderTestCase extends TestCase{
 
@@ -36,7 +33,7 @@ public class AIMEProviderTestCase extends TestCase{
 	private IManagementTasks getManagementTaskBean()
 	{
 		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IManagementTasks.class.getName());
+		ServiceReference<?> sf = context.getServiceReference(IManagementTasks.class.getName());
 		if(sf!=null)
 		{
 			Object service = context.getService(sf);
@@ -72,7 +69,7 @@ public class AIMEProviderTestCase extends TestCase{
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy() , "");
 		
 		}catch (Exception e) {
 			fail(e.getMessage());
@@ -101,7 +98,7 @@ public class AIMEProviderTestCase extends TestCase{
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy() , "");
 		
 		}catch (Exception e) {
 			fail(e.getMessage());
@@ -131,7 +128,7 @@ public class AIMEProviderTestCase extends TestCase{
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion() + 2) ); // wrong version specified here
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy() ,"");
 			fail("Must throw an exception");
 		}catch (Exception e) {
 			
@@ -159,7 +156,7 @@ public class AIMEProviderTestCase extends TestCase{
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion() ) ); 
 			profileParams.add("dataSource" , new JsonObject());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy(),"");
 			fail("Must throw an exception");
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -181,7 +178,7 @@ public class AIMEProviderTestCase extends TestCase{
 			// 2. Create a new Profile
 			Profile testProfile = testWorkspace.getProfiles().values().iterator().next();
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), null, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), null, testProfile.getCreatedBy(),"");
 			fail("Must throw an exception");
 		}catch (Exception e) {
 			e.printStackTrace();

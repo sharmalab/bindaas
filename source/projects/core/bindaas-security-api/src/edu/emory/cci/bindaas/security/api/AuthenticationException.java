@@ -3,6 +3,8 @@ package edu.emory.cci.bindaas.security.api;
 public class AuthenticationException  extends Exception {
 
 	
+	
+	private static final long serialVersionUID = 1L;
 	private String message;
 		public AuthenticationException()
 		{

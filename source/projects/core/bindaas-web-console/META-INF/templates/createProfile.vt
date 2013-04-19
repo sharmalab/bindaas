@@ -43,7 +43,7 @@
 		<script src="/foundation/javascripts/jquery.hook.js"></script>
 		<script>
 			$.hook("show hide");
-			
+
 		</script>
 		<script>
 			var ValidationObject = {};
@@ -55,9 +55,8 @@
 				ValidationObject.constraints[name] = obj;
 			};
 			ValidationObject.removeConstraint = function(name) {
-				
 				delete ValidationObject.constraints[name];
-			}; 
+			};
 			ValidationObject.validate = function() {
 				for (var key in ValidationObject.constraints) {
 					var obj = ValidationObject.constraints[key];
@@ -88,7 +87,7 @@
 					<strong>Be worry free!</strong>
 				</p>
 				<p>
-					This is version <strong>2.0.0 Beta</strong>
+					$versionHeader
 				</p>
 				<hr />
 			</div>
@@ -118,9 +117,13 @@
 						<li>
 							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
 						</li>
-						<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
-<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
-</ul>
+						<li>
+							<a href="/dashboard/administration"><strong>Administration</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/audit"><strong>Audit</strong></a>
+						</li>
+					</ul>
 
 				</div>
 				<div class="row">
@@ -136,16 +139,18 @@
 							<input type="hidden"  name="jsonRequest"/>
 							<label>Name</label>
 							<input type="text" placeholder="name" name="profileName" id="profileName"/>
+							<label>Description</label>
+							<input type="text" placeholder="description" name="description" id="description"/>
 							<label for="provider">Choose Database</label>
 							<select  name="provider" id="provider">
 								<option value="">--- Select ---</option>
 								#foreach ($provider in $providers)
-								
-									#if ($provider.getDocumentation().get('title'))
-									<option value="$provider.getId()#$provider.getVersion()" ref="$provider.getDocumentation().get('simpleName').getAsString()" >$provider.getDocumentation().get('title').getAsString()</option>
-									#else
-									<option value="$provider.getId()#$provider.getVersion()" ref="defaultProviderPanel" >ID = $provider.getId() version = $provider.getVersion()</option>
-									#end 
+
+								#if ($provider.getDocumentation().get('title'))
+								<option value="$provider.getId()#$provider.getVersion()" ref="$provider.getDocumentation().get('simpleName').getAsString()" >$provider.getDocumentation().get('title').getAsString()</option>
+								#else
+								<option value="$provider.getId()#$provider.getVersion()" ref="defaultProviderPanel" >ID = $provider.getId() version = $provider.getVersion()</option>
+								#end
 								#end
 
 							</select>
@@ -166,6 +171,7 @@
 
 								</div>
 							</div>
+							
 							<div class="panel">
 								<label for="dataSource">Data Source Configuration</label>
 								<textarea name="dataSource" id="dataSource"></textarea>
@@ -188,11 +194,15 @@
 									#end
 									<div id="defaultProviderPanel">
 										<script>
-											$("#defaultProviderPanel").bind("onaftershow" , function(e){ $("#dataSource").show(); } );
-											$("#defaultProviderPanel").bind("onafterhide" , function(e){ $("#dataSource").hide(); } );
+											$("#defaultProviderPanel").bind("onaftershow", function(e) {
+												$("#dataSource").show();
+											});
+											$("#defaultProviderPanel").bind("onafterhide", function(e) {
+												$("#dataSource").hide();
+											});
 										</script>
 									</div>
-									
+
 								</div>
 
 								<script>
@@ -267,15 +277,15 @@
 									var req = {};
 									req.profileName = profileName;
 									req.jsonRequest = JSON.stringify(jsonRequest, null);
+									req.description = $("#description").attr("value");
 
 									$.post("/dashboard/$workspace/createProfile.action", req, function(data) {
 										window.location = "/dashboard/workspace/$workspace";
 									});
-									
+
 									// change label of the button
 									$(this).attr("value", "please wait ....");
 									$(this).attr("disabled", "true");
-									
 
 								} catch(e) {
 									alert(e);
@@ -292,5 +302,6 @@
 
 		</div>
 
-	<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
+		<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script>
+	</body>
 </html>

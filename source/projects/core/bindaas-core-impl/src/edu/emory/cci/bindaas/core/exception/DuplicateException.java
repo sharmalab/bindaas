@@ -3,6 +3,8 @@ package edu.emory.cci.bindaas.core.exception;
 
 public class DuplicateException extends FrameworkEntityException {
 
+	
+	private static final long serialVersionUID = 1L;
 	private Type type;
 	private String name;
 	

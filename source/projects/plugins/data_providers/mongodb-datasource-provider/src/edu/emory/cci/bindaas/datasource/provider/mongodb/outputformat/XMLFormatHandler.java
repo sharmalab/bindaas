@@ -41,7 +41,8 @@ public class XMLFormatHandler extends AbstractFormatHandler {
 		if(!condition) throw new Exception(message);
 	}
 	
-	 public static String toXML(DBCursor cursor) throws SQLException
+	 @SuppressWarnings("restriction")
+	public static String toXML(DBCursor cursor) throws SQLException
 	    {
 	        
 	        

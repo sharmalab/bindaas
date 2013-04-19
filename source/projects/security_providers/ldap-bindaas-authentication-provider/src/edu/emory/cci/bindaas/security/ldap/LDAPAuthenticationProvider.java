@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
 import org.apache.commons.logging.Log;
@@ -19,6 +18,7 @@ import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
+import edu.emory.cci.bindaas.security.ldap.bundle.Activator;
 
 public class LDAPAuthenticationProvider implements IAuthenticationProvider {
 
@@ -74,7 +74,7 @@ public class LDAPAuthenticationProvider implements IAuthenticationProvider {
 		env.put(Context.SECURITY_CREDENTIALS, password);
 
 		try {
-			DirContext ctx = new InitialDirContext(env);
+			new InitialDirContext(env);
 			log.debug("LDAP Auth succeeded for [" + dn + "]");
 		} catch (NamingException e) {
 			log.error("Failed LDAP Auth using DN [" + dn  +"]",e);
@@ -98,7 +98,7 @@ public class LDAPAuthenticationProvider implements IAuthenticationProvider {
 		env.put(Context.SECURITY_CREDENTIALS, password);
 
 		try {
-			DirContext ctx = new InitialDirContext(env);
+			new InitialDirContext(env);
 			log.debug("LDAP Auth succeeded for [" + dn + "]");
 		} catch (NamingException e) {
 			log.error("Failed LDAP Auth using DN [" + dn  +"]",e);
@@ -151,7 +151,7 @@ public class LDAPAuthenticationProvider implements IAuthenticationProvider {
 		env.put(Context.SECURITY_CREDENTIALS, password);
 
 		try {
-			DirContext ctx = new InitialDirContext(env);
+			new InitialDirContext(env);
 			return true;
 		} catch (NamingException e) {
 			log.error(e);

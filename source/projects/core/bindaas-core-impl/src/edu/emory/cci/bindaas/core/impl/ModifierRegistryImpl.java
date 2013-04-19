@@ -10,9 +10,7 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
-import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.core.bundle.Activator;
-import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.framework.api.IQueryModifier;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.api.ISubmitPayloadModifier;
@@ -147,17 +145,19 @@ public class ModifierRegistryImpl implements IModifierRegistry{
 				
 				@Override
 				public void serviceChanged(ServiceEvent sv) {
-					ServiceReference serviceRef = sv.getServiceReference();
+					ServiceReference<?> serviceRef = sv.getServiceReference();
 					      switch(sv.getType()) {
 					        case ServiceEvent.REGISTERED :
 					          {
-					        	  T serv = (T) context.getService(serviceRef);
+					        	  @SuppressWarnings("unchecked")
+								T serv = (T) context.getService(serviceRef);
 					        	  registry.put(serv.getClass().getName(), serv);
 					        	  break;
 					          }
 					         
 					        case ServiceEvent.UNREGISTERING :
 					        {
+					        	 @SuppressWarnings("unchecked")
 					        	T serv = (T) context.getService(serviceRef);
 					        	registry.remove(serv.getClass().getName());
 					        	break;
@@ -173,10 +173,11 @@ public class ModifierRegistryImpl implements IModifierRegistry{
 			
 			
 			// add existing providers
+			@SuppressWarnings("rawtypes")
 			ServiceReference[] serviceReferences = context.getAllServiceReferences(objectClass, null);
 			if(serviceReferences!=null)
 			{
-				for(ServiceReference serviceRef : serviceReferences)
+				for(@SuppressWarnings("rawtypes") ServiceReference serviceRef : serviceReferences)
 				{
 					serviceListener.serviceChanged( new ServiceEvent(ServiceEvent.REGISTERED, serviceRef));
 				}

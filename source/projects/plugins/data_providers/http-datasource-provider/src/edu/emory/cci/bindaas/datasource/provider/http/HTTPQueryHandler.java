@@ -1,6 +1,5 @@
 package edu.emory.cci.bindaas.datasource.provider.http;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 

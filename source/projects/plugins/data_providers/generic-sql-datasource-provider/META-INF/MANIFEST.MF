@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Generic SQL Data Source Provider
 Bundle-SymbolicName: generic-sql-datasource-provider
 Bundle-Version: 1.0.0
-Bundle-Activator: edu.emory.cci.bindaas.datasource.provider.genericsql.Activator
+Bundle-Activator: edu.emory.cci.bindaas.datasource.provider.genericsql.bundle.Activator
 Bundle-Vendor: CCI Emory University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: au.com.bytecode.opencsv,

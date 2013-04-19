@@ -47,6 +47,7 @@ public class LoginAction extends HttpServlet implements Filter{
 		
 		
 		
+		@SuppressWarnings("unchecked")
 		DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
 		
 		
@@ -130,12 +131,12 @@ public class LoginAction extends HttpServlet implements Filter{
 
 	@Override
 	public void init() throws ServletException {
-		log.info("LoginAction Servlet  Initialized");
+		log.debug("LoginAction Servlet  Initialized");
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		log.info("LoginAction Filter  Initialized");
+		log.debug("LoginAction Filter  Initialized");
 		
 	}
 

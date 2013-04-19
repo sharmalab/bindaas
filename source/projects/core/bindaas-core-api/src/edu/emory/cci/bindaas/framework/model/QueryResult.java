@@ -4,7 +4,6 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 
 public class QueryResult {

@@ -3,9 +3,6 @@ package edu.emory.cci.bindaas.datasource.provider.http;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.datasource.provider.http.bundle.Activator;
@@ -19,7 +16,7 @@ public class HTTPProvider implements IProvider{
 	private HTTPQueryHandler queryHandler;
 	private HTTPDeleteHandler deleteHandler;
 	private HTTPSubmitHandler submitHandler;
-	private Log log = LogFactory.getLog(getClass());
+	
 	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
 	private JsonObject documentation;
 	

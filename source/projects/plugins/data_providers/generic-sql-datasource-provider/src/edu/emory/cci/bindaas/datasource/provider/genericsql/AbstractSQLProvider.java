@@ -14,10 +14,7 @@ import org.osgi.framework.BundleContext;
 import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.datasource.provider.genericsql.model.DataSourceConfiguration;
-import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.api.IProvider;
-import edu.emory.cci.bindaas.framework.api.IQueryHandler;
-import edu.emory.cci.bindaas.framework.api.ISubmitHandler;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;

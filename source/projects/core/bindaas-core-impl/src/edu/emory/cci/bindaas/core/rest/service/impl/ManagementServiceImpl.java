@@ -12,6 +12,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.logging.Log;
@@ -25,10 +26,7 @@ import com.google.gson.JsonParser;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.bundle.Activator;
-import edu.emory.cci.bindaas.core.model.EntityEventType;
-import edu.emory.cci.bindaas.core.rest.service.api.IInformationService;
 import edu.emory.cci.bindaas.core.rest.service.api.IManagementService;
-import edu.emory.cci.bindaas.core.util.EventHelper;
 import edu.emory.cci.bindaas.core.util.RestUtils;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 import edu.emory.cci.bindaas.framework.model.Profile;
@@ -108,12 +106,12 @@ public class ManagementServiceImpl implements IManagementService {
 	@Path("{workspace}/{profile}")
 	@POST
 	public Response createProfile(@PathParam("workspace") String workspace,
-			@PathParam("profile") String profile) {
+			@PathParam("profile") String profile ,  @QueryParam("description") String description) {
 		String user = getUser();
 		try {
 
 			Profile prof = managementTask.createProfile(profile, workspace,
-					parsePostRequest(), user);
+					parsePostRequest(), user , description);
 		
 			return RestUtils.createJsonResponse(prof.toString());
 		} catch (Exception e) {
@@ -281,10 +279,10 @@ public class ManagementServiceImpl implements IManagementService {
 	@Path("{workspace}/{profile}")
 	@PUT
 	public Response updateProfile(@PathParam("workspace") String workspace,
-			@PathParam("profile") String profileName) {
+			@PathParam("profile") String profileName , @QueryParam("description") String description) {
 		try {
 			Profile profile = managementTask.updateProfile(profileName,
-					workspace, parsePostRequest(), getUser());
+					workspace, parsePostRequest(), getUser() , description);
 			
 			return RestUtils.createJsonResponse(profile.toString());
 		} catch (Exception e) {

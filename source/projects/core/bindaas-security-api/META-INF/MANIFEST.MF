@@ -3,8 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Bindaas Security API
 Bundle-SymbolicName: bindaas-security-api
 Bundle-Version: 1.0.0
-Bundle-Activator: edu.emory.cci.bindaas.security.Activator
+Bundle-Activator: edu.emory.cci.bindaas.security.bundle.Activator
 Bundle-Vendor: CCI Emory University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.osgi.framework;version="1.3.0"
+Import-Package: org.apache.commons.logging;version="1.1.1",
+ org.osgi.framework;version="1.3.0"
 Export-Package: edu.emory.cci.bindaas.security.api

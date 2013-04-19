@@ -23,6 +23,7 @@ import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
 
+import edu.emory.cci.bindaas.openid.bundle.Activator;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
 public class OpenIDHelper {
@@ -63,7 +64,9 @@ public class OpenIDHelper {
         	{
         		String userSuppliedString = httpReq.getParameter("identifier");
                 // perform discovery on the user-supplied identifier
-                List discoveries = manager.discover(userSuppliedString);
+
+        		@SuppressWarnings("unchecked")
+				List<Object> discoveries = manager.discover(userSuppliedString);
 
                 // attempt to associate with the OpenID provider
                 // and retrieve one service endpoint for authentication

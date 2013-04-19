@@ -9,7 +9,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 
-import edu.emory.cci.bindaas.framework.Activator;
+import edu.emory.cci.bindaas.framework.bundle.Activator;
 
 public class BindaasEvent extends Event{
 
@@ -77,9 +77,11 @@ public class BindaasEvent extends Event{
 	public EventAdmin getEventAdmin()
 	{
 		
+		@SuppressWarnings("rawtypes")
 		ServiceReference srf = Activator.getContext().getServiceReference(EventAdmin.class.getName());
 		if(srf!=null)
 		{
+			@SuppressWarnings("unchecked")
 			EventAdmin eventAdmin = (EventAdmin) Activator.getContext().getService(srf);
 			return eventAdmin;
 		}

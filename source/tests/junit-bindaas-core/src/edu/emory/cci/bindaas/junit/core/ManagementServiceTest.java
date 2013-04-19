@@ -5,17 +5,10 @@ package edu.emory.cci.bindaas.junit.core;
 
 import java.security.Principal;
 
-import javax.ws.rs.core.Response;
-
 import junit.framework.TestCase;
 
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.security.SecurityContext;
-
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-
-import edu.emory.cci.bindaas.core.rest.service.api.IManagementService;
 
 public class ManagementServiceTest extends TestCase {
 
@@ -49,29 +42,10 @@ public class ManagementServiceTest extends TestCase {
 
 	};
 	
-	private IManagementService getManagementServiceBean()
-	{
-		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IManagementService.class.getName());
-		if(sf!=null)
-		{
-			Object service = context.getService(sf);
-			if(service!=null)
-			return (IManagementService) service;
-			else
-				fail("Management Service not available for testing");
-		}
-		else
-			fail("Management Service not available for testing");
-		
-		return null;
-	}
-	
 	public void test_createWorkspace()
 	{
-		IManagementService managementService = getManagementServiceBean();
-		String workspaceName = "testWorkspace";
-		Response actualResponse = managementService.createWorkspace(workspaceName);
+		
+		
 				
 	}
 	

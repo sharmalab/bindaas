@@ -1,9 +1,5 @@
 package edu.emory.cci.bindaas.framework.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 

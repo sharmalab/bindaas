@@ -3,9 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Bindaas Commons H2 Hibernate
 Bundle-SymbolicName: bindaas-commons-h2-hibernate
 Bundle-Version: 1.0.0
-Bundle-Activator: edu.emory.cci.bindaas.commons.hibernateh2.Activator
+Bundle-Activator: edu.emory.cci.bindaas.commons.hibernateh2.bundle.Activator
 Bundle-Vendor: CCI Emory University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Spring-Context: *
 Import-Package: org.apache.commons.logging;version="1.1.1",
  org.osgi.framework;version="1.3.0"
 Bundle-ClassPath: antlr-2.7.7.jar,

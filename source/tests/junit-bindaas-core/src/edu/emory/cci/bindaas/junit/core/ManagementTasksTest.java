@@ -1,7 +1,6 @@
 package edu.emory.cci.bindaas.junit.core;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,9 +10,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-
-import org.eclipse.osgi.framework.console.CommandProvider;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -21,22 +17,21 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
-import edu.emory.cci.bindaas.core.bundle.BindaasOSGIConsole;
 import edu.emory.cci.bindaas.core.exception.DuplicateException;
-import edu.emory.cci.bindaas.core.exception.NotFoundException;
 import edu.emory.cci.bindaas.core.exception.FrameworkEntityException.Type;
+import edu.emory.cci.bindaas.core.exception.NotFoundException;
 import edu.emory.cci.bindaas.core.model.DeleteEndpointRequestParameter;
 import edu.emory.cci.bindaas.core.model.QueryEndpointRequestParameter;
 import edu.emory.cci.bindaas.core.model.SubmitEndpointRequestParameter;
 import edu.emory.cci.bindaas.framework.model.BindVariable;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
-import edu.emory.cci.bindaas.framework.model.ModifierEntry;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.Stage;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+import edu.emory.cci.bindaas.junit.bundle.Activator;
 import edu.emory.cci.bindaas.junit.mock.MockProvider;
 
 public class ManagementTasksTest extends TestCase {
@@ -76,7 +71,7 @@ public class ManagementTasksTest extends TestCase {
 	private IManagementTasks getManagementTaskBean()
 	{
 		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IManagementTasks.class.getName());
+		ServiceReference<?> sf = context.getServiceReference(IManagementTasks.class.getName());
 		if(sf!=null)
 		{
 			Object service = context.getService(sf);
@@ -134,7 +129,7 @@ public class ManagementTasksTest extends TestCase {
 		parameters.add("dataSource", dataSource);
 		
 		try {
-			Profile profile = managementTasks.createProfile(PROFILE_NAME, WORKSPACE_NAME, parameters, CREATED_BY);
+			Profile profile = managementTasks.createProfile(PROFILE_NAME, WORKSPACE_NAME, parameters, CREATED_BY, "");
 			assertEquals(PROFILE_NAME, profile.getName());
 			assertEquals(CREATED_BY, profile.getCreatedBy());
 			assertEquals(PROVIDER_ID, profile.getProviderId());
@@ -159,8 +154,7 @@ public class ManagementTasksTest extends TestCase {
 		JsonObject outputFormat = new JsonObject();
 		String queryTemplate = "select * from mytable";
 		List<String> tags = Arrays.asList(new String[]{"tag1"});
-		Map<Integer,ModifierEntry> queryModifierList = new HashMap<Integer, ModifierEntry>();
-		Map<Integer,ModifierEntry> queryResultModifierList = new HashMap<Integer, ModifierEntry>();
+	
 		String description = "description:";
 		
 		params.setBindVariables(bindVars);
@@ -237,7 +231,7 @@ public class ManagementTasksTest extends TestCase {
 		SubmitEndpointRequestParameter params = new SubmitEndpointRequestParameter();
 		
 		JsonObject properties = new JsonObject();
-		Map<Integer,ModifierEntry> payloadModifier = new HashMap<Integer, ModifierEntry>();
+		
 		
 		params.setProperties(properties);
 		
@@ -411,7 +405,7 @@ public class ManagementTasksTest extends TestCase {
 			JsonObject dataSource = new JsonObject();
 			parameters.add("dataSource", dataSource);
 
-			Profile updatedProfile = managementTasks.updateProfile(PROFILE_NAME, WORKSPACE_NAME, parameters, CREATED_BY);
+			Profile updatedProfile = managementTasks.updateProfile(PROFILE_NAME, WORKSPACE_NAME, parameters, CREATED_BY , "");
 			assertNotSame(oldTimeCreated, updatedProfile.getTimeCreated());
 			assertEquals(updatedProfile, managementTasks.getProfile(WORKSPACE_NAME, PROFILE_NAME));
 			
@@ -434,8 +428,7 @@ public class ManagementTasksTest extends TestCase {
 		JsonObject outputFormat = new JsonObject();
 		String queryTemplate = "select * from mytable";
 		List<String> tags = Arrays.asList(new String[]{"tag1"});
-		Map<Integer,ModifierEntry> queryModifierList = new HashMap<Integer, ModifierEntry>();
-		Map<Integer,ModifierEntry> queryResultModifierList = new HashMap<Integer, ModifierEntry>();
+		
 		String description = "description:";
 		
 		params.setBindVariables(bindVars);
@@ -514,7 +507,7 @@ public class ManagementTasksTest extends TestCase {
 		SubmitEndpointRequestParameter params = new SubmitEndpointRequestParameter();
 		
 		JsonObject properties = new JsonObject();
-		Map<Integer,ModifierEntry> payloadModifier = new HashMap<Integer, ModifierEntry>();
+		
 		
 		params.setProperties(properties);
 		
@@ -593,7 +586,7 @@ public class ManagementTasksTest extends TestCase {
 		test_createProfile();
 		IManagementTasks managementTasks = getManagementTaskBean();
 		try {
-			managementTasks.createProfile(PROFILE_NAME,WORKSPACE_NAME,null,CREATED_BY);
+			managementTasks.createProfile(PROFILE_NAME,WORKSPACE_NAME,null,CREATED_BY , "");
 			fail("Duplicate Exception not thrown");
 		} catch (DuplicateException e) {
 			assertEquals(PROFILE_NAME, e.getName());

@@ -3,11 +3,9 @@ package edu.emory.cci.bindaas.core.impl;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
@@ -15,16 +13,15 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.JsonObject;
 
-
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IPersistenceDriver;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.core.api.IValidator;
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.exception.DuplicateException;
+import edu.emory.cci.bindaas.core.exception.FrameworkEntityException.Type;
 import edu.emory.cci.bindaas.core.exception.NotFoundException;
 import edu.emory.cci.bindaas.core.exception.ProviderNotFoundException;
-import edu.emory.cci.bindaas.core.exception.FrameworkEntityException.Type;
 import edu.emory.cci.bindaas.core.model.DeleteEndpointRequestParameter;
 import edu.emory.cci.bindaas.core.model.EntityEventType;
 import edu.emory.cci.bindaas.core.model.ProfileRequestParameter;
@@ -168,7 +165,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 
 	@Override
 	public  Profile createProfile(String name, String workspaceName,
-			JsonObject parameters, String createdBy) throws Exception {
+			JsonObject parameters, String createdBy , String description) throws Exception {
 		
 		// locate Workspace
 			Workspace workspace = getWorkspace(workspaceName);
@@ -179,6 +176,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 					Profile profile = new Profile();
 					profile.setCreatedBy(createdBy);
 					profile.setName(name);
+					profile.setDescription(description);
 					
 					// locate provider
 					
@@ -565,13 +563,13 @@ public class ManagementTasksImpl implements IManagementTasks {
 
 	@Override
 	public Profile updateProfile(String profileName, String workspaceName,
-			JsonObject parameters, String updatedBy) throws Exception {
+			JsonObject parameters, String updatedBy , String description) throws Exception {
 		
 		synchronized (persistenceDriver) {
 			Profile oldProfile = getProfile(workspaceName, profileName);
 			deleteProfile(workspaceName, profileName);
 			try{
-			Profile profile = this.createProfile(profileName, workspaceName, parameters, updatedBy);
+			Profile profile = this.createProfile(profileName, workspaceName, parameters, updatedBy , description);
 			profile.setQueryEndpoints(oldProfile.getQueryEndpoints());
 			profile.setDeleteEndpoints(oldProfile.getDeleteEndpoints());
 			profile.setSubmitEndpoints(oldProfile.getSubmitEndpoints());

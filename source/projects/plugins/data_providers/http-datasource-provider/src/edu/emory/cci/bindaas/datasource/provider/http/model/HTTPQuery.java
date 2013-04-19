@@ -1,8 +1,5 @@
 package edu.emory.cci.bindaas.datasource.provider.http.model;
 
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

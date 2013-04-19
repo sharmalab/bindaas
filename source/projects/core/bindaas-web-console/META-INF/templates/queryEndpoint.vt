@@ -72,7 +72,7 @@
 		<!-- Initialize JS Plugins -->
 		<script src="/foundation/javascripts/app.js"></script>
 		<script>
-			function randomString(length) {
+						function randomString(length) {
 			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
 
 			if (! length) {
@@ -157,19 +157,20 @@
 
 		</script>
 		<div id="bindVarTemplate" class="hide">
-  	<label >Name</label>
-  	<input type="text" placeholder="name" name="bvName" />
-  	<label >Description</label>
-    <input type="text" placeholder="description" name="bvDescription" />
-    								<label >Required</label>
-  										<select   name="bvRequired">
-    										<option value="true">Yes</option>
-    										<option value="false">No</option>
-  										</select>
-  										<br></br>
-    								<label>Default Value</label>
-    								<input type="text" placeholder="default value" name="defaultValue" />
-  </div>
+			<label >Name</label>
+			<input type="text" placeholder="name" name="bvName" />
+			<label >Description</label>
+			<input type="text" placeholder="description" name="bvDescription" />
+			<label >Required</label>
+			<select   name="bvRequired">
+				<option value="true">Yes</option>
+				<option value="false">No</option>
+			</select>
+			<br>
+			</br>
+			<label>Default Value</label>
+			<input type="text" placeholder="default value" name="defaultValue" />
+		</div>
 
 		<div class="row">
 			<div class="six columns">
@@ -178,7 +179,7 @@
 					<strong>Be worry free!</strong>
 				</p>
 				<p>
-					This is version <strong>2.0.0 Beta</strong>
+					$versionHeader
 				</p>
 				<hr />
 			</div>
@@ -207,9 +208,13 @@
 						<li>
 							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
 						</li>
-						<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
-<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
-</ul>
+						<li>
+							<a href="/dashboard/administration"><strong>Administration</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/audit"><strong>Audit</strong></a>
+						</li>
+					</ul>
 
 				</div>
 				<div class="row">
@@ -291,10 +296,11 @@
 								</select>
 								<label for="queryModifierProperties">Query Modifier Properties</label>
 								#if (!$queryEndpoint.getQueryModifiers())
-								<textarea id="queryModifierProperties" placeholder="{}" disabled="true" value=""></textarea>																
+								<textarea id="queryModifierProperties" placeholder="{}" disabled="true" value=""></textarea>																								
   							#else
  								<textarea id="queryModifierProperties" placeholder="{}" disabled="true" value="$queryEndpoint.getQueryModifiers().getProperties().toString()"></textarea>
   							#end
+
 
 
 							</div>
@@ -302,66 +308,58 @@
 							<div class="panel" id="queryResultModifierPanel">
 								<label for="queryResultModifier">Query Result Modifier</label>
 								<select  name="queryResultModifier" id="queryResultModifier" disabled="true">
-									
-									
-									
+
 									#if (!$queryEndpoint.getQueryResultModifiers())
-											<option selected="true" value="null">--select--</option>
-											#foreach ($qrm in $queryResultModifiers)
-											<option value="$qrm.getClass().getName()">$qrm.getDescriptiveName()</option>
-											#end
-									
-									#else
-											<option  value="null">--select--</option>
-											#foreach ($qrm in $queryResultModifiers)
-												#if ( $qrm.getClass().getName() == $queryEndpoint.getQueryResultModifiers().getName()  )
-													<option value="$qrm.getClass().getName()" selected="true" >$qrm.getDescriptiveName()</option>
-												#else
-													<option value="$qrm.getClass().getName()">$qrm.getDescriptiveName()</option>
-												#end
-											
-											#end
-									
+									<option selected="true" value="null">--select--</option>
+									#foreach ($qrm in $queryResultModifiers)
+									<option value="$qrm.getClass().getName()">$qrm.getDescriptiveName()</option>
 									#end
-									
+
+									#else
+									<option  value="null">--select--</option>
+									#foreach ($qrm in $queryResultModifiers)
+									#if ( $qrm.getClass().getName() == $queryEndpoint.getQueryResultModifiers().getName()  )
+									<option value="$qrm.getClass().getName()" selected="true" >$qrm.getDescriptiveName()</option>
+									#else
+									<option value="$qrm.getClass().getName()">$qrm.getDescriptiveName()</option>
+									#end
+
+									#end
+
+									#end
+
 								</select>
-								
+
 								<label for="queryResultModifierProperties">Query Result Modifier Properties</label>
-							#if (!$queryEndpoint.getQueryResultModifiers())
-								<textarea id="queryResultModifierProperties" placeholder="{}" disabled="true" ></textarea>																
+								#if (!$queryEndpoint.getQueryResultModifiers())
+								<textarea id="queryResultModifierProperties" placeholder="{}" disabled="true" ></textarea>																								
   							#else
  								<textarea id="queryResultModifierProperties" placeholder="{}" disabled="true"  >$queryEndpoint.getQueryResultModifiers().getProperties().toString()</textarea>
   							#end
-  								<!-- New Code -->
+ <!-- New Code -->
 								<div id="queryResultModifierPropertiesPanel"></div>
 								<script>
-									$("#queryResultModifier").change(
-									function (){
+									$("#queryResultModifier").change(function() {
 										var className = $("#queryResultModifier option:selected").attr("value");
-										if(className && className != "null")
-										{
-											var url = "/fetchDocumentation?type=IQueryResultModifier&class=" + className ;
-										try {
-										$.get(url , function(documentation) {
-											$("#queryResultModifierPropertiesPanel").html( documentation.view );
-										} );
-										}catch(e){
-										console.log(e);
-										}	
-										}
-										else
-										{
+										if (className && className != "null") {
+											var url = "/fetchDocumentation?type=IQueryResultModifier&class=" + className;
+											try {
+												$.get(url, function(documentation) {
+													$("#queryResultModifierPropertiesPanel").html(documentation.view);
+												});
+											} catch(e) {
+												console.log(e);
+											}
+										} else {
 											$("#queryResultModifierPropertiesPanel").html("");
 										}
-										
-									}
-									);
-									
+
+									});
+
 									$("#queryResultModifierProperties,label[for='queryResultModifierProperties']").hide();
 									$("#queryResultModifier").trigger("change");
 								</script>
 								<!-- New Code ends -->
-
 
 							</div>
 
@@ -550,6 +548,7 @@
 									$("#qeName").removeAttr("disabled");
 									$("#qeName").attr("value", $("#qeName").attr('value') + "Clone");
 									$("#qeName").focus();
+									$("#qeTemplate").off("keyup");
 								}
 
 							</script>
@@ -585,54 +584,55 @@
 		</div>
 
 		<div id="tryQuery" class="reveal-modal xlarge">
-					<div class="row">
-							<div class="two columns">
-								<a class="radius button">GET</a>
-							</div>
-							<div class="ten columns left-align" >
-								<h4>$queryEndpoint.getName()</h4><h4 class="subheader">$serviceUrl/services/$workspace/$profile/query/$queryEndpoint.getName()</h4>
-							</div>
-						</div>
+			<div class="row">
+				<div class="two columns">
+					<a class="radius button">GET</a>
+				</div>
+				<div class="ten columns left-align" >
+					<h4>$queryEndpoint.getName()</h4><h4 class="subheader">$serviceUrl/services/$workspace/$profile/query/$queryEndpoint.getName()</h4>
+				</div>
+			</div>
 
-						<div class="row">
-							$queryEndpoint.getDescription()
-						</div>
-						<div class="row">
-							<table>
-								<thead>
-									<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
-								</thead>
-								<tbody>
-									#foreach ($bindVar in $queryEndpoint.getBindVariables().values())
-									<tr>
-										<td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td>
-										<input type="text" id="$bindVar.getName()" />
-										</td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td>
-									</tr>
-									#end
+			<div class="row">
+				$queryEndpoint.getDescription()
+			</div>
+			<div class="row">
+				<table>
+					<thead>
+						<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
+					</thead>
+					<tbody>
+						#foreach ($bindVar in $queryEndpoint.getBindVariables().values())
+						<tr>
+							<td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td>
+							<input type="text" id="$bindVar.getName()" />
+							</td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td>
+						</tr>
+						#end
 
-								</tbody>
-							</table>
-							<a class="button secondary" onclick="executeAPI('$serviceUrl/services/$workspace/$profile/query/$queryEndpoint.getName()' , this )" >Submit</a>
-							<script>
-								function executeAPI(url, buttonClicked) {
-									var queryString = "?api_key=$apiKey&";
-									$(buttonClicked).parent().find("input").each(function() {
+					</tbody>
+				</table>
+				<a class="button secondary" onclick="executeAPI('$serviceUrl/services/$workspace/$profile/query/$queryEndpoint.getName()' , this )" >Submit</a>
+				<script>
+					function executeAPI(url, buttonClicked) {
+						var queryString = "?api_key=$apiKey&";
+						$(buttonClicked).parent().find("input").each(function() {
 
-										if ($(this).attr("value") && $(this).attr("value") != "") {
-											queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';
-										}
+							if ($(this).attr("value") && $(this).attr("value") != "") {
+								queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';
+							}
 
-									});
-									url = url + queryString;
-									window.open(encodeURI(url));
-									$("#tryQuery").trigger('reveal:close');
-								}
+						});
+						url = url + queryString;
+						window.open(encodeURI(url));
+						$("#tryQuery").trigger('reveal:close');
+					}
 
-							</script>
-						</div>
+				</script>
+			</div>
 
 			<a class="close-reveal-modal">&#215;</a>
 		</div>
-	<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
+		<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script>
+	</body>
 </html>

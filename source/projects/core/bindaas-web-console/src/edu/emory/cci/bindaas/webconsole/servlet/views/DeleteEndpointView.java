@@ -2,6 +2,7 @@ package edu.emory.cci.bindaas.webconsole.servlet.views;
 
 import java.security.Principal;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.tools.generic.EscapeTool;
 
 import com.google.gson.JsonObject;
 
@@ -20,18 +20,29 @@ import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
+import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class DeleteEndpointView extends AbstractRequestHandler {
 
 	private static String templateName = "deleteEndpoint.vt";
-	private static Template template;
+	private  Template template;
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
+	private VelocityEngineWrapper velocityEngineWrapper;
 	
+	public VelocityEngineWrapper getVelocityEngineWrapper() {
+		return velocityEngineWrapper;
+	}
+
+	public void setVelocityEngineWrapper(VelocityEngineWrapper velocityEngineWrapper) {
+		this.velocityEngineWrapper = velocityEngineWrapper;
+	}
+
 	public String getUriTemplate() {
 		return uriTemplate;
 	}
@@ -40,8 +51,9 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 		this.uriTemplate = uriTemplate;
 	}
 
-	static {
-		template = Activator.getVelocityTemplateByName(templateName);
+	public void init() throws Exception
+	{
+		template = velocityEngineWrapper.getVelocityTemplateByName(templateName);
 	}
 
 
@@ -83,9 +95,34 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 			
 			DeleteEndpoint deleteEndpoint = managementTasks.getDeleteEndpoint(workspace, profile, deleteEndpointName); 
 			VelocityContext context = new VelocityContext(pathParameters);
-			context.put("esc", Activator.getEscapeTool());
+			context.put("esc", velocityEngineWrapper.getEscapeTool());
 			context.put("deleteEndpoint", deleteEndpoint);
+			/**
+			 * Add version information
+			 */
+			String versionHeader = "";
+			VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+			if(versionCommand!=null)
+			{
+				String frameworkBuilt = "";
 			
+				String buildDate = "";
+				try{
+					Properties versionProperties = versionCommand.getProperties();
+					frameworkBuilt = String.format("%s.%s.%s", versionProperties.get("bindaas.framework.version.major") , versionProperties.get("bindaas.framework.version.minor") , versionProperties.get("bindaas.framework.version.revision") );
+			
+					buildDate = versionProperties.getProperty("bindaas.build.date");
+				}catch(NullPointerException e)
+				{
+					log.warn("Version Header not set");
+				}
+				versionHeader = String.format("System built <strong>%s</strong>  Build date <strong>%s<strong>", frameworkBuilt,buildDate);
+			}
+			else
+			{
+				log.warn("Version Header not set");
+			}
+			context.put("versionHeader", versionHeader);
 			Profile prof = managementTasks.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
 			JsonObject documentation = Activator.getService(IProviderRegistry.class).lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
 			context.put("documentation" , documentation);

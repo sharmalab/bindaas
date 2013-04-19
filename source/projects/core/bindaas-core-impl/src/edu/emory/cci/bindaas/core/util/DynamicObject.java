@@ -36,6 +36,7 @@ public class DynamicObject<T extends ThreadSafe> {
 		context.registerService(DynamicObject.class.getName(), this, props);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void init() throws Exception {
 		if(defaultObject!=null)
 		{

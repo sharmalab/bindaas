@@ -17,6 +17,7 @@ import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+import edu.emory.cci.bindaas.junit.provider.aime.bundle.Activator;
 import junit.framework.TestCase;
 
 public class AIMESubmitHandlerTestCase extends TestCase {
@@ -31,7 +32,7 @@ public class AIMESubmitHandlerTestCase extends TestCase {
 	private IExecutionTasks getExecutionTaskBean()
 	{
 		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IExecutionTasks.class.getName());
+		ServiceReference<?> sf = context.getServiceReference(IExecutionTasks.class.getName());
 		if(sf!=null)
 		{
 			Object service = context.getService(sf);
@@ -49,7 +50,7 @@ public class AIMESubmitHandlerTestCase extends TestCase {
 	private IManagementTasks getManagementTaskBean()
 	{
 		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IManagementTasks.class.getName());
+		ServiceReference<?> sf = context.getServiceReference(IManagementTasks.class.getName());
 		if(sf!=null)
 		{
 			Object service = context.getService(sf);
@@ -97,7 +98,7 @@ public class AIMESubmitHandlerTestCase extends TestCase {
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy() ,"");
 		
 		}catch (Exception e) {
 			fail(e.getMessage());

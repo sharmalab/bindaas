@@ -1,12 +1,8 @@
 package edu.emory.cci.bindaas.framework.util;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
@@ -31,7 +27,7 @@ public class IOUtils {
 	
 	public static String join(Collection<?> s, String delimiter) {
 	     StringBuilder builder = new StringBuilder();
-	     Iterator iter = s.iterator();
+	     Iterator<?> iter = s.iterator();
 	     while (iter.hasNext()) {
 	         builder.append(iter.next());
 	         if (!iter.hasNext()) {
@@ -45,7 +41,7 @@ public class IOUtils {
 	public static String[] joinMap(Map<String,String> s, String delimiter) {
 	     StringBuilder keyBuilder = new StringBuilder();
 	     StringBuilder valueBuilder = new StringBuilder();
-	     Iterator iter = s.keySet().iterator();
+	     Iterator<?> iter = s.keySet().iterator();
 	     while (iter.hasNext()) {
 	    	 String key = iter.next().toString();
 	    	 keyBuilder.append(key);

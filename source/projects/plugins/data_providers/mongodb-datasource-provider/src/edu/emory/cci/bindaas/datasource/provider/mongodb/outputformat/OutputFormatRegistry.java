@@ -8,7 +8,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
-import edu.emory.cci.bindaas.datasource.provider.mongodb.Activator;
+import edu.emory.cci.bindaas.datasource.provider.mongodb.bundle.Activator;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormat;
 
 public class OutputFormatRegistry {
@@ -25,7 +25,7 @@ public class OutputFormatRegistry {
 			
 			@Override
 			public void serviceChanged(ServiceEvent sv) {
-				ServiceReference serviceRef = sv.getServiceReference();
+				ServiceReference<?> serviceRef = sv.getServiceReference();
 				      switch(sv.getType()) {
 				        case ServiceEvent.REGISTERED :
 				          {
@@ -51,10 +51,11 @@ public class OutputFormatRegistry {
 		
 		
 		// add existing providers
+		@SuppressWarnings("rawtypes")
 		ServiceReference[] serviceReferences = context.getAllServiceReferences(IFormatHandler.class.getName(), null);
 		if(serviceReferences!=null)
 		{
-			for(ServiceReference serviceRef : serviceReferences)
+			for(ServiceReference<?> serviceRef : serviceReferences)
 			{
 				serviceListener.serviceChanged( new ServiceEvent(ServiceEvent.REGISTERED, serviceRef));
 			}

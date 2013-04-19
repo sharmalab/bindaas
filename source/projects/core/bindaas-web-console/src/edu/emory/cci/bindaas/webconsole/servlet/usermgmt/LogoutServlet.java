@@ -1,7 +1,6 @@
 package edu.emory.cci.bindaas.webconsole.servlet.usermgmt;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,11 +11,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import edu.emory.cci.bindaas.security.api.BindaasUser;
-import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-
 public class LogoutServlet extends HttpServlet{
 	
+	
+	private static final long serialVersionUID = 1L;
 	private Log log = LogFactory.getLog(getClass());
 	private String loginPage = "/user/login";
 	private String servletLocation = "/user/logout";
@@ -27,6 +25,7 @@ public class LogoutServlet extends HttpServlet{
 		if(session!=null)
 		{
 			session.invalidate();
+			log.trace("Successfully logged out user");
 		}
 		response.sendRedirect(loginPage);
 	}

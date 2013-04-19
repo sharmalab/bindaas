@@ -53,9 +53,9 @@ public class GSONUtil {
 		return gson;
 	}
 	
-	private static class ClassSerializer implements JsonSerializer<Class> {
+	private static class ClassSerializer implements JsonSerializer<Class<? extends Object>> {
 
-		public JsonElement serialize(Class clazz, Type arg1,
+		public JsonElement serialize(Class<? extends Object> clazz, Type arg1,
 				JsonSerializationContext context) {
 			
 			return new JsonPrimitive(clazz.getName());
@@ -63,9 +63,9 @@ public class GSONUtil {
 		
 	}
 	
-	private static class ClassDeserializer implements JsonDeserializer<Class> {
+	private static class ClassDeserializer implements JsonDeserializer<Class<? extends Object>> {
 
-		public Class deserialize(JsonElement json, Type arg1,
+		public Class<? extends Object> deserialize(JsonElement json, Type arg1,
 				JsonDeserializationContext arg2) throws JsonParseException {
 			String val = json.getAsString();
 			try {

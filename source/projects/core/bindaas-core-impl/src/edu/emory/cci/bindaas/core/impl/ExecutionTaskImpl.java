@@ -12,7 +12,6 @@ import org.springframework.util.StopWatch;
 import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.core.api.IExecutionTasks;
-import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.core.api.IValidator;
@@ -34,218 +33,239 @@ import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 
-public class ExecutionTaskImpl implements IExecutionTasks{
+public class ExecutionTaskImpl implements IExecutionTasks {
 
 	private IProviderRegistry providerRegistry;
 	private IModifierRegistry modifierRegistry;
 	private IValidator validator;
 	private Log log = LogFactory.getLog(getClass());
-	
-	
-	public ExecutionTaskImpl()
-	{
+
+	public ExecutionTaskImpl() {
 		Dictionary<String, String> props = new Hashtable<String, String>();
 		props.put("class", getClass().getName());
-		Activator.getContext().registerService(IExecutionTasks.class.getName(), this, props);
+		Activator.getContext().registerService(IExecutionTasks.class.getName(),
+				this, props);
 	}
-	
+
 	@Override
-	public QueryResult executeQueryEndpoint(String user ,Map<String,String> runtimeParameters,
-			Profile profile ,QueryEndpoint queryEndpoint) throws ExecutionTaskException {
+	public QueryResult executeQueryEndpoint(String user,
+			Map<String, String> runtimeParameters, Profile profile,
+			QueryEndpoint queryEndpoint) throws ExecutionTaskException {
 		ProfilerService profiler = Activator.getProfilerService();
-		boolean enableProfiling = profiler!=null && profiler.isEnabled();
+		boolean enableProfiling = profiler != null && profiler.isEnabled();
 		StopWatch stopWatch = null;
-		if(enableProfiling)
-			 stopWatch = profiler.createStopWatch("executeQueryEndpoint");
+		if (enableProfiling)
+			stopWatch = profiler.createStopWatch("executeQueryEndpoint");
 		// construct real query
-		if(enableProfiling)
+		if (enableProfiling)
 			stopWatch.start("Creating Query from Query Template");
-		
-		Map<String,BindVariable> bindVariables = queryEndpoint.getBindVariables();
+
+		Map<String, BindVariable> bindVariables = queryEndpoint
+				.getBindVariables();
 		String template = queryEndpoint.getQueryTemplate();
-		for(BindVariable bindVariable : bindVariables.values())
-		{
+
+		try {
+			// modify runtimeParams
+
+			runtimeParameters = executeQueryParameterModifierChain(user,
+					runtimeParameters, queryEndpoint.getQueryModifiers(),
+					profile.getDataSource());
+			for (BindVariable bindVariable : bindVariables.values()) {
+				String attrName = bindVariable.getName();
+				String attrValue = runtimeParameters.get(attrName);
+
+				if (!bindVariable.isRequired()) {
+					if (attrValue == null) {
+						attrValue = bindVariable.getDefaultValue();
+					}
+
+				} else if (attrValue == null) {
+					throw new ExecutionTaskException("Mandatory attribute ["
+							+ attrName + "] not provided");
+				}
+
+				log.trace("Substituting [" + "$" + attrName + "$" + "] for ["
+						+ attrValue + "] in the Query Template");
+
+				template = template.replace("$" + attrName + "$", attrValue);
+			}
+
+			// execute queryModifier chain
+			if (enableProfiling) {
+				stopWatch.stop();
+				stopWatch.start("Executing Query Modifier Chain");
+			}
+			String finalQuery = executeQueryModifierChain(user, template,
+					queryEndpoint.getQueryModifiers(), profile.getDataSource());
+
+			// execute handler
+
+			IProvider provider = providerRegistry.lookupProvider(
+					profile.getProviderId(), profile.getProviderVersion());
+			IQueryHandler queryHandler = provider.getQueryHandler();
+
+			if (enableProfiling) {
+				stopWatch.stop();
+				stopWatch.start("Executing Query");
+			}
+
+			QueryResult queryResult = queryHandler.query(
+					profile.getDataSource(), queryEndpoint.getOutputFormat(),
+					finalQuery);
+
+			// execute query result chain
+
+			if (enableProfiling) {
+				stopWatch.stop();
+				stopWatch.start("Executing Query Result Modifier Chain");
+			}
+
+			queryResult = executeQueryResultModifierChain(user, queryResult,
+					queryEndpoint.getQueryResultModifiers(),
+					profile.getDataSource());
+
+			// render result
+			return queryResult;
+
+		} catch (Exception e) {
+			log.error("Execution Task failed", e);
+			throw new ExecutionTaskException(e);
+		} finally {
+
+			if (enableProfiling && stopWatch != null && stopWatch.isRunning()) {
+				stopWatch.stop();
+				log.debug(stopWatch.prettyPrint());
+			}
+		}
+	}
+
+	protected Map<String, String> executeQueryParameterModifierChain(
+			String user, Map<String, String> runtimeParameters,
+			ModifierEntry queryModifiers, JsonObject dataSource)
+			throws Exception {
+		Map<String, String> modifiedParams = runtimeParameters;
+		ModifierEntry next = queryModifiers;
+		while (next != null) {
+			IQueryModifier queryModifier = modifierRegistry
+					.findQueryModifier(next.getName());
+			if (queryModifier != null) {
+				modifiedParams = queryModifier.modiftQueryParameters(
+						modifiedParams, dataSource, user, next.getProperties());
+				next = next.getAttachment();
+			} else {
+				throw new ExecutionTaskException("[IQueryModifier] by id=["
+						+ next.getName() + "] not found");
+			}
+
+		}
+
+		return modifiedParams;
+	}
+
+	@Override
+	public QueryResult executeDeleteEndpoint(String user,
+			Map<String, String> runtimeParameters, Profile profile,
+			DeleteEndpoint deleteEndpoint) throws ExecutionTaskException {
+		ProfilerService profiler = Activator.getProfilerService();
+		boolean enableProfiling = profiler != null && profiler.isEnabled();
+
+		StopWatch stopWatch = null;
+		if (enableProfiling)
+			stopWatch = profiler.createStopWatch("executeDeleteEndpoint");
+		// construct real query
+		if (enableProfiling)
+			stopWatch.start("Creating Query from Query Template");
+		Map<String, BindVariable> bindVariables = deleteEndpoint
+				.getBindVariables();
+		String template = deleteEndpoint.getQueryTemplate();
+		for (BindVariable bindVariable : bindVariables.values()) {
 			String attrName = bindVariable.getName();
 			String attrValue = runtimeParameters.get(attrName);
-			
-			if(!bindVariable.isRequired())
-			{
-				if(attrValue == null)
-				{
+
+			if (!bindVariable.isRequired()) {
+				if (attrValue == null) {
 					attrValue = bindVariable.getDefaultValue();
 				}
-				
+
+			} else if (attrValue == null) {
+				throw new ExecutionTaskException("Mandatory attribute ["
+						+ attrName + "] not provided");
 			}
-			else if(attrValue == null)
-			{
-					throw new ExecutionTaskException("Mandatory attribute ["+ attrName + "] not provided");
-			}
-		
-			log.trace("Substituting [" + "$" + attrName + "$" + "] for [" + attrValue + "] in the Query Template");
-			
-			
+
+			log.trace("Substituting [" + "$" + attrName + "$" + "] for ["
+					+ attrValue + "] in the Query Template");
+
 			template = template.replace("$" + attrName + "$", attrValue);
 		}
-		
-		
+
+		// execute handler
+
 		try {
-		// execute queryModifier chain
-			if(enableProfiling)
-				{
-					stopWatch.stop();
-					stopWatch.start("Executing Query Modifier Chain");
-				}
-		String finalQuery = executeQueryModifierChain(user, template, queryEndpoint.getQueryModifiers() , profile.getDataSource());
-		
-		
-		// execute handler
-		
-		IProvider provider = providerRegistry.lookupProvider(profile.getProviderId(), profile.getProviderVersion());
-		IQueryHandler queryHandler = provider.getQueryHandler();
-		
-		if(enableProfiling)
-		{
-			stopWatch.stop();
-			stopWatch.start("Executing Query");
-		}
-		
-		QueryResult queryResult = queryHandler.query(profile.getDataSource(),queryEndpoint.getOutputFormat() ,finalQuery);
-		
-		// execute query result chain
-		
-		if(enableProfiling)
-		{
-			stopWatch.stop();
-			stopWatch.start("Executing Query Result Modifier Chain");
-		}
-		
-		queryResult = executeQueryResultModifierChain(user, queryResult, queryEndpoint.getQueryResultModifiers(), profile.getDataSource());
-		
-		// render result
-		return queryResult;
-		
-		}
-		catch (Exception e) {
-			log.error("Execution Task failed" , e);
+			IProvider provider = providerRegistry.lookupProvider(
+					profile.getProviderId(), profile.getProviderVersion());
+			IDeleteHandler deleteHandler = provider.getDeleteHandler();
+
+			if (enableProfiling) {
+				stopWatch.stop();
+				stopWatch.start("Executing Delete Query");
+			}
+			QueryResult queryResult = deleteHandler.delete(
+					profile.getDataSource(), template);
+			// render result
+			return queryResult;
+
+		} catch (Exception e) {
+			log.error("Execution Task failed", e);
 			throw new ExecutionTaskException(e);
-		}
-		finally{
-			
-			if(enableProfiling && stopWatch!=null && stopWatch.isRunning())
-			{
+		} finally {
+			if (enableProfiling && stopWatch != null && stopWatch.isRunning()) {
 				stopWatch.stop();
 				log.debug(stopWatch.prettyPrint());
 			}
 		}
+
 	}
 
 	@Override
-	public QueryResult executeDeleteEndpoint(String user ,Map<String,String> runtimeParameters,
-			Profile profile ,DeleteEndpoint deleteEndpoint) throws ExecutionTaskException {
+	public QueryResult executeSubmitEndpoint(String user, InputStream is,
+			Profile profile, SubmitEndpoint submitEndpoint)
+			throws ExecutionTaskException {
 		ProfilerService profiler = Activator.getProfilerService();
-		boolean enableProfiling = profiler!=null && profiler.isEnabled();
-		
+		boolean enableProfiling = profiler != null && profiler.isEnabled();
 		StopWatch stopWatch = null;
-		if(enableProfiling)
-			 stopWatch = profiler.createStopWatch("executeDeleteEndpoint");
-		// construct real query
-		if(enableProfiling)
-			stopWatch.start("Creating Query from Query Template");
-				Map<String,BindVariable> bindVariables = deleteEndpoint.getBindVariables();
-				String template = deleteEndpoint.getQueryTemplate();
-				for(BindVariable bindVariable : bindVariables.values())
-				{
-					String attrName = bindVariable.getName();
-					String attrValue = runtimeParameters.get(attrName);
-					
-					if(!bindVariable.isRequired())
-					{
-						if(attrValue == null)
-						{
-							attrValue = bindVariable.getDefaultValue();
-						}
-						
-					}
-					else if(attrValue == null)
-					{
-							throw new ExecutionTaskException("Mandatory attribute ["+ attrName + "] not provided");
-					}
-				
-					log.trace("Substituting [" + "$" + attrName + "$" + "] for [" + attrValue + "] in the Query Template");
-					
-					
-					template = template.replace("$" + attrName + "$", attrValue);
-				}
-				
-				// execute handler
-				
-				
-				try {
-					IProvider provider = providerRegistry.lookupProvider(profile.getProviderId(), profile.getProviderVersion());
-					IDeleteHandler deleteHandler = provider.getDeleteHandler();
-					
-					if(enableProfiling)
-					{
-						stopWatch.stop();
-						stopWatch.start("Executing Delete Query");
-					}
-					QueryResult queryResult = deleteHandler.delete(profile.getDataSource(), template); 
-					// render result
-					return queryResult;
-					
-				} catch (Exception e) {
-					log.error("Execution Task failed" , e);
-					throw new ExecutionTaskException(e);
-				}finally{
-					if(enableProfiling && stopWatch!=null && stopWatch.isRunning())
-					{
-						stopWatch.stop();
-						log.debug(stopWatch.prettyPrint());
-					}
-				}
-								
-				
-	}
-
-	@Override
-	public QueryResult executeSubmitEndpoint(String user ,InputStream is,
-			Profile profile ,SubmitEndpoint submitEndpoint) throws ExecutionTaskException {
-		ProfilerService profiler = Activator.getProfilerService();
-		boolean enableProfiling = profiler!=null && profiler.isEnabled();
-		StopWatch stopWatch = null;
-		if(enableProfiling)
-			 stopWatch = profiler.createStopWatch("executeSubmitEndpoint");
-		try{
-			if(enableProfiling)
+		if (enableProfiling)
+			stopWatch = profiler.createStopWatch("executeSubmitEndpoint");
+		try {
+			if (enableProfiling)
 				stopWatch.start("Executing Submit payload modifier");
-		InputStream finalStream = executeSubmitPayloadModifierChain(user, is, submitEndpoint.getSubmitPayloadModifiers(), submitEndpoint);
-		// execute handler
-		
-		IProvider provider = providerRegistry.lookupProvider(profile.getProviderId(), profile.getProviderVersion());
-		ISubmitHandler submitHandler = provider.getSubmitHandler();
-		
-		if(enableProfiling)
-		{
-			stopWatch.stop();
-			stopWatch.start("Executing Submit ");
-		}
-		QueryResult queryResult = submitHandler.submit(profile.getDataSource(), submitEndpoint.getProperties(), finalStream);
-		return queryResult;
-		}
-		catch (Exception e) {
-			log.error("Execution Task failed" , e);
+			InputStream finalStream = executeSubmitPayloadModifierChain(user,
+					is, submitEndpoint.getSubmitPayloadModifiers(),
+					submitEndpoint);
+			// execute handler
+
+			IProvider provider = providerRegistry.lookupProvider(
+					profile.getProviderId(), profile.getProviderVersion());
+			ISubmitHandler submitHandler = provider.getSubmitHandler();
+
+			if (enableProfiling) {
+				stopWatch.stop();
+				stopWatch.start("Executing Submit ");
+			}
+			QueryResult queryResult = submitHandler.submit(
+					profile.getDataSource(), submitEndpoint.getProperties(),
+					finalStream);
+			return queryResult;
+		} catch (Exception e) {
+			log.error("Execution Task failed", e);
 			throw new ExecutionTaskException(e);
-		}
-		finally{
-			if(enableProfiling && stopWatch!=null && stopWatch.isRunning())
-			{
+		} finally {
+			if (enableProfiling && stopWatch != null && stopWatch.isRunning()) {
 				stopWatch.stop();
 				log.debug(stopWatch.prettyPrint());
 			}
 		}
 	}
 
-	
 	public IProviderRegistry getProviderRegistry() {
 		return providerRegistry;
 	}
@@ -262,7 +282,6 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 		this.modifierRegistry = modifierRegistry;
 	}
 
-
 	public IValidator getValidator() {
 		return validator;
 	}
@@ -271,113 +290,119 @@ public class ExecutionTaskImpl implements IExecutionTasks{
 		this.validator = validator;
 	}
 
-	protected String executeQueryModifierChain(String user ,String query , ModifierEntry modifierChain , JsonObject dataSource) throws Exception
-	{
+	protected String executeQueryModifierChain(String user, String query,
+			ModifierEntry modifierChain, JsonObject dataSource)
+			throws Exception {
 		String modifiedQuery = query;
 		ModifierEntry next = modifierChain;
-		while(next!=null)
-		{
-			IQueryModifier queryModifier = modifierRegistry.findQueryModifier(next.getName()) ;
-			if(queryModifier!=null)
-			{
-				modifiedQuery = queryModifier.modifyQuery(modifiedQuery, dataSource, user, next.getProperties());
+		while (next != null) {
+			IQueryModifier queryModifier = modifierRegistry
+					.findQueryModifier(next.getName());
+			if (queryModifier != null) {
+				modifiedQuery = queryModifier.modifyQuery(modifiedQuery,
+						dataSource, user, next.getProperties());
 				next = next.getAttachment();
+			} else {
+				throw new ExecutionTaskException("[IQueryModifier] by id=["
+						+ next.getName() + "] not found");
 			}
-			else
-			{
-				throw new ExecutionTaskException("[IQueryModifier] by id=[" + next.getName()  +"] not found");
-			}
-			
+
 		}
-		
+
 		return modifiedQuery;
 	}
-	
-	protected QueryResult executeQueryResultModifierChain(String user , QueryResult queryResult  ,ModifierEntry modifierChain , JsonObject dataSource) throws Exception
-	{
+
+	protected QueryResult executeQueryResultModifierChain(String user,
+			QueryResult queryResult, ModifierEntry modifierChain,
+			JsonObject dataSource) throws Exception {
 		QueryResult modifiedQueryResult = queryResult;
 		ModifierEntry next = modifierChain;
-		while(next!=null)
-		{
-			IQueryResultModifier queryResultModifier = modifierRegistry.findQueryResultModifier(next.getName()) ;
-			if(queryResultModifier!=null)
-			{
-				modifiedQueryResult = queryResultModifier.modifyQueryResult(modifiedQueryResult, dataSource, user, next.getProperties());
+		while (next != null) {
+			IQueryResultModifier queryResultModifier = modifierRegistry
+					.findQueryResultModifier(next.getName());
+			if (queryResultModifier != null) {
+				modifiedQueryResult = queryResultModifier.modifyQueryResult(
+						modifiedQueryResult, dataSource, user,
+						next.getProperties());
 				next = next.getAttachment();
+			} else {
+				throw new ExecutionTaskException(
+						"[IQueryResultModifier] by id=[" + next.getName()
+								+ "] not found");
 			}
-			else
-			{
-				throw new ExecutionTaskException("[IQueryResultModifier] by id=[" + next.getName()  +"] not found");
-			}
-			
+
 		}
-		
-		
-		return modifiedQueryResult; 
+
+		return modifiedQueryResult;
 	}
-	
-	protected InputStream executeSubmitPayloadModifierChain(String user, InputStream input , ModifierEntry modifierChain , SubmitEndpoint submitEndpoint) throws Exception
-	{
+
+	protected InputStream executeSubmitPayloadModifierChain(String user,
+			InputStream input, ModifierEntry modifierChain,
+			SubmitEndpoint submitEndpoint) throws Exception {
 		InputStream modifiedInput = input;
 		ModifierEntry next = modifierChain;
-		while(next!=null)
-		{
-			ISubmitPayloadModifier submitPayloadModifier = modifierRegistry.findSubmitPayloadModifier(next.getName()) ;
-			if(submitPayloadModifier!=null)
-			{
-				modifiedInput = submitPayloadModifier.transformPayload(modifiedInput, submitEndpoint, next.getProperties());
+		while (next != null) {
+			ISubmitPayloadModifier submitPayloadModifier = modifierRegistry
+					.findSubmitPayloadModifier(next.getName());
+			if (submitPayloadModifier != null) {
+				modifiedInput = submitPayloadModifier.transformPayload(
+						modifiedInput, submitEndpoint, next.getProperties());
 				next = next.getAttachment();
+			} else {
+				throw new ExecutionTaskException(
+						"[ISubmitPayloadModifier] by id=[" + next.getName()
+								+ "] not found");
 			}
-			else
-			{
-				throw new ExecutionTaskException("[ISubmitPayloadModifier] by id=[" + next.getName()  +"] not found");
-			}
-			
+
 		}
-		
-		return modifiedInput; 
+
+		return modifiedInput;
 	}
 
 	@Override
 	public QueryResult executeSubmitEndpoint(String user, String data,
 			Profile profile, SubmitEndpoint submitEndpoint)
 			throws ExecutionTaskException {
-		try{
+		try {
 			log.debug(data);
-			String finalData = executeSubmitPayloadModifierChain(user, data, submitEndpoint.getSubmitPayloadModifiers(), submitEndpoint);
+			String finalData = executeSubmitPayloadModifierChain(user, data,
+					submitEndpoint.getSubmitPayloadModifiers(), submitEndpoint);
 			// execute handler
-			
-			IProvider provider = providerRegistry.lookupProvider(profile.getProviderId(), profile.getProviderVersion());
+
+			IProvider provider = providerRegistry.lookupProvider(
+					profile.getProviderId(), profile.getProviderVersion());
 			ISubmitHandler submitHandler = provider.getSubmitHandler();
-			QueryResult queryResult = submitHandler.submit(profile.getDataSource(), submitEndpoint.getProperties(), finalData);
+			QueryResult queryResult = submitHandler.submit(
+					profile.getDataSource(), submitEndpoint.getProperties(),
+					finalData);
 			return queryResult;
-			}
-			catch (Exception e) {
-				log.error("Execution Task failed" , e);
-				throw new ExecutionTaskException(e);
-			}
+		} catch (Exception e) {
+			log.error("Execution Task failed", e);
+			throw new ExecutionTaskException(e);
+		}
 	}
 
 	private String executeSubmitPayloadModifierChain(String user, String data,
-			ModifierEntry submitPayloadModifiers , SubmitEndpoint submitEndpoint) throws Exception {
+			ModifierEntry submitPayloadModifiers, SubmitEndpoint submitEndpoint)
+			throws Exception {
 
 		String modifiedInput = data;
 		ModifierEntry next = submitPayloadModifiers;
-		while(next!=null)
-		{
-			ISubmitPayloadModifier submitPayloadModifier = modifierRegistry.findSubmitPayloadModifier(next.getName()) ;
-			if(submitPayloadModifier!=null)
-			{
-				modifiedInput = submitPayloadModifier.transformPayload(modifiedInput, submitEndpoint, next.getProperties());
+		while (next != null) {
+			ISubmitPayloadModifier submitPayloadModifier = modifierRegistry
+					.findSubmitPayloadModifier(next.getName());
+			if (submitPayloadModifier != null) {
+				modifiedInput = submitPayloadModifier.transformPayload(
+						modifiedInput, submitEndpoint, next.getProperties());
 				next = next.getAttachment();
+			} else {
+				throw new ExecutionTaskException(
+						"[ISubmitPayloadModifier] by id=[" + next.getName()
+								+ "] not found");
 			}
-			else
-			{
-				throw new ExecutionTaskException("[ISubmitPayloadModifier] by id=[" + next.getName()  +"] not found");
-			}
-			
+
 		}
-		
-		return modifiedInput; 
+
+		return modifiedInput;
 	}
 }

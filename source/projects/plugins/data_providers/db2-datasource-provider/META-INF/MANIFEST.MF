@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: IBM DB2 DataSource Provider
 Bundle-SymbolicName: db2-datasource-provider
 Bundle-Version: 1.0.0
-Bundle-Activator: edu.emory.cci.bindaas.datasource.provider.db2.DB2Activator
+Bundle-Activator: edu.emory.cci.bindaas.datasource.provider.db2.bundle.Activator
 Bundle-Vendor: CCI Emory University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.google.gson;version="2.1.0",

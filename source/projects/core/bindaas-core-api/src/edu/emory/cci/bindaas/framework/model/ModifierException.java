@@ -2,6 +2,8 @@ package edu.emory.cci.bindaas.framework.model;
 
 public class ModifierException extends Exception{
 
+	
+	private static final long serialVersionUID = 7533907432696194881L;
 	private String modifierId;
 	
 	public ModifierException(String modifierId) {

@@ -1,6 +1,5 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat;
 
-import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +45,7 @@ public class HTMLFormatHandler extends AbstractFormatHandler{
 		return OutputFormat.HTML; 
 	}
 	
+	@SuppressWarnings("restriction")
 	private String toHTML(DBCursor cursor)
 		    throws Exception {
 		List<Map<String,String>> listOfValues = new ArrayList<Map<String,String>>();

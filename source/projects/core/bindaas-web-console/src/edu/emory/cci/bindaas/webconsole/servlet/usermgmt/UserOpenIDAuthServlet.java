@@ -17,9 +17,10 @@ import edu.emory.cci.bindaas.openid.OpenIDHelper;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
-import edu.emory.cci.bindaas.webconsole.LoginView;
 
 public class UserOpenIDAuthServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
 	private String servletLocation = "/user/openidlogin" ;
 	private String defaultLoginTarget  = "/user/login";
 	private String postLoginActionTarget = "/user/postAuthenticate";
@@ -99,11 +100,13 @@ public class UserOpenIDAuthServlet extends HttpServlet {
 	{
 		// code for setting authentication provider
 		final BundleContext context = Activator.getContext();
+		@SuppressWarnings("rawtypes")
 		ServiceReference[] serviceReferences;
 		try {
 			serviceReferences = context.getAllServiceReferences(OpenIDHelper.class.getName(), null);
 			if(serviceReferences.length > 0)
 			{
+				@SuppressWarnings("unchecked")
 				Object service = context.getService(serviceReferences[0]);
 				if(service!=null)
 				{

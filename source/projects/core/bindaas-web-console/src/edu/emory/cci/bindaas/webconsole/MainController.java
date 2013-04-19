@@ -16,7 +16,7 @@ import edu.emory.cci.bindaas.webconsole.util.UriTemplate;
 
 public class MainController extends HttpServlet {
 
-	
+	private static final long serialVersionUID = 1L;
 	private Log log = LogFactory.getLog(getClass());
 	private List<IRequestHandler> requestHandlers;
 	
@@ -78,49 +78,6 @@ public class MainController extends HttpServlet {
 			log.error(e);
 			ErrorView.handleError(response, e);
 		}
-	}
-
-	/**
-	 * find request handler matching the request parameter
-	 * 
-	 * @param request
-	 * @return
-	 */
-
-	private IRequestHandler findRequestHandlerMatchingRequest(
-			HttpServletRequest request) {
-		String pathInfo = request.getPathInfo();
-		String[] pathElements = pathInfo.split("/");
-		
-		for(IRequestHandler requestHandler : requestHandlers)
-		{
-			String uriTemplate = requestHandler.getUriTemplate();
-			String[] pathSegments = uriTemplate.split("/");
-			boolean isMatch = false;
-			if(pathElements.length == pathSegments.length)
-			{	
-				for(int index = 0; index < pathSegments.length ; index++)
-				{
-					if(pathSegments[index].startsWith("{") && pathSegments[index].endsWith("}"))
-					{
-						continue;
-					}
-					else if(pathSegments[index].equals(pathElements[index]))
-					{
-						continue;
-					}
-					else
-					{
-						break;
-					}
-				}
-			}
-			
-			if(isMatch)
-				return requestHandler;
-		}
-		
-		return null;
 	}
 	
 	public void init()

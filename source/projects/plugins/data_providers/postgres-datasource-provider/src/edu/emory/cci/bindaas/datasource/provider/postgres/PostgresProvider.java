@@ -2,20 +2,19 @@ package edu.emory.cci.bindaas.datasource.provider.postgres;
 
 import java.sql.Driver;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 
 import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.datasource.provider.genericsql.AbstractSQLProvider;
+import edu.emory.cci.bindaas.datasource.provider.postgres.bundle.Activator;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 
 public class PostgresProvider extends AbstractSQLProvider{
 	private static Driver driver = null;
 	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
 	private JsonObject documentation;
-	private Log log = LogFactory.getLog(getClass());
+	
 	
 	public void init() throws Exception
 	{

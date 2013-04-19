@@ -26,6 +26,7 @@ Import-Package: com.google.gson;version="2.1.0",
  edu.emory.cci.bindaas.framework.event.listeners,
  edu.emory.cci.bindaas.framework.model,
  edu.emory.cci.bindaas.framework.util,
+ edu.emory.cci.bindaas.installer.command,
  edu.emory.cci.bindaas.openid,
  edu.emory.cci.bindaas.security.api,
  edu.emory.cci.bindaas.security.ldap,
@@ -50,3 +51,5 @@ Bundle-ClassPath: velocity-1.7.jar,
  velocity-tools-2.0.jar,
  velocity-tools-generic-2.0.jar,
  velocity-tools-view-2.0.jar
+Export-Package: edu.emory.cci.bindaas.webconsole.config,
+ edu.emory.cci.bindaas.webconsole.util

@@ -1,10 +1,11 @@
 package edu.emory.cci.bindaas.junit.provider.mongodb;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.osgi.framework.BundleContext;
@@ -19,15 +20,12 @@ import com.mongodb.Mongo;
 import edu.emory.cci.bindaas.core.api.IExecutionTasks;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.model.DeleteEndpointRequestParameter;
-import edu.emory.cci.bindaas.core.model.QueryEndpointRequestParameter;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 import edu.emory.cci.bindaas.framework.model.Profile;
-import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
-import junit.framework.TestCase;
 
 public class DeleteHandlerTestCase extends TestCase {
 
@@ -56,7 +54,7 @@ public class DeleteHandlerTestCase extends TestCase {
 	private IExecutionTasks getExecutionTaskBean()
 	{
 		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IExecutionTasks.class.getName());
+		ServiceReference<?> sf = context.getServiceReference(IExecutionTasks.class.getName());
 		if(sf!=null)
 		{
 			Object service = context.getService(sf);
@@ -74,7 +72,7 @@ public class DeleteHandlerTestCase extends TestCase {
 	private IManagementTasks getManagementTaskBean()
 	{
 		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IManagementTasks.class.getName());
+		ServiceReference<?> sf = context.getServiceReference(IManagementTasks.class.getName());
 		if(sf!=null)
 		{
 			Object service = context.getService(sf);
@@ -110,7 +108,7 @@ public class DeleteHandlerTestCase extends TestCase {
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy() , "");
 			
 			for(DeleteEndpoint testDeleteEndpoint : testProfile.getDeleteEndpoints().values())
 			{
@@ -152,7 +150,7 @@ public class DeleteHandlerTestCase extends TestCase {
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy() , "");
 			
 			for(DeleteEndpoint testDeleteEndpoint : testProfile.getDeleteEndpoints().values())
 			{
@@ -190,7 +188,7 @@ public class DeleteHandlerTestCase extends TestCase {
 			profileParams.add("providerVersion", new JsonPrimitive(testProfile.getProviderVersion()) );
 			profileParams.add("dataSource" , testProfile.getDataSource());
 			
-			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy());
+			managementTask.createProfile(testProfile.getName(), testWorkspace.getName(), profileParams, testProfile.getCreatedBy() , "");
 		
 			// 3. Create a new SubmitEndpoint
 						

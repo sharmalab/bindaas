@@ -17,6 +17,8 @@ import edu.emory.cci.bindaas.openid.OpenIDHelper;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
 public class OpenIDAuth extends HttpServlet {
+	
+	private static final long serialVersionUID = -3635690241712230630L;
 	private String servletLocation = "/openidlogin" ;
 	private String defaultLoginTarget  = "/dashboard/";
 	private String postLoginActionTarget = "/postAuthenticate";
@@ -97,11 +99,13 @@ public class OpenIDAuth extends HttpServlet {
 	{
 		// code for setting authentication provider
 		final BundleContext context = Activator.getContext();
+		@SuppressWarnings("rawtypes")
 		ServiceReference[] serviceReferences;
 		try {
 			serviceReferences = context.getAllServiceReferences(OpenIDHelper.class.getName(), null);
 			if(serviceReferences.length > 0)
 			{
+				@SuppressWarnings("unchecked")
 				Object service = context.getService(serviceReferences[0]);
 				if(service!=null)
 				{

@@ -38,6 +38,7 @@ public class UserManagementPanelAction implements IAdminAction {
 		return actionName;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public String doAction(JsonObject payload , HttpServletRequest request) throws Exception {
 		BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
@@ -50,7 +51,7 @@ public class UserManagementPanelAction implements IAdminAction {
 			
 			try {
 					session.beginTransaction();
-					
+					@SuppressWarnings("unchecked")
 					List<UserRequest> list = session.createCriteria(UserRequest.class).add(Restrictions.eq("id", requestObject.entityId)).list();
 					String emailMessage = null;
 					if(list!=null && list.size() > 0)

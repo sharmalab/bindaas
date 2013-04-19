@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Bindaas Commons OpenID Helper Bundle
 Bundle-SymbolicName: bindaas-commons-openid-helper
 Bundle-Version: 1.0.0
-Bundle-Activator: edu.emory.cci.bindaas.openid.Activator
+Bundle-Activator: edu.emory.cci.bindaas.openid.bundle.Activator
 Bundle-Vendor: CCI Emory University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Spring-Context: *

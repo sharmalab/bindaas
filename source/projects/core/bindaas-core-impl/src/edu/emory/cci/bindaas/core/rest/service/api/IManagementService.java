@@ -6,6 +6,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 public interface IManagementService {
@@ -20,7 +21,7 @@ public interface IManagementService {
 	
 	@Path("{workspace}/{profile}")
 	@POST
-	public Response createProfile(@PathParam("workspace") String workspace , @PathParam("profile") String profile) ;
+	public Response createProfile(@PathParam("workspace") String workspace , @PathParam("profile") String profile , @QueryParam("description") String description) ;
 	
 	@Path("{workspace}/{profile}/query/{queryEndpoint}")
 	@POST
@@ -67,7 +68,7 @@ public interface IManagementService {
 	
 	@Path("{workspace}/{profile}")
 	@PUT
-	public Response updateProfile(@PathParam("workspace") String workspace , @PathParam("profile") String profile) ;
+	public Response updateProfile(@PathParam("workspace") String workspace , @PathParam("profile") String profile , @QueryParam("description") String description) ;
 	
 	@Path("{workspace}/{profile}/query/{queryEndpoint}")
 	@PUT

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,19 +26,31 @@ import edu.emory.cci.bindaas.commons.mail.api.IMailService;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 
 public class ManageUserRegistration extends AbstractRequestHandler {
 
 	private static String templateName = "manageUserRegistration.vt";
-	private static Template template;
+	private  Template template;
+private VelocityEngineWrapper velocityEngineWrapper;
 	
-	static {
-		template = Activator.getVelocityTemplateByName(templateName);
+	public VelocityEngineWrapper getVelocityEngineWrapper() {
+		return velocityEngineWrapper;
+	}
+
+	public void setVelocityEngineWrapper(VelocityEngineWrapper velocityEngineWrapper) {
+		this.velocityEngineWrapper = velocityEngineWrapper;
+	}
+
+	public void init() throws Exception
+	{
+		template = velocityEngineWrapper.getVelocityTemplateByName(templateName);
 	}
 	
 	private String uriTemplate;
@@ -78,16 +91,41 @@ public class ManageUserRegistration extends AbstractRequestHandler {
 			Session session  = sessionFactory.openSession();
 			
 			try {
-					List pendingRequests = session.createQuery("from UserRequest where stage = :stage order by requestDate desc").setString("stage", "pending").list();
-					List acceptedRequests = session.createQuery("from UserRequest where stage = :stage order by requestDate desc").setString("stage", "accepted").list();
-					List historyLog = session.createQuery("from HistoryLog order by activityDate desc").list();
+					List<?> pendingRequests = session.createQuery("from UserRequest where stage = :stage order by requestDate desc").setString("stage", "pending").list();
+					List<?> acceptedRequests = session.createQuery("from UserRequest where stage = :stage order by requestDate desc").setString("stage", "accepted").list();
+					List<?> historyLog = session.createQuery("from HistoryLog order by activityDate desc").list();
 					
 					VelocityContext velocityContext = new VelocityContext();
 					velocityContext.put("pendingRequests", pendingRequests);
 					velocityContext.put("acceptedRequests", acceptedRequests);
 					velocityContext.put("historyLog", historyLog);
 					velocityContext.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
+					/**
+					 * Add version information
+					 */
+					String versionHeader = "";
+					VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+					if(versionCommand!=null)
+					{
+						String frameworkBuilt = "";
 					
+						String buildDate = "";
+						try{
+							Properties versionProperties = versionCommand.getProperties();
+							frameworkBuilt = String.format("%s.%s.%s", versionProperties.get("bindaas.framework.version.major") , versionProperties.get("bindaas.framework.version.minor") , versionProperties.get("bindaas.framework.version.revision") );
+					
+							buildDate = versionProperties.getProperty("bindaas.build.date");
+						}catch(NullPointerException e)
+						{
+							log.warn("Version Header not set");
+						}
+						versionHeader = String.format("System built <strong>%s</strong>  Build date <strong>%s<strong>", frameworkBuilt,buildDate);
+					}
+					else
+		{
+			log.warn("Version Header not set");
+		}		
+					velocityContext.put("versionHeader", versionHeader);
 					template.merge(velocityContext, response.getWriter());
 			}
 			catch(Exception e)
@@ -105,6 +143,7 @@ public class ManageUserRegistration extends AbstractRequestHandler {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void doAction(HttpServletRequest request,
 			HttpServletResponse response)
 	{
@@ -123,6 +162,7 @@ public class ManageUserRegistration extends AbstractRequestHandler {
 			try {
 					session.beginTransaction();
 					
+					@SuppressWarnings("unchecked")
 					List<UserRequest> list = session.createCriteria(UserRequest.class).add(Restrictions.eq("id", requestObject.entityId)).list();
 					String emailMessage = null;
 					if(list!=null && list.size() > 0)

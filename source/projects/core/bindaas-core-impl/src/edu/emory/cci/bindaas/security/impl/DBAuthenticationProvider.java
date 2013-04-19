@@ -81,6 +81,7 @@ public class DBAuthenticationProvider implements IAuthenticationProvider {
 			Session session = sessionFactory.openSession();
 			try{
 				
+				@SuppressWarnings("unchecked")
 				List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).add(Restrictions.eq("stage",	"accepted")).add(Restrictions.eq("apiKey", api_key)).list();
 				if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
 				{

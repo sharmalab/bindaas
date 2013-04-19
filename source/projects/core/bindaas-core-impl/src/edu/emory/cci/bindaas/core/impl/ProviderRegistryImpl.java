@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
@@ -32,7 +31,7 @@ public class ProviderRegistryImpl implements IProviderRegistry{
 			
 			@Override
 			public void serviceChanged(ServiceEvent sv) {
-				ServiceReference serviceRef = sv.getServiceReference();
+				ServiceReference<?> serviceRef = sv.getServiceReference();
 				      switch(sv.getType()) {
 				        case ServiceEvent.REGISTERED :
 				          {
@@ -58,10 +57,11 @@ public class ProviderRegistryImpl implements IProviderRegistry{
 		
 		
 		// add existing providers
+		@SuppressWarnings("rawtypes")
 		ServiceReference[] serviceReferences = context.getAllServiceReferences(IProvider.class.getName(), null);
 		if(serviceReferences!=null)
 		{
-			for(ServiceReference serviceRef : serviceReferences)
+			for(ServiceReference<?> serviceRef : serviceReferences)
 			{
 				providerServiceListener.serviceChanged( new ServiceEvent(ServiceEvent.REGISTERED, serviceRef));
 			}
@@ -126,7 +126,7 @@ public class ProviderRegistryImpl implements IProviderRegistry{
 	public Collection<IProvider> findProviders() {
 		List<IProvider> listOfAllProvider = new ArrayList<IProvider>();
 		
-		for(Map map : providerRegistry.values())
+		for(Map<Integer,IProvider> map : providerRegistry.values())
 		{
 			listOfAllProvider.addAll(map.values());
 		}

@@ -3,7 +3,7 @@ package edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import edu.emory.cci.bindaas.datasource.provider.genericsql.Activator;
+import edu.emory.cci.bindaas.datasource.provider.genericsql.bundle.Activator;
 
 public abstract class AbstractFormatHandler implements IFormatHandler{
 

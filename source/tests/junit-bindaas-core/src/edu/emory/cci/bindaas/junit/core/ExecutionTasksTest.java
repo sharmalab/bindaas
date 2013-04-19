@@ -1,12 +1,13 @@
 package edu.emory.cci.bindaas.junit.core;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -27,12 +28,11 @@ import edu.emory.cci.bindaas.framework.model.ModifierEntry;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
-import edu.emory.cci.bindaas.framework.model.Stage;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+import edu.emory.cci.bindaas.junit.bundle.Activator;
 import edu.emory.cci.bindaas.junit.mock.MockProvider;
-import junit.framework.TestCase;
 
 public class ExecutionTasksTest extends TestCase {
 	
@@ -99,7 +99,7 @@ public class ExecutionTasksTest extends TestCase {
 		parameters.add("dataSource", dataSource);
 		
 		try {
-			 managementTasks.createProfile(PROFILE_NAME, WORKSPACE_NAME, parameters, CREATED_BY);
+			 managementTasks.createProfile(PROFILE_NAME, WORKSPACE_NAME, parameters, CREATED_BY , "");
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
@@ -184,6 +184,7 @@ public class ExecutionTasksTest extends TestCase {
 		SubmitEndpointRequestParameter params = new SubmitEndpointRequestParameter();
 		
 		JsonObject properties = new JsonObject();
+		@SuppressWarnings("unused")
 		Map<Integer,ModifierEntry> payloadModifier = new HashMap<Integer, ModifierEntry>();
 		
 		params.setProperties(properties);
@@ -203,7 +204,7 @@ public class ExecutionTasksTest extends TestCase {
 	private IManagementTasks getManagementTaskBean()
 	{
 		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IManagementTasks.class.getName());
+		ServiceReference<?> sf = context.getServiceReference(IManagementTasks.class.getName());
 		if(sf!=null)
 		{
 			Object service = context.getService(sf);
@@ -221,7 +222,7 @@ public class ExecutionTasksTest extends TestCase {
 	private IExecutionTasks getExecutionTaskBean()
 	{
 		BundleContext context = Activator.getContext();
-		ServiceReference sf = context.getServiceReference(IExecutionTasks.class.getName());
+		ServiceReference<?> sf = context.getServiceReference(IExecutionTasks.class.getName());
 		if(sf!=null)
 		{
 			Object service = context.getService(sf);
@@ -289,7 +290,7 @@ public class ExecutionTasksTest extends TestCase {
 				
 				String expectedName = "JunitName";
 				String expectedPhone = "JunitPhone";
-				String expectedAddress = "JunitAddress";
+				
 				runtimeParameters.put("name", expectedName);
 				runtimeParameters.put("phone", expectedPhone);
 				

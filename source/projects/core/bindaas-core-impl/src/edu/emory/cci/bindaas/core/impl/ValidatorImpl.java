@@ -2,13 +2,11 @@ package edu.emory.cci.bindaas.core.impl;
 
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.core.api.IValidator;
-import edu.emory.cci.bindaas.core.exception.ExecutionTaskException;
 import edu.emory.cci.bindaas.core.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.api.IQueryModifier;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.api.ISubmitPayloadModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierEntry;
-import edu.emory.cci.bindaas.framework.model.QueryResult;
 
 public class ValidatorImpl implements IValidator{
 	private IModifierRegistry modifierRegistry;

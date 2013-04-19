@@ -213,6 +213,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 	}
 
 	private List<Map<String, String>> parseCSV(String data) throws Exception {
+		@SuppressWarnings("resource")
 		CSVReader csvReader = new CSVReader(new StringReader(data));
 		List<String[]> listOfVal = csvReader.readAll();
 		List<Map<String, String>> retVal = new ArrayList<Map<String,String>>();
@@ -244,7 +245,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 			String columns[] =	columnNames.split(",");
 			StringBuilder preparedStatement = new StringBuilder();
 			preparedStatement.append("insert into ").append(tableName).append(" (").append(columnNames).append(" ) values (");
-			for(String column : columns)
+			for(@SuppressWarnings("unused") String column : columns)
 			{
 				preparedStatement.append("?,");
 			}

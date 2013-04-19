@@ -1,7 +1,6 @@
 package edu.emory.cci.bindaas.security.api;
 
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * All authentication providers must implement this interface

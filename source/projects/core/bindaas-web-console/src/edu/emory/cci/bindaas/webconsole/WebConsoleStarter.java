@@ -39,10 +39,68 @@ public class WebConsoleStarter {
 	private PostLoginAction postLoginAction;
 	private Log log = LogFactory.getLog(getClass());
 	private boolean initialized = false;
+	@SuppressWarnings("unused")
 	private DynamicObject<BindaasAdminConsoleConfiguration> bindaasAdminConsoleConfiguration;
 	private BindaasAdminConsoleConfiguration defaultBindaasAdminConsoleConfiguration;
 	private OpenIDAuth openIdAuth;
+	private UserQueryBrowserServlet userQueryBrowserServlet;
+	private UserOpenIDAuthServlet userOpenIDAuthServlet;
+	private PostUserLoginServlet postUserLoginServlet;
+	private LogoutServlet logoutServlet;
+	private UserLoginServlet userLoginServlet;
 	
+	
+	public UserQueryBrowserServlet getUserQueryBrowserServlet() {
+		return userQueryBrowserServlet;
+	}
+
+
+	public void setUserQueryBrowserServlet(
+			UserQueryBrowserServlet userQueryBrowserServlet) {
+		this.userQueryBrowserServlet = userQueryBrowserServlet;
+	}
+
+
+	public UserOpenIDAuthServlet getUserOpenIDAuthServlet() {
+		return userOpenIDAuthServlet;
+	}
+
+
+	public void setUserOpenIDAuthServlet(UserOpenIDAuthServlet userOpenIDAuthServlet) {
+		this.userOpenIDAuthServlet = userOpenIDAuthServlet;
+	}
+
+
+	public PostUserLoginServlet getPostUserLoginServlet() {
+		return postUserLoginServlet;
+	}
+
+
+	public void setPostUserLoginServlet(PostUserLoginServlet postUserLoginServlet) {
+		this.postUserLoginServlet = postUserLoginServlet;
+	}
+
+
+	public LogoutServlet getLogoutServlet() {
+		return logoutServlet;
+	}
+
+
+	public void setLogoutServlet(LogoutServlet logoutServlet) {
+		this.logoutServlet = logoutServlet;
+	}
+
+
+	public UserLoginServlet getUserLoginServlet() {
+		return userLoginServlet;
+	}
+
+
+	public void setUserLoginServlet(UserLoginServlet userLoginServlet) {
+		this.userLoginServlet = userLoginServlet;
+	}
+
+
 	public OpenIDAuth getOpenIdAuth() {
 		return openIdAuth;
 	}
@@ -101,6 +159,7 @@ public class WebConsoleStarter {
 
 	public void init() throws Exception
 	{
+		log.debug("Initializing bean WebConsoleStarter");
 		final BundleContext context = Activator.getContext();
 		// set config
 		bindaasAdminConsoleConfiguration = new DynamicObject<BindaasAdminConsoleConfiguration>("bindaas.adminconsole", defaultBindaasAdminConsoleConfiguration, context);
@@ -118,7 +177,7 @@ public class WebConsoleStarter {
 				if(!initialized)
 				{
 
-					ServiceReference serviceRef = sv.getServiceReference();
+					ServiceReference<?> serviceRef = sv.getServiceReference();
 					      switch(sv.getType()) {
 					        case ServiceEvent.REGISTERED:
 					        case ServiceEvent.MODIFIED:
@@ -134,26 +193,18 @@ public class WebConsoleStarter {
 										
 										
 										((org.apache.felix.http.api.ExtHttpService) service) .registerFilter(loginAction, "/dashboard/.*", null, 0 ,  defaultContext);
-										
-										
-										
 										service.registerServlet(openIdAuth.getServletLocation(), openIdAuth, null, defaultContext);
 										
-										
-										
-										
 										service.registerServlet("/fetchDocumentation", documentationFetcher, null, defaultContext);
+							
 										
-										/**
-										 * User portal
-										 */
+										service.registerServlet("/user/login", userLoginServlet , null, defaultContext);
+										service.registerServlet("/user/dashboard/queryBrowser", userQueryBrowserServlet , null, defaultContext);
+										service.registerServlet("/user/openid", userOpenIDAuthServlet , null, defaultContext);
+										service.registerServlet("/user/postAuthenticate", postUserLoginServlet , null, defaultContext);
+										service.registerServlet("/user/logout", logoutServlet , null, defaultContext);
 										
-										service.registerServlet("/user/login", new UserLoginServlet(), null, defaultContext);
-										service.registerServlet("/user/dashboard/queryBrowser", new UserQueryBrowserServlet(), null, defaultContext);
-										service.registerServlet("/user/openid", new UserOpenIDAuthServlet(), null, defaultContext);
-										service.registerServlet("/user/postAuthenticate", new PostUserLoginServlet(), null, defaultContext);
-										service.registerServlet("/user/logout", new LogoutServlet(), null, defaultContext);
-										
+										log.info("Bindaas WebConsole Started");  
 									} catch (Exception e) {
 											log.error(e);
 									}
@@ -180,10 +231,11 @@ public class WebConsoleStarter {
 		
 		
 		// add existing
+		@SuppressWarnings("rawtypes")
 		ServiceReference[] serviceReferences = context.getAllServiceReferences(HttpService.class.getName(), null);
 		if(serviceReferences!=null)
 		{
-			for(ServiceReference serviceRef : serviceReferences)
+			for(@SuppressWarnings("rawtypes") ServiceReference serviceRef : serviceReferences)
 			{
 				httpServiceListener.serviceChanged( new ServiceEvent(ServiceEvent.REGISTERED, serviceRef));
 				break;
@@ -195,7 +247,7 @@ public class WebConsoleStarter {
 		// listen for new providers
 		context.addServiceListener( httpServiceListener , filter);
 		
-		log.info("Bindaas WebConsole Started");
+		
 		
 	}
 	

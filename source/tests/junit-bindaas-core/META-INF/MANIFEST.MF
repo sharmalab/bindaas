@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: JUnit for Bindaas Core Framework
 Bundle-SymbolicName: junit-bindaas-core
 Bundle-Version: 1.0.0
-Bundle-Activator: edu.emory.cci.bindaas.junit.core.Activator
+Bundle-Activator: edu.emory.cci.bindaas.junit.bundle.Activator
 Bundle-Vendor: CCI Emory University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.google.gson;version="2.1.0",

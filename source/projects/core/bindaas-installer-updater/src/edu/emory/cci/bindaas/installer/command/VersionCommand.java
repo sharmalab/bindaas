@@ -1,42 +1,77 @@
 package edu.emory.cci.bindaas.installer.command;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Properties;
 
-import org.osgi.service.cm.ConfigurationException;
-import org.osgi.service.cm.ManagedService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import edu.emory.cci.bindaas.installer.bundle.Activator;
 
 
 //import org.apache.felix.service.command.*;
-public class VersionCommand implements ManagedService{
+public class VersionCommand {
 
-	private Dictionary properties;
-	private String servicePid;
+	private Properties properties;
+	private Properties defaultProperties;
+	private String filename ; // bindaas-framework-info.properties
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+
+	private Log log = LogFactory.getLog(getClass());
 	
-	public String getServicePid() {
-		return servicePid;
+	public Properties getDefaultProperties() {
+		return defaultProperties;
 	}
 
-	public void setServicePid(String servicePid) {
-		this.servicePid = servicePid;
+	public void setDefaultProperties(Properties defaultProperties) {
+		this.defaultProperties = defaultProperties;
 	}
 
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+
+	
 	public void init()
 	{
+		File file = new File(filename);
+		if(file.exists() && file.isFile() && file.canRead())
+		{
+			
+			try {
+				this.properties = new Properties();
+				this.properties.load(new FileInputStream(file));
+			} catch (IOException e) {
+				log.trace(e);
+			}
+	
+		}
+		else
+		{
+			log.warn("Properties for version info could not be read. Using default properties");
+			properties = defaultProperties;
+		}
+		
 		Dictionary<String, Object> dict = new Hashtable<String, Object>();
 		dict.put("osgi.command.scope", "bindaas");
 		dict.put("osgi.command.function", new String[] {"version"});
-		dict.put("service.pid",servicePid);
-		
-		Activator.getContext().registerService(ManagedService.class, this, dict);
-	}
-	
-	@Override
-	public void updated(Dictionary properties) throws ConfigurationException {
-		this.properties = properties;
+		Activator.getContext().registerService(VersionCommand.class, this, dict);
 		
 	}
 	

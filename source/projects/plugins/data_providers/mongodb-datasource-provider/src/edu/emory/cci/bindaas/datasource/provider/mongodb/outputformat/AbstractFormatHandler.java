@@ -3,7 +3,7 @@ package edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import edu.emory.cci.bindaas.datasource.provider.mongodb.Activator;
+import edu.emory.cci.bindaas.datasource.provider.mongodb.bundle.Activator;
 
 
 

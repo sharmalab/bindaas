@@ -74,7 +74,7 @@
 					<strong>Be worry free!</strong>
 				</p>
 				<p>
-					This is version <strong>2.0.0 Beta</strong>
+					$versionHeader
 				</p>
 				<hr />
 			</div>

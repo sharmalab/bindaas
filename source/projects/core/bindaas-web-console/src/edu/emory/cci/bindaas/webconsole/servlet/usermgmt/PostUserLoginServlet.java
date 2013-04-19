@@ -1,8 +1,8 @@
 package edu.emory.cci.bindaas.webconsole.servlet.usermgmt;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,14 +21,16 @@ import org.hibernate.criterion.Restrictions;
 import edu.emory.cci.bindaas.commons.mail.api.IMailService;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
-import edu.emory.cci.bindaas.core.util.DynamicProperties;
-import edu.emory.cci.bindaas.framework.model.Stage;
+import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
+import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class PostUserLoginServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
 	public static final String servletLocation = "/user/postAuthenticate";
 	private static String newRegistrationTemplateName = "seekReason.vt";
 	private static String simpleMessageTemplateName = "simpleMessage.vt";
@@ -37,12 +39,22 @@ public class PostUserLoginServlet extends HttpServlet {
 	private static Template simpleMessageTemplate;
 	
 	private static Template newRegistrationTemplate;
+private VelocityEngineWrapper velocityEngineWrapper;
 	
-	static {
-		
-		simpleMessageTemplate = Activator.getVelocityTemplateByName(simpleMessageTemplateName);
-		newRegistrationTemplate = Activator.getVelocityTemplateByName(newRegistrationTemplateName);
+	public VelocityEngineWrapper getVelocityEngineWrapper() {
+		return velocityEngineWrapper;
 	}
+
+	public void setVelocityEngineWrapper(VelocityEngineWrapper velocityEngineWrapper) {
+		this.velocityEngineWrapper = velocityEngineWrapper;
+	}
+
+	public void init()
+	{
+		simpleMessageTemplate = velocityEngineWrapper.getVelocityTemplateByName(simpleMessageTemplateName);
+		newRegistrationTemplate = velocityEngineWrapper.getVelocityTemplateByName(newRegistrationTemplateName);
+	}
+	
 	
 	private Log log = LogFactory.getLog(getClass());
 	
@@ -79,6 +91,33 @@ public class PostUserLoginServlet extends HttpServlet {
 						context.put("firstName" , bindaasUser.getProperty(BindaasUser.FIRST_NAME).toString() );
 						context.put("lastName" , bindaasUser.getProperty(BindaasUser.LAST_NAME).toString() );
 						context.put("emailAddress" , bindaasUser.getProperty(BindaasUser.EMAIL_ADDRESS).toString() );
+						
+						/**
+						 * Add version information
+						 */
+						String versionHeader = "";
+						VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+						if(versionCommand!=null)
+						{
+							String frameworkBuilt = "";
+						
+							String buildDate = "";
+							try{
+								Properties versionProperties = versionCommand.getProperties();
+								frameworkBuilt = String.format("%s.%s.%s", versionProperties.get("bindaas.framework.version.major") , versionProperties.get("bindaas.framework.version.minor") , versionProperties.get("bindaas.framework.version.revision") );
+						
+								buildDate = versionProperties.getProperty("bindaas.build.date");
+							}catch(NullPointerException e)
+							{
+								log.warn("Version Header not set");
+							}
+							versionHeader = String.format("System built <strong>%s</strong>  Build date <strong>%s<strong>", frameworkBuilt,buildDate);
+						}
+						else
+						{
+							log.warn("Version Header not set");
+						}
+						context.put("versionHeader", versionHeader);
 						newRegistrationTemplate.merge(context, resp.getWriter());
 					}
 				}
@@ -107,6 +146,7 @@ public class PostUserLoginServlet extends HttpServlet {
 			try {
 				transaction = session.beginTransaction();
 				// check to see if already one exists
+				@SuppressWarnings("unchecked")
 				List<UserRequest> list = session
 						.createCriteria(UserRequest.class)
 						.add(Restrictions.eq("emailAddress", emailAddress))
@@ -187,6 +227,7 @@ public class PostUserLoginServlet extends HttpServlet {
 
 								// send email notification to the admin
 
+								@SuppressWarnings("unchecked")
 								DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminconsoleConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas.adminconsole)");
 								
 								if (dynamicAdminconsoleConfiguration != null) {

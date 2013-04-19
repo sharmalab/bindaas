@@ -10,19 +10,18 @@ import java.util.Set;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.google.gson.JsonElement;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
-import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
 // TODO implement this later
 public class CSVFormatHandler extends AbstractFormatHandler {
 
+	@SuppressWarnings("restriction")
 	@Override
 	public QueryResult format(OutputFormatProps outputFormatProps,
 			DBCursor cursor) throws Exception {

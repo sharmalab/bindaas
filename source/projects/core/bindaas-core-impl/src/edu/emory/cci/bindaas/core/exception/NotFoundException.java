@@ -2,7 +2,7 @@ package edu.emory.cci.bindaas.core.exception;
 
 public class NotFoundException extends FrameworkEntityException{
 	
-	
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private Type type;
 	

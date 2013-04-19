@@ -1,14 +1,9 @@
 package edu.emory.cci.bindaas.core.model;
 
-import java.util.Map;
-
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
-import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 import edu.emory.cci.bindaas.framework.model.Profile;
-import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
-import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 
 public class ProfileRequestParameter {
 	
@@ -47,8 +42,6 @@ public class ProfileRequestParameter {
 		profile.setDataSource(getDataSource());
 		profile.setProviderId(getProviderId());
 		profile.setProviderVersion(getProviderVersion());
-		profile.setDescription(getDescription());
-		
 		return profile;
 	}
 }

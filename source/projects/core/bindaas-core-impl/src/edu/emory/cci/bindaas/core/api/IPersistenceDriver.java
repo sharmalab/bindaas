@@ -1,6 +1,5 @@
 package edu.emory.cci.bindaas.core.api;
 
-import java.io.IOException;
 import java.util.List;
 
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;

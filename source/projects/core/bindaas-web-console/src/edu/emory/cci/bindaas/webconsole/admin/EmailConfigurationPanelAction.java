@@ -2,9 +2,6 @@ package edu.emory.cci.bindaas.webconsole.admin;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
@@ -15,7 +12,7 @@ import edu.emory.cci.bindaas.webconsole.Activator;
 public class EmailConfigurationPanelAction implements IAdminAction{
 
 	private String actionName;
-	private Log log = LogFactory.getLog(getClass());
+	
 	
 	public void setActionName(String actionName) {
 		this.actionName = actionName;

@@ -1,11 +1,9 @@
 package edu.emory.cci.bindaas.core.rest.service.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,10 +11,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -26,8 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.apache.cxf.jaxrs.ext.MessageContextImpl;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.utils.multipart.AttachmentUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 
 import edu.emory.cci.bindaas.core.api.IExecutionTasks;
@@ -39,7 +33,6 @@ import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
-import edu.emory.cci.bindaas.framework.model.Stage;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -163,21 +156,6 @@ public class ExecutionServiceImpl implements IExecutionService{
 			params.put(key, queryParams.getFirst(key));
 		}
 		return params;
-	}
-	
-	private InputStream getMimeRequestAsStream() throws Exception
-	{
-		
-		List<Attachment> attachments = AttachmentUtils.getAttachments(getMessageContext());
-		if(attachments.size() > 0)
-		{
-			return attachments.get(0).getDataHandler().getInputStream();
-		}
-		else
-		{
-			throw new IOException("No data found in the submit request");
-		}
-			
 	}
 	
 	

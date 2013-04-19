@@ -3,7 +3,6 @@ package edu.emory.cci.bindaas.core.rest.security;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -63,7 +62,7 @@ public class AuditInLogger extends AbstractPhaseInterceptor<Message> {
 							message.get(Message.QUERY_STRING).toString());
 
 				if (message.get("org.apache.cxf.form_data") != null) {
-					Map formParam = (Map) message
+					Map<?,?> formParam = (Map<?,?>) message
 							.get("org.apache.cxf.form_data");
 					auditMessage.put(AuditConstants.REQUEST,
 							formParam.toString());
@@ -117,12 +116,14 @@ public class AuditInLogger extends AbstractPhaseInterceptor<Message> {
 
 	private IAuditProvider locateAuditProvider() {
 		final BundleContext context = Activator.getContext();
+		@SuppressWarnings("rawtypes")
 		ServiceReference[] serviceReferences;
 		try {
 			serviceReferences = context.getAllServiceReferences(
 					IAuditProvider.class.getName(), "(class="
 							+ auditProviderClass + ")");
 			if (serviceReferences!=null && serviceReferences.length > 0) {
+				@SuppressWarnings("unchecked")
 				Object service = context.getService(serviceReferences[0]);
 				if (service != null) {
 					return (IAuditProvider) service;

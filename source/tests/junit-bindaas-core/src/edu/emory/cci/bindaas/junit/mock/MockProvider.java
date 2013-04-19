@@ -9,7 +9,6 @@ import edu.emory.cci.bindaas.framework.api.IQueryHandler;
 import edu.emory.cci.bindaas.framework.api.ISubmitHandler;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
-import edu.emory.cci.bindaas.junit.core.Activator;
 
 public class MockProvider implements IProvider{
 

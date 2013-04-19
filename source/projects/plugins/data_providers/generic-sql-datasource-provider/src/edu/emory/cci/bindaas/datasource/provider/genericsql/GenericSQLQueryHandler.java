@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import com.google.gson.JsonObject;
 
 
+import edu.emory.cci.bindaas.datasource.provider.genericsql.bundle.Activator;
 import edu.emory.cci.bindaas.datasource.provider.genericsql.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.genericsql.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.genericsql.model.OutputFormatProps;

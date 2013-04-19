@@ -5,9 +5,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
@@ -23,7 +20,7 @@ import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.
 public class SecurityConfigurationPanelAction implements IAdminAction{
 
 	private String actionName;
-	private Log log = LogFactory.getLog(getClass());
+	
 	
 	public void setActionName(String actionName) {
 		this.actionName = actionName;
@@ -39,7 +36,9 @@ public class SecurityConfigurationPanelAction implements IAdminAction{
 	public String doAction(JsonObject payload, HttpServletRequest request)
 			throws Exception {
 		Request requestObject = GSONUtil.getGSONInstance().fromJson(payload, Request.class);
+		@SuppressWarnings("unchecked")
 		DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
+		@SuppressWarnings("unchecked")
 		DynamicObject<BindaasConfiguration> dynamicConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas)");
 		requestObject.save(dynamicAdminConsoleConfiguration, dynamicConfiguration);
 		return "success";

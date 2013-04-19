@@ -1,7 +1,6 @@
 package edu.emory.cci.bindaas.core.api;
 
 import java.util.Collection;
-import java.util.List;
 
 import com.google.gson.JsonObject;
 
@@ -18,7 +17,7 @@ public interface IManagementTasks {
 	 */
 	
 	public Workspace createWorkspace(String name , JsonObject parameters , String createdBy) throws Exception;
-	public Profile createProfile(String name , String workspaceName,JsonObject parameters , String createdBy) throws Exception;
+	public Profile createProfile(String name , String workspaceName,JsonObject parameters , String createdBy , String description) throws Exception;
 	public QueryEndpoint createQueryEndpoint(String name , String workspaceName,String profileName ,JsonObject parameters, String createdBy) throws Exception;
 	public DeleteEndpoint createDeleteEndpoint(String name , String workspaceName,String profileName ,JsonObject parameters, String createdBy) throws Exception;
 	public SubmitEndpoint createSubmitEndpoint(String name , String workspaceName,String profileName ,JsonObject parameters, String createdBy) throws Exception;
@@ -40,7 +39,7 @@ public interface IManagementTasks {
 	 */
 	
 	
-	public Profile updateProfile(String name , String workspaceName,JsonObject parameters, String updatedBy) throws Exception;
+	public Profile updateProfile(String name , String workspaceName,JsonObject parameters, String updatedBy , String description) throws Exception;
 	public QueryEndpoint updateQueryEndpoint(String name , String workspaceName,String profileName ,JsonObject parameters, String updatedBy) throws Exception;
 	public DeleteEndpoint updateDeleteEndpoint(String name , String workspaceName,String profileName ,JsonObject parameters, String updatedBy) throws Exception;
 	public SubmitEndpoint updateSubmitEndpoint(String name , String workspaceName,String profileName ,JsonObject parameters, String updatedBy) throws Exception;

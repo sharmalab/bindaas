@@ -1,7 +1,5 @@
 package edu.emory.cci.bindaas.core.api;
 
-import java.util.Map;
-
 import edu.emory.cci.bindaas.core.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.model.ModifierEntry;
 

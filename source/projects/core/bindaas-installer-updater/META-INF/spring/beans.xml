@@ -2,30 +2,18 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-<bean id="buildInfo" class="edu.emory.cci.bindaas.installer.info.BuildInfo" init-method="init">
+
+
+<bean id="versionCommand" class="edu.emory.cci.bindaas.installer.command.VersionCommand" init-method="init">
 	<property name="filename" value="bindaas-framework-info.properties"></property>
-	<property name="servicePid" ref="servicePid"></property>
 	<property name="defaultProperties" >
 		<props>
 			<prop key="bindaas.framework.version.major">1</prop>
 			<prop key="bindaas.framework.version.minor">0</prop>
 			<prop key="bindaas.framework.version.revision">0</prop>
-			<prop key="bindaas.webconsole.version.major">1</prop>
-			<prop key="bindaas.webconsole.version.minor">0</prop>
-			<prop key="bindaas.webconsole.version.revision">0</prop>
 			<prop key="bindaas.build.date">TODAY</prop>
 		</props>
 	</property>
-</bean>
-
-
-
-<bean id="servicePid" class="java.lang.String">
-	<constructor-arg><value>bindaas-framework-info</value></constructor-arg>
-</bean>
-
-<bean id="versionCommand" class="edu.emory.cci.bindaas.installer.command.VersionCommand" init-method="init">
-	<property name="servicePid" ref="servicePid"></property>
 </bean>
 
 </beans>

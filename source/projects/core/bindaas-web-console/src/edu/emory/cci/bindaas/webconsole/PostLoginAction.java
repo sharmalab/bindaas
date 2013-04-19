@@ -27,6 +27,10 @@ import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 
 public class PostLoginAction extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String defaultLoginTarget;
 	private Log log = LogFactory.getLog(getClass());
 
@@ -47,6 +51,7 @@ public class PostLoginAction extends HttpServlet {
 			BindaasUser principal = (BindaasUser) request.getSession()
 					.getAttribute("loggedInUser");
 
+			@SuppressWarnings("unchecked")
 			DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator
 					.getService(DynamicObject.class,
 							"(name=bindaas.adminconsole)");
@@ -97,6 +102,7 @@ public class PostLoginAction extends HttpServlet {
 		super.doPost(req, resp);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void generateApiKey(BindaasUser principal) {
 
 		SessionFactory sessionFactory = Activator
@@ -118,6 +124,7 @@ public class PostLoginAction extends HttpServlet {
 						.getProperty(BindaasUser.LAST_NAME).toString()
 						: principal.getName();
 
+				@SuppressWarnings("unchecked")
 				List<UserRequest> listOfValidKeys = (List<UserRequest>) session
 						.createCriteria(UserRequest.class)
 						.add(Restrictions.eq("stage", "accepted"))

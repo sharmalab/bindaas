@@ -17,6 +17,7 @@ public class ErrorView  {
 	public static void handleError(HttpServletResponse response , Exception e)
 	{
 		try {
+			log.error("Server Error - Request could not be served" , e);
 			response.sendError(500, e.getMessage());
 		} catch (IOException e1) {
 			log.error(e1);
