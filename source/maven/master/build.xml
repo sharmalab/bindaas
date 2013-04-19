@@ -73,7 +73,7 @@
 		<loadproperties srcfile="build-configuration/bindaas-framework-info.properties">
 		</loadproperties>
 		<copy todir="${dist.placeholder.dir}" file="build-configuration/bindaas-framework-info.properties" />
-		<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}.${bindaas.webconsole.version.major}.${bindaas.webconsole.version.minor}.${bindaas.webconsole.version.revision}-${bindaas.build.date}"></property>
+		<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}-${bindaas.build.date}"></property>
 		<tar basedir="${dist.placeholder.dir}" tarfile="${dist.location}/${filename}.tar" />
 		<gzip destfile="${dist.location}/${filename}.tar.gz" src="${dist.location}/${filename}.tar" />
 		<delete file="${dist.location}/${filename}.tar">
@@ -114,30 +114,14 @@
 			<equals arg1="${inc.framework.minor}" arg2="true"/>
 		</condition>
 
-		<condition property="increment-webconsole-revision">
-			<equals arg1="${inc.webconsole.revision}" arg2="true"/>
-		</condition>
-
-		<condition property="increment-webconsole-major">
-			<equals arg1="${inc.webconsole.major}" arg2="true"/>
-		</condition>
-
-		<condition property="increment-webconsole-minor">
-			<equals arg1="${inc.webconsole.minor}" arg2="true"/>
-		</condition>
-
+		
 		<antcall target="incFrameworkMajor">
 		</antcall>
 		<antcall target="incFrameworkMinor">
 		</antcall>
 		<antcall target="incFrameworkRevision">
 		</antcall>
-		<antcall target="incWebconsoleMajor">
-		</antcall>
-		<antcall target="incWebconsoleMinor">
-		</antcall>
-		<antcall target="incWebconsoleRevision">
-		</antcall>
+	
 		<propertyfile file="build-configuration/bindaas-framework-info.properties">
 			<entry key="bindaas.build.date" operation="=" type="string" value="${DSTAMP}${TSTAMP}"/>
 		</propertyfile>
@@ -160,21 +144,6 @@
 		</propertyfile>
 	</target>
 
-	<target name="incWebconsoleRevision" if="increment-webconsole-revision">
-		<propertyfile file="build-configuration/bindaas-framework-info.properties">
-			<entry key="bindaas.webconsole.version.revision" operation="+" type="int" default="1"/>
-		</propertyfile>
-	</target>
-	<target name="incWebconsoleMinor" if="increment-webconsole-minor">
-		<propertyfile file="build-configuration/bindaas-framework-info.properties">
-			<entry key="bindaas.webconsole.version.minor" operation="+" type="int" default="0"/>
-		</propertyfile>
-	</target>
-	<target name="incWebconsoleMajor" if="increment-webconsole-major">
-		<propertyfile file="build-configuration/bindaas-framework-info.properties">
-			<entry key="bindaas.webconsole.version.major" operation="+" type="int" default="0"/>
-		</propertyfile>
-		
-	</target>
+	
 
 </project>

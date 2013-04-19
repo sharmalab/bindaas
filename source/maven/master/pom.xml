@@ -183,5 +183,6 @@
 		<module>log4j.config</module>
 		<module>generic-sql-datasource-provider</module>
 		<module>http-datasource-provider</module>
+		<module>bindaas-psuedo-sts</module>
 	</modules>
 </project>
