@@ -3,21 +3,15 @@ package edu.emory.cci.bindaas.datasource.provider.aime;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLXML;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,17 +23,13 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -47,6 +37,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import edu.emory.cci.bindaas.datasource.provider.aime.model.AIMBean;
+import edu.emory.cci.bindaas.datasource.provider.aime.model.DataSourceConfiguration;
+import edu.emory.cci.bindaas.datasource.provider.aime.model.SubmitEndpointProperties;
+import edu.emory.cci.bindaas.datasource.provider.aime.model.SubmitEndpointProperties.InputType;
 import edu.emory.cci.bindaas.framework.api.ISubmitHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
@@ -55,10 +49,6 @@ import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.IOUtils;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
-import edu.emory.cci.bindaas.datasource.provider.aime.model.AIMBean;
-import edu.emory.cci.bindaas.datasource.provider.aime.model.DataSourceConfiguration;
-import edu.emory.cci.bindaas.datasource.provider.aime.model.SubmitEndpointProperties;
-import edu.emory.cci.bindaas.datasource.provider.aime.model.SubmitEndpointProperties.InputType;
 
 public class AIMESubmitHandler implements ISubmitHandler {
 
@@ -264,6 +254,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 		XPath xpath = factory.newXPath();
 		xpath.setNamespaceContext(new NamespaceContext() {
 
+			@SuppressWarnings("rawtypes")
 			public Iterator getPrefixes(String namespaceURI) {
 				return null;
 			}

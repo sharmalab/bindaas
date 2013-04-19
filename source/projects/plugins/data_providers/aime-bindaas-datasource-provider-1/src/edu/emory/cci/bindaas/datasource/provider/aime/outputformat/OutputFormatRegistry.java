@@ -8,7 +8,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
-import edu.emory.cci.bindaas.datasource.provider.aime.Activator;
+import edu.emory.cci.bindaas.datasource.provider.aime.bundle.Activator;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.OutputFormatProps.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.OutputFormatProps.QueryType;
 
@@ -28,10 +28,12 @@ public class OutputFormatRegistry {
 			
 			@Override
 			public void serviceChanged(ServiceEvent sv) {
+				@SuppressWarnings("rawtypes")
 				ServiceReference serviceRef = sv.getServiceReference();
 				      switch(sv.getType()) {
 				        case ServiceEvent.REGISTERED :
 				          {
+				        	  @SuppressWarnings("unchecked")
 				        	  IFormatHandler handler = (IFormatHandler) context.getService(serviceRef);
 				        	  formatHandlers.put(handler.getQueryType() + "|"  + handler.getOutputFormat(), handler);
 				        	  break;
@@ -39,6 +41,7 @@ public class OutputFormatRegistry {
 				         
 				        case ServiceEvent.UNREGISTERING :
 				        {
+				        	@SuppressWarnings("unchecked")
 				        	IFormatHandler handler = (IFormatHandler) context.getService(serviceRef);
 				        	formatHandlers.remove(handler.getQueryType() + "|"  + handler.getOutputFormat());
 				        	break;
@@ -54,10 +57,11 @@ public class OutputFormatRegistry {
 		
 		
 		// add existing providers
+		@SuppressWarnings("rawtypes")
 		ServiceReference[] serviceReferences = context.getAllServiceReferences(IFormatHandler.class.getName(), null);
 		if(serviceReferences!=null)
 		{
-			for(ServiceReference serviceRef : serviceReferences)
+			for(@SuppressWarnings("rawtypes") ServiceReference serviceRef : serviceReferences)
 			{
 				serviceListener.serviceChanged( new ServiceEvent(ServiceEvent.REGISTERED, serviceRef));
 			}

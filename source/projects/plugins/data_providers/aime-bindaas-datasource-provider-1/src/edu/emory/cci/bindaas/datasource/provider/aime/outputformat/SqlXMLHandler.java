@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
-import edu.emory.cci.bindaas.datasource.provider.aime.Activator;
+import edu.emory.cci.bindaas.datasource.provider.aime.bundle.Activator;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.OutputFormatProps;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.OutputFormatProps.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.OutputFormatProps.QueryType;

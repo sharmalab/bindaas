@@ -1,9 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.aime;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -12,11 +9,13 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.ibm.db2.jcc.DB2Driver;
 
+import edu.emory.cci.bindaas.datasource.provider.aime.bundle.Activator;
+import edu.emory.cci.bindaas.datasource.provider.aime.model.DataSourceConfiguration;
+import edu.emory.cci.bindaas.datasource.provider.aime.model.SubmitEndpointProperties;
+import edu.emory.cci.bindaas.datasource.provider.aime.model.SubmitEndpointProperties.InputType;
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.framework.api.IQueryHandler;
@@ -27,10 +26,6 @@ import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
-import edu.emory.cci.bindaas.framework.util.IOUtils;
-import edu.emory.cci.bindaas.datasource.provider.aime.model.DataSourceConfiguration;
-import edu.emory.cci.bindaas.datasource.provider.aime.model.SubmitEndpointProperties;
-import edu.emory.cci.bindaas.datasource.provider.aime.model.SubmitEndpointProperties.InputType;
 
 public class AIMEProvider implements IProvider{
 
