@@ -11,7 +11,7 @@
 	
 
 	<appender name="R" class="org.apache.log4j.RollingFileAppender">
-		<param name="file" value="bindaas.log" />
+		<param name="file" value="../log/bindaas.log" />
 		<param name="MaxFileSize" value="500KB" />
 		<!-- Keep one backup file -->
 		<param name="MaxBackupIndex" value="5" />
