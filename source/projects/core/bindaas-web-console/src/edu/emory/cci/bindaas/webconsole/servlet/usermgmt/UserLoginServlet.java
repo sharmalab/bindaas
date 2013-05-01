@@ -18,8 +18,8 @@ import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.UserConfiguration.AuthenticationMethod;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
@@ -33,7 +33,15 @@ public class UserLoginServlet extends HttpServlet {
 	private String loginTarget = "/user/dashboard/queryBrowser";
 	private String postLoginActionTarget = "/user/postAuthenticate";
 	private VelocityEngineWrapper velocityEngineWrapper;
-	
+	private VersionCommand versionCommand;
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
+
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
 	}
@@ -61,7 +69,7 @@ public class UserLoginServlet extends HttpServlet {
 		 * Add version information
 		 */
 		String versionHeader = "";
-		VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+		
 		if(versionCommand!=null)
 		{
 			String frameworkBuilt = "";

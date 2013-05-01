@@ -49,12 +49,12 @@ public class ManagementTasksImpl implements IManagementTasks {
 	
 	
 	
-	public ManagementTasksImpl()
-	{
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("class", getClass().getName());
-		Activator.getContext().registerService(IManagementTasks.class.getName(), this, props);
-	}
+//	public ManagementTasksImpl()
+//	{
+//		Dictionary<String, String> props = new Hashtable<String, String>();
+//		props.put("class", getClass().getName());
+//		Activator.getContext().registerService(IManagementTasks.class.getName(), this, props);
+//	}
 	public IProviderRegistry getProviderRegistry() {
 		return providerRegistry;
 	}

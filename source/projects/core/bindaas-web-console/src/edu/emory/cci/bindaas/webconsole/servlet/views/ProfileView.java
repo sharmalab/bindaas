@@ -23,8 +23,8 @@ import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class ProfileView extends AbstractRequestHandler {
@@ -33,7 +33,37 @@ public class ProfileView extends AbstractRequestHandler {
 	private  Template template;
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
-private VelocityEngineWrapper velocityEngineWrapper;
+	private VelocityEngineWrapper velocityEngineWrapper;
+	private IManagementTasks managementTasks;
+	private VersionCommand versionCommand;
+	private IProviderRegistry providerRegistry;
+	
+	public IProviderRegistry getProviderRegistry() {
+		return providerRegistry;
+	}
+
+	public void setProviderRegistry(IProviderRegistry providerRegistry) {
+		this.providerRegistry = providerRegistry;
+	}
+
+	
+	public IManagementTasks getManagementTasks() {
+		return managementTasks;
+	}
+
+	public void setManagementTasks(IManagementTasks managementTasks) {
+		this.managementTasks = managementTasks;
+	}
+
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
+
+
 	
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
@@ -86,7 +116,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 	public void generateView(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters) throws Exception
 	{
-		IManagementTasks managementTasks = Activator.getService(IManagementTasks.class);
+		
 		if(managementTasks!=null)
 		{
 			String workspace = pathParameters.get("workspace");
@@ -101,7 +131,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 			 * Add version information
 			 */
 			String versionHeader = "";
-			VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+			
 			if(versionCommand!=null)
 			{
 				String frameworkBuilt = "";
@@ -124,7 +154,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 			}
 			context.put("versionHeader", versionHeader);
 			
-			IProviderRegistry providerRegistry = Activator.getService(IProviderRegistry.class);
+			
 			if(providerRegistry!=null)
 			{
 				IProvider provider = providerRegistry.lookupProvider(profile.getProviderId(), profile.getProviderVersion());
@@ -155,10 +185,10 @@ private VelocityEngineWrapper velocityEngineWrapper;
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
+		
 		try {
-			if(managementTask!=null){ 
-				Profile profile = managementTask.updateProfile(profileName, workspace, jsonObject, createdBy , description);
+			if(managementTasks!=null){ 
+				Profile profile = managementTasks.updateProfile(profileName, workspace, jsonObject, createdBy , description);
 				response.setContentType(StandardMimeType.JSON.toString());
 				response.getWriter().append(profile.toString());
 				response.getWriter().flush();
@@ -182,10 +212,10 @@ public void deleteProfile(HttpServletRequest request,
 	String workspace = pathParameters.get("workspace");
 	String profileName = pathParameters.get("profile");
 	
-	IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
+	
 	try {
-		if(managementTask!=null){
-			managementTask.deleteProfile(workspace,profileName);
+		if(managementTasks!=null){
+			managementTasks.deleteProfile(workspace,profileName);
 		}
 		else
 		{

@@ -16,8 +16,8 @@ import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class WorkspaceView extends AbstractRequestHandler {
@@ -26,7 +26,27 @@ public class WorkspaceView extends AbstractRequestHandler {
 	private  Template template;
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
-private VelocityEngineWrapper velocityEngineWrapper;
+	private VelocityEngineWrapper velocityEngineWrapper;
+	private IManagementTasks managementTasks;
+	private VersionCommand versionCommand;
+
+public IManagementTasks getManagementTasks() {
+	return managementTasks;
+}
+
+public void setManagementTasks(IManagementTasks managementTasks) {
+	this.managementTasks = managementTasks;
+}
+
+public VersionCommand getVersionCommand() {
+	return versionCommand;
+}
+
+public void setVersionCommand(VersionCommand versionCommand) {
+	this.versionCommand = versionCommand;
+}
+
+
 	
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
@@ -70,8 +90,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 	public void generateView(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters)
 			throws Exception {
-		IManagementTasks managementTasks = Activator
-				.getService(IManagementTasks.class);
+		
 		if (managementTasks != null) {
 			Workspace workspace = managementTasks.getWorkspace(pathParameters
 					.get("workspace"));
@@ -86,7 +105,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 			 * Add version information
 			 */
 			String versionHeader = "";
-			VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+			
 			if(versionCommand!=null)
 			{
 				String frameworkBuilt = "";
@@ -119,11 +138,9 @@ private VelocityEngineWrapper velocityEngineWrapper;
 			HttpServletResponse response, Map<String, String> pathParameters) {
 		String workspace = pathParameters.get("workspace");
 
-		IManagementTasks managementTask = Activator
-				.getService(IManagementTasks.class);
 		try {
-			if (managementTask != null) {
-				managementTask.deleteWorkspace(workspace);
+			if (managementTasks != null) {
+				managementTasks.deleteWorkspace(workspace);
 				response.getWriter().append("success");
 				response.getWriter().flush();
 			} else {

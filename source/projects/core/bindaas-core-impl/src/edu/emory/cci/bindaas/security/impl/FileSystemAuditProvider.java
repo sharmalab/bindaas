@@ -46,9 +46,9 @@ public class FileSystemAuditProvider implements IAuditProvider{
 	
 	public void init()
 	{
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("class", FileSystemAuditProvider.class.getName());
-		Activator.getContext().registerService(IAuditProvider.class.getName(), this, props);
+//		Dictionary<String, String> props = new Hashtable<String, String>();
+//		props.put("class", FileSystemAuditProvider.class.getName());
+//		Activator.getContext().registerService(IAuditProvider.class.getName(), this, props);
 		dynamicProperties = new DynamicProperties("bindaas.audit", defaultProperties , Activator.getContext());
 	}
 	

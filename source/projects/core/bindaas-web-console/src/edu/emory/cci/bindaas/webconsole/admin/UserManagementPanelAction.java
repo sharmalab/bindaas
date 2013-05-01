@@ -22,12 +22,32 @@ import edu.emory.cci.bindaas.commons.mail.api.IMailService;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
-import edu.emory.cci.bindaas.webconsole.Activator;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 
 public class UserManagementPanelAction implements IAdminAction {
 	private String actionName;
 	private Log log = LogFactory.getLog(getClass());
+	private IMailService mailService;
+	
+	public IMailService getMailService() {
+		return mailService;
+	}
+	public void setMailService(IMailService mailService) {
+		this.mailService = mailService;
+	}
+
+	private SessionFactory sessionFactory;
+
+	
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
 	
 	public void setActionName(String actionName) {
 		this.actionName = actionName;
@@ -43,8 +63,7 @@ public class UserManagementPanelAction implements IAdminAction {
 	public String doAction(JsonObject payload , HttpServletRequest request) throws Exception {
 		BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
 		Request requestObject = GSONUtil.getGSONInstance().fromJson(payload, Request.class);
-		
-		SessionFactory sessionFactory  = Activator.getService(SessionFactory.class);
+	
 		if(sessionFactory!=null)
 		{
 			Session session  = sessionFactory.openSession();
@@ -96,7 +115,7 @@ public class UserManagementPanelAction implements IAdminAction {
 						session.save(userRequest);
 						session.save(historyLog);
 						
-						IMailService mailService = Activator.getService(IMailService.class);
+//						IMailService mailService = Activator.getService(IMailService.class);
 					
 						if(mailService != null) 
 						{

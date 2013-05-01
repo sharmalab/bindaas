@@ -6,7 +6,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import edu.emory.cci.bindaas.core.util.ProfilerService;
+
 
 public class Activator implements BundleActivator {
 
@@ -21,8 +21,8 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
-		log.debug("Starting Bundle [aim-to-dicom-query-result-modifier]");
 		Activator.context = bundleContext;
+		log.trace(String.format("Starting Bundle [%s]", context.getBundle().getSymbolicName()));
 	}
 
 	/*
@@ -48,18 +48,6 @@ public class Activator implements BundleActivator {
 			return null;
 	}
 
-	public static ProfilerService getProfilerService()
-	{
-		@SuppressWarnings("rawtypes")
-		ServiceReference sr = (ServiceReference) context.getServiceReference(ProfilerService.class.getName());
-		if(sr!=null)
-		{
-			@SuppressWarnings("unchecked")
-			ProfilerService serviceObj = ProfilerService.class.cast(context.getService(sr) ) ;
-			return serviceObj;
-		}
-		else
-			return null;
-	}
+	
 
 }

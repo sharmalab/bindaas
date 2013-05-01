@@ -31,7 +31,7 @@ public class ModifierRegistryImpl implements IModifierRegistry{
 		new RegistryTracker<IQueryModifier>(queryModifierRegistry, IQueryModifier.class.getName());
 		new RegistryTracker<IQueryResultModifier>(queryResultModifierRegistry, IQueryResultModifier.class.getName());
 		new RegistryTracker<ISubmitPayloadModifier>(submitPayloadModifierRegistry, ISubmitPayloadModifier.class.getName());
-		Activator.getContext().registerService(IModifierRegistry.class.getName(), this, null);
+//		Activator.getContext().registerService(IModifierRegistry.class.getName(), this, null);
 	}
 	
 	public Map<String, IQueryModifier> getQueryModifierRegistry() {

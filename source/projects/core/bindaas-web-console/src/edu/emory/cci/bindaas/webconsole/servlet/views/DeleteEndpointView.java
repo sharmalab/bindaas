@@ -23,8 +23,8 @@ import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class DeleteEndpointView extends AbstractRequestHandler {
@@ -34,6 +34,35 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
 	private VelocityEngineWrapper velocityEngineWrapper;
+	private IManagementTasks managementTasks;
+	private VersionCommand versionCommand;
+	private IProviderRegistry providerRegistry;
+	
+	public IProviderRegistry getProviderRegistry() {
+		return providerRegistry;
+	}
+
+	public void setProviderRegistry(IProviderRegistry providerRegistry) {
+		this.providerRegistry = providerRegistry;
+	}
+
+	public IManagementTasks getManagementTasks() {
+		return managementTasks;
+	}
+
+	public void setManagementTasks(IManagementTasks managementTasks) {
+		this.managementTasks = managementTasks;
+	}
+
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
+
+
 	
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
@@ -86,7 +115,7 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 	public void generateView(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters) throws Exception
 	{
-		IManagementTasks managementTasks = Activator.getService(IManagementTasks.class);
+		
 		if(managementTasks!=null)
 		{
 			String workspace = pathParameters.get("workspace");
@@ -101,7 +130,7 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 			 * Add version information
 			 */
 			String versionHeader = "";
-			VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+			
 			if(versionCommand!=null)
 			{
 				String frameworkBuilt = "";
@@ -124,7 +153,7 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 			}
 			context.put("versionHeader", versionHeader);
 			Profile prof = managementTasks.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
-			JsonObject documentation = Activator.getService(IProviderRegistry.class).lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			JsonObject documentation = providerRegistry.lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
 			context.put("documentation" , documentation);
 			context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 			
@@ -147,10 +176,9 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
-			if(managementTask!=null){
-				DeleteEndpoint deleteEndpoint = managementTask.updateDeleteEndpoint(deleteEndpointName, workspace, profile, jsonObject, createdBy);
+			if(managementTasks!=null){
+				DeleteEndpoint deleteEndpoint = managementTasks.updateDeleteEndpoint(deleteEndpointName, workspace, profile, jsonObject, createdBy);
 				response.setContentType(StandardMimeType.JSON.toString());
 				response.getWriter().append(deleteEndpoint.toString());
 				response.getWriter().flush();
@@ -175,10 +203,10 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 		String profile = pathParameters.get("profile");
 		String deleteEndpointName = pathParameters.get("deleteEndpoint");
 		
-		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
+
 		try {
-			if(managementTask!=null){
-				DeleteEndpoint deleteEndpoint = managementTask.deleteDeleteEndpoint(workspace, profile, deleteEndpointName);
+			if(managementTasks!=null){
+				DeleteEndpoint deleteEndpoint = managementTasks.deleteDeleteEndpoint(workspace, profile, deleteEndpointName);
 				response.setContentType(StandardMimeType.JSON.toString());
 				response.getWriter().append(deleteEndpoint.toString());
 				response.getWriter().flush();

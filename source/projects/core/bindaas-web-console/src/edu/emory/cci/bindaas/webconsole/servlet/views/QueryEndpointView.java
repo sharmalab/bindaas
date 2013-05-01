@@ -29,8 +29,8 @@ import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class QueryEndpointView extends AbstractRequestHandler {
@@ -39,8 +39,44 @@ public class QueryEndpointView extends AbstractRequestHandler {
 	private  Template template;
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
-private VelocityEngineWrapper velocityEngineWrapper;
+	private VelocityEngineWrapper velocityEngineWrapper;
+	private IManagementTasks managementTasks;
+	private VersionCommand versionCommand;
+	private IProviderRegistry providerRegistry;
+	private IModifierRegistry modifierRegistry;
 	
+	public IModifierRegistry getModifierRegistry() {
+		return modifierRegistry;
+	}
+
+	public void setModifierRegistry(IModifierRegistry modifierRegistry) {
+		this.modifierRegistry = modifierRegistry;
+	}
+
+	public IProviderRegistry getProviderRegistry() {
+		return providerRegistry;
+	}
+
+	public void setProviderRegistry(IProviderRegistry providerRegistry) {
+		this.providerRegistry = providerRegistry;
+	}
+
+	
+	public IManagementTasks getManagementTasks() {
+		return managementTasks;
+	}
+
+	public void setManagementTasks(IManagementTasks managementTasks) {
+		this.managementTasks = managementTasks;
+	}
+
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
 	}
@@ -92,7 +128,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 	public void generateView(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters) throws Exception
 	{
-		IManagementTasks managementTasks = Activator.getService(IManagementTasks.class);
+		
 		if(managementTasks!=null)
 		{
 			String workspace = pathParameters.get("workspace");
@@ -108,7 +144,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 			 * Add version information
 			 */
 			String versionHeader = "";
-			VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+			
 			if(versionCommand!=null)
 			{
 				String frameworkBuilt = "";
@@ -130,7 +166,6 @@ private VelocityEngineWrapper velocityEngineWrapper;
 				log.warn("Version Header not set");
 			}
 			context.put("versionHeader", versionHeader);
-			IModifierRegistry modifierRegistry = Activator.getService(IModifierRegistry.class);
 			Collection<IQueryModifier> queryModifiers = modifierRegistry.findAllQueryModifier();
 			Collection<IQueryResultModifier> queryResultModifiers = modifierRegistry.findAllQueryResultModifiers();
 			context.put("queryModifiers" , queryModifiers);
@@ -138,7 +173,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 			
 			
 			Profile prof = managementTasks.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
-			JsonObject documentation = Activator.getService(IProviderRegistry.class).lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			JsonObject documentation = providerRegistry.lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation();  
 			context.put("documentation" , documentation);
 			
 			@SuppressWarnings("unchecked")
@@ -167,10 +202,10 @@ private VelocityEngineWrapper velocityEngineWrapper;
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
+		
 		try {
-			if(managementTask!=null){
-				QueryEndpoint queryEndpoint = managementTask.updateQueryEndpoint(queryEndpointName, workspace, profile, jsonObject, createdBy);
+			if(managementTasks!=null){
+				QueryEndpoint queryEndpoint = managementTasks.updateQueryEndpoint(queryEndpointName, workspace, profile, jsonObject, createdBy);
 				response.setContentType(StandardMimeType.JSON.toString());
 				response.getWriter().append(queryEndpoint.toString());
 				response.getWriter().flush();
@@ -195,10 +230,10 @@ public void deleteQueryEndpoint(HttpServletRequest request,
 	String profile = pathParameters.get("profile");
 	String queryEndpointName = pathParameters.get("queryEndpoint");
 	
-	IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
+	
 	try {
-		if(managementTask!=null){
-			QueryEndpoint queryEndpoint = managementTask.deleteQueryEndpoint(workspace, profile, queryEndpointName);
+		if(managementTasks!=null){
+			QueryEndpoint queryEndpoint = managementTasks.deleteQueryEndpoint(workspace, profile, queryEndpointName);
 			response.setContentType(StandardMimeType.JSON.toString());
 			response.getWriter().append(queryEndpoint.toString());
 			response.getWriter().flush();

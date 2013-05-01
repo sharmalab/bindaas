@@ -10,9 +10,9 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import edu.emory.cci.bindaas.commons.mail.Activator;
 import edu.emory.cci.bindaas.commons.mail.api.IMailService;
 import edu.emory.cci.bindaas.commons.mail.api.MailException;
+import edu.emory.cci.bindaas.commons.mail.bundle.Activator;
 import edu.emory.cci.bindaas.core.util.DynamicProperties;
 
 public class MailServiceImpl implements IMailService {
@@ -52,7 +52,7 @@ public class MailServiceImpl implements IMailService {
 			}
 		});
 		
-		Activator.getContext().registerService(IMailService.class.getName(), this, null);
+		
 		// send test mail
 		
 //		sendMail("nadirsaghar@gmail.com", "Test", "Test Message");

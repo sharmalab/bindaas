@@ -41,11 +41,11 @@ public class FileSystemAuthenticationProvider implements IAuthenticationProvider
 
 	public void init()
 	{
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("class", FileSystemAuthenticationProvider.class.getName());
-		props.put("protocol", AuthenticationProtocol.HTTP_BASIC.toString());
-		Activator.getContext().registerService(IAuthenticationProvider.class.getName(), this, props);
-		
+//		Dictionary<String, String> props = new Hashtable<String, String>();
+//		props.put("class", FileSystemAuthenticationProvider.class.getName());
+//		props.put("protocol", AuthenticationProtocol.HTTP_BASIC.toString());
+//		Activator.getContext().registerService(IAuthenticationProvider.class.getName(), this, props);
+//		
 		dynamicProperties = new DynamicProperties("bindaas.authentication", defaultProperties , Activator.getContext());
 	}
 	

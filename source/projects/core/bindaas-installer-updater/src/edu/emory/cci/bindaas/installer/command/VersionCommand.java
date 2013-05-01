@@ -11,6 +11,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.emory.cci.bindaas.core.system.SystemInfo;
 import edu.emory.cci.bindaas.installer.bundle.Activator;
 
 
@@ -20,6 +21,16 @@ public class VersionCommand {
 	private Properties properties;
 	private Properties defaultProperties;
 	private String filename ; // bindaas-framework-info.properties
+	private SystemInfo systemInfo;
+	
+	public SystemInfo getSystemInfo() {
+		return systemInfo;
+	}
+
+	public void setSystemInfo(SystemInfo systemInfo) {
+		this.systemInfo = systemInfo;
+	}
+
 	public String getFilename() {
 		return filename;
 	}
@@ -77,6 +88,7 @@ public class VersionCommand {
 	
 	public void version()
 	{
+		System.out.println("System runtime version :" + systemInfo.getRuntimeVersion());
 		if(properties!=null)
 		{
 			Enumeration<Object> keys = properties.keys();

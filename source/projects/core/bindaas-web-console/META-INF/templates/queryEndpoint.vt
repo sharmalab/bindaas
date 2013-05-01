@@ -131,11 +131,11 @@
 
 			if(required == true)
 			{
-			bindVariable.innerHTML = bindVariable.innerHTML + "<select  name=\"bvRequired\"><option value=\"Y\" selected='true' >Yes</option><option value=\"N\"  >No</option></select>";
+			bindVariable.innerHTML = bindVariable.innerHTML + "<select  name=\"bvRequired\"><option value=\"true\" selected='true' >Yes</option><option value=\"false\"  >No</option></select>";
 			}
 			else
 			{
-			bindVariable.innerHTML = bindVariable.innerHTML + "<select  name=\"bvRequired\"><option value=\"Y\" >Yes</option><option value=\"N\" selected='true' >No</option></select>";
+			bindVariable.innerHTML = bindVariable.innerHTML + "<select  name=\"bvRequired\"><option value=\"true\" >Yes</option><option value=\"false\" selected='true' >No</option></select>";
 			}
 
 			bindVariable.innerHTML = bindVariable.innerHTML + "<br>";

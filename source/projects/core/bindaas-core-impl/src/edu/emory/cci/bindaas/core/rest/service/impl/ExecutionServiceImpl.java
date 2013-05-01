@@ -43,14 +43,6 @@ public class ExecutionServiceImpl implements IExecutionService{
 	private IExecutionTasks executionTask;
 	private IManagementTasks managementTask;
 	
-	
-	public ExecutionServiceImpl()
-	{
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("class", getClass().getName());
-		Activator.getContext().registerService(IExecutionService.class.getName(), this, props);
-	}
-	
 	public IExecutionTasks getExecutionTask() {
 		return executionTask;
 	}

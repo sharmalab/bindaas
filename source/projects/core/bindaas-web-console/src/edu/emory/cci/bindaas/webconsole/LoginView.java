@@ -12,18 +12,43 @@ import org.apache.velocity.VelocityContext;
 
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class LoginView {
 	
-	private static String templateName = "login.vt";
-	private static Template template;
-	private static Log log = LogFactory.getLog(LoginView.class);
+	private  String templateName = "login.vt";
+	private  Template template;
+	private  Log log = LogFactory.getLog(LoginView.class);
+	private VelocityEngineWrapper velocityEngineWrapper;
+	private VersionCommand versionCommand;
 	
 	
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
+
+
+
+	public VelocityEngineWrapper getVelocityEngineWrapper() {
+		return velocityEngineWrapper;
+	}
+
+
+
+	public void setVelocityEngineWrapper(VelocityEngineWrapper velocityEngineWrapper) {
+		this.velocityEngineWrapper = velocityEngineWrapper;
+	}
+
 	
-	public static void generateLoginView(HttpServletRequest request , HttpServletResponse response , String loginTarget , String errorMessage) throws Exception
+	public void generateLoginView(HttpServletRequest request , HttpServletResponse response , String loginTarget , String errorMessage) throws Exception
 	{
 		@SuppressWarnings("unchecked")
 		DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
@@ -32,7 +57,7 @@ public class LoginView {
 		 * Add version information
 		 */
 		String versionHeader = "";
-		VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+		//VersionCommand versionCommand = Activator.getService(VersionCommand.class);
 		if(versionCommand!=null)
 		{
 			String frameworkBuilt = "";
@@ -61,7 +86,6 @@ public class LoginView {
 		// lazy init
 		if(template == null)
 		{
-			VelocityEngineWrapper velocityEngineWrapper = Activator.getService(VelocityEngineWrapper.class);
 			if(velocityEngineWrapper!=null)
 			{
 				template = velocityEngineWrapper.getVelocityTemplateByName(templateName);

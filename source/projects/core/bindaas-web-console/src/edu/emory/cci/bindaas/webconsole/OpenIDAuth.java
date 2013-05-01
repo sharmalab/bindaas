@@ -15,6 +15,7 @@ import org.osgi.framework.ServiceReference;
 
 import edu.emory.cci.bindaas.openid.OpenIDHelper;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 
 public class OpenIDAuth extends HttpServlet {
 	
@@ -24,7 +25,21 @@ public class OpenIDAuth extends HttpServlet {
 	private String postLoginActionTarget = "/postAuthenticate";
 	
 	private String defaultAttribute2Set = "loggedInUser";
+	private LoginView loginView;
+	private OpenIDHelper openIdHelper;
 	
+	public OpenIDHelper getOpenIdHelper() {
+		return openIdHelper;
+	}
+	public void setOpenIdHelper(OpenIDHelper openIdHelper) {
+		this.openIdHelper = openIdHelper;
+	}
+	public LoginView getLoginView() {
+		return loginView;
+	}
+	public void setLoginView(LoginView loginView) {
+		this.loginView = loginView;
+	}
 	public String getDefaultLoginTarget() {
 		return defaultLoginTarget;
 	}
@@ -46,7 +61,7 @@ public class OpenIDAuth extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		OpenIDHelper openIdHelper = getOpenIDHelper();
+
 		if(openIdHelper!=null)
 		{
 			openIdHelper.authRequest(request, response, servletLocation);
@@ -60,7 +75,7 @@ public class OpenIDAuth extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		OpenIDHelper openIdHelper = getOpenIDHelper();
+		
 		String loginTarget = request.getParameter("loginTarget") !=null ? request.getParameter("loginTarget") : defaultLoginTarget;
 		String attribute2set = request.getParameter("attribute2set")!=null ? request.getParameter("attribute2set") : defaultAttribute2Set ; 
 		if(openIdHelper!=null)
@@ -79,7 +94,7 @@ public class OpenIDAuth extends HttpServlet {
 				log.error("Authentication failed");
 				try {
 					
-					LoginView.generateLoginView(request , response , loginTarget, "Invalid Username/Password");
+					loginView.generateLoginView(request , response , loginTarget, "Invalid Username/Password");
 
 				} catch (Exception e1) {
 						log.error(e1);
@@ -95,29 +110,7 @@ public class OpenIDAuth extends HttpServlet {
 		}
 	}
 	
-	public OpenIDHelper getOpenIDHelper()
-	{
-		// code for setting authentication provider
-		final BundleContext context = Activator.getContext();
-		@SuppressWarnings("rawtypes")
-		ServiceReference[] serviceReferences;
-		try {
-			serviceReferences = context.getAllServiceReferences(OpenIDHelper.class.getName(), null);
-			if(serviceReferences.length > 0)
-			{
-				@SuppressWarnings("unchecked")
-				Object service = context.getService(serviceReferences[0]);
-				if(service!=null)
-				{
-					OpenIDHelper openIdHelper  =  (OpenIDHelper) service; 
-					return openIdHelper; 
-				}
-			}
-		} catch (InvalidSyntaxException e) {
-			log.error(e);
-		}
-		return null;
-	}
+	
 	
 	
 }

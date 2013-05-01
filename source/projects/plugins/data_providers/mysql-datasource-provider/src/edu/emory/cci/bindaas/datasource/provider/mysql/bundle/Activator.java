@@ -16,7 +16,7 @@ public class Activator implements BundleActivator {
 	private Log log = LogFactory.getLog(getClass());
 	@Override
 	public void start(BundleContext context) throws Exception {
-		log.debug("Starting Bundle [" + context.getBundle().getSymbolicName() + "]");
+		log.trace(String.format("Starting Bundle [%s]", context.getBundle().getSymbolicName()));
 		context.registerService(IProvider.class.getName(), new MySQLProvider(), null);
 		bundlecontext = context;
 	}

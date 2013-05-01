@@ -8,7 +8,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.tools.generic.EscapeTool;
 
-import edu.emory.cci.bindaas.webconsole.Activator;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 
 public class VelocityEngineWrapper {
 	
@@ -38,7 +38,6 @@ public class VelocityEngineWrapper {
 	{
 		velocityEngine = new VelocityEngine();
 		velocityEngine.init(props);	
-		Activator.getContext().registerService(VelocityEngineWrapper.class, this, null);
 		log.debug("VelocityEngine initialized");
 	}
 	

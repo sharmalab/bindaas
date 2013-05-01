@@ -18,25 +18,63 @@ import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import edu.emory.cci.bindaas.core.bundle.Activator;
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.security.api.IAuditProvider;
 
 public class AuditInLogger extends AbstractPhaseInterceptor<Message> {
 
 	private Log log = LogFactory.getLog(getClass());
-	private boolean enableAudit;
+	private ServiceTracker bindaasConfigServiceTracker;
 	
 	private String auditProviderClass;
 
 	public boolean isEnableAudit() {
-		return enableAudit;
+		
+		DynamicObject<BindaasConfiguration> bindaasConfig = (DynamicObject<BindaasConfiguration>) bindaasConfigServiceTracker.getService();
+		if(bindaasConfig!=null)
+		{
+			return bindaasConfig.getObject().getEnableAudit();
+		}
+		else
+		{
+			log.fatal("BindaasConfiguration not available");
+			return false;
+		}
 	}
 
-	public void setEnableAudit(boolean enableAudit) {
-		this.enableAudit = enableAudit;
-	}
+	
+public void init()
+{
+	bindaasConfigServiceTracker = new ServiceTracker(Activator.getContext(), DynamicObject.class, new ServiceTrackerCustomizer() {
 
+		@Override
+		public Object addingService(ServiceReference srf) {
+			if(srf.getProperty("name").equals("bindaas"))
+				return Activator.getContext().getService(srf);
+			else
+				return null;
+		}
+
+		@Override
+		public void modifiedService(ServiceReference arg0, Object arg1) {
+			
+			
+		}
+
+		@Override
+		public void removedService(ServiceReference arg0, Object arg1) {
+			
+			
+		}
+		
+	});
+	bindaasConfigServiceTracker.open();
+}
 	public String getAuditProviderClass() {
 		return auditProviderClass;
 	}
@@ -50,7 +88,7 @@ public class AuditInLogger extends AbstractPhaseInterceptor<Message> {
 	}
 
 	public void handleMessage(Message message) {
-		if (enableAudit) {
+		if (isEnableAudit()) {
 			try {
 				Map<String, String> auditMessage = new HashMap<String, String>();
 				String pathInfo = (String) message

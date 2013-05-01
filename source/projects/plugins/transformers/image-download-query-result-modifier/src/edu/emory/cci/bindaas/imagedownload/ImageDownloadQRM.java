@@ -14,15 +14,13 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
-import org.springframework.util.StopWatch;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.Expose;
 
-import edu.emory.cci.bindaas.core.util.ProfilerService;
+
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
@@ -76,17 +74,7 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 			
 			@Override
 			public void callback(OutputStream servletOutputStream, Properties context) {
-				ProfilerService profiler = Activator.getProfilerService();
-				boolean enableProfiling = profiler!=null && profiler.isEnabled();
-				StopWatch stopWatch = null;
-				if(enableProfiling)
-					 stopWatch = profiler.getThreadLocalStopWatch();
-				
-				enableProfiling = enableProfiling && stopWatch!=null;
-				
 				try{
-					if(enableProfiling)
-						stopWatch.start("Packaging [" + results.size() + "] Images");
 					
 					ZipOutputStream zos = new ZipOutputStream(servletOutputStream);
 					ZipEntry imagedDirectory = new ZipEntry(IMAGE_LOCATION + "/");
@@ -120,15 +108,7 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 					log.error(e);
 					// TODO send error stream to servlet
 				}
-				finally{
-					if(enableProfiling && stopWatch.isRunning())
-					{
-						stopWatch.stop();
-						log.debug(stopWatch.prettyPrint());
-					}
-				}
-
-				
+							
 			}
 		});
 		

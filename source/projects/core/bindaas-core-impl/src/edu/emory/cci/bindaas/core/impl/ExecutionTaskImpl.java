@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.StopWatch;
 
 import com.google.gson.JsonObject;
 
@@ -17,7 +16,6 @@ import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.core.api.IValidator;
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.exception.ExecutionTaskException;
-import edu.emory.cci.bindaas.core.util.ProfilerService;
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.framework.api.IQueryHandler;
@@ -40,26 +38,20 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	private IValidator validator;
 	private Log log = LogFactory.getLog(getClass());
 
-	public ExecutionTaskImpl() {
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("class", getClass().getName());
-		Activator.getContext().registerService(IExecutionTasks.class.getName(),
-				this, props);
-	}
-
+//	public ExecutionTaskImpl() {
+//		Dictionary<String, String> props = new Hashtable<String, String>();
+//		props.put("class", getClass().getName());
+//		Activator.getContext().registerService(IExecutionTasks.class.getName(),
+//				this, props); 
+//	}
+//
 	@Override
 	public QueryResult executeQueryEndpoint(String user,
 			Map<String, String> runtimeParameters, Profile profile,
 			QueryEndpoint queryEndpoint) throws ExecutionTaskException {
-		ProfilerService profiler = Activator.getProfilerService();
-		boolean enableProfiling = profiler != null && profiler.isEnabled();
-		StopWatch stopWatch = null;
-		if (enableProfiling)
-			stopWatch = profiler.createStopWatch("executeQueryEndpoint");
+		
 		// construct real query
-		if (enableProfiling)
-			stopWatch.start("Creating Query from Query Template");
-
+		
 		Map<String, BindVariable> bindVariables = queryEndpoint
 				.getBindVariables();
 		String template = queryEndpoint.getQueryTemplate();
@@ -91,10 +83,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 			}
 
 			// execute queryModifier chain
-			if (enableProfiling) {
-				stopWatch.stop();
-				stopWatch.start("Executing Query Modifier Chain");
-			}
+			
 			String finalQuery = executeQueryModifierChain(user, template,
 					queryEndpoint.getQueryModifiers(), profile.getDataSource());
 
@@ -104,10 +93,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					profile.getProviderId(), profile.getProviderVersion());
 			IQueryHandler queryHandler = provider.getQueryHandler();
 
-			if (enableProfiling) {
-				stopWatch.stop();
-				stopWatch.start("Executing Query");
-			}
+			
 
 			QueryResult queryResult = queryHandler.query(
 					profile.getDataSource(), queryEndpoint.getOutputFormat(),
@@ -115,10 +101,6 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 
 			// execute query result chain
 
-			if (enableProfiling) {
-				stopWatch.stop();
-				stopWatch.start("Executing Query Result Modifier Chain");
-			}
 
 			queryResult = executeQueryResultModifierChain(user, queryResult,
 					queryEndpoint.getQueryResultModifiers(),
@@ -130,13 +112,8 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		} catch (Exception e) {
 			log.error("Execution Task failed", e);
 			throw new ExecutionTaskException(e);
-		} finally {
-
-			if (enableProfiling && stopWatch != null && stopWatch.isRunning()) {
-				stopWatch.stop();
-				log.debug(stopWatch.prettyPrint());
-			}
-		}
+		} 
+		
 	}
 
 	protected Map<String, String> executeQueryParameterModifierChain(
@@ -166,15 +143,12 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	public QueryResult executeDeleteEndpoint(String user,
 			Map<String, String> runtimeParameters, Profile profile,
 			DeleteEndpoint deleteEndpoint) throws ExecutionTaskException {
-		ProfilerService profiler = Activator.getProfilerService();
-		boolean enableProfiling = profiler != null && profiler.isEnabled();
+		
+		
 
-		StopWatch stopWatch = null;
-		if (enableProfiling)
-			stopWatch = profiler.createStopWatch("executeDeleteEndpoint");
+		
+		
 		// construct real query
-		if (enableProfiling)
-			stopWatch.start("Creating Query from Query Template");
 		Map<String, BindVariable> bindVariables = deleteEndpoint
 				.getBindVariables();
 		String template = deleteEndpoint.getQueryTemplate();
@@ -205,10 +179,6 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					profile.getProviderId(), profile.getProviderVersion());
 			IDeleteHandler deleteHandler = provider.getDeleteHandler();
 
-			if (enableProfiling) {
-				stopWatch.stop();
-				stopWatch.start("Executing Delete Query");
-			}
 			QueryResult queryResult = deleteHandler.delete(
 					profile.getDataSource(), template);
 			// render result
@@ -217,12 +187,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		} catch (Exception e) {
 			log.error("Execution Task failed", e);
 			throw new ExecutionTaskException(e);
-		} finally {
-			if (enableProfiling && stopWatch != null && stopWatch.isRunning()) {
-				stopWatch.stop();
-				log.debug(stopWatch.prettyPrint());
-			}
-		}
+		} 
 
 	}
 
@@ -230,14 +195,10 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	public QueryResult executeSubmitEndpoint(String user, InputStream is,
 			Profile profile, SubmitEndpoint submitEndpoint)
 			throws ExecutionTaskException {
-		ProfilerService profiler = Activator.getProfilerService();
-		boolean enableProfiling = profiler != null && profiler.isEnabled();
-		StopWatch stopWatch = null;
-		if (enableProfiling)
-			stopWatch = profiler.createStopWatch("executeSubmitEndpoint");
+		
+		
 		try {
-			if (enableProfiling)
-				stopWatch.start("Executing Submit payload modifier");
+		
 			InputStream finalStream = executeSubmitPayloadModifierChain(user,
 					is, submitEndpoint.getSubmitPayloadModifiers(),
 					submitEndpoint);
@@ -247,10 +208,6 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					profile.getProviderId(), profile.getProviderVersion());
 			ISubmitHandler submitHandler = provider.getSubmitHandler();
 
-			if (enableProfiling) {
-				stopWatch.stop();
-				stopWatch.start("Executing Submit ");
-			}
 			QueryResult queryResult = submitHandler.submit(
 					profile.getDataSource(), submitEndpoint.getProperties(),
 					finalStream);
@@ -258,12 +215,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		} catch (Exception e) {
 			log.error("Execution Task failed", e);
 			throw new ExecutionTaskException(e);
-		} finally {
-			if (enableProfiling && stopWatch != null && stopWatch.isRunning()) {
-				stopWatch.stop();
-				log.debug(stopWatch.prettyPrint());
-			}
-		}
+		} 
 	}
 
 	public IProviderRegistry getProviderRegistry() {

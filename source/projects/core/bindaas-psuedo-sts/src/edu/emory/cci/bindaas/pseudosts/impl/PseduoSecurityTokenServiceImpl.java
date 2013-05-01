@@ -64,11 +64,14 @@ public class PseduoSecurityTokenServiceImpl implements
 						@SuppressWarnings("unchecked")
 						DynamicObject<BindaasConfiguration> dynamicConfiguration = (DynamicObject<BindaasConfiguration>) context
 								.getService(srf);
-						Dictionary<String, Object> cxfServiceProps = new Hashtable<String, Object>();
-						cxfServiceProps.put("service.exported.interfaces", "*");
-						cxfServiceProps.put("service.exported.intents", "HTTP");
-						cxfServiceProps.put("service.exported.configs",
-								"org.apache.cxf.rs");
+//						Dictionary<String, Object> cxfServiceProps = new Hashtable<String, Object>();
+//						cxfServiceProps.put("service.exported.interfaces", "*");
+//						cxfServiceProps.put("service.exported.intents", "HTTP");
+//						cxfServiceProps.put("service.exported.configs",
+//								"org.apache.cxf.rs");
+						Dictionary<String, Object> testProps = new Hashtable<String, Object>();
+						testProps.put("edu.emory.cci.bindaas.commons.cxf.service.name", "Security Token Service");
+						
 
 						if (dynamicConfiguration != null
 								&& dynamicConfiguration.getObject() != null) {
@@ -77,11 +80,15 @@ public class PseduoSecurityTokenServiceImpl implements
 							String publishUrl = "http://"
 									+ configuration.getHost() + ":"
 									+ configuration.getPort();
-							cxfServiceProps.put("org.apache.cxf.rs.address",
-									publishUrl + "/securityTokenService");
+							testProps.put("edu.emory.cci.bindaas.commons.cxf.service.address", publishUrl + "/securityTokenService");
+//							cxfServiceProps.put("org.apache.cxf.rs.address",
+//									publishUrl + "/securityTokenService");
+//							context.registerService(
+//									IPsuedoSecurityTokenService.class, ref,
+//									cxfServiceProps);
 							context.registerService(
 									IPsuedoSecurityTokenService.class, ref,
-									cxfServiceProps);
+									testProps);
 						}
 
 						return null;
@@ -184,7 +191,7 @@ public class PseduoSecurityTokenServiceImpl implements
 	private String[] getUsernamePassword(String credentials) throws  AuthenticationException
 	{
 		try {
-			
+		 if(credentials == null)  throw new AuthenticationException("Credential null");
 		 String userPass = new String(javax.xml.bind.DatatypeConverter.parseBase64Binary(credentials));
 		 int p = userPass.indexOf(":");
          if (p != -1) {

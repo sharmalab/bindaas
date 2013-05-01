@@ -17,7 +17,7 @@ import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuditProvider;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class AuditView extends AbstractRequestHandler {
@@ -27,7 +27,26 @@ public class AuditView extends AbstractRequestHandler {
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
 	private VelocityEngineWrapper velocityEngineWrapper;
+	private VersionCommand versionCommand;
+	private IAuditProvider auditProvider;
 	
+	
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
+
+	public IAuditProvider getAuditProvider() {
+		return auditProvider;
+	}
+
+	public void setAuditProvider(IAuditProvider auditProvider) {
+		this.auditProvider = auditProvider;
+	}
+
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
 	}
@@ -47,6 +66,7 @@ public class AuditView extends AbstractRequestHandler {
 	public void init() throws Exception
 	{
 		template = velocityEngineWrapper.getVelocityTemplateByName(templateName);
+		log.debug( getClass().getName() + " Initialized");
 	}
 
 	@Override
@@ -67,15 +87,14 @@ public class AuditView extends AbstractRequestHandler {
 	public void generateView(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters)
 			throws Exception {
-		IAuditProvider auditProvider = Activator
-				.getService(IAuditProvider.class);
+		
 		List<Map<String,String>> messages = null;
 		VelocityContext context = new VelocityContext();
 		/**
 		 * Add version information
 		 */
 		String versionHeader = "";
-		VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+		
 		if(versionCommand!=null)
 		{
 			String frameworkBuilt = "";

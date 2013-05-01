@@ -20,8 +20,8 @@ import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class UserQueryBrowserServlet extends HttpServlet {
@@ -33,7 +33,25 @@ public class UserQueryBrowserServlet extends HttpServlet {
 	
 	private Template userQueryBrowserTemplate;
 	private VelocityEngineWrapper velocityEngineWrapper;
+	private VersionCommand versionCommand;
+	private IManagementTasks managementTask;
 	
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
+
+	public IManagementTasks getManagementTask() {
+		return managementTask;
+	}
+
+	public void setManagementTask(IManagementTasks managementTask) {
+		this.managementTask = managementTask;
+	}
+
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
 	}
@@ -58,12 +76,12 @@ public class UserQueryBrowserServlet extends HttpServlet {
 			response.sendRedirect(loginPage);
 		}
 		try{
-			IManagementTasks managementTasks = Activator.getService(IManagementTasks.class);
+			
 			@SuppressWarnings("unchecked")
 			DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
-			if(managementTasks!=null && bindaasConfiguration!=null)
+			if(managementTask!=null && bindaasConfiguration!=null)
 			{
-				Collection<Workspace> workspaces = managementTasks.listWorkspaces();
+				Collection<Workspace> workspaces = managementTask.listWorkspaces();
 				VelocityContext context = new VelocityContext();
 				context.put("workspaces", workspaces);
 				context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("userLoggedIn")).getName());
@@ -71,7 +89,7 @@ public class UserQueryBrowserServlet extends HttpServlet {
 				 * Add version information
 				 */
 				String versionHeader = "";
-				VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+				
 				if(versionCommand!=null)
 				{
 					String frameworkBuilt = "";

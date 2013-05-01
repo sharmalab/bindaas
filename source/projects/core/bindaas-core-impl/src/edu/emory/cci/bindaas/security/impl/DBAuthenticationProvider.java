@@ -25,10 +25,10 @@ public class DBAuthenticationProvider implements IAuthenticationProvider {
 	private Log log = LogFactory.getLog(getClass());
 	public void init()
 	{
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("class", DBAuthenticationProvider.class.getName());
-		props.put("protocol", AuthenticationProtocol.API_KEY.toString());
-		Activator.getContext().registerService(IAuthenticationProvider.class.getName(), this, props);
+//		Dictionary<String, String> props = new Hashtable<String, String>();
+//		props.put("class", DBAuthenticationProvider.class.getName());
+//		props.put("protocol", AuthenticationProtocol.API_KEY.toString());
+//		Activator.getContext().registerService(IAuthenticationProvider.class.getName(), this, props);
 	}
 	
 	

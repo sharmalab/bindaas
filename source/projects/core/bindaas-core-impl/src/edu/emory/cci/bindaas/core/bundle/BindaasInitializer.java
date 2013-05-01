@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.core.bundle;
 
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -9,7 +10,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 
-import edu.emory.cci.bindaas.core.api.ISecurityHandler;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.rest.security.AuditInLogger;
 import edu.emory.cci.bindaas.core.rest.security.SecurityHandler;
@@ -56,10 +56,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 	private DynamicObject<BindaasConfiguration> bindaasConfiguration;
 	
 	
-	public BindaasInitializer()
-	{
-		
-	}
+	
 	
 	
 	public ManagementServiceImpl getManagementService() {
@@ -126,16 +123,14 @@ public class BindaasInitializer implements IBindaasAdminService{
 
 		if(bindaasConfiguration.getObject().getEnableAuthentication())
 		{
-			securityModule.setEnableAuthentication(true);
+			
 			securityModule.setAuthenticationProviderClass(bindaasConfiguration.getObject().getAuthenticationProviderClass());
 			
 			// authorization 
 			
 			if(bindaasConfiguration.getObject().getEnableAuthorization())
 			{
-				securityModule.setEnableAuthorization(true);
-				securityModule.setAuthorizationProviderClass(bindaasConfiguration.getObject().getAuthorizationProviderClass());
-				
+				securityModule.setAuthorizationProviderClass(bindaasConfiguration.getObject().getAuthorizationProviderClass());	
 			}
 			
 		}
@@ -143,7 +138,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 		// configure audit
 		if(bindaasConfiguration.getObject().getEnableAudit())
 		{
-			auditModule.setEnableAudit(true);
+			
 			auditModule.setAuditProviderClass(bindaasConfiguration.getObject().getAuditProviderClass());
 		}
 		
@@ -172,52 +167,43 @@ public class BindaasInitializer implements IBindaasAdminService{
 			}
 			
 		}
-		
-		
-		Dictionary<String, Object> cxfServiceProps = new Hashtable<String, Object>();
-		cxfServiceProps.put("service.exported.interfaces", "*");
-		cxfServiceProps.put("service.exported.intents", "HTTP");
-		cxfServiceProps.put("service.exported.configs", "org.apache.cxf.rs");
-//		cxfServiceProps.put("org.apache.cxf.rs.address", publishUrl);
-		cxfServiceProps.put("org.apache.cxf.rs.provider", securityModule );
-		cxfServiceProps.put("org.apache.cxf.rs.in.interceptors",  auditModule );
-		// configure securityModule : read props authentication, authorization
-		
+
 		BundleContext context = Activator.getContext();
 		
-		// set Mgmt Bean
-		cxfServiceProps.put("org.apache.cxf.rs.address", publishUrl + "/administration"); // TODO use String constants here
-		context.registerService(IManagementService.class.getName(), managementService, cxfServiceProps);
+		Dictionary<String, Object> adminServiceProps = new Hashtable<String, Object>();
+		adminServiceProps.put("edu.emory.cci.bindaas.commons.cxf.service.name", "Bindaas Administration Service");
+		adminServiceProps.put("edu.emory.cci.bindaas.commons.cxf.service.address",  publishUrl + "/administration");
+		adminServiceProps.put("edu.emory.cci.bindaas.commons.cxf.provider", Arrays.asList(new Object[]{ securityModule}));
+		adminServiceProps.put("edu.emory.cci.bindaas.commons.cxf.in.interceptor", Arrays.asList(new Object[]{ auditModule}));
+		context.registerService(IManagementService.class.getName(), managementService, adminServiceProps);
 		
-		cxfServiceProps.put("org.apache.cxf.rs.address", publishUrl + "/info");
-		context.registerService(IInformationService.class.getName(), informationService, cxfServiceProps);
+		Dictionary<String, Object> infoServiceProps = new Hashtable<String, Object>();
+		infoServiceProps.put("edu.emory.cci.bindaas.commons.cxf.service.name", "Bindaas Information Service");
+		infoServiceProps.put("edu.emory.cci.bindaas.commons.cxf.service.address",  publishUrl + "/info");
+		infoServiceProps.put("edu.emory.cci.bindaas.commons.cxf.provider", Arrays.asList(new Object[]{ securityModule}));
+		infoServiceProps.put("edu.emory.cci.bindaas.commons.cxf.in.interceptor", Arrays.asList(new Object[]{ auditModule}));
+		context.registerService(IInformationService.class.getName(), informationService, infoServiceProps);
 		
-		cxfServiceProps.put("org.apache.cxf.rs.address", publishUrl + "/services");
-		context.registerService(IExecutionService.class.getName(), executionService, cxfServiceProps);
-		
-		// configure auditModule : read props enable audit
-		
-		context.registerService(ISecurityHandler.class.getName(), securityModule, null);
-		
-		log.info("Bindaas Middleware Started");
+		Dictionary<String, Object> execServiceProps = new Hashtable<String, Object>();
+		execServiceProps.put("edu.emory.cci.bindaas.commons.cxf.service.name", "Bindaas Execution Service");
+		execServiceProps.put("edu.emory.cci.bindaas.commons.cxf.service.address",  publishUrl + "/services");
+		execServiceProps.put("edu.emory.cci.bindaas.commons.cxf.provider", Arrays.asList(new Object[]{ securityModule}));
+		execServiceProps.put("edu.emory.cci.bindaas.commons.cxf.in.interceptor", Arrays.asList(new Object[]{ auditModule}));
+		context.registerService(IExecutionService.class.getName(), executionService, execServiceProps);
+	
+		log.info("Middleware Started");
 	}
 	
 	
 	@Override
 	public void enableAuthentication() throws Exception {
-	
 		// TODO : deprecate 
-		
-		
 	}
 
 
 	@Override
 	public void disableAuthentication() throws Exception {
-		
 		// TODO : deprecate 
-		
-		
 	}
 
 	@Override
@@ -317,14 +303,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 
 	@Override
 	public String showStatus() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("Bindaas Version \t" + getVersion()).append("\n");
-		buffer.append(bindaasConfiguration.getObject().toString()).append("\n");
-		buffer.append("Registered Data Providers " + informationService.listProviders().getEntity()).append("\n");
-		buffer.append("Registered Query Modifiers " + informationService.listQueryModifiers().getEntity()).append("\n");
-		buffer.append("Registered QueryResult Modifiers " + informationService.listQueryResultModifiers().getEntity());
-		buffer.append("Registered Submit Payload Modifiers " + informationService.listSubmitPayloadModifiers().getEntity()).append("\n");
-		return buffer.toString();
+		return null; // TODO : deprecate
 	}
 
 	

@@ -25,8 +25,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.osgi.framework.BundleContext;
-import org.springframework.util.StopWatch;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
@@ -35,7 +33,6 @@ import edu.emory.cci.bindaas.aim2dicom.bundle.Activator;
 import edu.emory.cci.bindaas.commons.xml2json.XML2JSON;
 import edu.emory.cci.bindaas.commons.xml2json.model.Mapping;
 import edu.emory.cci.bindaas.commons.xml2json.model.Type;
-import edu.emory.cci.bindaas.core.util.ProfilerService;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
@@ -90,18 +87,9 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 				@Override
 				public void callback(OutputStream servletOutputStream,
 						Properties context) throws Exception {
-					ProfilerService profiler = Activator.getProfilerService();
-					boolean enableProfiling = profiler!=null && profiler.isEnabled();
-					StopWatch stopWatch = null;
-					if(enableProfiling)
-						 stopWatch = profiler.getThreadLocalStopWatch();
-					
-					enableProfiling = enableProfiling && stopWatch!=null;
 					
 					try {
 						
-						if(enableProfiling)
-							stopWatch.start("parseAnnotations");
 						List<JsonObject> annotations = parseAnnotations(queryResult
 								.getData());
 						
@@ -129,11 +117,7 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 						JsonArray arrayOfSeries = GSONUtil.getGSONInstance().toJsonTree(setOfUniqueSeries,HashSet.class).getAsJsonArray();
 
 						// download and stream image
-						if(enableProfiling)
-							{
-								stopWatch.stop();
-								stopWatch.start("Download and Stream [" + setOfUniqueSeries.size() + "] series");
-							}
+						
 						String seriesJson = arrayOfSeries.toString().trim();
 						writeDicomImage(props.imageURL, props.apiKey,seriesJson.substring(1, seriesJson.length() - 1) ,  servletOutputStream);
 						
@@ -141,13 +125,7 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 						log.error(e);
 						throw e;
 					}
-					finally{
-						if(enableProfiling && stopWatch.isRunning())
-						{
-							stopWatch.stop();
-							log.info(stopWatch.prettyPrint());
-						}
-					}
+					
 				}
 
 				private void writeDicomImage(String imageUrlToFetchDicom,

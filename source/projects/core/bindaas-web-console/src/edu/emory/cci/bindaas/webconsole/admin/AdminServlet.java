@@ -23,8 +23,8 @@ import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
@@ -32,6 +32,24 @@ public class AdminServlet extends AbstractRequestHandler {
 	private static String templateName = "administration.vt";
 	private Template template;
 	private VelocityEngineWrapper velocityEngineWrapper;
+	private SessionFactory sessionFactory;
+	private VersionCommand versionCommand;
+	
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
+
+	
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
@@ -86,8 +104,7 @@ public class AdminServlet extends AbstractRequestHandler {
 
 	private void getView(HttpServletRequest request,
 			HttpServletResponse response) {
-		SessionFactory sessionFactory = Activator
-				.getService(SessionFactory.class);
+		
 		if (sessionFactory != null) {
 			Session session = sessionFactory.openSession();
 
@@ -108,8 +125,8 @@ public class AdminServlet extends AbstractRequestHandler {
 				 * Add version information
 				 */
 				String versionHeader = "";
-				VersionCommand versionCommand = Activator
-						.getService(VersionCommand.class);
+//				VersionCommand versionCommand = Activator
+//						.getService(VersionCommand.class);
 				if (versionCommand != null) {
 					String frameworkBuilt = "";
 

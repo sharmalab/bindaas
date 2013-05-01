@@ -18,8 +18,8 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
-		log.debug("Starting Bundle [bindaas-commons-openid-helper]");
 		Activator.context = bundleContext;
+		log.trace(String.format("Starting Bundle [%s]", context.getBundle().getSymbolicName()));
 		
 	}
 

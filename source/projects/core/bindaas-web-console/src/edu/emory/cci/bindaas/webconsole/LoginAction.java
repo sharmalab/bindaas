@@ -21,6 +21,7 @@ import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 import edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.AdminConfiguration.AuthenticationMethod;
 
@@ -35,8 +36,18 @@ public class LoginAction extends HttpServlet implements Filter{
 	private String defaultLoginTarget ;
 	private Log log = LogFactory.getLog(getClass());
 	private String postLoginActionTarget = "/postAuthenticate";
+	private LoginView loginView;
 	
-	
+	public LoginView getLoginView() {
+		return loginView;
+	}
+	public void setLoginView(LoginView loginView) {
+		this.loginView = loginView;
+	}
+
+
+
+
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -82,7 +93,7 @@ public class LoginAction extends HttpServlet implements Filter{
 				
 				try {
 				
-					LoginView.generateLoginView(request , response , loginTarget, "Invalid Username/Password");
+					loginView.generateLoginView(request , response , loginTarget, "Invalid Username/Password");
 
 				} catch (Exception e1) {
 						log.error(e1);
@@ -118,7 +129,7 @@ public class LoginAction extends HttpServlet implements Filter{
 		else
 		{
 			try {
-				LoginView.generateLoginView(httpServletRequest , (HttpServletResponse) response ,  httpServletRequest.getPathInfo(), "You must login to access this resource");
+				loginView.generateLoginView(httpServletRequest , (HttpServletResponse) response ,  httpServletRequest.getPathInfo(), "You must login to access this resource");
 				
 			} catch (Exception e) {
 				

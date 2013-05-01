@@ -40,9 +40,9 @@ public class FileSystemAuthorizationProvider implements IAuthorizationProvider{
 
 	public void init()
 	{
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("class", FileSystemAuthorizationProvider.class.getName());
-		Activator.getContext().registerService(IAuthorizationProvider.class.getName(), this, props);
+//		Dictionary<String, String> props = new Hashtable<String, String>();
+//		props.put("class", FileSystemAuthorizationProvider.class.getName());
+//		Activator.getContext().registerService(IAuthorizationProvider.class.getName(), this, props);
 		dynamicProperties = new DynamicProperties("bindaas.authorization", defaultProperties , Activator.getContext());
 	}
 	

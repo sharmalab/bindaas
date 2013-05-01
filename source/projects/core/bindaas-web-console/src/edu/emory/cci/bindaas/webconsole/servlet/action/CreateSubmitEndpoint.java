@@ -26,8 +26,8 @@ import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class CreateSubmitEndpoint extends AbstractRequestHandler{
@@ -35,7 +35,47 @@ public class CreateSubmitEndpoint extends AbstractRequestHandler{
 	private  Template template;
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
-private VelocityEngineWrapper velocityEngineWrapper;
+	private VelocityEngineWrapper velocityEngineWrapper;
+	private IManagementTasks managementTask;
+	private IProviderRegistry providerRegistry;
+	private VersionCommand versionCommand;
+	private IModifierRegistry modifierRegistry;
+	
+	public IModifierRegistry getModifierRegistry() {
+		return modifierRegistry;
+	}
+
+	public void setModifierRegistry(IModifierRegistry modifierRegistry) {
+		this.modifierRegistry = modifierRegistry;
+	}
+
+
+
+public IManagementTasks getManagementTask() {
+	return managementTask;
+}
+
+public void setManagementTask(IManagementTasks managementTask) {
+	this.managementTask = managementTask;
+}
+
+public IProviderRegistry getProviderRegistry() {
+	return providerRegistry;
+}
+
+public void setProviderRegistry(IProviderRegistry providerRegistry) {
+	this.providerRegistry = providerRegistry;
+}
+
+public VersionCommand getVersionCommand() {
+	return versionCommand;
+}
+
+public void setVersionCommand(VersionCommand versionCommand) {
+	this.versionCommand = versionCommand;
+}
+
+
 	
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
@@ -81,7 +121,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 			HttpServletResponse response , Map<String,String> pathParameters)
 	{
 		VelocityContext context = new VelocityContext(pathParameters);
-		IModifierRegistry modifierRegistry = Activator.getService(IModifierRegistry.class);
+		
 		Collection<ISubmitPayloadModifier> submitPayloadModifier = modifierRegistry.findAllSubmitPayloadModifiers();
 		context.put("submitPayloadModifiers" , submitPayloadModifier);
 		context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
@@ -89,7 +129,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 		 * Add version information
 		 */
 		String versionHeader = "";
-		VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+		
 		if(versionCommand!=null)
 		{
 			String frameworkBuilt = "";
@@ -112,9 +152,9 @@ private VelocityEngineWrapper velocityEngineWrapper;
 		}		
 		context.put("versionHeader", versionHeader);
 		try {
-			IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
+			
 			Profile profile = managementTask.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
-			JsonObject documentation = Activator.getService(IProviderRegistry.class).lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			JsonObject documentation = providerRegistry.lookupProvider(profile.getProviderId(), profile.getProviderVersion()).getDocumentation(); 
 			context.put("documentation" , documentation);
 			
 			template.merge(context, response.getWriter());
@@ -135,7 +175,6 @@ private VelocityEngineWrapper velocityEngineWrapper;
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
 			SubmitEndpoint queryEndpoint = managementTask.createSubmitEndpoint(submitEndpointName, workspace, profile, jsonObject, createdBy);
 			response.setContentType(StandardMimeType.JSON.toString());

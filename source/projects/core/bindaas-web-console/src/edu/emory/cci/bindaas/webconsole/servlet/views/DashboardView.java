@@ -17,7 +17,7 @@ import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class DashboardView extends AbstractRequestHandler {
@@ -26,8 +26,26 @@ public class DashboardView extends AbstractRequestHandler {
 	private  Template template;
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
-private VelocityEngineWrapper velocityEngineWrapper;
+	private VelocityEngineWrapper velocityEngineWrapper;
+	private IManagementTasks managementTasks;
+	private VersionCommand versionCommand;
 	
+	public IManagementTasks getManagementTasks() {
+		return managementTasks;
+	}
+
+	public void setManagementTasks(IManagementTasks managementTasks) {
+		this.managementTasks = managementTasks;
+	}
+
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
+
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
 	}
@@ -47,6 +65,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 	public void init() throws Exception
 	{
 		template = velocityEngineWrapper.getVelocityTemplateByName(templateName);
+		log.debug( getClass().getName() + " Initialized");
 	}
 
 
@@ -54,7 +73,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 	public void handleRequest(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters)
 			throws Exception {
-		IManagementTasks managementTasks = Activator.getService(IManagementTasks.class);
+		
 		if(managementTasks!=null)
 		{
 			Collection<Workspace> workspaces = managementTasks.listWorkspaces();
@@ -63,7 +82,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 			 * Add version information
 			 */
 			String versionHeader = "";
-			VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+		
 			if(versionCommand!=null)
 			{
 				String frameworkBuilt = "";

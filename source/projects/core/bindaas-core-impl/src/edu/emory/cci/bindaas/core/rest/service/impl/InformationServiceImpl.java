@@ -33,12 +33,7 @@ public class InformationServiceImpl implements IInformationService{
 	private IProviderRegistry providerRegistry;
 	private IModifierRegistry modifierRegistry;
 	
-	public InformationServiceImpl()
-	{
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("class", getClass().getName());
-		Activator.getContext().registerService(IInformationService.class.getName(), this, props);
-	}
+	
 	public IProviderRegistry getProviderRegistry() {
 		return providerRegistry;
 	}

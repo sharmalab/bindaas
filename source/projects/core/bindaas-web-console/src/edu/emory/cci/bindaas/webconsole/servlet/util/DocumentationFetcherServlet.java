@@ -15,13 +15,22 @@ import edu.emory.cci.bindaas.framework.api.IQueryModifier;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.api.ISubmitPayloadModifier;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 
 public class DocumentationFetcherServlet extends HttpServlet {
 
 	
 	private static final long serialVersionUID = 1L;
+	private IProviderRegistry providerReg;
+
+	public IProviderRegistry getProviderReg() {
+		return providerReg;
+	}
+
+	public void setProviderReg(IProviderRegistry providerReg) {
+		this.providerReg = providerReg;
+	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -34,7 +43,7 @@ public class DocumentationFetcherServlet extends HttpServlet {
 		{
 			if(type.equals("IProvider"))
 			{
-				IProviderRegistry providerReg = Activator.getService(IProviderRegistry.class);
+				
 				
 				if(providerReg!=null && providerReg.findProvider(className)!=null && providerReg.findProvider(className).size() > 0)
 				{

@@ -25,9 +25,13 @@ import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import edu.emory.cci.bindaas.core.api.ISecurityHandler;
 import edu.emory.cci.bindaas.core.bundle.Activator;
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 import edu.emory.cci.bindaas.security.api.IAuthorizationProvider;
@@ -35,8 +39,7 @@ import edu.emory.cci.bindaas.security.api.IAuthorizationProvider;
 
 public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private Log log = LogFactory.getLog(getClass());
-	private boolean enableAuthorization ;
-	private boolean enableAuthentication ;
+	
 	
 	private String authenticationProviderClass;
 	private String authorizationProviderClass;
@@ -44,6 +47,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.API_KEY; // default
 	public final static String TOKEN = "token";
 	public final static String API_KEY = "api_key";
+	private ServiceTracker bindaasConfigServiceTracker;
 	
 	
 	public AuthenticationProtocol getAuthenticationProtocol() {
@@ -59,7 +63,30 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	}
 	public void init() throws Exception
 	{
-		// do init here
+		bindaasConfigServiceTracker = new ServiceTracker(Activator.getContext(), DynamicObject.class, new ServiceTrackerCustomizer() {
+
+			@Override
+			public Object addingService(ServiceReference srf) {
+				if(srf.getProperty("name").equals("bindaas"))
+					return Activator.getContext().getService(srf);
+				else
+					return null;
+			}
+
+			@Override
+			public void modifiedService(ServiceReference arg0, Object arg1) {
+				
+				
+			}
+
+			@Override
+			public void removedService(ServiceReference arg0, Object arg1) {
+				
+				
+			}
+			
+		});
+		bindaasConfigServiceTracker.open();
 	}
 	
 	private Principal handleHTTP_BASIC(Message message , IAuthenticationProvider authenticationProvider) throws Exception
@@ -173,7 +200,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
  	public Response handleRequest(Message message, ClassResourceInfo arg1) {
 		setRequestId(message);
 		Principal authenticatedUser =  null;
-		if(enableAuthentication)
+		if(isEnableAuthentication())
 		{
 			IAuthenticationProvider authenticationProvider = locateAuthenticationProvider();
 			if(authenticationProvider == null)
@@ -209,7 +236,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 			
 			// at this stage user is authenticated and principal is set
 			
-			if(enableAuthorization)
+			if(isEnableAuthorization())
 			{
 				IAuthorizationProvider authorizationProvider = locateAuthorizationProvider();
 				if(authorizationProvider == null)
@@ -242,22 +269,35 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	}
 	
 	public boolean isEnableAuthorization() {
-		return enableAuthorization;
+		DynamicObject<BindaasConfiguration> bindaasConfig = (DynamicObject<BindaasConfiguration>) bindaasConfigServiceTracker.getService();
+		if(bindaasConfig!=null)
+		{
+			return bindaasConfig.getObject().getEnableAuthorization();
+		}
+		else
+		{
+			log.fatal("BindaasConfiguration not available");
+			return false;
+		}
 	}
 
 
-	public void setEnableAuthorization(boolean enableAuthorization) {
-		this.enableAuthorization = enableAuthorization;
-	}
+	
 
 
 	public boolean isEnableAuthentication() {
-		return enableAuthentication;
-	}
-
-
-	public void setEnableAuthentication(boolean enableAuthentication) {
-		this.enableAuthentication = enableAuthentication;
+		 
+		DynamicObject<BindaasConfiguration> bindaasConfig = (DynamicObject<BindaasConfiguration>) bindaasConfigServiceTracker.getService();
+		if(bindaasConfig!=null)
+		{
+			return bindaasConfig.getObject().getEnableAuthentication();
+		}
+		else
+		{
+			log.fatal("BindaasConfiguration not available");
+			return false;
+		}
+		
 	}
 
 

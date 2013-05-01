@@ -1,29 +1,43 @@
 package edu.emory.cci.bindaas.openid;
 
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.openid4java.OpenIDException;
 import org.openid4java.consumer.ConsumerException;
 import org.openid4java.consumer.ConsumerManager;
+import org.openid4java.consumer.InMemoryConsumerAssociationStore;
+import org.openid4java.consumer.InMemoryNonceVerifier;
 import org.openid4java.consumer.VerificationResult;
+import org.openid4java.discovery.Discovery;
 import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.discovery.Identifier;
+import org.openid4java.discovery.html.HtmlResolver;
+import org.openid4java.discovery.yadis.YadisResolver;
 import org.openid4java.message.AuthRequest;
 import org.openid4java.message.AuthSuccess;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
+import org.openid4java.server.RealmVerifierFactory;
+import org.openid4java.util.HttpFetcherFactory;
 
-import edu.emory.cci.bindaas.openid.bundle.Activator;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
 public class OpenIDHelper {
@@ -41,15 +55,16 @@ public class OpenIDHelper {
 		this.listOfOpenIdProviders = listOfOpenIdProviders;
 	}
 
-	public OpenIDHelper() throws ConsumerException
+	public OpenIDHelper() throws Exception
     {
         // instantiate a ConsumerManager object
-        manager = new ConsumerManager();
+        manager = newConsumerManager();
+        
     }
 
 	public void init() throws Exception
 	{
-		Activator.getContext().registerService(this.getClass().getName(), this, null);
+		//Activator.getContext().registerService(this.getClass().getName(), this, null);
 	}
     // --- placing the authentication request ---
     public String authRequest(
@@ -108,17 +123,7 @@ public class OpenIDHelper {
                 		  }
                 	  }
 
-                	  
-//                      fetch.addAttribute("email","http://axschema.org/contact/email", true);
-//
-//                      fetch.addAttribute("firstName",
-//
-//                      		                        "http://axschema.org/namePerson/first", true);
-//
-//                      		                fetch.addAttribute("lastName",
-//
-//                      		                        "http://axschema.org/namePerson/last", true);
-
+                	
                       // attach the extension to the authentication request
                       authReq.addExtension(fetch);
 
@@ -133,8 +138,7 @@ public class OpenIDHelper {
         }
         catch (Exception e)
         {
-            log.error(e);
-        }
+            log.error("Error redirecting to OpenID provider" , e);        }
 
         return null;
     }
@@ -229,5 +233,62 @@ public class OpenIDHelper {
         }
 
         return null;
+    }
+    
+    /**
+     * Java proides a standard "trust manager" interface.  This trust manager
+     * essentially disables the rejection of certificates by trusting anyone and everyone.
+     */
+     public static X509TrustManager getDummyTrustManager() {
+         return new X509TrustManager() {
+             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                 return null;
+             }
+             public void checkClientTrusted(X509Certificate[] certs, String authType) {
+             }
+             public void checkServerTrusted(X509Certificate[] certs, String authType) {
+             }
+         };
+     }
+
+     /**
+     * Returns a hostname verifiers that always returns true, always positively verifies a host.
+     */
+     public static HostnameVerifier getAllHostVerifier() {
+         return new HostnameVerifier() {
+             public boolean verify(String hostname, SSLSession session) {
+                
+            	 return true;
+             }
+         };
+     }
+     
+    public static ConsumerManager newConsumerManager() throws Exception {
+        // Install the all-trusting trust manager SSL Context
+        
+    	 // Create a trust manager that does not validate certificate chains
+        TrustManager[] tma = new TrustManager[] {getDummyTrustManager()};
+
+        // Install the all-trusting trust manager
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, tma, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+        // Install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier(getAllHostVerifier());
+        
+    	
+
+        HttpFetcherFactory hff = new HttpFetcherFactory(sc,
+              SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        YadisResolver yr = new YadisResolver(hff);
+        RealmVerifierFactory rvf = new RealmVerifierFactory(yr);
+        Discovery d = new Discovery(new HtmlResolver(hff),yr,
+              Discovery.getXriResolver());
+
+        ConsumerManager manager = new ConsumerManager(rvf, d, hff);
+        manager.setAssociations(new InMemoryConsumerAssociationStore());
+        manager.setNonceVerifier(new InMemoryNonceVerifier(5000));
+        return manager;
     }
 }

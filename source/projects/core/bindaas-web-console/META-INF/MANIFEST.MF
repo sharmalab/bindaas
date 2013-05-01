@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Bindaas-web-console
 Bundle-SymbolicName: bindaas-web-console
 Bundle-Version: 1.0.0
-Bundle-Activator: edu.emory.cci.bindaas.webconsole.Activator
+Bundle-Activator: edu.emory.cci.bindaas.webconsole.bundle.Activator
 Bundle-Vendor: CCI Emory University
 Spring-Context: *
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

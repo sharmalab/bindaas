@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
+<beans xmlns="http://www.springframework.org/schema/beans"                               
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:osgi="http://www.springframework.org/schema/osgi"                               
+   xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd                      
+       http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 <bean id="versionCommand" class="edu.emory.cci.bindaas.installer.command.VersionCommand" init-method="init">
 	<property name="filename" value="bindaas-framework-info.properties"></property>
@@ -14,7 +17,11 @@
 			<prop key="bindaas.build.date">TODAY</prop>
 		</props>
 	</property>
+	<property name="systemInfo" ref="systemInfo"></property>
 </bean>
+
+<osgi:reference interface="edu.emory.cci.bindaas.core.system.SystemInfo" id="systemInfo"  ></osgi:reference>
+
 
 </beans>
 

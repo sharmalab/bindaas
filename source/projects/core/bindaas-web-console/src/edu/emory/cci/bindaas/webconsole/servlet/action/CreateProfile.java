@@ -24,8 +24,8 @@ import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 
@@ -36,7 +36,34 @@ public class CreateProfile extends AbstractRequestHandler{
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
 	private VelocityEngineWrapper velocityEngineWrapper;
+	private IManagementTasks managementTask;
+	private IProviderRegistry providerRegistry;
+	private VersionCommand versionCommand;
 	
+	public IManagementTasks getManagementTask() {
+		return managementTask;
+	}
+
+	public void setManagementTask(IManagementTasks managementTask) {
+		this.managementTask = managementTask;
+	}
+
+	public IProviderRegistry getProviderRegistry() {
+		return providerRegistry;
+	}
+
+	public void setProviderRegistry(IProviderRegistry providerRegistry) {
+		this.providerRegistry = providerRegistry;
+	}
+
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
+
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
 	}
@@ -87,7 +114,7 @@ public class CreateProfile extends AbstractRequestHandler{
 			HttpServletResponse response, Map<String, String> pathParameters)
 	{
 		VelocityContext context = new VelocityContext(pathParameters);
-		IProviderRegistry providerRegistry = Activator.getService(IProviderRegistry.class);
+		
 		if(providerRegistry!=null)
 		{
 			Collection<IProvider> listOfProviders = providerRegistry.findProviders();
@@ -98,7 +125,7 @@ public class CreateProfile extends AbstractRequestHandler{
 			 * Add version information
 			 */
 			String versionHeader = "";
-			VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+		
 			if(versionCommand!=null)
 			{
 				String frameworkBuilt = "";
@@ -146,7 +173,6 @@ public class CreateProfile extends AbstractRequestHandler{
 		String createdBy = ((Principal)request.getSession().getAttribute("loggedInUser")).getName();
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
 			Profile profile = managementTask.createProfile(profileName, workspace, jsonObject, createdBy , description);
 			response.setContentType(StandardMimeType.JSON.toString());

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd  http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 	<bean id="authenticationProvider"
 		class="edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider"
@@ -38,6 +41,34 @@
 	<bean id="dbAuthenticationProvider"
 		class="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"
 		init-method="init"></bean>
+		
+<!-- Blueprint Exports -->
+<osgi:service ref="dbAuthenticationProvider" interface="edu.emory.cci.bindaas.security.api.IAuthenticationProvider">
+	<osgi:service-properties>
+		<entry key="class" value="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider" />
+		<entry key="protocol" value="API_KEY" />
+	</osgi:service-properties>
+</osgi:service>
+
+<osgi:service interface="edu.emory.cci.bindaas.security.api.IAuthorizationProvider" ref="authorizationProvider">
+	<osgi:service-properties>
+		<entry key="class" value="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider" />
+	</osgi:service-properties>
+</osgi:service>
+
+<osgi:service interface="edu.emory.cci.bindaas.security.api.IAuthenticationProvider" ref="authenticationProvider">
+	<osgi:service-properties>
+		<entry key="class" value="edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider" />
+		<entry key="protocol" value="HTTP_BASIC" />
+	</osgi:service-properties>
+</osgi:service>
+
+<osgi:service interface="edu.emory.cci.bindaas.security.api.IAuditProvider" ref="auditProvider">
+	<osgi:service-properties>
+		<entry key="class" value="edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider" />
+	</osgi:service-properties>
+</osgi:service>
+
 
 </beans>
 

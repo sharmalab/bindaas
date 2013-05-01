@@ -22,8 +22,8 @@ public class Activator implements BundleActivator {
 	 * )
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
-		log.debug("Starting Bundle [bindaas-commons-h2-hibernate]");
 		Activator.context = bundleContext;
+		log.trace(String.format("Starting Bundle [%s]", context.getBundle().getSymbolicName()));
 
 	}
 

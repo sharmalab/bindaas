@@ -29,8 +29,8 @@ import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 
@@ -38,8 +38,35 @@ public class ManageUserRegistration extends AbstractRequestHandler {
 
 	private static String templateName = "manageUserRegistration.vt";
 	private  Template template;
-private VelocityEngineWrapper velocityEngineWrapper;
+	private VelocityEngineWrapper velocityEngineWrapper;
+	private IMailService mailService;
+	private SessionFactory sessionFactory;
+	private VersionCommand versionCommand;
 	
+	public IMailService getMailService() {
+		return mailService;
+	}
+
+	public void setMailService(IMailService mailService) {
+		this.mailService = mailService;
+	}
+
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
+
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
 	}
@@ -85,7 +112,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 	private void getView(HttpServletRequest request,
 			HttpServletResponse response)
 	{
-		SessionFactory sessionFactory  = Activator.getService(SessionFactory.class);
+		
 		if(sessionFactory!=null)
 		{
 			Session session  = sessionFactory.openSession();
@@ -104,7 +131,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 					 * Add version information
 					 */
 					String versionHeader = "";
-					VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+					
 					if(versionCommand!=null)
 					{
 						String frameworkBuilt = "";
@@ -154,7 +181,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 		
 		
 		//
-		SessionFactory sessionFactory  = Activator.getService(SessionFactory.class);
+		
 		if(sessionFactory!=null)
 		{
 			Session session  = sessionFactory.openSession();
@@ -207,8 +234,6 @@ private VelocityEngineWrapper velocityEngineWrapper;
 						session.save(userRequest);
 						session.save(historyLog);
 						
-						IMailService mailService = Activator.getService(IMailService.class);
-					
 						if(mailService == null) throw new Exception("Mail Service not available");
 						else
 						mailService.sendMail(userRequest.getEmailAddress() , "Your Bindaas API Key status" , emailMessage);

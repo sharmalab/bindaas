@@ -24,16 +24,29 @@ import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 
 public class PostLoginAction extends HttpServlet {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	private String defaultLoginTarget;
 	private Log log = LogFactory.getLog(getClass());
-
+	private LoginView loginView;
+	private SessionFactory sessionFactory;
+	
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+	public LoginView getLoginView() {
+		return loginView;
+	}
+	public void setLoginView(LoginView loginView) {
+		this.loginView = loginView;
+	}
 	public String getDefaultLoginTarget() {
 		return defaultLoginTarget;
 	}
@@ -68,7 +81,7 @@ public class PostLoginAction extends HttpServlet {
 
 				try {
 					request.getSession().setAttribute("loggedInUser", null);
-					LoginView.generateLoginView(request, response, loginTarget,
+					loginView.generateLoginView(request, response, loginTarget,
 							"You are not authorized to access this resource");
 
 				} catch (Exception e1) {
@@ -84,7 +97,7 @@ public class PostLoginAction extends HttpServlet {
 
 			try {
 
-				LoginView.generateLoginView(request, response, loginTarget,
+				loginView.generateLoginView(request, response, loginTarget,
 						"You are not authorized to access this resource");
 
 			} catch (Exception e1) {
@@ -105,8 +118,8 @@ public class PostLoginAction extends HttpServlet {
 	@SuppressWarnings("deprecation")
 	private void generateApiKey(BindaasUser principal) {
 
-		SessionFactory sessionFactory = Activator
-				.getService(SessionFactory.class);
+//		SessionFactory sessionFactory = Activator
+//				.getService(SessionFactory.class);
 		if (sessionFactory != null) {
 			Session session = sessionFactory.openSession();
 			try {

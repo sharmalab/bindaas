@@ -28,8 +28,8 @@ import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class SubmitEndpointView extends AbstractRequestHandler {
@@ -39,6 +39,43 @@ public class SubmitEndpointView extends AbstractRequestHandler {
 	private String uriTemplate;
 	private Log log = LogFactory.getLog(getClass());
 	private VelocityEngineWrapper velocityEngineWrapper;
+	private IManagementTasks managementTasks;
+	private VersionCommand versionCommand;
+	private IProviderRegistry providerRegistry;
+	private IModifierRegistry modifierRegistry;
+	
+	public IModifierRegistry getModifierRegistry() {
+		return modifierRegistry;
+	}
+
+	public void setModifierRegistry(IModifierRegistry modifierRegistry) {
+		this.modifierRegistry = modifierRegistry;
+	}
+
+	public IProviderRegistry getProviderRegistry() {
+		return providerRegistry;
+	}
+
+	public void setProviderRegistry(IProviderRegistry providerRegistry) {
+		this.providerRegistry = providerRegistry;
+	}
+
+	
+	public IManagementTasks getManagementTasks() {
+		return managementTasks;
+	}
+
+	public void setManagementTasks(IManagementTasks managementTasks) {
+		this.managementTasks = managementTasks;
+	}
+
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
+
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
 	
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
@@ -91,7 +128,7 @@ public class SubmitEndpointView extends AbstractRequestHandler {
 	public void generateView(HttpServletRequest request,
 			HttpServletResponse response, Map<String, String> pathParameters) throws Exception
 	{
-		IManagementTasks managementTasks = Activator.getService(IManagementTasks.class);
+		
 		if(managementTasks!=null)
 		{
 			String workspace = pathParameters.get("workspace");
@@ -107,7 +144,7 @@ public class SubmitEndpointView extends AbstractRequestHandler {
 			 * Add version information
 			 */
 			String versionHeader = "";
-			VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+			
 			if(versionCommand!=null)
 			{
 				String frameworkBuilt = "";
@@ -129,12 +166,12 @@ public class SubmitEndpointView extends AbstractRequestHandler {
 				log.warn("Version Header not set");
 			}
 			context.put("versionHeader", versionHeader);
-			IModifierRegistry modifierRegistry = Activator.getService(IModifierRegistry.class);
+			
 			Collection<ISubmitPayloadModifier> submitPayloadModifier = modifierRegistry.findAllSubmitPayloadModifiers();
 			context.put("submitPayloadModifiers" , submitPayloadModifier);
 			
 			Profile prof = managementTasks.getProfile(pathParameters.get("workspace"), pathParameters.get("profile"));
-			JsonObject documentation = Activator.getService(IProviderRegistry.class).lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
+			JsonObject documentation = providerRegistry.lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
 			context.put("documentation" , documentation);
 			
 			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
@@ -162,10 +199,9 @@ public class SubmitEndpointView extends AbstractRequestHandler {
 		String jsonRequest = request.getParameter("jsonRequest");
 		JsonObject jsonObject = GSONUtil.getJsonParser().parse(jsonRequest).getAsJsonObject();
 		
-		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
 		try {
-			if(managementTask!=null){
-				SubmitEndpoint submitEndpoint = managementTask.updateSubmitEndpoint(submitEndpointName, workspace, profile, jsonObject, createdBy);
+			if(managementTasks!=null){
+				SubmitEndpoint submitEndpoint = managementTasks.updateSubmitEndpoint(submitEndpointName, workspace, profile, jsonObject, createdBy);
 				response.setContentType(StandardMimeType.JSON.toString());
 				response.getWriter().append(submitEndpoint.toString());
 				response.getWriter().flush();
@@ -191,10 +227,10 @@ public class SubmitEndpointView extends AbstractRequestHandler {
 		String profile = pathParameters.get("profile");
 		String submitEndpointName = pathParameters.get("submitEndpoint");
 		
-		IManagementTasks managementTask = Activator.getService(IManagementTasks.class);
+		
 		try {
-			if(managementTask!=null){
-				SubmitEndpoint submitEndpoint = managementTask.deleteSubmitEndpoint(workspace, profile, submitEndpointName);
+			if(managementTasks!=null){
+				SubmitEndpoint submitEndpoint = managementTasks.deleteSubmitEndpoint(workspace, profile, submitEndpointName);
 				response.setContentType(StandardMimeType.JSON.toString());
 				response.getWriter().append(submitEndpoint.toString());
 				response.getWriter().flush();

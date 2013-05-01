@@ -37,12 +37,6 @@ import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
 public class ManagementServiceImpl implements IManagementService {
 
-	public ManagementServiceImpl()
-	{
-		Dictionary<String, String> props = new Hashtable<String, String>();
-		props.put("class", getClass().getName());
-		Activator.getContext().registerService(IManagementService.class.getName(), this, props);
-	}
 	public IManagementTasks getManagementTask() {
 		return managementTask;
 	}

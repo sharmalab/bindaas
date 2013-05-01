@@ -15,8 +15,8 @@ import org.osgi.framework.ServiceReference;
 
 import edu.emory.cci.bindaas.openid.OpenIDHelper;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 
 public class UserOpenIDAuthServlet extends HttpServlet {
 	

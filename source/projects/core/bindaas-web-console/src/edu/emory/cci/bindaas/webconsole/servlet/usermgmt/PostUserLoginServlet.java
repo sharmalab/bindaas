@@ -23,8 +23,8 @@ import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
-import edu.emory.cci.bindaas.webconsole.Activator;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
@@ -40,6 +40,34 @@ public class PostUserLoginServlet extends HttpServlet {
 	
 	private static Template newRegistrationTemplate;
 private VelocityEngineWrapper velocityEngineWrapper;
+private IMailService mailService;
+private SessionFactory sessionFactory;
+private VersionCommand versionCommand;
+
+public IMailService getMailService() {
+	return mailService;
+}
+
+public void setMailService(IMailService mailService) {
+	this.mailService = mailService;
+}
+
+public SessionFactory getSessionFactory() {
+	return sessionFactory;
+}
+
+public void setSessionFactory(SessionFactory sessionFactory) {
+	this.sessionFactory = sessionFactory;
+}
+
+public VersionCommand getVersionCommand() {
+	return versionCommand;
+}
+
+public void setVersionCommand(VersionCommand versionCommand) {
+	this.versionCommand = versionCommand;
+}
+
 	
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
@@ -96,7 +124,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 						 * Add version information
 						 */
 						String versionHeader = "";
-						VersionCommand versionCommand = Activator.getService(VersionCommand.class);
+						
 						if(versionCommand!=null)
 						{
 							String frameworkBuilt = "";
@@ -138,8 +166,6 @@ private VelocityEngineWrapper velocityEngineWrapper;
 	}
 
 	private UserRequest getUserRequest(String emailAddress,String stage) throws Exception {
-		SessionFactory sessionFactory = Activator
-				.getService(SessionFactory.class);
 		if (sessionFactory != null) {
 			Session session = sessionFactory.openSession();
 			Transaction transaction = null;
@@ -210,7 +236,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 						userRequest.setReason(reason);
 						userRequest.setStage("pending");
 						
-						SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
+						
 						if (sessionFactory != null) {
 							Session session = sessionFactory.openSession();
 							Transaction transaction = null;
@@ -234,10 +260,7 @@ private VelocityEngineWrapper velocityEngineWrapper;
 									Boolean enabled = dynamicAdminconsoleConfiguration.getObject().getUserAccountManagement().getEnableUserSignupNotification();
 									if (enabled != null && enabled.booleanValue()) {
 										try {
-											
-											IMailService mailService = Activator
-													.getService(IMailService.class);
-											mailService
+											 mailService
 													.sendMail(dynamicAdminconsoleConfiguration.getObject().getUserAccountManagement().getNotificationRecepients()
 															,
 															"New User Signup Notification",
