@@ -25,9 +25,9 @@
 	</property>
 
 
-	<property name="core.bundle.repo" value="../../dependencies/core" />
-	<property name="mandatory.bundle.repo" value="../../dependencies/mandatory" />
-	<property name="optional.bundle.repo" value="../../dependencies/optional" />
+	<property name="third-party.bundle.repo" value="../../dependencies/bundles/third-party" />
+	<property name="startup.bundle.repo" value="../../dependencies/bundles/startup" />
+	<property name="build.extras" value="build-extras" />
 
 	<target name="copyProject" description="default build file">
 
@@ -35,33 +35,30 @@
 
 	<target name="dist" depends="dist-clean">
 
-		<echo>Copying Core Bundles</echo>
+		<echo>Adding extras to package</echo>
 		<copy todir="${dist.placeholder.dir}">
-			<fileset dir="${core.bundle.repo}">
-				<include name="${equinoxBundle}" />
+			<fileset dir="${build.extras}">
+				<include name="**/*" />
 			</fileset>
+		</copy>
+
+		<echo>Copying Configuration</echo>
+		<copy todir="${dist.placeholder.dir}/bin/">
 			<fileset dir="../../dependencies">
 				<include name="**/configuration/*" />
 			</fileset>
 		</copy>
 
-		<copy todir="${dist.placeholder.dir}/bundles/core">
-			<fileset dir="${core.bundle.repo}">
-				<include name="*.jar" />
-				<exclude name="${equinoxBundle}" />
-			</fileset>
-		</copy>
-
-		<echo>Copying mandatory dependencies</echo>
-		<copy todir="${dist.placeholder.dir}/bundles/mandatory">
-			<fileset dir="${mandatory.bundle.repo}">
+		<echo>Copying Startup Bundles</echo>
+		<copy todir="${dist.placeholder.dir}/bin/">
+			<fileset dir="${startup.bundle.repo}">
 				<include name="*.jar" />
 			</fileset>
 		</copy>
 
-		<echo>Copying optional dependencies</echo>
-		<copy todir="${dist.placeholder.dir}/bundles/optional">
-			<fileset dir="${optional.bundle.repo}">
+		<echo>Copying Third-Party Bundles</echo>
+		<copy todir="${dist.placeholder.dir}/bundles/third-party/">
+			<fileset dir="${third-party.bundle.repo}">
 				<include name="*.jar" />
 			</fileset>
 		</copy>
@@ -70,10 +67,13 @@
 	</target>
 
 	<target name="deploy" depends="incVersion">
+
+
 		<loadproperties srcfile="build-configuration/bindaas-framework-info.properties">
 		</loadproperties>
-		<copy todir="${dist.placeholder.dir}" file="build-configuration/bindaas-framework-info.properties" />
-		<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}-${bindaas.build.date}"></property>
+		<copy todir="${dist.placeholder.dir}/bin" file="build-configuration/bindaas-framework-info.properties" />
+		<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}-${bindaas.build.date}">
+		</property>
 		<tar basedir="${dist.placeholder.dir}" tarfile="${dist.location}/${filename}.tar" />
 		<gzip destfile="${dist.location}/${filename}.tar.gz" src="${dist.location}/${filename}.tar" />
 		<delete file="${dist.location}/${filename}.tar">
@@ -87,12 +87,13 @@
 		<delete dir="${dist.placeholder.dir}">
 		</delete>
 		<mkdir dir="${dist.placeholder.dir}" />
+		<mkdir dir="${dist.placeholder.dir}/bin" />
+		<mkdir dir="${dist.placeholder.dir}/log" />
 		<mkdir dir="${dist.placeholder.dir}/bundles" />
-		<mkdir dir="${dist.placeholder.dir}/bundles/core" />
-		<mkdir dir="${dist.placeholder.dir}/bundles/mandatory" />
+		<mkdir dir="${dist.placeholder.dir}/bundles/third-party" />
 		<mkdir dir="${dist.placeholder.dir}/bundles/system" />
-		<mkdir dir="${dist.placeholder.dir}/bundles/optional" />
 		<mkdir dir="${dist.placeholder.dir}/bundles/pickup" />
+		<mkdir dir="${dist.placeholder.dir}/bundles/optional" />
 
 	</target>
 
@@ -114,14 +115,14 @@
 			<equals arg1="${inc.framework.minor}" arg2="true"/>
 		</condition>
 
-		
+
 		<antcall target="incFrameworkMajor">
 		</antcall>
 		<antcall target="incFrameworkMinor">
 		</antcall>
 		<antcall target="incFrameworkRevision">
 		</antcall>
-	
+
 		<propertyfile file="build-configuration/bindaas-framework-info.properties">
 			<entry key="bindaas.build.date" operation="=" type="string" value="${DSTAMP}${TSTAMP}"/>
 		</propertyfile>
@@ -144,6 +145,6 @@
 		</propertyfile>
 	</target>
 
-	
+
 
 </project>
