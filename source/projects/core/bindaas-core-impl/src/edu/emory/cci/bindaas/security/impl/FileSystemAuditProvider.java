@@ -46,9 +46,6 @@ public class FileSystemAuditProvider implements IAuditProvider{
 	
 	public void init()
 	{
-//		Dictionary<String, String> props = new Hashtable<String, String>();
-//		props.put("class", FileSystemAuditProvider.class.getName());
-//		Activator.getContext().registerService(IAuditProvider.class.getName(), this, props);
 		dynamicProperties = new DynamicProperties("bindaas.audit", defaultProperties , Activator.getContext());
 	}
 	
@@ -60,7 +57,7 @@ public class FileSystemAuditProvider implements IAuditProvider{
 		String filename = props.getProperty("audit.file");
 		if(filename!=null)
 		{
-			File file = new File(filename);
+			File file = new File(filename); 
 			JsonArray array = null;
 			if(file.exists())
 			{
@@ -68,6 +65,21 @@ public class FileSystemAuditProvider implements IAuditProvider{
 			}
 			else
 			{
+				boolean error = true;
+				if(file.getParentFile().exists() == false)
+				{
+					boolean successful = file.getParentFile().mkdirs();
+					if(successful)
+					{
+						error = ! file.createNewFile();
+					}
+				}
+				
+				if(error)
+				{
+					throw new Exception("Cannot write to the audit file [" + file.getAbsolutePath() + "]");
+				}
+				
 				array = new JsonArray();
 			}
 			

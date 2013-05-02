@@ -33,7 +33,7 @@
 
 		<property name="defaultProperties">
 			<props>
-				<prop key="audit.file">audit.data</prop>
+				<prop key="audit.file">../etc/audit/audit.data</prop>
 			</props>
 		</property>
 

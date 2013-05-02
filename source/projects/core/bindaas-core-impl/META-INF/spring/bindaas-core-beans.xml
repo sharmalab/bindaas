@@ -34,7 +34,8 @@
 
 <!-- FileSystem Persistence Driver -->
 <bean id="fileSystemPersistenceDriver" class="edu.emory.cci.bindaas.core.impl.FileSystemPersistenceDriverImpl" init-method="init">
-	<property name="metadataStore" value="bindaas-metadata"></property>
+	<property name="metadataStore" value="projects"></property>
+	<property name="fileExtension" value=".project"></property>
 </bean>
 
 <!-- Modifier Registry Bean -->

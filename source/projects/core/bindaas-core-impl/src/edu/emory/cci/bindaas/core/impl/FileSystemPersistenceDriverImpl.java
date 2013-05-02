@@ -28,6 +28,15 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 
 	private String metadataStore;
 	private File metadataStoreDirectory;
+	private String fileExtension;
+	public String getFileExtension() {
+		return fileExtension;
+	}
+
+	public void setFileExtension(String fileExtension) {
+		this.fileExtension = fileExtension;
+	}
+	
 	private Log log = LogFactory.getLog(getClass());
 	
 	public void init() throws Exception
@@ -57,7 +66,7 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 					
 					@Override
 					public boolean accept(File arg0, String filename) {
-						if(filename.endsWith(".workspace"))
+						if(filename.endsWith(fileExtension))
 							return true;
 						else
 							return false;
@@ -77,7 +86,7 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 
 
 	public  String loadWorkspaceByName(String name) throws IOException {
-		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ name + ".workspace");
+		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ name + fileExtension);
 		if(workspaceFile.isFile() && workspaceFile.canRead())
 		{
 			return readContent(workspaceFile);
@@ -86,15 +95,6 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 		
 	}
 
-
-	
-
-
-//	public synchronized void removeWorkspace(String name) throws IOException {
-//		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ name + ".workspace");
-//		workspaceFile.delete();
-//		
-//	}
 	
 	public String getMetadataStore() {
 		return metadataStore;
@@ -119,7 +119,7 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 
 	@Override
 	public synchronized boolean doesExist(String workspaceName) {
-		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspaceName + ".workspace");
+		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspaceName + fileExtension);
 		if(workspaceFile.isFile() && workspaceFile.canRead())
 		{
 			return true;
@@ -145,13 +145,13 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 	
 	@Override
 	public synchronized void saveWorkspace(Workspace workspace) throws IOException {
-		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspace.getName() + ".workspace");
+		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspace.getName() + fileExtension);
 		writeToFile(workspaceFile, workspace.toString());
 	}
 	
 	@Override
 	public synchronized void deleteWorkspace(String workspaceName) throws IOException {
-		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspaceName + ".workspace");
+		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspaceName + fileExtension);
 		workspaceFile.delete();
 	}
 	@Override
