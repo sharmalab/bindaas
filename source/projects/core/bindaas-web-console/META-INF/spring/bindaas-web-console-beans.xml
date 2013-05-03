@@ -310,6 +310,8 @@
 	<property name="versionCommand" ref="versionCommand"></property>
 </bean>
 
+
+
 <!-- OSGi Refereces -->
 <osgi:reference interface="edu.emory.cci.bindaas.openid.OpenIDHelper" id="openIdHelper"></osgi:reference>
 <osgi:reference interface="edu.emory.cci.bindaas.installer.command.VersionCommand" id="versionCommand"></osgi:reference>

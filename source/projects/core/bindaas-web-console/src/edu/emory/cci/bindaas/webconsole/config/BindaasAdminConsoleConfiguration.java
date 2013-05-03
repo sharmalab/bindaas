@@ -31,6 +31,7 @@ public class BindaasAdminConsoleConfiguration implements ThreadSafe{
 
 	public synchronized void setPort(Integer port) {
 		this.port = port;
+		
 	}
 
 	public synchronized String  getProxyUrl() {

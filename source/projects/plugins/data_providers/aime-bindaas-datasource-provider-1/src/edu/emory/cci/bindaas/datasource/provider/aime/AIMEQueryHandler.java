@@ -3,6 +3,7 @@ package edu.emory.cci.bindaas.datasource.provider.aime;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +38,7 @@ public class AIMEQueryHandler implements IQueryHandler {
 
 	@Override
 	public QueryResult query(JsonObject dataSource,
-			JsonObject outputFormatProps, String queryToExecute)
+			JsonObject outputFormatProps, String queryToExecute , Map<String,String> runtimeParameters)
 			throws ProviderException {
 
 		try {
@@ -48,6 +49,26 @@ public class AIMEQueryHandler implements IQueryHandler {
 			QueryType queryType = props.getQueryType();
 			OutputFormat outputFormat = props.getOutputFormat();
 
+			// override output format
+			if(outputFormat.equals(OutputFormat.ANY))
+			{
+				if(runtimeParameters.containsKey("format") && runtimeParameters.get("format")!=null )
+				{
+					try{
+						
+						outputFormat = OutputFormat.valueOf(runtimeParameters.get("format").toUpperCase());
+					     
+					}catch(IllegalArgumentException ei)
+					{
+						outputFormat = OutputFormat.XML; // default to XML
+					}
+				}
+				else
+				{
+					outputFormat = OutputFormat.XML; // default to XML
+				}
+			}
+			
 			IFormatHandler formatHandler = outputFormatRegistry.getHandler(
 					queryType, outputFormat);
 			if (formatHandler != null) {
@@ -95,9 +116,14 @@ public class AIMEQueryHandler implements IQueryHandler {
 
 			IFormatHandler formatHandler = outputFormatRegistry.getHandler(
 					queryType, outputFormat);
-			if (formatHandler != null) {
+			if (formatHandler != null && outputFormat.equals(OutputFormat.ANY)!= true) {
 				formatHandler.validate(props);
-			} else {
+			}
+			else if(outputFormat.equals(OutputFormat.ANY) == true)
+			{
+				return queryEndpoint;
+			}
+			else {
 				throw new Exception("No Handler for QueryType=[" + queryType
 						+ "] and OutputFormat=[" + outputFormat + "]");
 			}

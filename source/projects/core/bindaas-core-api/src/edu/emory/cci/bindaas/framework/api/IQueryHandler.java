@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.framework.api;
 
+import java.util.Map;
+
 import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.framework.model.ProviderException;
@@ -8,7 +10,7 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 
 public interface IQueryHandler {
 
-	public QueryResult query(JsonObject dataSource , JsonObject outputFormatProps ,String queryToExecute) throws ProviderException;
+	public QueryResult query(JsonObject dataSource , JsonObject outputFormatProps ,String queryToExecute , Map<String,String> runtimeParameters) throws ProviderException;
 	
 	/**
 	 * Validate the correctness of QueryEndpoint params - outputformat , etc.

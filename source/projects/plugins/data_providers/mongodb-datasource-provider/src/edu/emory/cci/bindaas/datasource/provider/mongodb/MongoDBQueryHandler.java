@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,7 +41,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
 
 	@Override
 	public QueryResult query(JsonObject dataSource,
-			JsonObject outputFormatProps, String queryToExecute)
+			JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters)
 			throws ProviderException {
 		
 		try{
@@ -48,6 +50,28 @@ public class MongoDBQueryHandler implements IQueryHandler {
 				OutputFormatProps props = GSONUtil.getGSONInstance().fromJson(outputFormatProps, OutputFormatProps.class);
 				if(props!=null)
 				{
+					// override output format
+					OutputFormat outputFormat = props.getOutputFormat();
+					if(outputFormat.equals(OutputFormat.ANY))
+					{
+						if(runtimeParameters.containsKey("format") && runtimeParameters.get("format")!=null )
+						{
+							try{
+								
+								outputFormat = OutputFormat.valueOf(runtimeParameters.get("format").toUpperCase());
+							     
+							}catch(IllegalArgumentException ei)
+							{
+								outputFormat = OutputFormat.JSON; // default to JSON
+							}
+						}
+						else
+						{
+							outputFormat = OutputFormat.JSON; // default to JSON
+						}
+					}
+					props.setOutputFormat(outputFormat);
+
 					MongoDBOperationDescriptor operationDescriptor = null;
 					try{
 						 operationDescriptor = GSONUtil.getGSONInstance().fromJson(queryToExecute,MongoDBOperationDescriptor.class);
@@ -124,9 +148,13 @@ public class MongoDBQueryHandler implements IQueryHandler {
 					{
 						OutputFormat of = props.getOutputFormat();
 						IFormatHandler formatHandler = registry.getHandler(of);
-						if(formatHandler!=null)
+						if(formatHandler!=null && of.equals(OutputFormat.ANY)!= true)
 						{
 							formatHandler.validate(props);
+							return queryEndpoint;
+						}
+						else if(of.equals(OutputFormat.ANY) == true)
+						{
 							return queryEndpoint;
 						}
 						else

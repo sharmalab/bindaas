@@ -97,7 +97,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 
 			QueryResult queryResult = queryHandler.query(
 					profile.getDataSource(), queryEndpoint.getOutputFormat(),
-					finalQuery);
+					finalQuery , runtimeParameters);
 
 			// execute query result chain
 

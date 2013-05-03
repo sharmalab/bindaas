@@ -1,6 +1,7 @@
 package edu.emory.cci.bindaas.datasource.provider.http;
 
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -23,7 +24,7 @@ public class HTTPQueryHandler implements IQueryHandler {
 
 	@Override
 	public QueryResult query(JsonObject dataSource,
-			JsonObject outputFormatProps, String queryToExecute)
+			JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters)
 			throws ProviderException {
 		
 		

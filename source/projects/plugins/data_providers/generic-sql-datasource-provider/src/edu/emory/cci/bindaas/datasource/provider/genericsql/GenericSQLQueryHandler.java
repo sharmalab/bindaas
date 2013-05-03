@@ -3,6 +3,7 @@ package edu.emory.cci.bindaas.datasource.provider.genericsql;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,7 +41,7 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 	
 	@Override
 	public QueryResult query(JsonObject dataSource,
-			JsonObject outputFormatProps, String queryToExecute)
+			JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters)
 			throws ProviderException {
 		try {
 			OutputFormatProps props = GSONUtil.getGSONInstance().fromJson(
@@ -49,7 +50,25 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 																	// props
 			
 			OutputFormat outputFormat = props.getOutputFormat();
-
+			// override output format
+						if(outputFormat.equals(OutputFormat.ANY))
+						{
+							if(runtimeParameters.containsKey("format") && runtimeParameters.get("format")!=null )
+							{
+								try{
+									
+									outputFormat = OutputFormat.valueOf(runtimeParameters.get("format").toUpperCase());
+								     
+								}catch(IllegalArgumentException ei)
+								{
+									outputFormat = OutputFormat.JSON; // default to JSON
+								}
+							}
+							else
+							{
+								outputFormat = OutputFormat.JSON; // default to JSON
+							}
+						}
 			IFormatHandler formatHandler = getOutputFormatRegistry().getHandler(outputFormat);
 			if (formatHandler != null) {
 				Connection connection = null;
@@ -93,9 +112,14 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 			OutputFormat outputFormat = props.getOutputFormat();
 
 			IFormatHandler formatHandler = getOutputFormatRegistry().getHandler(outputFormat);
-			if (formatHandler != null) {
+			if (formatHandler != null && outputFormat.equals(OutputFormat.ANY)!= true) {
 				formatHandler.validate(props);
-			} else {
+			} 
+			else if(outputFormat.equals(OutputFormat.ANY) == true)
+			{
+				return queryEndpoint;
+			}
+			else {
 				throw new Exception("No Handler for OutputFormat=[" + outputFormat + "]");
 			}
 		} catch (Exception e) {

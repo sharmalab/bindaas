@@ -58,6 +58,7 @@ public class DynamicProperties {
 			loadedFromDefault = true;
 			properties = (Properties) defaultProperties.clone();
 			log.debug("Loaded default properties");
+			save();
 		}
 	}
 	

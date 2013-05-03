@@ -3,8 +3,10 @@ package edu.emory.cci.bindaas.core.util;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +23,7 @@ public class DynamicObject<T extends ThreadSafe> {
 	private String name;
 	private String filename;
 	private Log log = LogFactory.getLog(getClass());
+	private List<DynamicObjectChangeListener<T>> changeListeners;
 
 	public DynamicObject(String name,T defaultObject,  BundleContext context) throws Exception {
 		this.name = name;
@@ -34,6 +37,7 @@ public class DynamicObject<T extends ThreadSafe> {
 		props.put("filename", filename);
 		props.put("type", defaultObject.getClass().getName());
 		context.registerService(DynamicObject.class.getName(), this, props);
+		changeListeners = new ArrayList<DynamicObject.DynamicObjectChangeListener<T>>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -55,8 +59,9 @@ public class DynamicObject<T extends ThreadSafe> {
 			}
 			else
 			{
-				log.warn("Reading default properties for [" + this.name + "]");
+				log.debug("Reading default properties for [" + this.name + "]");
 				currentObject = (T) defaultObject.clone();
+				saveObject();
 			}
 		}
 		else throw new Exception("Default values not set");
@@ -77,6 +82,7 @@ public class DynamicObject<T extends ThreadSafe> {
 				fw = new FileWriter(filename);
 				// write to the file
 				GSONUtil.getGSONInstance().toJson(currentObject, fw);
+				sendNotification(currentObject);
 			} catch (Exception e) {
 				log.error(e);
 				throw e;
@@ -87,5 +93,45 @@ public class DynamicObject<T extends ThreadSafe> {
 
 		}
 	}
+	/**
+	 * Send notification asynchronously
+	 * @param updateObject
+	 */
+	private void sendNotification(T updateObject)
+	{
+		@SuppressWarnings("unchecked")
+		final T clonedCopy = (T) updateObject.clone();
+		Runnable runnable = new Runnable() {
+			
+			@Override
+			public void run() {
+				for(DynamicObjectChangeListener<T> changeListener : changeListeners)
+				{
+					changeListener.update(clonedCopy);
+				}
+				
+			}
+		};
+		Thread t = new Thread(runnable);
+		t.start();
+		
+		
+	}
+	
+	public synchronized T addChangeListener(DynamicObjectChangeListener<T> changeListener)
+	{
+		changeListeners.add(changeListener);
+		return (T)currentObject.clone();
+	}
+	public synchronized void removeChangeListener(DynamicObjectChangeListener<T> changeListener)
+	{
+		changeListeners.remove(changeListener);
+	}
+	
+ 
+ public static interface DynamicObjectChangeListener<T>  
+ {
+	 public void update(T object);
+ }
 
 }

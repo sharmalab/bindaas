@@ -82,7 +82,7 @@ public class MainController extends HttpServlet {
 	
 	public void init()
 	{
-		log.info("Main Controller Initialized");
+		log.trace("Main Controller Initialized");
 	}
 
 }

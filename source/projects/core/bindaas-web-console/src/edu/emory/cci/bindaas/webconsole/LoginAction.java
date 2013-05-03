@@ -142,12 +142,12 @@ public class LoginAction extends HttpServlet implements Filter{
 
 	@Override
 	public void init() throws ServletException {
-		log.debug("LoginAction Servlet  Initialized");
+		log.trace("LoginAction Servlet  Initialized");
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		log.debug("LoginAction Filter  Initialized");
+		log.trace("LoginAction Filter  Initialized");
 		
 	}
 

@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.junit.mock;
 
+import java.util.Map;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -11,7 +13,7 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 public class MockQueryHandler implements IQueryHandler{
 
 	@Override
-	public QueryResult query(JsonObject dataSource,JsonObject outputFormatProps, String queryToExecute)
+	public QueryResult query(JsonObject dataSource,JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters)
 			throws ProviderException {
 		QueryResult result = new QueryResult();
 		result.setCallback(false);

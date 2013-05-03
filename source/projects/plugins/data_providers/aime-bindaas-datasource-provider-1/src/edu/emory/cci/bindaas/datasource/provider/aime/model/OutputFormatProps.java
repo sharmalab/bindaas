@@ -17,7 +17,7 @@ public class OutputFormatProps {
 	
 	public static enum OutputFormat 
 	{
-		HTML,CSV,JSON,XML
+		HTML,CSV,JSON,XML,ANY
 	}
 
 	public QueryType getQueryType() {

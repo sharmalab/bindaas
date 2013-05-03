@@ -106,13 +106,13 @@
 							<h3>Administration</h3>
 						</legend>
 
-						<ul class="accordion">
+						<ul class="accordion" style="width:800px">
 
 							<li>
 								<div class="title">
 									<h5>User Account Management</h5>
 								</div>
-								<div class="content">
+								<div class="content" style="width:800px">
 									<div class="row">
 										<script>
 											function setEntityValues(action, id) {
@@ -289,13 +289,13 @@
 								<div class="title">
 									<h5>Server Administration</h5>
 								</div>
-								<div class="content">
+								<div class="content" style="width:800px">
 									<label>Host</label>
-									<input type="text" id="sa_middleware_host"/>
+									<input type="text" id="sa_middleware_host" disabled="true"/>
 									<label>Middleware Port</label>
-									<input type="text" id="sa_middleware_port"/>
+									<input type="text" id="sa_middleware_port" disabled="true"/>
 									<label>Admin Console Port</label>
-									<input type="text" id="sa_adminconsole_port"/>
+									<input type="text" id="sa_adminconsole_port" disabled="true"/>
 									<fieldset>
 										<legend>
 											<h5>Configure Proxy</h5>
@@ -362,9 +362,10 @@
 											
 										</script>
 									</fieldset>
-
+									<div><kbd>The host and port can be changed in the config.ini file.Refer documentation for more details</kbd></div>
+									
 									<i class="button" onclick="saveServerConfig()">Save</i>
-									<strong>Changes made will reflect on the next reboot</strong>
+									
 									<script>
 										function saveServerConfig() {
 										var req = {};
@@ -416,7 +417,7 @@
 								<div class="title">
 									<h5>Email Configuration</h5>
 								</div>
-								<div class="content">
+								<div class="content" style="width:800px">
 									<label>SMTP Server</label>
 									<input type="text" id="email_smptp_server" />
 									<label>SMTP Port</label>
@@ -426,7 +427,7 @@
 									<label>Password</label>
 									<input type="password" id="email_smptp_password" />
 									<i class="button" onclick="saveEmailConfig()">Save</i>
-									<strong>Changes made will reflect on the next reboot</strong>
+									
 									<script>
 										function saveEmailConfig() {
 											var req = {};
@@ -463,7 +464,7 @@
 								<div class="title">
 									<h5>Security Configuration</h5>
 								</div>
-								<div class="content">
+								<div class="content" style="width:800px">
 									<fieldset>
 										<legend>
 											<h5>Authentication</h5>

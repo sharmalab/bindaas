@@ -134,14 +134,33 @@ public class WebConsoleStarter {
 		this.loginAction = loginAction;
 	}
 
+	private void updateBindaasAdminConfig(DynamicObject<BindaasAdminConsoleConfiguration> bindaasAdminConsoleConfiguration)
+	{
+		String port = System.getProperty("org.osgi.service.http.port"); // TODO : need to find a better way of changing port
+		if(port!=null)
+		{
+			try{
+				
+				bindaasAdminConsoleConfiguration.getObject().setPort(Integer.parseInt(port));
+				bindaasAdminConsoleConfiguration.saveObject();
+				
+			}catch(Exception e)
+			{
+				log.error("Failed to override webconsole port. Using default",e);
+			}
+		}
+	}
+	
 	public void init() throws Exception {
-		log.debug("Initializing bean WebConsoleStarter");
+		log.trace("Initializing bean WebConsoleStarter");
 		final BundleContext context = Activator.getContext();
 		// set config
 		bindaasAdminConsoleConfiguration = new DynamicObject<BindaasAdminConsoleConfiguration>(
 				"bindaas.adminconsole",
 				defaultBindaasAdminConsoleConfiguration, context);
-
+	
+		updateBindaasAdminConfig(bindaasAdminConsoleConfiguration);
+		
 		String filter = "(objectclass=" + HttpService.class.getName() + ")";
 
 		ServiceListener httpServiceListener = new ServiceListener() {
@@ -230,7 +249,7 @@ public class WebConsoleStarter {
 								service.unregister("/user/postAuthenticate");
 								service.unregister("/user/logout");
 
-								log.info("Bindaas WebConsole Stopped");
+								log.trace("Bindaas WebConsole Stopped");
 							} catch (Exception e) {
 								log.error(e);
 							}
