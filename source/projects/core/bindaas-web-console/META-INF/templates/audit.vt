@@ -118,7 +118,7 @@
 			// Set paging configuration options
 			// Note: these options are changed by the UI controls in the example.
 			options['page'] = 'enable';
-			options['pageSize'] = 10;
+			options['pageSize'] = 20;
 			options['pagingSymbols'] = {prev: 'prev', next: 'next'};
 			options['pagingButtonsConfiguration'] = 'auto';
 
@@ -233,11 +233,11 @@
 						<span style="font-size: 12px;">Number of rows:</span>
 						<select style="font-size: 12px" onchange="setNumberOfPages(this.value)">
 							<option value="">No paging</option>
-							<option value="3">3</option>
-							<option value="5">5</option>
-							<option value="9">9</option>
-							<option selected="selected" value="10">10</option>
+							<option value="10">10</option>
+							<option selected="selected" value="20">20</option>
+							<option value="50">50</option>
 							<option value="100">100</option>
+							<option value="200">200</option>
 						</select>
 						
 					</form>

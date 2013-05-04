@@ -25,6 +25,7 @@
 
 <bean id="createWorkspace" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateWorkspace" >
 	<property name="uriTemplate" value="/createWorkspace/{workspace}"></property>
+	<property name="managementTask" ref="managementTasks"></property>
 </bean>
 
 <bean id="workspaceView" class="edu.emory.cci.bindaas.webconsole.servlet.views.WorkspaceView" init-method="init">
@@ -55,6 +56,10 @@
 <bean id="createSubmitEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateSubmitEndpoint" init-method="init">
 	<property name="uriTemplate" value="/{workspace}/{profile}/createSubmitEndpoint.action"></property>
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="modifierRegistry" ref="modifierRegistry"></property>
 </bean>
 
 <bean id="createDeleteEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateDeleteEndpoint" init-method="init" >
