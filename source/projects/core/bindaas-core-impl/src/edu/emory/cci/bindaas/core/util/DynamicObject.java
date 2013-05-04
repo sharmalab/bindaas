@@ -29,7 +29,7 @@ public class DynamicObject<T extends ThreadSafe> {
 		this.name = name;
 		this.filename = name + suffix;
 		this.defaultObject = defaultObject;
-		
+		changeListeners = new ArrayList<DynamicObject.DynamicObjectChangeListener<T>>();
 		init();
 
 		Dictionary<String, String> props = new Hashtable<String, String>();
@@ -37,7 +37,7 @@ public class DynamicObject<T extends ThreadSafe> {
 		props.put("filename", filename);
 		props.put("type", defaultObject.getClass().getName());
 		context.registerService(DynamicObject.class.getName(), this, props);
-		changeListeners = new ArrayList<DynamicObject.DynamicObjectChangeListener<T>>();
+		
 	}
 
 	@SuppressWarnings("unchecked")
