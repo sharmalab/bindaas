@@ -41,7 +41,7 @@
 				<include name="**/*" />
 			</fileset>
 		</copy>
-
+	
 		<echo>Copying Configuration</echo>
 		<copy todir="${dist.placeholder.dir}/bin/">
 			<fileset dir="../../dependencies">
@@ -62,7 +62,7 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
-
+		<chmod dir="${dist.placeholder.dir}/bin" perm="a+rx" includes="*.*"/>
 
 	</target>
 
@@ -74,7 +74,11 @@
 		<copy todir="${dist.placeholder.dir}/bin" file="build-configuration/bindaas-framework-info.properties" />
 		<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}-${bindaas.build.date}">
 		</property>
-		<tar basedir="${dist.placeholder.dir}" tarfile="${dist.location}/${filename}.tar" />
+		<tar tarfile="${dist.location}/${filename}.tar" >
+			<tarfileset dir="${dist.placeholder.dir}" filemode="0555">
+				<include name="**/*"/>
+			</tarfileset>
+		</tar>
 		<gzip destfile="${dist.location}/${filename}.tar.gz" src="${dist.location}/${filename}.tar" />
 		<delete file="${dist.location}/${filename}.tar">
 		</delete>
