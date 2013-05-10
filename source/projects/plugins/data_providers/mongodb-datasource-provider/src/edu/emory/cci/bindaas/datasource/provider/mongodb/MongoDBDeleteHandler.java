@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,6 +18,7 @@ import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfigu
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
@@ -25,7 +28,7 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 	private JsonParser parser = new JsonParser();
 
 	@Override
-	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute)
+	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute , Map<String,String> runtimeParamters , RequestContext requestContext)
 			throws ProviderException {
 
 		try {

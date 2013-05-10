@@ -29,6 +29,7 @@ import edu.emory.cci.bindaas.framework.model.ModifierEntry;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 
 public class ExecutionTaskImpl implements IExecutionTasks {
@@ -38,18 +39,13 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	private IValidator validator;
 	private Log log = LogFactory.getLog(getClass());
 
-//	public ExecutionTaskImpl() {
-//		Dictionary<String, String> props = new Hashtable<String, String>();
-//		props.put("class", getClass().getName());
-//		Activator.getContext().registerService(IExecutionTasks.class.getName(),
-//				this, props); 
-//	}
-//
 	@Override
 	public QueryResult executeQueryEndpoint(String user,
 			Map<String, String> runtimeParameters, Profile profile,
 			QueryEndpoint queryEndpoint) throws ExecutionTaskException {
 		
+		RequestContext requestContext = new RequestContext();
+		requestContext.setUser(user);
 		// construct real query
 		
 		Map<String, BindVariable> bindVariables = queryEndpoint
@@ -59,7 +55,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		try {
 			// modify runtimeParams
 
-			runtimeParameters = executeQueryParameterModifierChain(user,
+			runtimeParameters = executeQueryParameterModifierChain(requestContext,
 					runtimeParameters, queryEndpoint.getQueryModifiers(),
 					profile.getDataSource());
 			for (BindVariable bindVariable : bindVariables.values()) {
@@ -84,7 +80,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 
 			// execute queryModifier chain
 			
-			String finalQuery = executeQueryModifierChain(user, template,
+			String finalQuery = executeQueryModifierChain(requestContext, template,
 					queryEndpoint.getQueryModifiers(), profile.getDataSource());
 
 			// execute handler
@@ -97,14 +93,14 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 
 			QueryResult queryResult = queryHandler.query(
 					profile.getDataSource(), queryEndpoint.getOutputFormat(),
-					finalQuery , runtimeParameters);
+					finalQuery , runtimeParameters, requestContext);
 
 			// execute query result chain
 
 
-			queryResult = executeQueryResultModifierChain(user, queryResult,
+			queryResult = executeQueryResultModifierChain(requestContext, queryResult,
 					queryEndpoint.getQueryResultModifiers(),
-					profile.getDataSource());
+					profile.getDataSource() , runtimeParameters);
 
 			// render result
 			return queryResult;
@@ -117,7 +113,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	}
 
 	protected Map<String, String> executeQueryParameterModifierChain(
-			String user, Map<String, String> runtimeParameters,
+			RequestContext requestContext, Map<String, String> runtimeParameters,
 			ModifierEntry queryModifiers, JsonObject dataSource)
 			throws Exception {
 		Map<String, String> modifiedParams = runtimeParameters;
@@ -127,7 +123,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					.findQueryModifier(next.getName());
 			if (queryModifier != null) {
 				modifiedParams = queryModifier.modiftQueryParameters(
-						modifiedParams, dataSource, user, next.getProperties());
+						modifiedParams, dataSource, requestContext, next.getProperties());
 				next = next.getAttachment();
 			} else {
 				throw new ExecutionTaskException("[IQueryModifier] by id=["
@@ -144,9 +140,8 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 			Map<String, String> runtimeParameters, Profile profile,
 			DeleteEndpoint deleteEndpoint) throws ExecutionTaskException {
 		
-		
-
-		
+		RequestContext requestContext = new RequestContext();
+		requestContext.setUser(user);
 		
 		// construct real query
 		Map<String, BindVariable> bindVariables = deleteEndpoint
@@ -180,7 +175,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 			IDeleteHandler deleteHandler = provider.getDeleteHandler();
 
 			QueryResult queryResult = deleteHandler.delete(
-					profile.getDataSource(), template);
+					profile.getDataSource(), template ,  runtimeParameters , requestContext);
 			// render result
 			return queryResult;
 
@@ -198,8 +193,10 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		
 		
 		try {
-		
-			InputStream finalStream = executeSubmitPayloadModifierChain(user,
+			RequestContext requestContext = new RequestContext();
+			requestContext.setUser(user);
+			
+			InputStream finalStream = executeSubmitPayloadModifierChain(requestContext,
 					is, submitEndpoint.getSubmitPayloadModifiers(),
 					submitEndpoint);
 			// execute handler
@@ -210,7 +207,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 
 			QueryResult queryResult = submitHandler.submit(
 					profile.getDataSource(), submitEndpoint.getProperties(),
-					finalStream);
+					finalStream , requestContext );
 			return queryResult;
 		} catch (Exception e) {
 			log.error("Execution Task failed", e);
@@ -242,7 +239,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		this.validator = validator;
 	}
 
-	protected String executeQueryModifierChain(String user, String query,
+	protected String executeQueryModifierChain(RequestContext requestContext, String query,
 			ModifierEntry modifierChain, JsonObject dataSource)
 			throws Exception {
 		String modifiedQuery = query;
@@ -252,7 +249,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					.findQueryModifier(next.getName());
 			if (queryModifier != null) {
 				modifiedQuery = queryModifier.modifyQuery(modifiedQuery,
-						dataSource, user, next.getProperties());
+						dataSource, requestContext, next.getProperties());
 				next = next.getAttachment();
 			} else {
 				throw new ExecutionTaskException("[IQueryModifier] by id=["
@@ -264,9 +261,9 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		return modifiedQuery;
 	}
 
-	protected QueryResult executeQueryResultModifierChain(String user,
+	protected QueryResult executeQueryResultModifierChain(RequestContext requestContext,
 			QueryResult queryResult, ModifierEntry modifierChain,
-			JsonObject dataSource) throws Exception {
+			JsonObject dataSource , Map<String,String> queryParams) throws Exception {
 		QueryResult modifiedQueryResult = queryResult;
 		ModifierEntry next = modifierChain;
 		while (next != null) {
@@ -274,8 +271,8 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					.findQueryResultModifier(next.getName());
 			if (queryResultModifier != null) {
 				modifiedQueryResult = queryResultModifier.modifyQueryResult(
-						modifiedQueryResult, dataSource, user,
-						next.getProperties());
+						modifiedQueryResult, dataSource, requestContext,
+						next.getProperties(), queryParams );
 				next = next.getAttachment();
 			} else {
 				throw new ExecutionTaskException(
@@ -288,7 +285,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		return modifiedQueryResult;
 	}
 
-	protected InputStream executeSubmitPayloadModifierChain(String user,
+	protected InputStream executeSubmitPayloadModifierChain(RequestContext requestContext,
 			InputStream input, ModifierEntry modifierChain,
 			SubmitEndpoint submitEndpoint) throws Exception {
 		InputStream modifiedInput = input;
@@ -298,7 +295,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					.findSubmitPayloadModifier(next.getName());
 			if (submitPayloadModifier != null) {
 				modifiedInput = submitPayloadModifier.transformPayload(
-						modifiedInput, submitEndpoint, next.getProperties());
+						modifiedInput, submitEndpoint, next.getProperties() , requestContext);
 				next = next.getAttachment();
 			} else {
 				throw new ExecutionTaskException(
@@ -316,8 +313,12 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 			Profile profile, SubmitEndpoint submitEndpoint)
 			throws ExecutionTaskException {
 		try {
-			log.debug(data);
-			String finalData = executeSubmitPayloadModifierChain(user, data,
+			
+			RequestContext requestContext = new RequestContext();
+			requestContext.setUser(user);
+			log.trace(data);
+			
+			String finalData = executeSubmitPayloadModifierChain(requestContext, data,
 					submitEndpoint.getSubmitPayloadModifiers(), submitEndpoint);
 			// execute handler
 
@@ -326,7 +327,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 			ISubmitHandler submitHandler = provider.getSubmitHandler();
 			QueryResult queryResult = submitHandler.submit(
 					profile.getDataSource(), submitEndpoint.getProperties(),
-					finalData);
+					finalData , requestContext);
 			return queryResult;
 		} catch (Exception e) {
 			log.error("Execution Task failed", e);
@@ -334,7 +335,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		}
 	}
 
-	private String executeSubmitPayloadModifierChain(String user, String data,
+	private String executeSubmitPayloadModifierChain(RequestContext requestContext, String data,
 			ModifierEntry submitPayloadModifiers, SubmitEndpoint submitEndpoint)
 			throws Exception {
 
@@ -345,7 +346,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					.findSubmitPayloadModifier(next.getName());
 			if (submitPayloadModifier != null) {
 				modifiedInput = submitPayloadModifier.transformPayload(
-						modifiedInput, submitEndpoint, next.getProperties());
+						modifiedInput, submitEndpoint, next.getProperties() , requestContext);
 				next = next.getAttachment();
 			} else {
 				throw new ExecutionTaskException(

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ import edu.emory.cci.bindaas.aim2dicom.bundle.Activator;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
@@ -68,7 +70,7 @@ public class Dicom2AIMQRM implements IQueryResultModifier {
 
 	@Override
 	public QueryResult modifyQueryResult(final QueryResult queryResult,
-			JsonObject dataSource, String user, JsonObject modifierProperties)
+			JsonObject dataSource, RequestContext requestContext, JsonObject modifierProperties , Map<String,String> runtimeParameters)
 			throws Exception {
 		
 		

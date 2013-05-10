@@ -1,16 +1,19 @@
 package edu.emory.cci.bindaas.junit.mock;
 
+import java.util.Map;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 
 public class MockDeleteHandler implements IDeleteHandler{
 
 	@Override
-	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute)
+	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute , Map<String,String> runtimeParamters , RequestContext requestContext)
 			throws ProviderException {
 		QueryResult result = new QueryResult();
 		result.setCallback(false);

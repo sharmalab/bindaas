@@ -2,6 +2,7 @@ package edu.emory.cci.bindaas.datasource.provider.aime;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,6 +12,7 @@ import com.google.gson.JsonObject;
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.DataSourceConfiguration;
 
@@ -19,7 +21,7 @@ public class AIMEDeleteHandler implements IDeleteHandler {
 	private Log log = LogFactory.getLog(getClass());
 
 	@Override
-	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute)
+	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute , Map<String,String> runtimeParameters, RequestContext requestContext )
 			throws ProviderException {
 		try {
 			Connection connection = null;

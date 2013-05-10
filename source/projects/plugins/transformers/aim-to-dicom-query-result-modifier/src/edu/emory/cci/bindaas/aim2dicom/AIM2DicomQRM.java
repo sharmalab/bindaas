@@ -37,6 +37,7 @@ import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -72,7 +73,7 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 
 	@Override
 	public QueryResult modifyQueryResult(final QueryResult queryResult,
-			JsonObject dataSource, String user, JsonObject modifierProperties)
+			JsonObject dataSource, RequestContext requestContext, JsonObject modifierProperties , Map<String,String> runtimeParameters)
 			throws Exception {
 		
 		

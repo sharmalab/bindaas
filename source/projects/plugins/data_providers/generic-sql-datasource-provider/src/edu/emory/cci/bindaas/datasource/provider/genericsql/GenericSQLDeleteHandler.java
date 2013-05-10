@@ -2,6 +2,7 @@ package edu.emory.cci.bindaas.datasource.provider.genericsql;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +14,7 @@ import edu.emory.cci.bindaas.datasource.provider.genericsql.model.DataSourceConf
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
 public class GenericSQLDeleteHandler implements IDeleteHandler {
@@ -27,7 +29,7 @@ public class GenericSQLDeleteHandler implements IDeleteHandler {
 	}
 	
 	@Override
-	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute)
+	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute, Map<String,String> runtimeParamters , RequestContext requestContext)
 			throws ProviderException {
 		try {
 			Connection connection = null;

@@ -25,6 +25,7 @@ import edu.emory.cci.bindaas.datasource.provider.genericsql.model.SubmitEndpoint
 import edu.emory.cci.bindaas.framework.api.ISubmitHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
@@ -45,7 +46,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 
 	@Override
 	public QueryResult submit(JsonObject dataSource,
-			JsonObject endpointProperties, InputStream is)
+			JsonObject endpointProperties, InputStream is, RequestContext requestContext)
 			throws ProviderException {
 		SubmitEndpointProperties seProps = GSONUtil.getGSONInstance().fromJson(
 				endpointProperties, SubmitEndpointProperties.class);
@@ -108,7 +109,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 
 	@Override
 	public QueryResult submit(JsonObject dataSource,
-			JsonObject endpointProperties, String data)
+			JsonObject endpointProperties, String data, RequestContext requestContext)
 			throws ProviderException {
 		SubmitEndpointProperties seProps = GSONUtil.getGSONInstance().fromJson(
 				endpointProperties, SubmitEndpointProperties.class);

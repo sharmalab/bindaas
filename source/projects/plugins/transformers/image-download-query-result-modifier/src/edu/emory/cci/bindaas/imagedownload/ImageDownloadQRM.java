@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -25,6 +26,7 @@ import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -61,7 +63,7 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 
 	@Override
 	public QueryResult modifyQueryResult(final QueryResult queryResult,
-			JsonObject dataSource, String user, final  JsonObject modifierProperties)
+			JsonObject dataSource, RequestContext requestContext, final  JsonObject modifierProperties ,  Map<String,String> queryParams)
 			throws Exception {
 		final ImageDownloadQRMProperties props = GSONUtil.getGSONInstance().fromJson(modifierProperties, ImageDownloadQRMProperties.class);
 		final JsonArray results = queryResult.getIntermediateResult().getAsJsonArray();

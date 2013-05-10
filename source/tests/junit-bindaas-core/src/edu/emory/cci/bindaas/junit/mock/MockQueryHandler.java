@@ -9,11 +9,12 @@ import edu.emory.cci.bindaas.framework.api.IQueryHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 
 public class MockQueryHandler implements IQueryHandler{
 
 	@Override
-	public QueryResult query(JsonObject dataSource,JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters)
+	public QueryResult query(JsonObject dataSource,JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters, RequestContext requestContext)
 			throws ProviderException {
 		QueryResult result = new QueryResult();
 		result.setCallback(false);

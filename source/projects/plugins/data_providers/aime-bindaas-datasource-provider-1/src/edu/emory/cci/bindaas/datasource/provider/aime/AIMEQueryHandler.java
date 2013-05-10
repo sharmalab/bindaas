@@ -14,6 +14,7 @@ import edu.emory.cci.bindaas.framework.api.IQueryHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.OutputFormatProps;
@@ -38,7 +39,7 @@ public class AIMEQueryHandler implements IQueryHandler {
 
 	@Override
 	public QueryResult query(JsonObject dataSource,
-			JsonObject outputFormatProps, String queryToExecute , Map<String,String> runtimeParameters)
+			JsonObject outputFormatProps, String queryToExecute , Map<String,String> runtimeParameters , RequestContext requestContext)
 			throws ProviderException {
 
 		try {
