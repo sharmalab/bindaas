@@ -1,0 +1,14 @@
+{
+
+"providerId" : "edu.emory.cci.bindaas.datasource.provider.aime4.AIMEProvider",
+"providerVersion" : "1",
+
+"dataSource" : {
+"username" : "db2inst1" ,
+"password" : "aim03@cci" ,
+"url" : "jdbc:db2://ivi02.cci.emory.edu:50000/XMLDB" ,
+"autoInitialize": "true",
+"tableName" : "bindaas_test_1"
+}
+
+}
