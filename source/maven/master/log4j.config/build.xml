@@ -22,11 +22,7 @@
           target: copyProject              
          ================================= -->
     <target name="copyProject" depends="clean" description="Copy project to do maven build">
-        <copy todir="${build.src}">
-        	<fileset dir="${project.home}/src">
-        		<include name="**/*"/>
-        	</fileset>
-        </copy>
+       
     	
     	<copy todir="${build.resources}">
     		<fileset dir="${project.home}">

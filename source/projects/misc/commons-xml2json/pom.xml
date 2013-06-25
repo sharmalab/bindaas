@@ -5,7 +5,7 @@
 		<groupId>bindaas</groupId>
 		<artifactId>master</artifactId>
 		<version>0.0.1</version>
-		<relativePath>.../../../maven/master/</relativePath>
+		<relativePath>../../../maven/master/</relativePath>
 	</parent>
 	<artifactId>commons-xml2json</artifactId>
 	<version>0.0.1</version>
