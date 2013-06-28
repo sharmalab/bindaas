@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.aime4;
 
+import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Map;
@@ -34,11 +35,10 @@ public class AIMEDeleteHandler implements IDeleteHandler {
 				log.debug("Executing Delte Query:\n" + deleteQueryToExecute);
 				int status = statement.executeUpdate(deleteQueryToExecute);
 				QueryResult queryResult = new QueryResult();
-				queryResult.setCallback(false);
-				queryResult.setError(false);
-				queryResult.setData(String.format(
+				
+				queryResult.setData( new ByteArrayInputStream(String.format(
 						"{ 'result' : 'success' , 'rowsDeleted' : '%s' }",
-						status + "").getBytes());
+						status + "").getBytes()));
 				return queryResult;
 			} catch (Exception er) {
 				log.error(er);

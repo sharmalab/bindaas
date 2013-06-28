@@ -1,6 +1,8 @@
 package edu.emory.cci.bindaas.core.rest.service.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -13,10 +15,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +37,7 @@ import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -72,64 +77,59 @@ public class ExecutionServiceImpl implements IExecutionService{
 		// do init here 
 	}
 	
-	public Response queryResultToResponse(QueryResult queryResult) throws Exception
+	
+	public Response queryResultToResponse(final QueryResult queryResult , QueryEndpoint queryEndpoint , Long responseTime) throws Exception
 	{
-		if(queryResult.isCallback())
+		Map<String,Object> headers = new HashMap<String, Object>();
+		
+		if(queryEndpoint!= null)
 		{
-			queryResult.getCallback().callback(getMessageContext().getHttpServletResponse().getOutputStream(), null); // TODO here instead of null a context should be passed
-			return Response.ok().build();
+			headers.put("metadata", queryEndpoint.getMetaData());
+			headers.put("tags", queryEndpoint.getTags());
 		}
-		else if(queryResult.isError())
+
+		if(responseTime != null)
 		{
-			return RestUtils.createErrorResponse(queryResult.getErrorMessage());
-		}
-		else if(queryResult.isMime())
-		{
-			return RestUtils.createMimeResponse(queryResult.getData(), queryResult.getMimeType());
-		}
-		else
-		{
-			return RestUtils.createSuccessResponse(new String(queryResult.getData()) , queryResult.getMimeType());
+			headers.put("responseTime", responseTime.toString());
 		}
 		
-	}
-	public Response queryResultToResponse(QueryResult queryResult , QueryEndpoint queryEndpoint , long responseTime) throws Exception
-	{
-		if(queryResult.isCallback())
+		
+		Map<String,Object> responseHeaders = queryResult.getResponseHeaders();
+		if(responseHeaders!=null && responseHeaders.size() > 0)
+		{
+			headers.putAll(responseHeaders);
+		}
+
+
+		if(queryResult.getCallback()!=null)
 		{
 			
-			HttpServletResponse response = getMessageContext().getHttpServletResponse(); 
-			response.setContentType(queryResult.getMimeType());
-			response.setHeader("metadata", queryEndpoint.getMetaData().toString());
-			response.setHeader("tags", queryEndpoint.getTags().toString());
-			response.setHeader("responseTime", responseTime+ "");
-			if(queryResult.getMimeType().equals(StandardMimeType.ZIP.toString()))
-			{
-				response.setHeader("Content-Disposition","attachment;filename=\"" + queryEndpoint.getName() + ".zip\"");
-			}
+						final Callback callback = queryResult.getCallback();
+			StreamingOutput streamingOutput = new StreamingOutput() {
+				
+				@Override
+				public void write(OutputStream os) throws IOException,
+						WebApplicationException {
+					try {
+							callback.callback(os, null);
+					}catch(Exception e)
+					{
+						log.error(e);
+						throw new WebApplicationException(e);
+					}
+					
+				}
+			};
 			
-			queryResult.getCallback().callback(getMessageContext().getHttpServletResponse().getOutputStream(), null); // TODO here instead of null a context should be passed
-			return Response.ok().type(queryResult.getMimeType()).build();
+			return RestUtils.createMimeResponse(streamingOutput, queryResult.getMimeType() , headers);
 		}
 		else if(queryResult.isError())
 		{
 			return RestUtils.createErrorResponse(queryResult.getErrorMessage());
 		}
-		else if(queryResult.isMime())
-		{
-			Map<String,Object> headers = new HashMap<String, Object>();
-			headers.put("metadata", queryEndpoint.getMetaData());
-			headers.put("tags", queryEndpoint.getTags());
-			headers.put("responseTime", responseTime+ "");
-			return RestUtils.createMimeResponse(queryResult.getData(), queryResult.getMimeType() , headers);
-		}
 		else
-		{
-			Map<String,Object> headers = new HashMap<String, Object>();
-			headers.put("metadata", queryEndpoint.getMetaData());
-			headers.put("tags", queryEndpoint.getTags());
-			headers.put("responseTime(ms)",responseTime+ "");
-			return RestUtils.createSuccessResponse(new String(queryResult.getData()) , queryResult.getMimeType() ,headers);
+		{			
+			return RestUtils.createMimeResponse(queryResult.getData() , queryResult.getMimeType() ,headers);
 		}
 		
 	}
@@ -168,7 +168,7 @@ public class ExecutionServiceImpl implements IExecutionService{
 				if(submitEndpoint.getType().equals(Type.MULTIPART))
 				{
 					QueryResult queryResult = executionTask.executeSubmitEndpoint(getUser(), is , profile, submitEndpoint);
-					return queryResultToResponse(queryResult);
+					return queryResultToResponse(queryResult , null , null);
 				}
 				else
 				{
@@ -227,7 +227,7 @@ public class ExecutionServiceImpl implements IExecutionService{
 				{
 					QueryResult queryResult = executionTask.executeSubmitEndpoint(getUser(), requestBody , profile, submitEndpoint);
 					
-					return queryResultToResponse(queryResult);	
+					return queryResultToResponse(queryResult ,  null , null);	
 				}
 				else
 				{
@@ -289,7 +289,7 @@ public class ExecutionServiceImpl implements IExecutionService{
 				
 				QueryResult queryResult = executionTask.executeDeleteEndpoint(getUser(), getRuntimeQueryParameters(), profile, deleteEndpoint);
 				
-				return queryResultToResponse(queryResult);
+				return queryResultToResponse(queryResult , null , null );
 			}
 			else
 			{

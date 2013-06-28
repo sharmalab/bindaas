@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.aime.outputformat;
 
+import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
 
 import edu.emory.cci.bindaas.datasource.provider.aime.bundle.Activator;
@@ -40,10 +41,9 @@ public class XqueryCSVHandler implements IFormatHandler{
 		}
 		
 		QueryResult qr = new QueryResult();
-		qr.setCallback(false);
-		qr.setData(buff.toString().getBytes());
-		qr.setError(false);
-		qr.setMime(false);
+		
+		qr.setData(new ByteArrayInputStream(buff.toString().getBytes()));
+		
 		qr.setMimeType(StandardMimeType.CSV.toString());
 		return qr;
 

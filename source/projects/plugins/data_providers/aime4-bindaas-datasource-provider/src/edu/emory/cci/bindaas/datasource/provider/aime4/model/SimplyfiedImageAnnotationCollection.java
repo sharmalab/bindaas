@@ -1,7 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.aime4.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -32,17 +31,37 @@ public class SimplyfiedImageAnnotationCollection {
 		 return gson.toJsonTree(this).getAsJsonObject();
 	};
 	
+	
 	public static SimplyfiedImageAnnotationCollection convert(ImageAnnotationCollection imageAnnotationCollection)
 	{
 		SimplyfiedImageAnnotationCollection simplified = new SimplyfiedImageAnnotationCollection();
-		simplified.annotationContainerUID = imageAnnotationCollection.getUniqueIdentifier().getRoot();
-		simplified.patientId = imageAnnotationCollection.getPerson().getId().getValue();
+		simplified.annotationContainerUID = imageAnnotationCollection.getUniqueIdentifier().getRoot(); // mandatory
+		
+		try{
+		simplified.patientId = imageAnnotationCollection.getPerson().getId().getValue(); 
+		}catch(NullPointerException ne){}
+		
+		try{
 		simplified.patientName = imageAnnotationCollection.getPerson().getName().getValue();
+		}catch(NullPointerException ne){}
+		
+		try{
 		simplified.sex = imageAnnotationCollection.getPerson().getSex().getValue();
+		}catch(NullPointerException ne){}
+		
+		try{
 		simplified.dob = imageAnnotationCollection.getPerson().getBirthDate().getValue();
-		simplified.annotationDateTime = imageAnnotationCollection.getDateTime().getValue();
+		}catch(NullPointerException ne){}
+		
+		try{
+		simplified.annotationDateTime = imageAnnotationCollection.getDateTime().getValue();// mandatory
+		}catch(NullPointerException ne){}
+		
 		simplified.annotationType = "ImageAnnotation";
+		
+		try{
 		simplified.user = imageAnnotationCollection.getUser().getLoginName().getValue();
+		}catch(NullPointerException ne){}
 		
 		List<ImageAnnotation> listOfAnnotations = new ArrayList<SimplyfiedImageAnnotationCollection.ImageAnnotation>();
 		
@@ -51,12 +70,27 @@ public class SimplyfiedImageAnnotationCollection {
 			ImageAnnotation simpleImageAnnotation = new ImageAnnotation();
 			for(edu.emory.cci.bindaas.datasource.provider.aime4.jaxb.ImageAnnotation fullImageAnnotation : imageAnnotationCollection.getImageAnnotations().getImageAnnotation())
 			{
+				try{
 				simpleImageAnnotation.annotationName = fullImageAnnotation.getName().getValue();
+				}catch(NullPointerException ne){}
+				
+				try{
 				simpleImageAnnotation.annotationUID = fullImageAnnotation.getUniqueIdentifier().getRoot();
+				}catch(NullPointerException ne){}
+				
+				try{
 				DicomImageReferenceEntity dicomImageRef = (DicomImageReferenceEntity) fullImageAnnotation.getImageReferenceEntityCollection().getImageReferenceEntity().get(0); 
 				simpleImageAnnotation.studyInstanceUid = dicomImageRef.getImageStudy().getInstanceUid().getRoot();
+				
+				try{
 				simpleImageAnnotation.imagingObservationEntities = fullImageAnnotation.getImagingObservationEntityCollection().getImagingObservationEntity();
+				}catch(NullPointerException ne){}
+				
+				try{
 				simpleImageAnnotation.imagingPhysicalEntities = fullImageAnnotation.getImagingPhysicalEntityCollection().getImagingPhysicalEntity();
+				}catch(NullPointerException ne){}
+				
+				}catch(NullPointerException ne){}
 			}
 			listOfAnnotations.add(simpleImageAnnotation);
 		}

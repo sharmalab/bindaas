@@ -228,8 +228,8 @@ public class DeleteHandlerTestCase extends TestCase {
 			assertNotNull(queryResult);
 			assertNotNull(queryResult.getData());
 			assertFalse(queryResult.isError());
-			assertFalse(queryResult.isCallback());
-			System.out.println(new String(queryResult.getData()));
+			
+			
 			
 			// Execute DeleteEndpoint and remove data
 			DeleteEndpoint deleteEndpoint = profile.getDeleteEndpoints().get("deleteByUser");
@@ -238,9 +238,9 @@ public class DeleteHandlerTestCase extends TestCase {
 			queryResult = executionTasks.executeDeleteEndpoint(deleteEndpoint.getCreatedBy(), runtimeParameters, profile, deleteEndpoint);
 			assertNotNull(queryResult.getData());
 			assertFalse(queryResult.isError());
-			assertFalse(queryResult.isCallback());
 			
-			String str = new String(queryResult.getData());
+			
+			String str = edu.emory.cci.bindaas.framework.util.IOUtils.toString(queryResult.getData());
 			JsonObject json = parser.parse(str).getAsJsonObject();
 			assertEquals(json.get("rowsDeleted").getAsInt(), 102);
 			System.out.println(str);
@@ -251,17 +251,16 @@ public class DeleteHandlerTestCase extends TestCase {
 			assertNotNull(queryResult);
 			assertNotNull(queryResult.getData());
 			assertFalse(queryResult.isError());
-			assertFalse(queryResult.isCallback());
-			System.out.println(new String(queryResult.getData()));
+			
 			
 			// Execute Delete endoint again with different param this time
 			runtimeParameters.put("user", "anonymous");
 			queryResult = executionTasks.executeDeleteEndpoint(deleteEndpoint.getCreatedBy(), runtimeParameters, profile, deleteEndpoint);
 			assertNotNull(queryResult.getData());
 			assertFalse(queryResult.isError());
-			assertFalse(queryResult.isCallback());
 			
-			str = new String(queryResult.getData());
+			
+			str = edu.emory.cci.bindaas.framework.util.IOUtils.toString(queryResult.getData());
 			System.out.println(str);
 			json = parser.parse(str).getAsJsonObject();
 			assertEquals(json.get("rowsDeleted").getAsInt(), 0);

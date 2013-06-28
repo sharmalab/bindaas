@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -75,7 +76,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				
 				QueryResult queryResult = new QueryResult();
 				
-				queryResult.setData("{ 'count':'1'}".getBytes());
+				queryResult.setData(new ByteArrayInputStream("{ 'count':'1'}".getBytes()));
 				queryResult.setMimeType(StandardMimeType.JSON.toString());
 				return queryResult;
 			}
@@ -89,7 +90,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				QueryResult queryResult = new QueryResult();
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("{ 'count':'" + object.length + "'}");
-				queryResult.setData(buffer.toString().getBytes());
+				queryResult.setData(new ByteArrayInputStream(buffer.toString().getBytes()));
 				queryResult.setMimeType(StandardMimeType.JSON.toString());
 				return queryResult;
 			}

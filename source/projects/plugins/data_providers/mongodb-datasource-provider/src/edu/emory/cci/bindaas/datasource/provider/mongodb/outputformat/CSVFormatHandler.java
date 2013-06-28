@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat;
 
+import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class CSVFormatHandler extends AbstractFormatHandler {
 		
 		// construct CSV
 		StringWriter sw = new StringWriter();
-		CSVWriter writer = new CSVWriter(sw, ',',CSVWriter.NO_QUOTE_CHARACTER);
+		CSVWriter writer = new CSVWriter(sw, ',',CSVWriter.DEFAULT_QUOTE_CHARACTER);
 		
 		String[] columns = uniqueColumns.toArray(new String[uniqueColumns.size()]);
 		
@@ -60,7 +61,7 @@ public class CSVFormatHandler extends AbstractFormatHandler {
 		writer.close();
 		
 		QueryResult queryResult = new QueryResult();
-		queryResult.setData(sw.toString().getBytes());
+		queryResult.setData(new ByteArrayInputStream(sw.toString().getBytes()));
 		queryResult.setMimeType(StandardMimeType.CSV.toString());
 		return queryResult;
 		

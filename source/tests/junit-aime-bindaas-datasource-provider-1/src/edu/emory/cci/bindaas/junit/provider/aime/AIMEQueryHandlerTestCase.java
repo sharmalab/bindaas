@@ -199,7 +199,7 @@ public class AIMEQueryHandlerTestCase extends TestCase {
 				assertNotNull(queryResult);
 				assertTrue(queryResult.isError() == false);
 				assertNotNull(queryResult.getData());
-				System.out.println(new String(queryResult.getData()));
+				System.out.println(edu.emory.cci.bindaas.framework.util.IOUtils.toString(queryResult.getData()));
 				
 			}
 		

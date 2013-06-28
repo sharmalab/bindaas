@@ -77,8 +77,7 @@ public class Dicom2AIMQRM implements IQueryResultModifier {
 		final Dicom2AIMQRMProperties props = GSONUtil.getGSONInstance()
 				.fromJson(modifierProperties, Dicom2AIMQRMProperties.class);
 		if (props != null && props.aimURL != null) {
-			queryResult.setCallback(true);
-			queryResult.setMime(true);
+			
 			queryResult.setMimeType(StandardMimeType.XML.toString());
 			queryResult.setCallback(new Callback() {
 

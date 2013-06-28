@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb.operation;
 
+import java.io.ByteArrayInputStream;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,7 +40,7 @@ public class GroupOperationHandler implements IOperationHandler {
 			
 			QueryResult queryResult = new QueryResult();
 			queryResult.setMimeType(StandardMimeType.JSON.toString());
-			queryResult.setData(result.toString().getBytes());
+			queryResult.setData(new ByteArrayInputStream(result.toString().getBytes()));
 			return queryResult;
 			
 			

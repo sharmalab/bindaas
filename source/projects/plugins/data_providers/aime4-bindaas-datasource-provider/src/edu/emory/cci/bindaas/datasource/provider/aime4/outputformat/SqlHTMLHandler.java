@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.aime4.outputformat;
 
+import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
@@ -30,7 +31,7 @@ public class SqlHTMLHandler implements IFormatHandler {
 	public QueryResult format(OutputFormatProps outputFormatProps,
 			ResultSet queryResult) throws Exception {
 		QueryResult qr = new QueryResult();
-		qr.setData(toHTML(queryResult).getBytes());
+		qr.setData(new ByteArrayInputStream(toHTML(queryResult).getBytes()));
 		qr.setMimeType(StandardMimeType.HTML.toString());
 		return qr;
 

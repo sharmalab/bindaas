@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.io.ByteArrayInputStream;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -47,9 +48,7 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 				res.add("rowsDeleted", new JsonPrimitive(count));
 				res.add("query", parser.parse(query.toString()));
 				QueryResult queryResult = new QueryResult();
-				queryResult.setCallback(false);
-				queryResult.setError(false);
-				queryResult.setData(res.toString().getBytes());
+				queryResult.setData(new ByteArrayInputStream(res.toString().getBytes()));
 				queryResult.setMimeType(StandardMimeType.JSON.toString());
 				return queryResult;
 				

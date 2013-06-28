@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb.operation;
 
+import java.io.ByteArrayInputStream;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,7 +43,7 @@ public class MapReduceOperationHandler implements IOperationHandler {
 			
 			QueryResult queryResult = new QueryResult();
 			queryResult.setMimeType(StandardMimeType.JSON.toString());
-			queryResult.setData(mapReduceOutput.toString().getBytes());
+			queryResult.setData(new ByteArrayInputStream(mapReduceOutput.toString().getBytes()));
 			return queryResult;
 			
 			

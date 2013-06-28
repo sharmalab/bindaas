@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import edu.emory.cci.bindaas.core.bundle.Activator;
@@ -76,6 +77,16 @@ public class RestUtils {
 		mimeType = mimeType == null? "text/plain" : mimeType;
 		
 		ResponseBuilder builder = Response.ok(message).type(mimeType);
+		for(String key : headers.keySet())
+		{
+			builder = builder.header(key, headers.get(key));
+		}
+		return createResponse(builder);
+	}
+	
+	public static Response createMimeResponse(StreamingOutput streamingOutput , String mimeType, Map<String,Object> headers)
+	{
+		ResponseBuilder builder = Response.ok(streamingOutput).type(mimeType);
 		for(String key : headers.keySet())
 		{
 			builder = builder.header(key, headers.get(key));
