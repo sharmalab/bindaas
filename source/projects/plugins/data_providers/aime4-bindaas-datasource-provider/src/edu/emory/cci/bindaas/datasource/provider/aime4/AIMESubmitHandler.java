@@ -1,7 +1,7 @@
 package edu.emory.cci.bindaas.datasource.provider.aime4;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,9 +90,8 @@ public class AIMESubmitHandler implements ISubmitHandler {
 					JsonObject retVal = saveAnnotationToDatabase(requestContext ,annotations, connection, seProps.getTableName());
 					
 					QueryResult result = new QueryResult();
-					result.setCallback(false);
-					result.setError(false);
-					result.setData(retVal.toString().getBytes());
+					
+					result.setData( new ByteArrayInputStream(retVal.toString().getBytes()));
 					result.setMimeType(StandardMimeType.JSON.toString());
 					return result;
 					
@@ -146,9 +144,8 @@ public class AIMESubmitHandler implements ISubmitHandler {
 				JsonObject retVal = saveAnnotationToDatabase(requestContext ,data, connection, seProps.getTableName());
 				
 				QueryResult result = new QueryResult();
-				result.setCallback(false);
-				result.setError(false);
-				result.setData(retVal.toString().getBytes());
+				
+				result.setData( new ByteArrayInputStream(retVal.toString().getBytes()));
 				result.setMimeType(StandardMimeType.JSON.toString());
 				return result;
 			} catch (Exception e) {

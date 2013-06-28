@@ -15,8 +15,6 @@ import com.ibm.db2.jcc.DB2Driver;
 
 import edu.emory.cci.bindaas.datasource.provider.aime4.bundle.Activator;
 import edu.emory.cci.bindaas.datasource.provider.aime4.model.DataSourceConfiguration;
-import edu.emory.cci.bindaas.datasource.provider.aime4.model.SubmitEndpointProperties;
-import edu.emory.cci.bindaas.datasource.provider.aime4.model.SubmitEndpointProperties.InputType;
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.api.IProvider;
 import edu.emory.cci.bindaas.framework.api.IQueryHandler;
@@ -26,7 +24,6 @@ import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
-import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 

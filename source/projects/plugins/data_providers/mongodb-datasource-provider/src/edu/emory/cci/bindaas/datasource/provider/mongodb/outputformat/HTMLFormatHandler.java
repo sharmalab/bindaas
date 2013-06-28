@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +34,7 @@ public class HTMLFormatHandler extends AbstractFormatHandler{
 		
 		String htmlContent = toHTML(cursor);
 		QueryResult queryResult = new QueryResult();
-		queryResult.setData(htmlContent.getBytes());
+		queryResult.setData(new ByteArrayInputStream(htmlContent.getBytes()));
 		queryResult.setMimeType(StandardMimeType.HTML.toString());
 		return queryResult;
 		

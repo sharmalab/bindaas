@@ -31,6 +31,7 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+import edu.emory.cci.bindaas.framework.util.IOUtils;
 import edu.emory.cci.bindaas.junit.bundle.Activator;
 import edu.emory.cci.bindaas.junit.mock.MockProvider;
 
@@ -260,13 +261,13 @@ public class ExecutionTasksTest extends TestCase {
 				QueryResult queryResult = executionTaks.executeQueryEndpoint(USER, runtimeParameters, profile , queryEndpoint);
 				
 				assertNotNull(queryResult);
-				assertEquals(false, queryResult.isCallback());
+				
 				assertEquals("text", queryResult.getMimeType());
 				assertNull(queryResult.getErrorMessage());
 				assertEquals(false, queryResult.isError());
 				assertNotNull(queryResult.getData());
 				
-				JsonObject result = parser.parse(new String(queryResult.getData())).getAsJsonObject();
+				JsonObject result = parser.parse( IOUtils.toString(queryResult.getData())).getAsJsonObject();
 				String actualQuery = result.get("query").getAsString();
 				assertEquals(expectedQuery, actualQuery);
 				
@@ -297,13 +298,13 @@ public class ExecutionTasksTest extends TestCase {
 				QueryResult queryResult = executionTaks.executeQueryEndpoint(USER, runtimeParameters, profile , queryEndpoint);
 				
 				assertNotNull(queryResult);
-				assertEquals(false, queryResult.isCallback());
+				
 				assertEquals("text", queryResult.getMimeType());
 				assertNull(queryResult.getErrorMessage());
 				assertEquals(false, queryResult.isError());
 				assertNotNull(queryResult.getData());
 				
-				JsonObject result = parser.parse(new String(queryResult.getData())).getAsJsonObject();
+				JsonObject result = parser.parse( IOUtils.toString(queryResult.getData())).getAsJsonObject();
 				String actualQuery = result.get("query").getAsString();
 				assertEquals(expectedQuery, actualQuery);
 				
@@ -368,13 +369,13 @@ public class ExecutionTasksTest extends TestCase {
 				QueryResult queryResult = executionTaks.executeDeleteEndpoint(USER, runtimeParameters, profile, deleteEndpoint);
 				
 				assertNotNull(queryResult);
-				assertEquals(false, queryResult.isCallback());
+				
 				assertEquals("text", queryResult.getMimeType());
 				assertNull(queryResult.getErrorMessage());
 				assertEquals(false, queryResult.isError());
 				assertNotNull(queryResult.getData());
 				
-				JsonObject result = parser.parse(new String(queryResult.getData())).getAsJsonObject();
+				JsonObject result = parser.parse( IOUtils.toString(queryResult.getData())).getAsJsonObject();
 				String actualQuery = result.get("query").getAsString();
 				assertEquals(expectedQuery, actualQuery);
 				
@@ -405,13 +406,13 @@ public class ExecutionTasksTest extends TestCase {
 				QueryResult queryResult = executionTaks.executeDeleteEndpoint(USER, runtimeParameters, profile, deleteEndpoint);
 				
 				assertNotNull(queryResult);
-				assertEquals(false, queryResult.isCallback());
+				
 				assertEquals("text", queryResult.getMimeType());
 				assertNull(queryResult.getErrorMessage());
 				assertEquals(false, queryResult.isError());
 				assertNotNull(queryResult.getData());
 				
-				JsonObject result = parser.parse(new String(queryResult.getData())).getAsJsonObject();
+				JsonObject result = parser.parse( IOUtils.toString(queryResult.getData())).getAsJsonObject();
 				String actualQuery = result.get("query").getAsString();
 				assertEquals(expectedQuery, actualQuery);
 				
@@ -472,12 +473,12 @@ public class ExecutionTasksTest extends TestCase {
 				QueryResult queryResult = executionTaks.executeSubmitEndpoint(USER,bis,profile,submitEndpoint);
 				
 				assertNotNull(queryResult);
-				assertEquals(false, queryResult.isCallback());
+				
 				assertEquals("text", queryResult.getMimeType());
 				assertNull(queryResult.getErrorMessage());
 				assertEquals(false, queryResult.isError());
 				assertNotNull(queryResult.getData());
-				assertEquals(testData, new String(queryResult.getData()));
+				assertEquals(testData, IOUtils.toString(queryResult.getData()));
 				
 			} catch (Exception e) {
 					fail(e.getMessage());
@@ -499,12 +500,12 @@ public class ExecutionTasksTest extends TestCase {
 				QueryResult queryResult = executionTaks.executeSubmitEndpoint(USER,testData,profile,submitEndpoint);
 				
 				assertNotNull(queryResult);
-				assertEquals(false, queryResult.isCallback());
+				
 				assertEquals("text", queryResult.getMimeType());
 				assertNull(queryResult.getErrorMessage());
 				assertEquals(false, queryResult.isError());
 				assertNotNull(queryResult.getData());
-				assertEquals(testData, new String(queryResult.getData()));
+				assertEquals(testData, IOUtils.toString(queryResult.getData()));
 				
 			} catch (Exception e) {
 					fail(e.getMessage());

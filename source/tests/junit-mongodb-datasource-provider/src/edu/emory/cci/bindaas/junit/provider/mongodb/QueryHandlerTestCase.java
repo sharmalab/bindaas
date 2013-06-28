@@ -204,7 +204,7 @@ public class QueryHandlerTestCase extends TestCase {
 				assertNotNull(queryResult);
 				assertTrue(queryResult.isError() == false);
 				assertNotNull(queryResult.getData());
-				System.out.println(new String(queryResult.getData()));
+				
 				
 			}
 		

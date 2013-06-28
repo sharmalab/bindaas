@@ -37,7 +37,7 @@ public class HTTPQueryHandler implements IQueryHandler {
 			if(response!=null && response.getStatusLine().getStatusCode() == 200 && response.getEntity()!=null)
 			{
 				final QueryResult result = new QueryResult();
-				result.setCallback(true);
+				
 				result.setCallback(new Callback() {
 					
 					@Override
@@ -48,7 +48,6 @@ public class HTTPQueryHandler implements IQueryHandler {
 					}
 				});
 				
-				result.setMime(true);
 				result.setMimeType(response.getFirstHeader("Content-Type").getValue());
 				return result;
 				

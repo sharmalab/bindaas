@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat;
 
+import java.io.ByteArrayInputStream;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -28,7 +30,7 @@ public class JSONFormatHandler extends AbstractFormatHandler{
 		}
 		
 		QueryResult queryResult = new QueryResult();
-		queryResult.setData(array.toString().getBytes());
+		queryResult.setData(new ByteArrayInputStream(array.toString().getBytes()));
 		queryResult.setMimeType(StandardMimeType.JSON.toString());
 		queryResult.setIntermediateResult(array);
 		return queryResult;

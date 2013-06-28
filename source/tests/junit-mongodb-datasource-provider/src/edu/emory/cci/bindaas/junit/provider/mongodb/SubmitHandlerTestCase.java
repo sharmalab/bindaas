@@ -217,8 +217,8 @@ public class SubmitHandlerTestCase extends TestCase {
 				assertNotNull(queryResult);
 				assertNotNull(queryResult.getData());
 				assertFalse(queryResult.isError());
-				assertFalse(queryResult.isCallback());
-				System.out.println(new String(queryResult.getData()));
+				
+				
 			}
 			
 				
@@ -278,8 +278,8 @@ public class SubmitHandlerTestCase extends TestCase {
 			assertNotNull(queryResult);
 			assertNotNull(queryResult.getData());
 			assertFalse(queryResult.isError());
-			assertFalse(queryResult.isCallback());
-			System.out.println(new String(queryResult.getData()));
+			
+			
 				
 		} catch (Exception e) {
 
@@ -334,8 +334,7 @@ public class SubmitHandlerTestCase extends TestCase {
 			assertNotNull(queryResult);
 			assertNotNull(queryResult.getData());
 			assertFalse(queryResult.isError());
-			assertFalse(queryResult.isCallback());
-			System.out.println(new String(queryResult.getData()));
+			
 				
 		} catch (Exception e) {
 

@@ -125,9 +125,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 					JsonObject retVal = saveAnnotationToDatabase(annotations, connection, seProps.getTableName());
 					
 					QueryResult result = new QueryResult();
-					result.setCallback(false);
-					result.setError(false);
-					result.setData(retVal.toString().getBytes());
+					result.setData( new ByteArrayInputStream(retVal.toString().getBytes()));
 					result.setMimeType(StandardMimeType.JSON.toString());
 					return result;
 					
@@ -180,9 +178,8 @@ public class AIMESubmitHandler implements ISubmitHandler {
 				JsonObject retVal = saveAnnotationToDatabase(data, connection, seProps.getTableName());
 				
 				QueryResult result = new QueryResult();
-				result.setCallback(false);
-				result.setError(false);
-				result.setData(retVal.toString().getBytes());
+				
+				result.setData(new ByteArrayInputStream(retVal.toString().getBytes()));
 				result.setMimeType(StandardMimeType.JSON.toString());
 				return result;
 			} catch (Exception e) {

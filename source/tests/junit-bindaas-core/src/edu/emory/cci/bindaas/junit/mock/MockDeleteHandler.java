@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.junit.mock;
 
+import java.io.ByteArrayInputStream;
 import java.util.Map;
 
 import com.google.gson.JsonObject;
@@ -16,12 +17,12 @@ public class MockDeleteHandler implements IDeleteHandler{
 	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute , Map<String,String> runtimeParamters , RequestContext requestContext)
 			throws ProviderException {
 		QueryResult result = new QueryResult();
-		result.setCallback(false);
+		
 		result.setError(false);
 		result.setMimeType("text");
 		JsonObject res = new JsonObject();
 		res.add("query", new JsonPrimitive(deleteQueryToExecute));
-		result.setData(res.toString().getBytes());
+		result.setData(new ByteArrayInputStream(res.toString().getBytes()));
 		return result;
 	}
 

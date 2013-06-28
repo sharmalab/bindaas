@@ -1,6 +1,8 @@
 package edu.emory.cci.bindaas.framework.model;
 
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.Properties;
 
 import com.google.gson.JsonElement;
@@ -10,13 +12,18 @@ public class QueryResult {
 
 	private boolean isError;
 	private String errorMessage;
-	private boolean isMime;
 	private String mimeType; 
-	private byte[] data;
-	private boolean isCallback;
+	private InputStream data;
 	private JsonElement intermediateResult;
 	private Callback callback;
+	private Map<String,Object> responseHeaders;
 	
+	public Map<String, Object> getResponseHeaders() {
+		return responseHeaders;
+	}
+	public void setResponseHeaders(Map<String, Object> responseHeaders) {
+		this.responseHeaders = responseHeaders;
+	}
 	public JsonElement getIntermediateResult() {
 		return intermediateResult;
 	}
@@ -43,31 +50,20 @@ public class QueryResult {
 		this.errorMessage = errorMessage;
 	}
 	
-	public boolean isMime() {
-		return isMime;
-	}
-	public void setMime(boolean isMime) {
-		this.isMime = isMime;
-	}
 	public String getMimeType() {
 		return mimeType;
 	}
 	public void setMimeType(String mimeType) {
 		this.mimeType = mimeType;
 	}
-	public byte[] getData() {
+	
+	public InputStream getData() {
 		return data;
 	}
-	public void setData(byte[] data) {
+	public void setData(InputStream data) {
 		this.data = data;
 	}
-	public boolean isCallback() {
-		return isCallback;
-	}
-	public void setCallback(boolean isCallback) {
-		this.isCallback = isCallback;
-	}
-	
+
 	public static interface Callback
 	{
 		public void callback(OutputStream servletOutputStream , Properties context) throws Exception; 

@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.genericsql;
 
+import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Map;
@@ -41,11 +42,10 @@ public class GenericSQLDeleteHandler implements IDeleteHandler {
 				Statement statement = connection.createStatement();
 				int status = statement.executeUpdate(deleteQueryToExecute);
 				QueryResult queryResult = new QueryResult();
-				queryResult.setCallback(false);
-				queryResult.setError(false);
-				queryResult.setData(String.format(
+				
+				queryResult.setData( new ByteArrayInputStream(String.format(
 						"{ 'result' : 'success' , 'rowsDeleted' : '%s' }",
-						status + "").getBytes());
+						status + "").getBytes()));
 				return queryResult;
 			} catch (Exception er) {
 				log.error(er);

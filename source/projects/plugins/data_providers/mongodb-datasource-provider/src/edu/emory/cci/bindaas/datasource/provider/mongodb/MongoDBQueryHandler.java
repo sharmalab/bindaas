@@ -83,7 +83,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
 					}
 					catch(Exception e)
 					{
-						log.warn(e);
+						log.trace(e.getMessage());
 						// default to find query
 						operationDescriptor = new MongoDBOperationDescriptor();
 						operationDescriptor.set_operation(MongoDBOperation.find);

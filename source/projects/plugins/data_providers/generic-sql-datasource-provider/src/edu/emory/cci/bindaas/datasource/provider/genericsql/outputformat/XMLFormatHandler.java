@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat;
 
+import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ public class XMLFormatHandler extends AbstractFormatHandler {
 	public QueryResult format(OutputFormatProps outputFormatProps,
 			ResultSet queryResult) throws Exception {
 		QueryResult qr = new QueryResult();
-		qr.setData(toXML(queryResult).getBytes());
+		qr.setData(new ByteArrayInputStream(toXML(queryResult).getBytes()));
 		qr.setMimeType(StandardMimeType.XML.toString());
 		return qr;
 		

@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.junit.mock;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -22,12 +23,12 @@ public class MockSubmitHandler implements ISubmitHandler {
 			throws ProviderException {
 		
 		QueryResult result = new QueryResult();
-		result.setCallback(false);
+		
 		result.setError(false);
 		result.setMimeType("text");
 		try {
-			result.setData(IOUtils.readBytesFromStream(is));
-		} catch (IOException e) {
+			result.setData(is);
+		} catch (RuntimeException e) {
 			throw new ProviderException(MockProvider.class.getName() , MockProvider.VERSION , e);
 		}
 		return result;
@@ -38,10 +39,10 @@ public class MockSubmitHandler implements ISubmitHandler {
 			JsonObject endpointProperties, String data, RequestContext requestContext)
 			throws ProviderException {
 		QueryResult result = new QueryResult();
-		result.setCallback(false);
+		
 		result.setError(false);
 		result.setMimeType("text");
-		result.setData(data.getBytes());
+		result.setData(new ByteArrayInputStream(data.getBytes()));
 		return result;
 	}
 

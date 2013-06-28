@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -69,9 +70,15 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 		final JsonArray results = queryResult.getIntermediateResult().getAsJsonArray();
 		final Iterator<JsonElement> iterator = results.iterator();
 		
-		queryResult.setCallback(true);
-		queryResult.setMime(true);
+
 		queryResult.setMimeType(StandardMimeType.ZIP.toString());
+		
+		Map<String,Object> responseHeaders = new HashMap<String, Object>();
+		responseHeaders.put("imageCount", results.size() + ""); // Add image count to the responseHeader to provide better heuristic about the download size expected
+		responseHeaders.put("Content-Disposition","attachment;filename=\"images-" + results.size() + ".zip\"");
+		queryResult.setResponseHeaders(responseHeaders);
+		
+		
 		queryResult.setCallback(new Callback() {
 			
 			@Override
@@ -97,6 +104,10 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 								// do your magic here
 								packImage(file, zos, locationToSave);
 								currentRecord.add(props.imageLinkAttribute, new JsonPrimitive(locationToSave));
+							}
+							else
+							{
+								currentRecord.add(props.imageLinkAttribute, new JsonPrimitive("error retrieving file"));
 							}
 						}
 					}

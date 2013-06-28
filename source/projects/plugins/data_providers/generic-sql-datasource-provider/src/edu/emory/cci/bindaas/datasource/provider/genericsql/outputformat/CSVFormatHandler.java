@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat;
 
+import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.sql.ResultSet;
 
@@ -23,7 +24,7 @@ public class CSVFormatHandler extends AbstractFormatHandler {
 		csvWriter.close();
 		
 		QueryResult qr = new QueryResult();
-		qr.setData(sw.toString().getBytes());
+		qr.setData(new ByteArrayInputStream(sw.toString().getBytes()));
 		qr.setMimeType(StandardMimeType.CSV.toString());
 		return qr;
 	}

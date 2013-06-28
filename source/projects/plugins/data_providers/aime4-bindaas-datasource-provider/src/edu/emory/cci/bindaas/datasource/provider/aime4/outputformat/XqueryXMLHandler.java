@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.aime4.outputformat;
 
+import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
 
 import edu.emory.cci.bindaas.framework.model.QueryResult;
@@ -30,10 +31,8 @@ public class XqueryXMLHandler implements IFormatHandler {
 	      }
 		 retVal.append(String.format("</%s>",outputFormatProps.getRootElement()));
 	     
-		 qr.setCallback(false);
-		 qr.setData(retVal.toString().getBytes());
-		 qr.setError(false);
-		 qr.setMime(false);
+
+		 qr.setData(new ByteArrayInputStream(retVal.toString().getBytes()));
 		 qr.setMimeType(StandardMimeType.XML.toString());
 		return qr;
 		

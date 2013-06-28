@@ -80,8 +80,7 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 		final AIM2DicomQRMProperties props = GSONUtil.getGSONInstance()
 				.fromJson(modifierProperties, AIM2DicomQRMProperties.class);
 		if (props != null && props.imageURL != null) {
-			queryResult.setCallback(true);
-			queryResult.setMime(true);
+			
 			queryResult.setMimeType(StandardMimeType.ZIP.toString());
 			queryResult.setCallback(new Callback() {
 
@@ -153,7 +152,7 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 					}
 				}
 
-				private List<JsonObject> parseAnnotations(byte[] dataBytes)
+				private List<JsonObject> parseAnnotations(InputStream is)
 						throws Exception {
 					log.debug("Parsing Annotations");
 					Mapping seriesUID = new Mapping();
@@ -171,8 +170,6 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 							.asList(new Mapping[] { seriesUID }));
 					xml2json.setRootElementSelector("/results/ns1:ImageAnnotation");
 					xml2json.init();
-
-					InputStream is = new ByteArrayInputStream(dataBytes);
 
 					return xml2json.parseXML(is);
 				}

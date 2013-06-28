@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat;
 
+import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -23,25 +24,9 @@ public class JSONFormatHandler extends AbstractFormatHandler {
 	@Override
 	public QueryResult format(OutputFormatProps outputFormatProps,
 			ResultSet queryResult) throws Exception {
-
-		// ResultSetMetaData metadata = queryResult.getMetaData();
-		// JsonArray array = new JsonArray();
-		//
-		// while(queryResult.next())
-		// {
-		// JsonObject obj = new JsonObject();
-		// for(int colIndex = 1 ; colIndex < metadata.getColumnCount() ;
-		// colIndex++)
-		// {
-		// obj.add(metadata.getColumnLabel(colIndex), new
-		// JsonPrimitive(queryResult.getObject(colIndex).toString()));
-		// }
-		// array.add(obj);
-		// }
-
 		QueryResult qr = new QueryResult();
 		JsonArray intermediateResult = convert(queryResult);
-		qr.setData(intermediateResult.toString().getBytes());
+		qr.setData( new ByteArrayInputStream(intermediateResult.toString().getBytes()));
 		qr.setIntermediateResult(intermediateResult);
 		qr.setMimeType(StandardMimeType.JSON.toString());
 		return qr;

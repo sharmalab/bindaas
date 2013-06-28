@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.aime4.outputformat;
 
+import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.sql.ResultSet;
 
@@ -12,15 +13,14 @@ import javax.xml.transform.stream.StreamSource;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import edu.emory.cci.bindaas.framework.model.QueryResult;
-import edu.emory.cci.bindaas.framework.util.GSONUtil;
-import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import edu.emory.cci.bindaas.datasource.provider.aime4.bundle.Activator;
 import edu.emory.cci.bindaas.datasource.provider.aime4.jaxb.ImageAnnotationCollection;
 import edu.emory.cci.bindaas.datasource.provider.aime4.model.OutputFormatProps;
 import edu.emory.cci.bindaas.datasource.provider.aime4.model.OutputFormatProps.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.aime4.model.OutputFormatProps.QueryType;
 import edu.emory.cci.bindaas.datasource.provider.aime4.model.SimplyfiedImageAnnotationCollection;
+import edu.emory.cci.bindaas.framework.model.QueryResult;
+import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
 public class XqueryImageAnnotationJSONHandler implements IFormatHandler {
 
@@ -51,10 +51,9 @@ public class XqueryImageAnnotationJSONHandler implements IFormatHandler {
 	      }
 		 
 	     
-		 qr.setCallback(false);
-		 qr.setData(jsonArray.toString().getBytes());
-		 qr.setError(false);
-		 qr.setMime(false);
+		 
+		 qr.setData(new ByteArrayInputStream(jsonArray.toString().getBytes()));
+		 
 		 qr.setMimeType(StandardMimeType.JSON.toString());
 		return qr;
 		

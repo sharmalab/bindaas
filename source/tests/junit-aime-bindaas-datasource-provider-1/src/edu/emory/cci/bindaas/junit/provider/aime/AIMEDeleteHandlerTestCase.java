@@ -187,7 +187,7 @@ public class AIMEDeleteHandlerTestCase extends TestCase {
 				assertTrue(queryResult.isError() == false);
 				assertNotNull(queryResult.getData());
 				JsonParser parser = new JsonParser();
-				JsonObject result = parser.parse(new String(queryResult.getData())).getAsJsonObject();
+				JsonObject result = parser.parse(edu.emory.cci.bindaas.framework.util.IOUtils.toString(queryResult.getData())).getAsJsonObject();
 				assertEquals(27, result.get("rowsDeleted").getAsInt());
 			}
 		

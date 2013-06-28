@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat;
 
+import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
 
 import com.mongodb.DBCursor;
@@ -17,7 +18,7 @@ public class XMLFormatHandler extends AbstractFormatHandler {
 			DBCursor cursor) throws Exception {
 		String xmlContent = toXML(cursor);
 		QueryResult queryResult = new QueryResult();
-		queryResult.setData(xmlContent.getBytes());
+		queryResult.setData(new ByteArrayInputStream(xmlContent.getBytes()));
 		queryResult.setMimeType(StandardMimeType.XML.toString());
 		return queryResult;
 		

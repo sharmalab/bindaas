@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.genericsql;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.sql.Connection;
@@ -30,6 +31,7 @@ import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.IOUtils;
+import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
 public class GenericSQLSubmitHandler implements ISubmitHandler {
 	private AbstractSQLProvider provider;
@@ -69,8 +71,8 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 		}
 
 		QueryResult queryResult = new QueryResult();
-		queryResult.setCallback(false);
-		queryResult.setMimeType("application/json");
+		
+		queryResult.setMimeType(StandardMimeType.JSON.toString());
 		// insert records
 		if (records != null) {
 			Connection connection = null;
@@ -82,7 +84,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				connection.setAutoCommit(false);
 				int total = insertRecords(records, connection,seProps.getTableName());
 				connection.commit();
-				queryResult.setData(String.format("{ 'result' : 'success' , 'rowsInserted' : '%s'  }", total).getBytes());
+				queryResult.setData(new ByteArrayInputStream(String.format("{ 'result' : 'success' , 'rowsInserted' : '%s'  }", total).getBytes()));
 			} catch (Exception e) {
 				log.error(e);
 				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
@@ -139,8 +141,8 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 		}
 
 		QueryResult queryResult = new QueryResult();
-		queryResult.setCallback(false);
-		queryResult.setMimeType("application/json");
+		
+		queryResult.setMimeType(StandardMimeType.JSON.toString());
 		// insert records
 		if (records != null) {
 			Connection connection = null;
@@ -152,7 +154,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				connection.setAutoCommit(false);
 				int total = insertRecords(records, connection,seProps.getTableName());
 				connection.commit();
-				queryResult.setData(String.format("{ 'result' : 'success' , 'rowsInserted' : '%s'  }", total).getBytes());
+				queryResult.setData(new ByteArrayInputStream(String.format("{ 'result' : 'success' , 'rowsInserted' : '%s'  }", total).getBytes()));
 			} catch (Exception e) {
 				log.error(e);
 				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
