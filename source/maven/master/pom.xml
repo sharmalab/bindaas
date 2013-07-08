@@ -170,6 +170,7 @@
 		<module>mongodb-datasource-provider</module>
 		<module>mysql-datasource-provider</module>
 		<module>aime-bindaas-datasource-provider-1</module>
+		<module>aime4-bindaas-datasource-provider</module>
 		<module>bindaas-core-api</module>
 		<module>bindaas-core-impl</module>
 		<module>bindaas-web-console</module>
