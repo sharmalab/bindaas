@@ -123,7 +123,7 @@ public class MongoDBProvider implements IProvider{
 		{
 			// create mongo endpoint
 			SubmitEndpoint mongo = new SubmitEndpoint();
-			mongo.setName("mongo");
+			mongo.setName("json");
 			mongo.setCreatedBy(profile.getCreatedBy());
 			SubmitEndpointProperties seprops = new SubmitEndpointProperties();
 			seprops.setInputType(InputType.JSON);
@@ -132,7 +132,7 @@ public class MongoDBProvider implements IProvider{
 
 			// create mongo file endpoint
 			SubmitEndpoint mongoFile = new SubmitEndpoint();
-			mongoFile.setName("mongoFile");
+			mongoFile.setName("jsonFile");
 			mongoFile.setCreatedBy(profile.getCreatedBy());
 			seprops = new SubmitEndpointProperties();
 			seprops.setInputType(InputType.JSON_FILE);
