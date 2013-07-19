@@ -1,15 +1,16 @@
 {
   "host": "localhost",
   "port": 8080,
-  "proxyUrl": "http://localhost:8080",
+  "proxyUrl": "http://localhost:8084",
   "adminAccounts": [
     "admin",
     "nadirsaghar@gmail.com",
-    "nadirsaghar@yahoo.com"
+    "nadirsaghar@yahoo.com",
+    "nsaghar"
   ],
   "enableProxy": false,
   "adminConfiguration": {
-    "authenticationMethod": "openid",
+    "authenticationMethod": "defaultMethod",
     "openIdProviders": {
       "google": true,
       "yahoo": true
@@ -18,7 +19,7 @@
     "ldapDNPattern": "cn\u003d%s,cn\u003dUsers,dc\u003dccibmi,dc\u003dcci,dc\u003demory,dc\u003dedu"
   },
   "userConfiguration": {
-    "authenticationMethod": "openid",
+    "authenticationMethod": "ldap",
     "openIdProviders": {
       "google": true,
       "yahoo": true

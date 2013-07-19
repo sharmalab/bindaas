@@ -3,7 +3,7 @@
   "port": 9099,
   "protocol": "http",
   "enableAuthentication": true,
-  "enableAuthorization": false,
+  "enableAuthorization": true,
   "enableAudit": true,
   "authenticationProviderClass": "edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider",
   "authorizationProviderClass": "edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider",
