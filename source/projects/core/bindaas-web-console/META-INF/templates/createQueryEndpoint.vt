@@ -208,7 +208,30 @@
 							</div>
 
 							<div class="panel">
-								<label>Query Template</label>
+								<label>Query Template [ <a id="autoDetectToggle" toggle='on' >Turn Auto Detect OFF</a> ]</label>
+								<script>
+									$("#autoDetectToggle").click (
+										function()
+										{
+											if( $(this).attr('toggle') == 'on' )
+											{
+												$(this).attr('toggle' , 'off');
+												$(this).html('Turn Auto Detect ON');
+												$("#qeTemplate").off("keyup");
+											}
+											else if($(this).attr('toggle') == 'off' )
+											{
+												$(this).attr('toggle' , 'on');
+												$(this).html('Turn Auto Detect OFF');
+												$("#qeTemplate").on("keyup" , function () {
+													
+															validateQueryTempalate();
+													
+												});
+											}
+										}
+									);
+								</script>
 								<textarea name="qeTemplate" id="qeTemplate"></textarea>
 								<fieldset>
 									<legend>
