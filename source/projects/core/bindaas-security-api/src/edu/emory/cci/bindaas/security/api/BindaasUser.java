@@ -16,16 +16,18 @@ public class BindaasUser implements Principal {
 	
 	public BindaasUser(String name)
 	{
-		this.name = name;
+		
 		properties = new HashMap<String, Object>();
 		if(name.contains("@"))
 		{
 			String[] parts = name.split("@");
 			domain = parts[1];
+			this.name = parts[0];
 		}
 		else
 		{
 			domain = "localhost";
+			this.name = name;
 		}
 	}
 	

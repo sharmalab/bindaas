@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.framework.model;
 
+import java.net.URLEncoder;
 import java.util.GregorianCalendar;
 
 import com.google.gson.annotations.Expose;
@@ -24,6 +25,8 @@ public class Entity implements Cloneable{
 		if(name == null || "".equals(name))
 			throw new Exception("name attribute cannot be null");
 		
+		if( name.matches("^\\w+$") == false)
+			throw new Exception("name contains illegal characters");
 		if(description == null)
 			description = "";
 	}

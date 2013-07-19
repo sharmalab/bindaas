@@ -1,139 +1,233 @@
 package edu.emory.cci.bindaas.security.impl;
 
-import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
+import com.google.gson.annotations.Expose;
 
 import edu.emory.cci.bindaas.core.bundle.Activator;
-import edu.emory.cci.bindaas.core.util.DynamicProperties;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
+import edu.emory.cci.bindaas.core.util.ThreadSafe;
+import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.IAuthorizationProvider;
 
 public class FileSystemAuthorizationProvider implements IAuthorizationProvider{
 
-	private DynamicProperties dynamicProperties;
-	private Properties defaultProperties;
 	
-	public DynamicProperties getDynamicProperties() {
-		return dynamicProperties;
+	private Log log = LogFactory.getLog(getClass());
+	private Policies defaultPolicies;
+	public Policies getDefaultPolicies() {
+		return defaultPolicies;
 	}
 
 
-	public void setDynamicProperties(DynamicProperties dynamicProperties) {
-		this.dynamicProperties = dynamicProperties;
+
+	public void setDefaultPolicies(Policies defaultPolicies) {
+		this.defaultPolicies = defaultPolicies;
 	}
-
-
-	public Properties getDefaultProperties() {
-		return defaultProperties;
-	}
-
-
-	public void setDefaultProperties(Properties defaultProperties) {
-		this.defaultProperties = defaultProperties;
-	}
-
-
-	public void init()
+	private DynamicObject<Policies> policies;
+	
+	public void init() throws Exception
 	{
-//		Dictionary<String, String> props = new Hashtable<String, String>();
-//		props.put("class", FileSystemAuthorizationProvider.class.getName());
-//		Activator.getContext().registerService(IAuthorizationProvider.class.getName(), this, props);
-		dynamicProperties = new DynamicProperties("bindaas.authorization", defaultProperties , Activator.getContext());
+		policies = new DynamicObject<FileSystemAuthorizationProvider.Policies>("bindaas.authorization", defaultPolicies, Activator.getContext());
 	}
 	
 	
-	/**
-	 * Properties :
-	 * user.{user}={role1},{role2} ...
-	 * 
-	 * 
-	 * resource.{url}={role1}/{user}
-	 * 
-	 * 
-	 * 
-	 */
 	
 	@Override
 	public boolean isAuthorized(Map<String, String> userAttributes,
-			String username, String resourceId, String actionId) throws Exception {
+			final String username, final String resourceId, String actionId) throws Exception {
 		
-		Properties props = (Properties) dynamicProperties.getProperties().clone();
+		final Policies policies = this.policies.getObject() ; // get reference to policies
+		boolean authDecision = policies.allow(username, resourceId);
+		return authDecision; 
+	}
+	
+	public static class AuthEntry
+	{
+		private String username;
+		private String resource;
 		
-		Map<String,Set<String>> rules = createRuleMap(props);
-		Map<String,Set<String>> roles = createRoleMap(props);
-		Set<String> assoicatedRoles = roles.get(username);
-		
-		Set<String> rolesAllowed = getAllowedRoles(resourceId, rules);
-		
-		if(rolesAllowed!=null )
+		public AuthEntry(String username , String resource)
 		{
-		
-			for(String allowedRole : rolesAllowed)
-			{
-				if( (assoicatedRoles!=null && assoicatedRoles.contains(allowedRole)) || allowedRole.equals(username))
-					return true;
-			}
+			this.username = username;
+			this.resource = resource;
 		}
 		
-		return false; // Default is deny all
+		@Override
+		public int hashCode() {
+			return username.hashCode() + resource.hashCode();
+		}
+
+
+		public boolean equals(Object o)
+		{
+			if(o instanceof AuthEntry)
+			{
+				AuthEntry r = (AuthEntry) o;
+				if(r.username.equals(username)  && r.resource.equals(resource)) return true;
+			}
+			
+			return false;
+		}
+	}
+	
+	public static class Policies implements ThreadSafe{
+		 
+		public List<RoleRule> getRoleRules() {
+			return roleRules;
+		}
+
+		public void setRoleRules(List<RoleRule> roleRules) {
+			this.roleRules = roleRules;
+		}
+
+		public List<ResourceRule> getResourceRules() {
+			return resourceRules;
+		}
+
+		public void setResourceRules(List<ResourceRule> resourceRules) {
+			this.resourceRules = resourceRules;
+		}
+
+		@Expose private List<RoleRule> roleRules;
+		@Expose private List<ResourceRule> resourceRules;
+		private Log log = LogFactory.getLog(getClass());
+		
+		public Object clone()
+		{
+			return GSONUtil.getGSONInstance().fromJson(GSONUtil.getGSONInstance().toJson(this), Policies.class);
+		}
+		
+		public boolean allow(String username , String resourceRequested)
+		{
+			boolean authDecision = false;
+			Set<String> userRoles = getUserRoles(username);
+			List<ResourceRule> applicableRules = getApplicableRules(resourceRequested);
+			
+			for(ResourceRule resourceRule : applicableRules)
+			{
+				Set<String> allowedRoles = new HashSet<String>(resourceRule.allowedRolesOrUsers);
+				allowedRoles.retainAll(userRoles);
+				if(allowedRoles.isEmpty()) continue;
+				authDecision = true;
+				log.trace("Applied Authorization Rule\t" + resourceRule);
+				break;
+			}
+			
+			return authDecision;
+		}
+		
+		public Set<String> getUserRoles(String username)
+		{
+			Set<String> roles = new HashSet<String>();
+			if(username!=null)
+			{
+				for(RoleRule roleRule : roleRules)
+				{
+					if(roleRule.users.contains(username))
+					{
+						roles.addAll(roleRule.roles);
+					}
+				}
+				roles.add(username);
+			}
+			
+			return roles;
+		}
+		
+		public List<ResourceRule> getApplicableRules(String resourceRequested)
+		{
+			List<ResourceRule> appResourceRules = new ArrayList<ResourceRule>();
+			for(ResourceRule resourceRule : this.resourceRules)
+			{
+				Operator logic = resourceRule.logic; 
+				
+				if(logic == null) logic = Operator.EXACT;
+				boolean add = false;
+				switch (logic)
+				{
+				
+				case STARTS_WITH:  if(resourceRequested !=null && resourceRequested.startsWith(resourceRule.resource)) add = true; break;
+				case CONTAINS: if(resourceRequested !=null && resourceRequested.contains(resourceRule.resource)) add = true; break;
+				case EXACT : if(resourceRequested !=null && resourceRequested.equals(resourceRule.resource)) add = true;
+					
+				}
+				
+				if(add) appResourceRules.add(resourceRule);
+			}
+			return appResourceRules;
+		}
+		
+	}
+	
+	public static class RoleRule {
+		@Expose private Set<String> users;
+		@Expose private Set<String> roles;
+		
+		
+		public Set<String> getUsers() {
+			return users;
+		}
+		public void setUsers(Set<String> users) {
+			this.users = users;
+		}
+		public Set<String> getRoles() {
+			return roles;
+		}
+		public void setRoles(Set<String> roles) {
+			this.roles = roles;
+		}
 	}
 	
 	
-	// get roles assoicated with this url and all its prefixes
-	private Set<String> getAllowedRoles(String resourceId , Map<String,Set<String>> rules)
-	{
-		Set<String> setOfAllowedRoles = new HashSet<String>();
+	public static class ResourceRule {
+		@Expose private String resource ;
+		@Expose private Operator logic ;
+		@Expose private Set<String> allowedRolesOrUsers;
 		
-		for(String url : rules.keySet())
-		{
-			if( resourceId.startsWith(url))
-			{
-				setOfAllowedRoles.addAll(rules.get(url));
-			}
+		public String getResource() {
+			return resource;
 		}
-		
-		return setOfAllowedRoles;
+
+		public void setResource(String resource) {
+			this.resource = resource;
+		}
+
+		public Operator getLogic() {
+			return logic;
+		}
+
+		public void setLogic(Operator logic) {
+			this.logic = logic;
+		}
+
+		public Set<String> getAllowedRolesOrUsers() {
+			return allowedRolesOrUsers;
+		}
+
+		public void setAllowedRolesOrUsers(Set<String> allowedRolesOrUsers) {
+			this.allowedRolesOrUsers = allowedRolesOrUsers;
+		}
+
+		public String toString()
+		{
+			return String.format("Resource [%s] Operator [%s] Roles %s", resource , logic , allowedRolesOrUsers);
+		}
 	}
-	
-	private Map<String,Set<String>> createRoleMap(Properties prop)
-	{
-		Map<String,Set<String>> retVal = new HashMap<String, Set<String>>();
-		for(Object key : prop.keySet())
-		{
-			if(key.toString().startsWith("user."))
-			{
-				String id = key.toString().replace("user.", "");
-				String value = prop.getProperty(key.toString());
-				String[] roles = value.split(",");
-				Set<String> set = new HashSet<String>();
-				set.addAll(Arrays.asList(roles));
-				retVal.put(id, set);
-			}
-		}
-		return retVal;
-	}
-	
-	private Map<String,Set<String>> createRuleMap(Properties prop)
-	{
-		Map<String,Set<String>> retVal = new HashMap<String, Set<String>>();
-		for(Object key : prop.keySet())
-		{
-			if(key.toString().startsWith("resource."))
-			{
-				String id = key.toString().replace("resource.", "");
-				String value = prop.getProperty(key.toString());
-				String[] roles = value.split(",");
-				Set<String> set = new HashSet<String>();
-				set.addAll(Arrays.asList(roles));
-				retVal.put(id, set);
-			}
-		}
-		return retVal;
+	public static enum Operator {
+		STARTS_WITH,CONTAINS,EXACT
 	}
 	
 

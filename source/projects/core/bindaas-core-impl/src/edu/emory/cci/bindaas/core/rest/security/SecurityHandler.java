@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +30,9 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import edu.emory.cci.bindaas.core.api.ISecurityHandler;
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
@@ -39,7 +44,10 @@ import edu.emory.cci.bindaas.security.api.IAuthorizationProvider;
 
 public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private Log log = LogFactory.getLog(getClass());
-	
+	private static final Long DECISION_CACHE_MAX = 1000l;
+	private static final Long DECISION_CACHE_TIMEOUT_MINUTES = 60l;
+	private Cache<String,AuthenticationResponseEntry> authenticationDecisionCache;
+	private Cache<AuthorizationRequestEntry ,Boolean> authorizationDecisionCache;
 	
 	private String authenticationProviderClass;
 	private String authorizationProviderClass;
@@ -87,6 +95,10 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 			
 		});
 		bindaasConfigServiceTracker.open();
+		
+		// initialize caches
+		authenticationDecisionCache = CacheBuilder.newBuilder().expireAfterAccess(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
+		authorizationDecisionCache = CacheBuilder.newBuilder().expireAfterAccess(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
 	}
 	
 	private Principal handleHTTP_BASIC(Message message , IAuthenticationProvider authenticationProvider) throws Exception
@@ -143,7 +155,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 			
 	}
 	
-	private Principal handleAPI_KEY(Message message,IAuthenticationProvider authenticationProvider) throws Exception
+	private Principal handleAPI_KEY(Message message,final IAuthenticationProvider authenticationProvider) throws Exception
 	{
 		String apiKey = null;
 		
@@ -171,15 +183,35 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 			
 		if(apiKey != null)
 		{
-			
-			
 			try {
-				Principal authenticatedUser = authenticationProvider.loginUsingAPIKey(apiKey ); // TODO
-				return authenticatedUser;
-			} catch (AuthenticationException e) {
-					log.error(e); // authentication failed
-					throw e;
-			}
+				 final String apiK = apiKey;
+				 AuthenticationResponseEntry responseEntry = authenticationDecisionCache.get(apiKey, new Callable<AuthenticationResponseEntry>() {
+
+					@Override
+					public AuthenticationResponseEntry call() throws Exception {
+						AuthenticationResponseEntry responseEntry = new AuthenticationResponseEntry();
+						try {
+						
+							Principal authenticatedUser = authenticationProvider.loginUsingAPIKey( apiK );
+							responseEntry.setDecision(true);
+							responseEntry.setPrincipal(authenticatedUser);
+						}catch(AuthenticationException authException)
+						{
+							responseEntry.setDecision(false);
+						}
+						
+						return responseEntry;
+					}
+				});
+				
+				 if(responseEntry.getDecision().equals(true))
+				 {
+					 return responseEntry.getPrincipal();
+				 }
+				 else
+					 throw new AuthenticationException(apiKey);
+				 
+			} 
 			catch(Exception e)
 			{
 				log.error(e);
@@ -217,7 +249,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 						default : 
 						case HTTP_BASIC : authenticatedUser = handleHTTP_BASIC(message, authenticationProvider); break;
 						case SECURITY_TOKEN : authenticatedUser = handleSecurityToken(message, authenticationProvider); break;
-						case API_KEY :authenticatedUser = handleAPI_KEY(message, authenticationProvider); break;		
+						case API_KEY : authenticatedUser = handleAPI_KEY(message, authenticationProvider); break;		
 				}
 				
 			} 
@@ -246,7 +278,8 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 					return Response.serverError().entity("Error communicating with Authorization Module").build();
 				}
 				try{
-						boolean grantAccess = performAuthorization( message , authenticatedUser , authorizationProvider);
+					
+					boolean grantAccess = performAuthorization( message , authenticatedUser , authorizationProvider);
 						if(!grantAccess)
 						{
 							return Response.status(
@@ -348,23 +381,28 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	
 	
 	private boolean performAuthorization(Message message,
-			Principal authenticatedUser,
-			IAuthorizationProvider authorizationProvider) throws Exception {
+			final Principal authenticatedUser,
+			final IAuthorizationProvider authorizationProvider) throws Exception {
 		HttpServletRequest request = (HttpServletRequest) message
 				.get(AbstractHTTPDestination.HTTP_REQUEST);
 		
-		String pathInfo = (String) message.get("org.apache.cxf.request.url");
+		final String pathInfo = (String) message.get("org.apache.cxf.request.url");
 		
 		
-		Map<String,String> userAttributes = new HashMap<String,String>();
+		final Map<String,String> userAttributes = new HashMap<String,String>();
 		userAttributes.put(IAuthorizationProvider.IP_ADDRESS, request.getRemoteAddr());
 		userAttributes.put(IAuthorizationProvider.TIME_OF_AUTHENTICATION, GregorianCalendar.getInstance().getTime().toString());
 		
-		String actionId = request.getMethod();
+		final String actionId = request.getMethod();
 		
-		boolean result = authorizationProvider.isAuthorized(userAttributes, authenticatedUser.getName(), pathInfo, actionId);
-		
-		
+		boolean result = authorizationDecisionCache.get(new AuthorizationRequestEntry(authenticatedUser.getName(), pathInfo), new Callable<Boolean>() {
+
+			@Override
+			public Boolean call() throws Exception {
+				return authorizationProvider.isAuthorized(userAttributes, authenticatedUser.getName(), pathInfo, actionId);
+			}
+		});
+		 
 		return result;
 	}
 
@@ -463,6 +501,52 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 
 	public void setAuthorizationProviderClass(String authorizationProviderClass) {
 		this.authorizationProviderClass = authorizationProviderClass;
+	}
+	
+	
+	private static  class AuthorizationRequestEntry {
+		private String username;
+		private String resource;
+		
+		public AuthorizationRequestEntry (String username , String resource)
+		{
+			this.username = username;
+			this.resource = resource;
+		}
+		
+		@Override
+		public int hashCode() {
+			return username.hashCode() + resource.hashCode();
+		}
+
+
+		public boolean equals(Object o)
+		{
+			if(o instanceof AuthorizationRequestEntry)
+			{
+				AuthorizationRequestEntry r = (AuthorizationRequestEntry) o;
+				if(r.username.equals(username)  && r.resource.equals(resource)) return true;
+			}
+			
+			return false;
+		}
+	}
+	
+	private static class AuthenticationResponseEntry {
+		private Principal principal;
+		private Boolean decision;
+		public Principal getPrincipal() {
+			return principal;
+		}
+		public void setPrincipal(Principal principal) {
+			this.principal = principal;
+		}
+		public Boolean getDecision() {
+			return decision;
+		}
+		public void setDecision(Boolean decision) {
+			this.decision = decision;
+		}
 	}
 
 }
