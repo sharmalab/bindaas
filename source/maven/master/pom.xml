@@ -194,5 +194,6 @@
 		<module>bindaas-commons-cxf-wrapper</module>
 		<module>dicom-to-png-query-result-modifier</module>
 		<module>aim-to-svg-query-result-modifier</module>
+		<module>dicomaim-to-pngsvg-QRM</module>
 	</modules>
 </project>
