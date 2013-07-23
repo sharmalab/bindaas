@@ -1,8 +1,6 @@
 package edu.emory.cci.bindaas.core.rest.security;
 
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -25,6 +23,7 @@ import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.security.api.IAuditProvider;
+import edu.emory.cci.bindaas.security.model.hibernate.AuditMessage;
 
 public class AuditInLogger extends AbstractPhaseInterceptor<Message> {
 
@@ -90,37 +89,32 @@ public void init()
 	public void handleMessage(Message message) {
 		if (isEnableAudit()) {
 			try {
-				Map<String, String> auditMessage = new HashMap<String, String>();
+				AuditMessage auditMessage = new AuditMessage();
 				String pathInfo = (String) message
 						.get("org.apache.cxf.request.url");
-				auditMessage.put(AuditConstants.REQUEST_URI, pathInfo);
+				auditMessage.setRequestUri(pathInfo);
 
 				if (message.get(Message.QUERY_STRING) != null)
-					auditMessage.put(AuditConstants.QUERY_STRING,
-							message.get(Message.QUERY_STRING).toString());
+					auditMessage.setQueryString(message.get(Message.QUERY_STRING).toString());
+					
 
-				if (message.get("org.apache.cxf.form_data") != null) {
-					Map<?,?> formParam = (Map<?,?>) message
-							.get("org.apache.cxf.form_data");
-					auditMessage.put(AuditConstants.REQUEST,
-							formParam.toString());
-				}
 
 				SecurityContext user = message.get(SecurityContext.class);
 				if (user != null && user.getUserPrincipal() != null) {
-					auditMessage.put(AuditConstants.SUBJECT, user
+					auditMessage.setSubject(user
 							.getUserPrincipal().toString());
+					
 				} else {
-					auditMessage.put(AuditConstants.SUBJECT, "anonymous");
+					auditMessage.setSubject("anonymous");
 				}
+				
 				HttpServletRequest request = (HttpServletRequest) message
 						.get(AbstractHTTPDestination.HTTP_REQUEST);
 
-				auditMessage.put(AuditConstants.TIMESTAMP, GregorianCalendar
-						.getInstance().getTime().toString());
-				auditMessage.put(AuditConstants.EVENT, "invoke");
-				auditMessage
-						.put(AuditConstants.SOURCE, request.getRemoteAddr());
+				auditMessage.setTimestamp(new Date());
+				auditMessage.setEvent("invoke");
+				auditMessage.setSource(request.getRemoteAddr());
+				
 				Message outMessage = message.getExchange().getOutMessage();
 				MessageContentsList objs = MessageContentsList
 						.getContentsList(outMessage);
@@ -130,8 +124,7 @@ public void init()
 
 					if (content instanceof Response) {
 						Response resp = (Response) content;
-						auditMessage.put(AuditConstants.OUTCOME,
-								resp.getStatus() + "");
+						auditMessage.setOutcome( resp.getStatus());
 
 					}
 				}
