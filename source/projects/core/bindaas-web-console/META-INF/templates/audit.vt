@@ -38,83 +38,62 @@
 
 			var options = {'showRowNumber': true};
 			function drawVisualization() {
-			// Create and populate the data table.
-			var dataAsJson =
-			{
-			cols:[
-			{id:'A',label:'Timestamp',type:'string'},
-			{id:'B',label:'Request URL',type:'string'},
-			{id:'C',label:'Query Parameters',type:'string'},
-			{id:'D',label:'Requester',type:'string'},
-			{id:'E',label:'Source IP',type:'string'},
-			{id:'F',label:'Event',type:'string'},
-			{id:'G',label:'HTTP Response Code',type:'string'}
-
-			],
-			rows:[
-			#foreach ($message in $auditMessages)
-			{
-
-			c:[
-			#if ($message.get('timestamp'))
-			{v:$message.get('timestamp').toString()},
+			data = new google.visualization.DataTable();
+			
+			// populate data
+			data.addColumn('date' , 'Timestamp');
+  data.addColumn('string' , 'Request URL');
+  data.addColumn('string' , 'Query Parameters');
+  data.addColumn('string' , 'Requester');
+  data.addColumn('string' , 'Source IP');
+  data.addColumn('string' , 'Event');
+  data.addColumn('number' , 'HTTP Response Code');
+  
+  #foreach ($message in $auditMessages)
+  
+  #if ($message.getTimestamp())
+			var timestamp =  new Date($message.getTimestamp().getTime()) ;
+  #end
+  #if ($message.getRequestUri())
+			var requestUri = '$message.getRequestUri().toString()' ;
 			#else
-			{v:''},
-			#end
+			var requestUri = '' ;
+   #end
 
-			#if ($message.get('requestUri'))
-			{v:$message.get('requestUri').toString()},
+   #if ($message.getQueryString())
+			var queryString = '$message.getQueryString().toString()' ;
 			#else
-			{v:''},
-			#end
+			var queryString = '' ;
+	#end
 
-			#if ($message.get('queryString'))
-			{v:$message.get('queryString').toString()},
+	#if ($message.getSubject())
+			var subject = '$message.getSubject().toString()';
 			#else
-			{v:''},
-			#end
+			var subject = '' ;
+	#end
 
-			#if ($message.get('subject'))
-			{v:$message.get('subject').toString()},
+	#if ($message.getSource())
+			var source  = '$message.getSource().toString()' ;
 			#else
-			{v:''},
-			#end
+			var source = '' ;
+	#end
 
-			#if ($message.get('source'))
-			{v:$message.get('source').toString()},
+	#if ($message.getEvent())
+			var event  = '$message.getEvent().toString()' ;
 			#else
-			{v:''},
-			#end
+			var event = '';
+	#end
 
-			#if ($message.get('event'))
-			{v:$message.get('event').toString()},
+	#if ($message.getOutcome())
+			var outcome = $message.getOutcome(); 
 			#else
-			{v:''},
-			#end
-
-			#if ($message.get('outcome'))
-			{v:$message.get('outcome').toString()}
-			#else
-			{v:''}
-			#end
-
-			],
-
-			},
-			#end
-			{ c:[
-			{v:''},
-			{v:''},
-			{v:''},
-			{v:''},
-			{v:''},
-			{v:''},
-			{v:''}
-			] }
-
-			]};
-			data = new google.visualization.DataTable(dataAsJson);
-
+			var outcome = '';
+	#end
+	
+	data.addRow([timestamp,requestUri,queryString,subject,source,event, outcome ]);
+  #end
+			
+			
 			// Set paging configuration options
 			// Note: these options are changed by the UI controls in the example.
 			options['page'] = 'enable';
@@ -122,6 +101,9 @@
 			options['pagingSymbols'] = {prev: 'prev', next: 'next'};
 			options['pagingButtonsConfiguration'] = 'auto';
 
+			// reformat date columns
+			 var formatter = new google.visualization.DateFormat({ pattern:'HH:mm:ss zzz MM/dd/yyyy'});
+      		formatter.format(data, 0);
 			// Create and draw the visualization.
 			visualization = new google.visualization.Table(document.getElementById('table'));
 			draw();
@@ -157,13 +139,7 @@
 			}
 
 		</script>
-		<!--<script  src="http://datatables.net/download/build/jquery.dataTables.nightly.js"></script>
-		<script>
-		$(document).ready(function(){
-		$('#auditTable').dataTable();
-		});
-		</script> -->
-
+		
 		<!-- IE Fix for HTML5 Tags -->
 		<!--[if lt IE 9]>
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>

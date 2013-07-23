@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import com.google.gson.JsonObject;
@@ -27,6 +28,7 @@ import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 
 public class UserManagementPanelAction implements IAdminAction {
+	
 	private String actionName;
 	private Log log = LogFactory.getLog(getClass());
 	private IMailService mailService;
@@ -71,7 +73,7 @@ public class UserManagementPanelAction implements IAdminAction {
 			try {
 					session.beginTransaction();
 					@SuppressWarnings("unchecked")
-					List<UserRequest> list = session.createCriteria(UserRequest.class).add(Restrictions.eq("id", requestObject.entityId)).list();
+					List<UserRequest> list = session.createCriteria(UserRequest.class).add(Restrictions.eq("id", requestObject.entityId)). list();
 					String emailMessage = null;
 					if(list!=null && list.size() > 0)
 					{

@@ -1,10 +1,14 @@
 package edu.emory.cci.bindaas.security.api;
 
 import java.util.List;
-import java.util.Map;
+
+import edu.emory.cci.bindaas.security.model.hibernate.AuditMessage;
 
 public interface IAuditProvider {
 
-	public void audit(Map<String,String> auditMessage) throws Exception;
-	public List<Map<String,String>> getAuditLogs() throws Exception;
+	public void audit(AuditMessage auditMessage) throws Exception;
+	public List<AuditMessage> getAuditLogs() throws Exception;
+	
+	
+	
 }

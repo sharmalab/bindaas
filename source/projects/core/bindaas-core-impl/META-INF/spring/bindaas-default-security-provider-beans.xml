@@ -67,16 +67,9 @@
 		
 	
 	<bean id="auditProvider"
-		class="edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider"
-		init-method="init">
-
-		<property name="defaultProperties">
-			<props>
-				<prop key="audit.file">../etc/audit/audit.data</prop>
-			</props>
-		</property>
-
+		class="edu.emory.cci.bindaas.security.impl.DBAuditProvider" >
 	</bean>
+	
 	<bean id="dbAuthenticationProvider"
 		class="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"
 		init-method="init"></bean>

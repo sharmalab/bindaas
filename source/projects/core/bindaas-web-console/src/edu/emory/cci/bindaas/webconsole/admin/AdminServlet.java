@@ -13,6 +13,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 
 import com.google.gson.JsonObject;
 
@@ -34,6 +35,7 @@ public class AdminServlet extends AbstractRequestHandler {
 	private VelocityEngineWrapper velocityEngineWrapper;
 	private SessionFactory sessionFactory;
 	private VersionCommand versionCommand;
+	private static final int MAX_DISPLAY_THRESHOLD = 50;
 	
 	public VersionCommand getVersionCommand() {
 		return versionCommand;
@@ -118,7 +120,7 @@ public class AdminServlet extends AbstractRequestHandler {
 								"from UserRequest where stage = :stage order by requestDate desc")
 						.setString("stage", "accepted").list();
 				List<?> historyLog = session.createQuery(
-						"from HistoryLog order by activityDate desc").list();
+						"from HistoryLog order by activityDate desc").setFetchSize(MAX_DISPLAY_THRESHOLD).list();
 
 				VelocityContext velocityContext = new VelocityContext();
 				/**
