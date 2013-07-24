@@ -5,6 +5,7 @@ import java.io.InputStream;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -34,6 +35,10 @@ public interface IExecutionService {
 		@Path("{workspace}/{profile}/delete/{deleteEndpoint}")
 		@DELETE
 		public Response executeDeleteEndpoint(@PathParam("workspace") String workspace , @PathParam("profile") String profile , @PathParam("deleteEndpoint") String deleteEndpoint) ;
+		
+		@Path("{workspace}/{profile}/delete/{deleteEndpoint}")
+		@OPTIONS
+		public Response getAllowableOptionsForDeleteEndpoint(@PathParam("workspace") String workspace , @PathParam("profile") String profile , @PathParam("deleteEndpoint") String deleteEndpoint) ;
 		
 		
 		

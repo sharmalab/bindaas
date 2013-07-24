@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -338,6 +339,22 @@ public class ExecutionServiceImpl implements IExecutionService{
 			params.put(key, mm.getFirst(key));
 		}
 		return params;
+	}
+
+	@Override
+	@Path("{workspace}/{profile}/delete/{deleteEndpoint}")
+	@OPTIONS
+	public Response getAllowableOptionsForDeleteEndpoint(
+			@PathParam("workspace") String workspace,
+			@PathParam("profile") String profile,
+			@PathParam("deleteEndpoint") String deleteEndpoint) {
+		
+		Map<String,Object> headers = new HashMap<String, Object>();
+		headers.put("Allow", "DELETE,OPTIONS");
+		headers.put("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,HEAD,OPTIONS");
+		headers.put("Access-Control-Allow-Headers", "Authorization, X-Authorization");
+		return RestUtils.createJsonResponse("{}", headers);
+		
 	}
 
 }
