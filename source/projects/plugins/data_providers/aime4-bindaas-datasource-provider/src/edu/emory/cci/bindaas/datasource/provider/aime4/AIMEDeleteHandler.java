@@ -10,14 +10,13 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.datasource.provider.aime4.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
-import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 import edu.emory.cci.bindaas.framework.provider.exception.DeleteExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
-import edu.emory.cci.bindaas.datasource.provider.aime4.model.DataSourceConfiguration;
 
 public class AIMEDeleteHandler implements IDeleteHandler {
 
