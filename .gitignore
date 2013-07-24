@@ -1,5 +1,7 @@
 *.class
 *.DS_Store
+binaries/*.gz
+source/projects/core/bindaas-test-runtime-directory
 source/maven/master/aim-to-dicom-query-result-modifier/src/
 source/maven/master/aim-to-dicom-query-result-modifier/target/
 source/maven/master/aime-bindaas-datasource-provider-1/src/
