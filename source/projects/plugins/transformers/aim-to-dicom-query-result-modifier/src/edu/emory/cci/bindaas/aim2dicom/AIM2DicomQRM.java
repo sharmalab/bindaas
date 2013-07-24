@@ -1,6 +1,5 @@
 package edu.emory.cci.bindaas.aim2dicom;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,6 +24,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.osgi.framework.BundleContext;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
@@ -38,6 +38,9 @@ import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.ModifierExecutionFailedException;
+import edu.emory.cci.bindaas.framework.provider.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -74,7 +77,7 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 	@Override
 	public QueryResult modifyQueryResult(final QueryResult queryResult,
 			JsonObject dataSource, RequestContext requestContext, JsonObject modifierProperties , Map<String,String> runtimeParameters)
-			throws Exception {
+			throws AbstractHttpCodeException {
 		
 		
 		final AIM2DicomQRMProperties props = GSONUtil.getGSONInstance()
@@ -86,7 +89,7 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 
 				@Override
 				public void callback(OutputStream servletOutputStream,
-						Properties context) throws Exception {
+						Properties context) throws AbstractHttpCodeException {
 					
 					try {
 						
@@ -123,7 +126,7 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 						
 					} catch (Exception e) {
 						log.error(e);
-						throw e;
+						throw new ModifierExecutionFailedException(getClass().getName(), 1 , e);
 					}
 					
 				}
@@ -178,7 +181,7 @@ public class AIM2DicomQRM implements IQueryResultModifier {
 		} else {
 			String error = "QRM properties missing attribute imageUrl";
 			log.error(error);
-			throw new Exception(error);
+			throw new ValidationException(getClass().getName() , 1 , error);
 		}
 		return queryResult;
 	}

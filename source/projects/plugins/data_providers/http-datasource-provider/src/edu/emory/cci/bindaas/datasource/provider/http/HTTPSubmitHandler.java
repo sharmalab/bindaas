@@ -9,27 +9,29 @@ import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.MethodNotImplementedException;
 
 public class HTTPSubmitHandler implements ISubmitHandler {
 
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, InputStream is, RequestContext requestContext)
-			throws ProviderException {
-		throw new ProviderException(HTTPProvider.class.getName(), HTTPProvider.VERSION, "Method not implemented");
+			throws AbstractHttpCodeException {
+		throw new MethodNotImplementedException(HTTPProvider.class.getName(), HTTPProvider.VERSION, "Method not implemented");
 	}
 
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, String data, RequestContext requestContext)
-			throws ProviderException {
-		throw new ProviderException(HTTPProvider.class.getName(), HTTPProvider.VERSION, "Method not implemented");
+			throws AbstractHttpCodeException {
+		throw new MethodNotImplementedException(HTTPProvider.class.getName(), HTTPProvider.VERSION, "Method not implemented");
 	}
 
 	@Override
 	public SubmitEndpoint validateAndInitializeSubmitEndpoint(
-			SubmitEndpoint submitEndpoint) throws ProviderException {
-		throw new ProviderException(HTTPProvider.class.getName(), HTTPProvider.VERSION, "Method not implemented");
+			SubmitEndpoint submitEndpoint) throws AbstractHttpCodeException {
+		throw new MethodNotImplementedException(HTTPProvider.class.getName(), HTTPProvider.VERSION, "Method not implemented");
 	}
 
 	@Override

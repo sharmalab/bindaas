@@ -29,6 +29,9 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.SubmitExecutionFailedException;
+import edu.emory.cci.bindaas.framework.provider.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.IOUtils;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -40,7 +43,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, InputStream is, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		
 		try {
 			String data = IOUtils.toString(is);
@@ -48,7 +51,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 			return queryResult;
 		} catch (IOException e) {
 			log.error(e);
-			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
+			throw new SubmitExecutionFailedException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 
 	}
@@ -56,7 +59,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, String data, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		Mongo mongo = null;
 		try {
 			DataSourceConfiguration configuration = GSONUtil.getGSONInstance()
@@ -95,10 +98,16 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				return queryResult;
 			}
 			else
-				throw new Exception("Unsupported Input Type");
-		} catch (Exception e) {
+				throw new ValidationException(getClass().getName() , MongoDBProvider.VERSION ,"Unsupported Input Type");
+		} 
+		catch(AbstractHttpCodeException e)
+		{
 			log.error(e);
-			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
+			throw e;
+		}
+		catch (Exception e) {
+			log.error(e);
+			throw new SubmitExecutionFailedException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 		finally{
 			if(mongo!=null)

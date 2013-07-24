@@ -4,14 +4,25 @@ import java.io.InputStream;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.StreamingOutput;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import edu.emory.cci.bindaas.core.bundle.Activator;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
 public class RestUtils {
 
+	
+	public static Response createErrorResponse(AbstractHttpCodeException abstractHttpCodeException)
+	{
+		ResponseBuilder builder =  Response.status(abstractHttpCodeException.getHttpStatusCode()).type(StandardMimeType.JSON.toString()) . entity(abstractHttpCodeException.toString());
+		
+		return createResponse(builder);
+	}
 	public static Response createSuccessResponse(String message)
 	{
 		return createResponse(Response.ok(message).type("text/plain"));
@@ -41,13 +52,17 @@ public class RestUtils {
 	
 	public static Response createErrorResponse(String message)
 	{
-		return createResponse(Response.serverError().entity(message));
+		
+		JsonObject jsonResp = new JsonObject();
+		jsonResp.add("errorMessage", new JsonPrimitive(message));
+		
+		ResponseBuilder builder =  Response.status(500).type(StandardMimeType.JSON.toString()) . entity(jsonResp.toString());
+		return createResponse(builder);
 	}
 	
 	public static Response createResponse(String message, int code)
 	{
-		
-	 	return createResponse(Response.status(code).entity(message));
+	 	return createResponse(Response.status(code).type(StandardMimeType.JSON.toString()).entity(String.format("{ 'message' : '%s'}", message)));
 	}
 	
 	public static Response createSuccessResponse(String message , Map<String,Object> headers)
@@ -116,7 +131,9 @@ public class RestUtils {
 	
 	public static Response createErrorResponse(String message, Map<String,Object> headers)
 	{
-		ResponseBuilder builder = Response.serverError().entity(message);
+		JsonObject jsonResp = new JsonObject();
+		jsonResp.add("errorMessage", new JsonPrimitive(message));
+		ResponseBuilder builder = Response.serverError().entity(jsonResp.toString()).type(StandardMimeType.JSON.toString());
 		for(String key : headers.keySet())
 		{
 			builder = builder.header(key, headers.get(key));

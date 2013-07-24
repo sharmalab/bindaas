@@ -8,11 +8,12 @@ import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 
 public interface ISubmitHandler {
 
-	public QueryResult submit(JsonObject dataSource , JsonObject endpointProperties , InputStream is , RequestContext requestContext) throws ProviderException;
-	public QueryResult submit(JsonObject dataSource , JsonObject endpointProperties , String data , RequestContext requestContext) throws ProviderException;
+	public QueryResult submit(JsonObject dataSource , JsonObject endpointProperties , InputStream is , RequestContext requestContext) throws AbstractHttpCodeException;
+	public QueryResult submit(JsonObject dataSource , JsonObject endpointProperties , String data , RequestContext requestContext) throws AbstractHttpCodeException;
 	
 	/**
 	 * Must set Type attribute for the endpoint

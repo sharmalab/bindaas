@@ -10,12 +10,13 @@ import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 
 public class MockDeleteHandler implements IDeleteHandler{
 
 	@Override
 	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute , Map<String,String> runtimeParamters , RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		QueryResult result = new QueryResult();
 		
 		result.setError(false);

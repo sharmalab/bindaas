@@ -3,12 +3,9 @@ package edu.emory.cci.bindaas.core.rest.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -31,7 +28,6 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 
 import edu.emory.cci.bindaas.core.api.IExecutionTasks;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
-import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.rest.service.api.IExecutionService;
 import edu.emory.cci.bindaas.core.util.RestUtils;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
@@ -41,7 +37,7 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
-import edu.emory.cci.bindaas.framework.util.StandardMimeType;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 
 public class ExecutionServiceImpl implements IExecutionService{
 
@@ -105,7 +101,7 @@ public class ExecutionServiceImpl implements IExecutionService{
 		if(queryResult.getCallback()!=null)
 		{
 			
-						final Callback callback = queryResult.getCallback();
+			final Callback callback = queryResult.getCallback();
 			StreamingOutput streamingOutput = new StreamingOutput() {
 				
 				@Override
@@ -113,7 +109,8 @@ public class ExecutionServiceImpl implements IExecutionService{
 						WebApplicationException {
 					try {
 							callback.callback(os, null);
-					}catch(Exception e)
+					}
+					catch(Exception e)
 					{
 						log.error(e);
 						throw new WebApplicationException(e);
@@ -181,7 +178,14 @@ public class ExecutionServiceImpl implements IExecutionService{
 			{
 				throw new Exception("SubmitEndpoint [" + submitEndpointName + "] not found");
 			}
-		} catch (Exception e) {
+		} 
+		
+		catch(AbstractHttpCodeException e)
+		{
+			log.error(e);
+			return RestUtils.createErrorResponse(e);
+		}
+		catch (Exception e) {
 			log.error(e);
 			return RestUtils.createErrorResponse(e.getMessage());
 		}
@@ -206,7 +210,13 @@ public class ExecutionServiceImpl implements IExecutionService{
 			{
 				throw new Exception("QueryEndpoint [" + queryEndpointName + "] not found");
 			}
-		} catch (Exception e) {
+		} 
+		catch(AbstractHttpCodeException e)
+		{
+			log.error(e);
+			return RestUtils.createErrorResponse(e);
+		}
+		catch (Exception e) {
 			log.error(e);
 			return RestUtils.createErrorResponse(e.getMessage());
 		}
@@ -240,7 +250,13 @@ public class ExecutionServiceImpl implements IExecutionService{
 			{
 				throw new Exception("SubmitEndpoint [" + submitEndpointName + "] not found");
 			}
-		} catch (Exception e) {
+		} 
+		catch(AbstractHttpCodeException e)
+		{
+			log.error(e);
+			return RestUtils.createErrorResponse(e);
+		}
+		catch (Exception e) {
 			log.error(e);
 			return RestUtils.createErrorResponse(e.getMessage());
 		}
@@ -268,7 +284,13 @@ public class ExecutionServiceImpl implements IExecutionService{
 			{
 				throw new Exception("QueryEndpoint [" + queryEndpointName + "] not found");
 			}
-		} catch (Exception e) {
+		} 
+		catch(AbstractHttpCodeException e)
+		{
+			log.error(e);
+			return RestUtils.createErrorResponse(e);
+		}
+		catch (Exception e) {
 			log.error(e);
 			return RestUtils.createErrorResponse(e.getMessage());
 		}
@@ -296,7 +318,14 @@ public class ExecutionServiceImpl implements IExecutionService{
 			{
 				throw new Exception("DeleteEndpoint [" + deleteEndpointName + "] not found");
 			}
-		} catch (Exception e) {
+		} 
+		catch(AbstractHttpCodeException e)
+		{
+			log.error(e);
+			return RestUtils.createErrorResponse(e);
+		}
+		
+		catch (Exception e) {
 			log.error(e);
 			return RestUtils.createErrorResponse(e.getMessage());
 		}
@@ -325,7 +354,13 @@ public class ExecutionServiceImpl implements IExecutionService{
 			{
 				throw new Exception("QueryEndpoint [" + queryEndpointName + "] not found");
 			}
-		} catch (Exception e) {
+		} 
+		catch(AbstractHttpCodeException e)
+		{
+			log.error(e);
+			return RestUtils.createErrorResponse(e);
+		}
+		catch (Exception e) {
 			log.error(e);
 			return RestUtils.createErrorResponse(e.getMessage());
 		}

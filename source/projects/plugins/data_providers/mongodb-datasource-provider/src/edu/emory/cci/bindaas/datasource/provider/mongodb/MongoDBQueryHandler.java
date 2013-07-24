@@ -2,6 +2,8 @@ package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
 import java.util.Map;
 
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,6 +27,9 @@ import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.QueryExecutionFailedException;
+import edu.emory.cci.bindaas.framework.provider.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
 public class MongoDBQueryHandler implements IQueryHandler {
@@ -43,7 +48,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
 	@Override
 	public QueryResult query(JsonObject dataSource,
 			JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		
 		try{
 			if(outputFormatProps!=null)
@@ -121,19 +126,24 @@ public class MongoDBQueryHandler implements IQueryHandler {
 				}
 				else
 				{
-					throw new Exception("outputFormat could not be parsed");
+					throw new ValidationException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,"outputFormat could not be parsed");
 				}
 			}
 			else
 			{
-				throw new Exception("outputFormat not specified");
+				throw new ValidationException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,"outputFormat not specified");
 			}
 			
+	}
+	catch(AbstractHttpCodeException e)
+	{
+		log.error(e);
+		throw e;
 	}
 	catch(Exception e)
 	{
 		log.error(e);
-		throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
+		throw new QueryExecutionFailedException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 	}
 
 }
@@ -160,7 +170,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
 						}
 						else
 						{
-							throw new Exception("No handler found for outputType=[" + of + "]");
+							throw new ValidationException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION  ,"No handler found for outputType=[" + of + "]");
 						}
 						
 					}

@@ -14,13 +14,15 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.SubmitExecutionFailedException;
 
 public class MockSubmitHandler implements ISubmitHandler {
 
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, InputStream is, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		
 		QueryResult result = new QueryResult();
 		
@@ -29,7 +31,7 @@ public class MockSubmitHandler implements ISubmitHandler {
 		try {
 			result.setData(is);
 		} catch (RuntimeException e) {
-			throw new ProviderException(MockProvider.class.getName() , MockProvider.VERSION , e);
+			throw new SubmitExecutionFailedException(MockProvider.class.getName() , MockProvider.VERSION , e);
 		}
 		return result;
 	}
@@ -37,7 +39,7 @@ public class MockSubmitHandler implements ISubmitHandler {
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, String data, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		QueryResult result = new QueryResult();
 		
 		result.setError(false);

@@ -16,6 +16,8 @@ import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.DeleteExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
 public class GenericSQLDeleteHandler implements IDeleteHandler {
@@ -31,7 +33,7 @@ public class GenericSQLDeleteHandler implements IDeleteHandler {
 	
 	@Override
 	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute, Map<String,String> runtimeParamters , RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		try {
 			Connection connection = null;
 			try {
@@ -57,7 +59,7 @@ public class GenericSQLDeleteHandler implements IDeleteHandler {
 
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , "Delete operation failed", e);
+			throw new DeleteExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , "Delete operation failed", e);
 		}
 		
 	}

@@ -28,6 +28,8 @@ import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.ModifierExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -65,7 +67,7 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 	@Override
 	public QueryResult modifyQueryResult(final QueryResult queryResult,
 			JsonObject dataSource, RequestContext requestContext, final  JsonObject modifierProperties ,  Map<String,String> queryParams)
-			throws Exception {
+			throws AbstractHttpCodeException {
 		final ImageDownloadQRMProperties props = GSONUtil.getGSONInstance().fromJson(modifierProperties, ImageDownloadQRMProperties.class);
 		final JsonArray results = queryResult.getIntermediateResult().getAsJsonArray();
 		final Iterator<JsonElement> iterator = results.iterator();
@@ -82,7 +84,7 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 		queryResult.setCallback(new Callback() {
 			
 			@Override
-			public void callback(OutputStream servletOutputStream, Properties context) {
+			public void callback(OutputStream servletOutputStream, Properties context) throws AbstractHttpCodeException{
 				try{
 					
 					ZipOutputStream zos = new ZipOutputStream(servletOutputStream);
@@ -119,7 +121,7 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 				}catch(Exception e)
 				{
 					log.error(e);
-					// TODO send error stream to servlet
+					throw new ModifierExecutionFailedException(getClass().getName(), 1 , e);
 				}
 							
 			}

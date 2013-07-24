@@ -14,6 +14,8 @@ import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.DeleteExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.datasource.provider.aime.model.DataSourceConfiguration;
 
@@ -23,7 +25,7 @@ public class AIMEDeleteHandler implements IDeleteHandler {
 
 	@Override
 	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute , Map<String,String> runtimeParameters, RequestContext requestContext )
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		try {
 			Connection connection = null;
 			try {
@@ -50,7 +52,7 @@ public class AIMEDeleteHandler implements IDeleteHandler {
 
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,"Delete operation failed", e);
+			throw new DeleteExecutionFailedException(AIMEProvider.class.getName(),AIMEProvider.VERSION,"Delete operation failed", e);
 		}
 	}
 

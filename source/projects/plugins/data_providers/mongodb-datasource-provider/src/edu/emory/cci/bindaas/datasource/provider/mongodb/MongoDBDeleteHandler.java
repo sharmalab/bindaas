@@ -20,6 +20,8 @@ import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.DeleteExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
@@ -30,7 +32,7 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 
 	@Override
 	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute , Map<String,String> runtimeParamters , RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 
 		try {
 			DataSourceConfiguration configuration = GSONUtil.getGSONInstance()
@@ -64,7 +66,7 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 			}
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
+			throw new DeleteExecutionFailedException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
 		}
 
 	}

@@ -7,6 +7,8 @@ import java.util.Properties;
 
 import com.google.gson.JsonElement;
 
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+
 
 public class QueryResult {
 
@@ -66,7 +68,7 @@ public class QueryResult {
 
 	public static interface Callback
 	{
-		public void callback(OutputStream servletOutputStream , Properties context) throws Exception; 
+		public void callback(OutputStream servletOutputStream , Properties context) throws AbstractHttpCodeException; 
 	}
 	
 }

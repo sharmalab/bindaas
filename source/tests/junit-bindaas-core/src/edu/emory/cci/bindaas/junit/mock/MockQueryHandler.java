@@ -11,12 +11,13 @@ import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 
 public class MockQueryHandler implements IQueryHandler{
 
 	@Override
 	public QueryResult query(JsonObject dataSource,JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		QueryResult result = new QueryResult();
 		
 		result.setError(false);

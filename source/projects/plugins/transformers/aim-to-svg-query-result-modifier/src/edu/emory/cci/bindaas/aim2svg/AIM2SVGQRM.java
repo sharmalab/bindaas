@@ -29,6 +29,8 @@ import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.ModifierExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 
 public class AIM2SVGQRM implements IQueryResultModifier {
@@ -84,14 +86,14 @@ public class AIM2SVGQRM implements IQueryResultModifier {
 	@Override
 	public QueryResult modifyQueryResult(final QueryResult queryResult,
 			JsonObject dataSource, RequestContext requestContext, JsonObject modifierProperties , Map<String,String> runtimeParameters)
-			throws Exception {
+			throws AbstractHttpCodeException {
 		
 		queryResult.setMimeType("image/svg+xml");
 		queryResult.setCallback(new Callback() {
 			
 			@Override
 			public void callback(OutputStream servletOutputStream,
-					Properties context) throws Exception {
+					Properties context) throws AbstractHttpCodeException {
 				
 				try {
 						
@@ -104,7 +106,7 @@ public class AIM2SVGQRM implements IQueryResultModifier {
 					Scanner s = new Scanner(queryResult.getData());
 					String nextMatch = s.findWithinHorizon(inPattern, 0);
 					while (nextMatch != null) {
-//						System.out.println("query result: " + nextMatch);
+
 						ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				        javax.xml.transform.Result result =
 				                new javax.xml.transform.stream.StreamResult(baos);
@@ -128,7 +130,7 @@ public class AIM2SVGQRM implements IQueryResultModifier {
 
 				} catch (Exception e) {
 					log.error(e);
-					throw e;
+					throw new ModifierExecutionFailedException(getClass().getName() , 1 , e);
 				}
 				
 			}

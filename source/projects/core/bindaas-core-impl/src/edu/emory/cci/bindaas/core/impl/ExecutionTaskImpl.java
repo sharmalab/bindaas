@@ -1,8 +1,6 @@
 package edu.emory.cci.bindaas.core.impl;
 
 import java.io.InputStream;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -14,7 +12,6 @@ import edu.emory.cci.bindaas.core.api.IExecutionTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.core.api.IValidator;
-import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.exception.ExecutionTaskException;
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
 import edu.emory.cci.bindaas.framework.api.IProvider;
@@ -31,6 +28,8 @@ import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.MandatoryQueryAttributeMissingException;
 
 public class ExecutionTaskImpl implements IExecutionTasks {
 
@@ -42,7 +41,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	@Override
 	public QueryResult executeQueryEndpoint(String user,
 			Map<String, String> runtimeParameters, Profile profile,
-			QueryEndpoint queryEndpoint) throws ExecutionTaskException {
+			QueryEndpoint queryEndpoint) throws ExecutionTaskException, AbstractHttpCodeException {
 		
 		RequestContext requestContext = new RequestContext();
 		requestContext.setUser(user);
@@ -68,8 +67,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					}
 
 				} else if (attrValue == null) {
-					throw new ExecutionTaskException("Mandatory attribute ["
-							+ attrName + "] not provided");
+					throw new MandatoryQueryAttributeMissingException(attrName);
 				}
 
 				log.trace("Substituting [" + "$" + attrName + "$" + "] for ["
@@ -105,7 +103,12 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 			// render result
 			return queryResult;
 
-		} catch (Exception e) {
+		} 
+		catch(AbstractHttpCodeException e)
+		{
+			throw e;
+		}
+		catch (Exception e) {
 			log.error("Execution Task failed", e);
 			throw new ExecutionTaskException(e);
 		} 
@@ -138,7 +141,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	@Override
 	public QueryResult executeDeleteEndpoint(String user,
 			Map<String, String> runtimeParameters, Profile profile,
-			DeleteEndpoint deleteEndpoint) throws ExecutionTaskException {
+			DeleteEndpoint deleteEndpoint) throws ExecutionTaskException, AbstractHttpCodeException {
 		
 		RequestContext requestContext = new RequestContext();
 		requestContext.setUser(user);
@@ -179,7 +182,12 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 			// render result
 			return queryResult;
 
-		} catch (Exception e) {
+		} 
+		catch(AbstractHttpCodeException e)
+		{
+			throw e;
+		}
+		catch (Exception e) {
 			log.error("Execution Task failed", e);
 			throw new ExecutionTaskException(e);
 		} 
@@ -189,7 +197,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	@Override
 	public QueryResult executeSubmitEndpoint(String user, InputStream is,
 			Profile profile, SubmitEndpoint submitEndpoint)
-			throws ExecutionTaskException {
+			throws ExecutionTaskException, AbstractHttpCodeException {
 		
 		
 		try {
@@ -209,7 +217,13 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					profile.getDataSource(), submitEndpoint.getProperties(),
 					finalStream , requestContext );
 			return queryResult;
-		} catch (Exception e) {
+		} 
+		
+		catch(AbstractHttpCodeException e)
+		{
+			throw e;
+		}
+		catch (Exception e) {
 			log.error("Execution Task failed", e);
 			throw new ExecutionTaskException(e);
 		} 
@@ -311,7 +325,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	@Override
 	public QueryResult executeSubmitEndpoint(String user, String data,
 			Profile profile, SubmitEndpoint submitEndpoint)
-			throws ExecutionTaskException {
+			throws ExecutionTaskException, AbstractHttpCodeException {
 		try {
 			
 			RequestContext requestContext = new RequestContext();
@@ -329,7 +343,12 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 					profile.getDataSource(), submitEndpoint.getProperties(),
 					finalData , requestContext);
 			return queryResult;
-		} catch (Exception e) {
+		} 
+		catch(AbstractHttpCodeException e)
+		{
+			throw e;
+		}
+		catch (Exception e) {
 			log.error("Execution Task failed", e);
 			throw new ExecutionTaskException(e);
 		}

@@ -47,6 +47,9 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.BadContentException;
+import edu.emory.cci.bindaas.framework.provider.exception.SubmitExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.IOUtils;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -110,7 +113,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, InputStream is , RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		
 		SubmitEndpointProperties seProps = GSONUtil.getGSONInstance().fromJson(endpointProperties, SubmitEndpointProperties.class);
 		if(seProps.getInputType().equals(InputType.ZIP))
@@ -153,12 +156,12 @@ public class AIMESubmitHandler implements ISubmitHandler {
 			catch(Exception e)
 			{
 				log.error(e);
-				throw new ProviderException(AIMEProvider.class.getName(), AIMEProvider.VERSION, e);
+				throw new SubmitExecutionFailedException(AIMEProvider.class.getName(), AIMEProvider.VERSION, e);
 			}
 		}
 		else
 		{
-			throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,"Wrong type of data submitted. Expected ZIP");
+			throw new BadContentException(AIMEProvider.class.getName(),AIMEProvider.VERSION,"Wrong type of data submitted. Expected ZIP");
 		}
 		
 		
@@ -167,7 +170,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, String data, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		SubmitEndpointProperties seProps = GSONUtil.getGSONInstance().fromJson(endpointProperties, SubmitEndpointProperties.class);
 		if(seProps.getInputType().equals(InputType.XML))
 		{
@@ -188,9 +191,9 @@ public class AIMESubmitHandler implements ISubmitHandler {
 					connection.rollback();
 				} catch (SQLException e1) {
 					log.error(e1);
-					throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,e1);
+					throw new SubmitExecutionFailedException(AIMEProvider.class.getName(),AIMEProvider.VERSION,e1);
 				}
-				throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,e);
+				throw new SubmitExecutionFailedException(AIMEProvider.class.getName(),AIMEProvider.VERSION,e);
 			}
 			finally{
 				if(connection!=null){
@@ -205,7 +208,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 		}
 		else
 		{
-			throw new ProviderException(AIMEProvider.class.getName(),AIMEProvider.VERSION,"Wrong type of data submitted. Expected XML");
+			throw new BadContentException(AIMEProvider.class.getName(),AIMEProvider.VERSION,"Wrong type of data submitted. Expected XML");
 		}
 		
 		

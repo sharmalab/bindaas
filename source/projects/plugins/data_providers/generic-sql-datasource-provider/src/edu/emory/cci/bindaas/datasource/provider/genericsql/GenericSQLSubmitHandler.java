@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,6 +31,9 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.SubmitExecutionFailedException;
+import edu.emory.cci.bindaas.framework.provider.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.IOUtils;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -49,7 +54,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, InputStream is, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		SubmitEndpointProperties seProps = GSONUtil.getGSONInstance().fromJson(
 				endpointProperties, SubmitEndpointProperties.class);
 		List<Map<String, String>> records = null;
@@ -62,11 +67,11 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				records = parseCSV(data);
 			} catch (Exception e) {
 				log.error("Could not parse the input CSV data ", e);
-				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
+				throw new SubmitExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 			}
 
 		} else {
-			throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , 
+			throw new ValidationException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , 
 					"Invalid InputFormat specified in the endpoint properties");
 		}
 
@@ -87,7 +92,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				queryResult.setData(new ByteArrayInputStream(String.format("{ 'result' : 'success' , 'rowsInserted' : '%s'  }", total).getBytes()));
 			} catch (Exception e) {
 				log.error(e);
-				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
+				throw new SubmitExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 			} finally {
 				if (connection != null) {
 					try {
@@ -95,7 +100,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 						
 					} catch (SQLException e) {
 						log.error(e);
-						throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
+						throw new SubmitExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 					}
 				}
 			}
@@ -112,7 +117,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, String data, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		SubmitEndpointProperties seProps = GSONUtil.getGSONInstance().fromJson(
 				endpointProperties, SubmitEndpointProperties.class);
 		List<Map<String, String>> records = null;
@@ -124,7 +129,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				records = parseCSV(data);
 			} catch (Exception e) {
 				log.error("Could not parse the input CSV data ", e);
-				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
+				throw new SubmitExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 			}
 
 		} else if (seProps.getInputType() != null
@@ -133,10 +138,10 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				records = parseJson(data);
 			} catch (Exception e) {
 				log.error("Could not parse the input JSON data ", e);
-				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
+				throw new SubmitExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 			}
 		} else {
-			throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , 
+			throw new ValidationException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , 
 					"Invalid InputFormat specified in the endpoint properties");
 		}
 
@@ -157,14 +162,14 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				queryResult.setData(new ByteArrayInputStream(String.format("{ 'result' : 'success' , 'rowsInserted' : '%s'  }", total).getBytes()));
 			} catch (Exception e) {
 				log.error(e);
-				throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
+				throw new SubmitExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 			} finally {
 				if (connection != null) {
 					try {
 						connection.close();
 					} catch (SQLException e) {
 						log.error(e);
-						throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
+						throw new SubmitExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
 					}
 				}
 			}

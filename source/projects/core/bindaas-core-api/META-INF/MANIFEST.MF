@@ -17,5 +17,6 @@ Export-Package: edu.emory.cci.bindaas.framework.api,
  edu.emory.cci.bindaas.framework.event,
  edu.emory.cci.bindaas.framework.event.listeners,
  edu.emory.cci.bindaas.framework.model,
+ edu.emory.cci.bindaas.framework.provider.exception,
  edu.emory.cci.bindaas.framework.util
 Bundle-Activator: edu.emory.cci.bindaas.framework.bundle.Activator

@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.http;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.Properties;
@@ -17,6 +18,9 @@ import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.NetworkConnectionException;
+import edu.emory.cci.bindaas.framework.provider.exception.QueryExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
 public class HTTPQueryHandler implements IQueryHandler {
@@ -26,7 +30,7 @@ public class HTTPQueryHandler implements IQueryHandler {
 	@Override
 	public QueryResult query(JsonObject dataSource,
 			JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		
 		
 		try {
@@ -42,9 +46,14 @@ public class HTTPQueryHandler implements IQueryHandler {
 					
 					@Override
 					public void callback(OutputStream servletOutputStream, Properties context)
-							throws Exception {
+							throws AbstractHttpCodeException {
 
-						response.getEntity().writeTo(servletOutputStream);
+						try {
+							response.getEntity().writeTo(servletOutputStream);
+						} catch (IOException e) {
+							log.error(e);
+							throw new NetworkConnectionException(getClass().getName(), 1 , e);
+						}
 					}
 				});
 				
@@ -60,7 +69,7 @@ public class HTTPQueryHandler implements IQueryHandler {
 		
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(HTTPProvider.class.getName(), HTTPProvider.VERSION);
+			throw new QueryExecutionFailedException(HTTPProvider.class.getName(), HTTPProvider.VERSION);
 		}
 		
 	}

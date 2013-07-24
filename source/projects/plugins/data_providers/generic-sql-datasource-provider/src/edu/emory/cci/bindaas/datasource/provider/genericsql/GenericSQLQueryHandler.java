@@ -22,6 +22,8 @@ import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.QueryExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
 public class GenericSQLQueryHandler implements IQueryHandler {
@@ -43,7 +45,7 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 	@Override
 	public QueryResult query(JsonObject dataSource,
 			JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters, RequestContext requestContext)
-			throws ProviderException {
+			throws AbstractHttpCodeException {
 		try {
 			OutputFormatProps props = GSONUtil.getGSONInstance().fromJson(
 					outputFormatProps, OutputFormatProps.class); // Get
@@ -97,7 +99,7 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 
 		} catch (Exception e) {
 			log.error(e);
-			throw new ProviderException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , "Query Not Executed", e);
+			throw new QueryExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , "Query Not Executed", e);
 		}
 	}
 

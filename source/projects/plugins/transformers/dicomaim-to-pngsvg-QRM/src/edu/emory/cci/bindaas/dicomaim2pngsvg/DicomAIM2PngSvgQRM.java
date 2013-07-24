@@ -51,6 +51,10 @@ import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
+import edu.emory.cci.bindaas.framework.provider.exception.ModifierExecutionFailedException;
+import edu.emory.cci.bindaas.framework.provider.exception.UpstreamContentAssertionFailedException;
+import edu.emory.cci.bindaas.framework.provider.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
@@ -111,7 +115,7 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 	@Override
 	public QueryResult modifyQueryResult(final QueryResult queryResult,
 			JsonObject dataSource, RequestContext requestContext, JsonObject modifierProperties , Map<String,String> runtimeParameters)
-			throws Exception {
+			throws AbstractHttpCodeException {
 		
 		
 		final DicomAIM2PngSvgQRMProperties props = GSONUtil.getGSONInstance()
@@ -119,7 +123,7 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 		if (props == null || props.aimURL == null) {
 			String error = "QRM properties missing attribute imageUrl";
 			log.error(error);
-			throw new Exception(error);
+			throw new ValidationException(getClass().getName() , 1 ,  error);
 		}
 			
 		queryResult.setMimeType(StandardMimeType.ZIP.toString());
@@ -127,7 +131,7 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 
 			@Override
 			public void callback(OutputStream servletOutputStream,
-					Properties context) throws Exception {
+					Properties context) throws AbstractHttpCodeException {
 
 				// results returned: if no image, error.  if no annotation, return empty xml + image.  if both, return both.
 				
@@ -138,14 +142,14 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 
 					// check to see if we get the right kind of data
 					if (queryResult.getIntermediateResult() == null) {
-						throw new Exception("Upstream query result did not set a json element variable.");
+						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "Upstream query result did not set a json element variable.");
 					}
 
 					JsonArray resultSet = queryResult.getIntermediateResult().getAsJsonArray();
 					if (resultSet.size() > 1) {
-						throw new Exception("Number of upstream image query results is more than 1.");
+						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "Number of upstream image query results is more than 1.");
 					} else if (resultSet.size() == 0) {
-						throw new Exception("No image results found to transform to PNG.");
+						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "No image results found to transform to PNG.");
 					}
 					JsonObject jobj = resultSet.get(0).getAsJsonObject();
 
@@ -154,7 +158,7 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 						sopInstanceUID = jobj.get("SOPInstanceUID").getAsString();
 					}
 					if (sopInstanceUID.isEmpty()) {
-						throw new Exception("Query result is missing SOPInstanceUID attribute.");
+						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "Query result is missing SOPInstanceUID attribute.");
 					}
 
 					// get the image filename
@@ -162,12 +166,19 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 						filename = jobj.get("filepath").getAsString();
 					}
 					if (filename.isEmpty()) {
-						throw new Exception("Query result is missing filepath attribute.");
+						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "Query result is missing filepath attribute.");
 					}
 
-				} catch (Exception e) {
+				} 
+				
+				catch(AbstractHttpCodeException e)
+				{
 					log.error(e);
 					throw e;
+				}
+				catch (Exception e) {
+					log.error(e);
+					throw new ModifierExecutionFailedException(getClass().getName(), 1 , e);
 				}
 
 
@@ -215,13 +226,14 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 
 				} catch (Exception e) {
 					log.error(e);
-					throw e;
+					throw new ModifierExecutionFailedException(getClass().getName(), 1 , e);
+					
 				} finally {
 					try {
 						zos.close();
 					} catch (IOException e) {
 						log.error(e);
-						throw e;
+						throw new ModifierExecutionFailedException(getClass().getName(), 1 , e);
 					}
 				}
 
