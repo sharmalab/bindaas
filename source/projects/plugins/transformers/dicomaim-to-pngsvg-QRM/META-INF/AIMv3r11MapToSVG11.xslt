@@ -13,6 +13,8 @@ http://www.altova.com/mapforce
 	<xsl:template name="agt:var58_MapToSVG11_function">
 		<xsl:param name="par0" as="node()"/>
 		<ellipse xmlns="http://www.w3.org/2000/svg">
+			<xsl:attribute name="stroke" namespace="" select="'red'"/>
+			<xsl:attribute name="stroke-width" namespace="" select="'3'"/>
 			<xsl:variable name="var8_resultof_map" as="xs:boolean+">
 				<xsl:for-each select="$par0/ns0:spatialCoordinateCollection/ns0:SpatialCoordinate">
 					<xsl:variable name="var7_cur" as="node()" select="."/>
@@ -251,13 +253,69 @@ http://www.altova.com/mapforce
 			</xsl:if>
 		</ellipse>
 	</xsl:template>
-	<xsl:template name="agt:var67_MapToSVG11_function">
+	<xsl:template name="agt:var66_MapToSVG11_function">
 		<xsl:param name="par0" as="node()"/>
 		<xsl:sequence select="fn:concat(fn:concat(xs:string(xs:double(fn:string($par0/@x))), ','), xs:string(xs:double(fn:string($par0/@y))))"/>
 	</xsl:template>
-	<xsl:template name="agt:var77_MapToSVG11_function">
+	<xsl:template name="agt:var68_MapToSVG11_function">
+		<xsl:param name="par0" as="node()"/>
+		<polyline xmlns="http://www.w3.org/2000/svg">
+			<xsl:attribute name="stroke" namespace="" select="'green'"/>
+			<xsl:attribute name="stroke-width" namespace="" select="'3'"/>
+			<xsl:variable name="var65_resultof_filter" as="node()*">
+				<xsl:for-each select="$par0/ns0:spatialCoordinateCollection/ns0:SpatialCoordinate">
+					<xsl:variable name="var64_" as="node()" select="."/>
+					<xsl:variable name="var63_resultof_map" as="xs:boolean*">
+						<xsl:for-each select="@xsi:type">
+							<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var64_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
+						</xsl:for-each>
+					</xsl:variable>
+					<xsl:if test="fn:exists($var63_resultof_map[.])">
+						<xsl:sequence select="."/>
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:variable>
+			<xsl:variable name="var67_resultof_map" as="xs:string*">
+				<xsl:for-each select="$var65_resultof_filter">
+					<xsl:call-template name="agt:var66_MapToSVG11_function">
+						<xsl:with-param name="par0" select="." as="node()"/>
+					</xsl:call-template>
+				</xsl:for-each>
+			</xsl:variable>
+			<xsl:attribute name="points" namespace="" select="fn:string-join($var67_resultof_map, ' ')"/>
+		</polyline>
+	</xsl:template>
+	<xsl:template name="agt:var76_MapToSVG11_function">
 		<xsl:param name="par0" as="node()"/>
 		<xsl:sequence select="fn:concat(fn:concat(xs:string(xs:double(fn:string($par0/@x))), ','), xs:string(xs:double(fn:string($par0/@y))))"/>
+	</xsl:template>
+	<xsl:template name="agt:var78_MapToSVG11_function">
+		<xsl:param name="par0" as="node()"/>
+		<polyline xmlns="http://www.w3.org/2000/svg">
+			<xsl:attribute name="stroke" namespace="" select="'blue'"/>
+			<xsl:attribute name="stroke-width" namespace="" select="'3'"/>
+			<xsl:variable name="var75_resultof_filter" as="node()*">
+				<xsl:for-each select="$par0/ns0:spatialCoordinateCollection/ns0:SpatialCoordinate">
+					<xsl:variable name="var74_" as="node()" select="."/>
+					<xsl:variable name="var73_resultof_map" as="xs:boolean*">
+						<xsl:for-each select="@xsi:type">
+							<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var74_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
+						</xsl:for-each>
+					</xsl:variable>
+					<xsl:if test="fn:exists($var73_resultof_map[.])">
+						<xsl:sequence select="."/>
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:variable>
+			<xsl:variable name="var77_resultof_map" as="xs:string*">
+				<xsl:for-each select="$var75_resultof_filter">
+					<xsl:call-template name="agt:var76_MapToSVG11_function">
+						<xsl:with-param name="par0" select="." as="node()"/>
+					</xsl:call-template>
+				</xsl:for-each>
+			</xsl:variable>
+			<xsl:attribute name="points" namespace="" select="fn:string-join($var77_resultof_map, ' ')"/>
+		</polyline>
 	</xsl:template>
 	<xsl:template match="/">
 		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -300,30 +358,9 @@ http://www.altova.com/mapforce
 						</xsl:for-each>
 					</xsl:variable>
 					<xsl:for-each select="$var62_resultof_filter">
-						<xsl:variable name="var66_resultof_filter" as="node()*">
-							<xsl:for-each select="ns0:spatialCoordinateCollection/ns0:SpatialCoordinate">
-								<xsl:variable name="var64_" as="node()" select="."/>
-								<xsl:variable name="var63_resultof_map" as="xs:boolean*">
-									<xsl:for-each select="@xsi:type">
-										<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var64_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
-									</xsl:for-each>
-								</xsl:variable>
-								<xsl:variable name="var65_resultof_any" as="xs:boolean" select="fn:exists($var63_resultof_map[.])"/>
-								<xsl:if test="$var65_resultof_any">
-									<xsl:sequence select="."/>
-								</xsl:if>
-							</xsl:for-each>
-						</xsl:variable>
-						<xsl:variable name="var68_resultof_map" as="xs:string*">
-							<xsl:for-each select="$var66_resultof_filter">
-								<xsl:call-template name="agt:var67_MapToSVG11_function">
-									<xsl:with-param name="par0" select="." as="node()"/>
-								</xsl:call-template>
-							</xsl:for-each>
-						</xsl:variable>
-						<polyline>
-							<xsl:attribute name="points" namespace="" select="fn:string-join($var68_resultof_map, ' ')"/>
-						</polyline>
+						<xsl:call-template name="agt:var68_MapToSVG11_function">
+							<xsl:with-param name="par0" select="." as="node()"/>
+						</xsl:call-template>
 					</xsl:for-each>
 				</xsl:for-each>
 				<xsl:for-each select="$var1_geometricShapeCollection">
@@ -342,30 +379,9 @@ http://www.altova.com/mapforce
 						</xsl:for-each>
 					</xsl:variable>
 					<xsl:for-each select="$var72_resultof_filter">
-						<xsl:variable name="var76_resultof_filter" as="node()*">
-							<xsl:for-each select="ns0:spatialCoordinateCollection/ns0:SpatialCoordinate">
-								<xsl:variable name="var74_" as="node()" select="."/>
-								<xsl:variable name="var73_resultof_map" as="xs:boolean*">
-									<xsl:for-each select="@xsi:type">
-										<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var74_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
-									</xsl:for-each>
-								</xsl:variable>
-								<xsl:variable name="var75_resultof_any" as="xs:boolean" select="fn:exists($var73_resultof_map[.])"/>
-								<xsl:if test="$var75_resultof_any">
-									<xsl:sequence select="."/>
-								</xsl:if>
-							</xsl:for-each>
-						</xsl:variable>
-						<xsl:variable name="var78_resultof_map" as="xs:string*">
-							<xsl:for-each select="$var76_resultof_filter">
-								<xsl:call-template name="agt:var77_MapToSVG11_function">
-									<xsl:with-param name="par0" select="." as="node()"/>
-								</xsl:call-template>
-							</xsl:for-each>
-						</xsl:variable>
-						<polyline>
-							<xsl:attribute name="points" namespace="" select="fn:string-join($var78_resultof_map, ' ')"/>
-						</polyline>
+						<xsl:call-template name="agt:var78_MapToSVG11_function">
+							<xsl:with-param name="par0" select="." as="node()"/>
+						</xsl:call-template>
 					</xsl:for-each>
 				</xsl:for-each>
 			</xsl:for-each>
