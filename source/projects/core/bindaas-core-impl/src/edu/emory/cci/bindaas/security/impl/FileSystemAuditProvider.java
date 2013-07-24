@@ -5,13 +5,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -27,7 +22,13 @@ import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.IAuditProvider;
+import edu.emory.cci.bindaas.security.model.hibernate.AuditMessage;
 
+/**
+ * Depricated : Should not be used.
+ * @author nadir
+ *
+ */
 public class FileSystemAuditProvider implements IAuditProvider{
 
 	private JsonParser parser = GSONUtil.getJsonParser();
@@ -50,7 +51,7 @@ public class FileSystemAuditProvider implements IAuditProvider{
 	}
 	
 	@Override
-	public void audit(Map<String, String> auditMessage)
+	public void audit(AuditMessage auditMessage)
 			throws Exception {
 		Properties props = (Properties) dynamicProperties.getProperties().clone();
 		
@@ -93,10 +94,14 @@ public class FileSystemAuditProvider implements IAuditProvider{
 		
 		
 	}
+	
+	/**
+	 * TODO : UNTESTED DANGEROUS CODE -- SHOULD NOT BE USED AS IS
+	 */
 
 	@Override
-	public List<Map<String, String>> getAuditLogs() throws Exception {
-		List<Map<String, String>> retVal = new ArrayList<Map<String,String>>();
+	public List<AuditMessage> getAuditLogs() throws Exception {
+		List<AuditMessage> retVal = new ArrayList<AuditMessage>();
 		
 		Properties props = (Properties) dynamicProperties.getProperties().clone();
 		
@@ -111,14 +116,8 @@ public class FileSystemAuditProvider implements IAuditProvider{
 				Iterator<JsonElement> iterator = array.iterator(); 
 				while(iterator.hasNext())
 				{
-					Map<String,String> auditMessage = new HashMap<String, String>();
 					JsonObject jsonObj = iterator.next().getAsJsonObject();
-					
-					for(Entry<String,JsonElement> entry : jsonObj.entrySet())
-					{
-						auditMessage.put(entry.getKey(), entry.getValue().toString());
-					}
-					
+					AuditMessage auditMessage = GSONUtil.getGSONInstance().fromJson(jsonObj, AuditMessage.class);
 					retVal.add(auditMessage);
 				}
 			

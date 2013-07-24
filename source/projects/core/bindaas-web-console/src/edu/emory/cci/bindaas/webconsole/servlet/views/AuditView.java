@@ -16,6 +16,7 @@ import org.apache.velocity.VelocityContext;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuditProvider;
+import edu.emory.cci.bindaas.security.model.hibernate.AuditMessage;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
@@ -88,7 +89,7 @@ public class AuditView extends AbstractRequestHandler {
 			HttpServletResponse response, Map<String, String> pathParameters)
 			throws Exception {
 		
-		List<Map<String,String>> messages = null;
+		List<AuditMessage> messages = null;
 		VelocityContext context = new VelocityContext();
 		/**
 		 * Add version information
@@ -128,7 +129,7 @@ public class AuditView extends AbstractRequestHandler {
 		} else {
 			
 			log.warn("No audit logs found");
-			messages = new ArrayList<Map<String,String>>();
+			messages = new ArrayList<AuditMessage>();
 			
 		}
 		template.merge(context, response.getWriter());

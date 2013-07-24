@@ -51,7 +51,36 @@
 				url = url + queryString;
 				window.open(encodeURI(url));
 			}
+			
+			function executeDeleteAPI(url, buttonClicked) {
+				var queryString = "?api_key=$apiKey&";
+				$(buttonClicked).parent().find("input").each(function() {
 
+					if ($(this).attr("value") && $(this).attr("value") != "") {
+						queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';
+					}
+
+				});
+
+				var encodedUrl = encodeURI(url + queryString);
+
+				$.ajax({
+   						 url: encodedUrl,
+    					 type: 'DELETE',
+    					 crossDomain : true,
+    					 dataType : 'text',
+         					success: function(result) {
+        					alert('Server Response\n' + result);
+    					},
+    					error : function(errorObj , textStatusLine , errorThrown)
+    					{
+    						alert('Server Error\n' + errorThrown);
+    					}
+    					
+					});
+			}
+
+			
 		</script>
 		<script>
 			function uploadFile(button) {
@@ -190,7 +219,7 @@
 							<div class="title">
 								<div class="row">
 									<div class="two columns">
-										<a class="radius button alert">POST</a>
+										<a class="radius button success">POST</a>
 									</div>
 									<div class="ten columns left-align" >
 										<h4>$submitEndpoint.getName()</h4>
@@ -231,6 +260,60 @@
 							</div>
 						</li>
 						#end
+						#foreach ($deleteEndpoint in $profile.getDeleteEndpoints().values())
+						<li>
+							<div class="title">
+								<div class="row">
+									<div class="two columns">
+										<a class="radius button alert">DELETE</a>
+									</div>
+									<div class="ten columns left-align" >
+										<h4>$deleteEndpoint.getName()</h4>
+									</div>
+								</div>
+
+							</div>
+							<div class="content">
+								<div class="row">
+									<div class="twelve columns">
+										<h5 class="subheader">Description : $deleteEndpoint.getDescription()</h5>
+										<h5 class="subheader">URL : $serviceUrl/services/$workspace.getName()/$profile.getName()/delete/$deleteEndpoint.getName()</h5>
+									</div>
+
+								</div>
+								<div class="row" >
+									<div class="twelve columns">
+										<table>
+											<thead>
+												<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
+											</thead>
+											<tbody>
+												#foreach ($bindVar in $deleteEndpoint.getBindVariables().values())
+												<tr>
+													<td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td>
+													<input type="text" id="$bindVar.getName()" />
+													</td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td>
+												</tr>
+												#end
+
+											</tbody>
+										</table>
+										<a class="button secondary" onclick="executeDeleteAPI('$serviceUrl/services/$workspace.getName()/$profile.getName()/delete/$deleteEndpoint.getName()' , this)" >Submit</a>
+										<div> <br> </div>
+										
+										<div class="alert-box alert">
+  													Please be careful while executing Delete API.If testing make sure you work against test database and/or backup your data.		
+										</div>
+										
+									</div>
+
+									
+								</div>
+
+							</div>
+						</li>
+						#end
+						
 					</ul>
 
 				</div>
