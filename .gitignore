@@ -1,6 +1,9 @@
 *.class
 *.DS_Store
+<<<<<<< HEAD
 binaries/*.gz
+=======
+>>>>>>> 418a7ca76c29c2f36d112c552251b9906d82fd8a
 source/projects/core/bindaas-test-runtime-directory
 source/maven/master/aim-to-dicom-query-result-modifier/src/
 source/maven/master/aim-to-dicom-query-result-modifier/target/
