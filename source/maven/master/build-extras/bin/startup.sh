@@ -1,1 +1,1 @@
-nohup java -Dpid=BINDAAS_INSTANCE -jar org.eclipse.osgi_3.8.2.v20130124-134944.jar -console > /dev/null &
+nohup java -Dpid=BINDAAS_INSTANCE -Xmx1024m -XX:MaxPermSize=384m -jar org.eclipse.osgi_3.8.2.v20130124-134944.jar > /dev/null &
