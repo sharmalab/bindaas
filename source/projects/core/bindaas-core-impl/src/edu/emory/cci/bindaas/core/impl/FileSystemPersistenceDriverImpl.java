@@ -8,11 +8,23 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.helpers.IOUtils;
+
+import com.google.common.annotations.GwtIncompatible;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListenableFutureTask;
 
 import edu.emory.cci.bindaas.core.api.IPersistenceDriver;
 import edu.emory.cci.bindaas.core.exception.FrameworkEntityException.Type;
@@ -29,6 +41,11 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 	private String metadataStore;
 	private File metadataStoreDirectory;
 	private String fileExtension;
+	
+	private LoadingCache<String, Workspace> listOfWorkspaces;
+	private Set<String> setOfDiscoveredWorkspaces;
+	private final static Integer POLL_FREQUENCY = 30 * 1000 ; // 10 seconds
+	
 	public String getFileExtension() {
 		return fileExtension;
 	}
@@ -55,30 +72,104 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 			throw new Exception("Metadata Store Directory not set");
 		}
 		
+		
+		initCache();
 	}
+	
+	public void initCache() throws Exception
+	{
+		setOfDiscoveredWorkspaces = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+		
+		Runnable updateDiscoveredWorkspacesTask = new Runnable()
+		{
+			private Log log = LogFactory.getLog(FileSystemPersistenceDriverImpl.class);
+			@Override
+			public void run() {
+				
+				while(true)
+				{
+					File[] listOfWorkspaces = metadataStoreDirectory.listFiles(
+							
+							new FilenameFilter() {
+								
+								@Override
+								public boolean accept(File arg0, String filename) {
+									if(filename.endsWith(fileExtension))
+										return true;
+									else
+										return false;
+								}
+							}
+							);
+					
+					for(File workspaceFile : listOfWorkspaces)
+					{
+						setOfDiscoveredWorkspaces.add(workspaceFile.getName().replace(fileExtension, ""));
+					}
+					
+					try {
+						Thread.sleep(POLL_FREQUENCY);
+					} catch (InterruptedException e) {
+						log.error("Project-Scanner-Thread was interrupted while sleeping");
+					}
+				}
+			}
+			
+		};
+		
+		Thread t = new Thread(updateDiscoveredWorkspacesTask,"Project-Scanner-Thread");
+		t.start();
+		
+		
+		
+		listOfWorkspaces = CacheBuilder.newBuilder().maximumSize(1000).refreshAfterWrite(10, TimeUnit.SECONDS).build(
+				new CacheLoader<String, Workspace>() {
+
+					@Override
+					public Workspace load(String workspace) throws Exception {
+						
+						String content = loadWorkspaceByName(workspace);
+						return GSONUtil.getGSONInstance().fromJson(content, Workspace.class);
+					
+					}
+
+					@Override
+					@GwtIncompatible("Futures")
+					public ListenableFuture<Workspace> reload(final String workspaceName,
+							Workspace oldValue) throws Exception {
+						
+						ListenableFutureTask<Workspace> task = ListenableFutureTask.create(new Callable<Workspace>() {
+			                   public Workspace call() throws IOException {
+			                	   	String content = loadWorkspaceByName(workspaceName);
+									Workspace workspace =  GSONUtil.getGSONInstance().fromJson(content, Workspace.class);
+									return workspace;
+			                   }
+			                 });
+						
+						return task;
+					}
+					
+				}
+				
+				);
+	}
+	
+	
 	
 	public synchronized List<Workspace> loadAllWorkspaces() throws Exception {
 		List<Workspace> workspaceContents = new ArrayList<Workspace>();
 		
-		File[] listOfWorkspaces = metadataStoreDirectory.listFiles(
-				
-				new FilenameFilter() {
-					
-					@Override
-					public boolean accept(File arg0, String filename) {
-						if(filename.endsWith(fileExtension))
-							return true;
-						else
-							return false;
-					}
-				}
-				);
 		
-		for(File workspaceFile : listOfWorkspaces)
+		for(String workspaceName : setOfDiscoveredWorkspaces)
 		{
-			String content = readContent(workspaceFile);
-			Workspace workspace = GSONUtil.getGSONInstance().fromJson(content, Workspace.class);
-			workspaceContents.add(workspace);
+			try{
+					Workspace workspace = listOfWorkspaces.get(workspaceName);
+					workspaceContents.add(workspace);
+			}
+			catch(Exception e)
+			{
+				log.error("Failed to load project [" + workspaceName + "]" , e);
+			}
 		}
 		
 		return workspaceContents;
@@ -119,21 +210,24 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 
 	@Override
 	public synchronized boolean doesExist(String workspaceName) {
-		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspaceName + fileExtension);
-		if(workspaceFile.isFile() && workspaceFile.canRead())
+		try {
+			
+			Workspace workspace = listOfWorkspaces.get(workspaceName);
+			if(workspace!=null) 
+				return true ;
+			else
+				return false;
+		}catch(Exception e)
 		{
-			return true;
+			return false;
 		}
-		else
-		return false;
 	}
 
 	
 	@Override
 	public Workspace getWorkspace(String workspaceName) throws Exception {
 		try{
-		String content = loadWorkspaceByName(workspaceName);
-		return GSONUtil.getGSONInstance().fromJson(content, Workspace.class);
+			 return listOfWorkspaces.get(workspaceName);
 		}
 		catch(Exception e)
 		{
@@ -147,12 +241,15 @@ public class FileSystemPersistenceDriverImpl implements IPersistenceDriver {
 	public synchronized void saveWorkspace(Workspace workspace) throws IOException {
 		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspace.getName() + fileExtension);
 		writeToFile(workspaceFile, workspace.toString());
+		listOfWorkspaces.invalidateAll();
+		setOfDiscoveredWorkspaces.add(workspace.getName());
 	}
 	
 	@Override
 	public synchronized void deleteWorkspace(String workspaceName) throws IOException {
 		File workspaceFile = new File(metadataStoreDirectory.getAbsolutePath() +"/"+ workspaceName + fileExtension);
 		workspaceFile.delete();
+		setOfDiscoveredWorkspaces.remove(workspaceName);
 	}
 	@Override
 	public synchronized void saveProfile(String workspaceName, Profile profile)

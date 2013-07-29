@@ -1,8 +1,6 @@
 package edu.emory.cci.bindaas.core.rest.service.impl;
 
 import java.util.Collection;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,7 +16,6 @@ import com.google.gson.JsonPrimitive;
 
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
-import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.rest.service.api.IInformationService;
 import edu.emory.cci.bindaas.core.util.RestUtils;
 import edu.emory.cci.bindaas.framework.api.IModifier;

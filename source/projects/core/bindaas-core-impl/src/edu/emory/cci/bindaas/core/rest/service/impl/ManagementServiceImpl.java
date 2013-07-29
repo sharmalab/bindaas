@@ -3,8 +3,6 @@ package edu.emory.cci.bindaas.core.rest.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,7 +23,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
-import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.rest.service.api.IManagementService;
 import edu.emory.cci.bindaas.core.util.RestUtils;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;

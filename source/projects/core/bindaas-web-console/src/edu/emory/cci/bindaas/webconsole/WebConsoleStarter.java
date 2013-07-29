@@ -1,7 +1,5 @@
 package edu.emory.cci.bindaas.webconsole;
 
-import java.util.Hashtable;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -37,7 +35,6 @@ public class WebConsoleStarter {
 	private PostLoginAction postLoginAction;
 	private Log log = LogFactory.getLog(getClass());
 	private boolean initialized = false;
-	@SuppressWarnings("unused")
 	private DynamicObject<BindaasAdminConsoleConfiguration> bindaasAdminConsoleConfiguration;
 	private BindaasAdminConsoleConfiguration defaultBindaasAdminConsoleConfiguration;
 	private OpenIDAuth openIdAuth;

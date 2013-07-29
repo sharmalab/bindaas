@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.core.bundle;
 
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -109,7 +111,22 @@ public class BindaasInitializer implements IBindaasAdminService{
 	}
 
 
-	
+	private void initializeBindaasConfiguration() throws Exception
+	{
+		String instanceName = this.bindaasConfiguration.getObject().getInstanceName();
+		if(instanceName == null)
+		{
+			try {
+				instanceName = Inet4Address.getLocalHost().getHostName();
+			} catch (UnknownHostException e) {
+				log.error("Unable to discern hostname. Assigning default value" , e);
+				instanceName = "localhost";
+			}
+			
+			this.bindaasConfiguration.getObject().setInstanceName(instanceName);
+			this.bindaasConfiguration.saveObject();
+		}
+	}
 	
 	
 	public void init() throws Exception
@@ -117,7 +134,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 		BundleContext context = Activator.getContext();
 		context.registerService(IBindaasAdminService.class.getName(), this , null);
 		bindaasConfiguration = new DynamicObject<BindaasConfiguration>("bindaas", defaultBindaasConfiguration , context);
-		
+		initializeBindaasConfiguration();
 		
 		// load authentication & authorization props
 

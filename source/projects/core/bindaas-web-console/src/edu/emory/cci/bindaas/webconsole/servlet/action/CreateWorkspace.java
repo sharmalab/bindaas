@@ -12,14 +12,11 @@ import org.apache.commons.logging.LogFactory;
 import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
-import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
-import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
-import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 
 public class CreateWorkspace extends AbstractRequestHandler{
 	

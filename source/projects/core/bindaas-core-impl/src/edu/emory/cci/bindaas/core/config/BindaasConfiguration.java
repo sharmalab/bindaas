@@ -18,7 +18,15 @@ public class BindaasConfiguration implements ThreadSafe {
 	@Expose private String authorizationProviderClass;
 	@Expose private String auditProviderClass;
 	@Expose private String proxyUrl;
+	@Expose private String instanceName;
 	
+	
+	public String getInstanceName() {
+		return instanceName;
+	}
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
+	}
 	public synchronized String getHost() {
 		return host;
 	}

@@ -78,7 +78,7 @@
 	<property name="enableAuthorization" value="false"></property>
 	<property name="authorizationProviderClass" value="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider"></property>
 	<property name="enableAudit" value="true"></property>
-	<property name="auditProviderClass" value="edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider"></property>
+	<property name="auditProviderClass" value="edu.emory.cci.bindaas.security.impl.DBAuditProvider"></property>
 	
 </bean>
 <bean id="bindaasInitializer" class="edu.emory.cci.bindaas.core.bundle.BindaasInitializer" init-method="init" >

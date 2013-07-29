@@ -2,8 +2,6 @@ package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
 import java.util.Map;
 
-
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -35,7 +35,6 @@ import edu.emory.cci.bindaas.framework.provider.exception.ModifierExecutionFaile
 public class Dicom2PNGQRM implements IQueryResultModifier {
 
 	private Log log = LogFactory.getLog(getClass());
-	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
 	private JsonObject documentation;
 	
 	
@@ -48,8 +47,6 @@ public class Dicom2PNGQRM implements IQueryResultModifier {
 
 	public void init() {
 		BundleContext context = Activator.getContext();
-//		documentation = DocumentationUtil.getProviderDocumentation(context,
-//				DOCUMENTATION_RESOURCES_LOCATION);
 		documentation = new JsonObject();
 		documentation.add("view", new JsonPrimitive(""));
 		Dictionary<String, String> props = new Hashtable<String, String>();
