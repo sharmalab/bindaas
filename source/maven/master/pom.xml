@@ -195,5 +195,7 @@
 		<module>dicom-to-png-query-result-modifier</module>
 		<module>aim-to-svg-query-result-modifier</module>
 		<module>dicomaim-to-pngsvg-QRM</module>
+		<module>heartbeat-monitor-client</module>
+		<module>heartbeat-monitor-server</module>
 	</modules>
 </project>
