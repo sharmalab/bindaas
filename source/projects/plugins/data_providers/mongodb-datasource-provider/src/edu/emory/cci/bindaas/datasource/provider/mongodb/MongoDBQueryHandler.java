@@ -16,8 +16,8 @@ import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.FindOperationHandler.FindOperationDescriptor;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.IOperationHandler;
-import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.MongoDBOperation;
-import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.MongoDBOperationDescriptor;
+import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.MongoDBQueryOperationType;
+import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.MongoDBQueryOperationDescriptor;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat.IFormatHandler;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat.OutputFormatRegistry;
 import edu.emory.cci.bindaas.framework.api.IQueryHandler;
@@ -76,9 +76,9 @@ public class MongoDBQueryHandler implements IQueryHandler {
 					}
 					props.setOutputFormat(outputFormat);
 
-					MongoDBOperationDescriptor operationDescriptor = null;
+					MongoDBQueryOperationDescriptor operationDescriptor = null;
 					try{
-						 operationDescriptor = GSONUtil.getGSONInstance().fromJson(queryToExecute,MongoDBOperationDescriptor.class);
+						 operationDescriptor = GSONUtil.getGSONInstance().fromJson(queryToExecute,MongoDBQueryOperationDescriptor.class);
 						 if(operationDescriptor == null || operationDescriptor.get_operation() == null || operationDescriptor.get_operation_args()==null)
 						 {
 							 throw new Exception("Not a valid query object"); // the query is not annotated properly
@@ -88,8 +88,8 @@ public class MongoDBQueryHandler implements IQueryHandler {
 					{
 						log.trace(e.getMessage());
 						// default to find query
-						operationDescriptor = new MongoDBOperationDescriptor();
-						operationDescriptor.set_operation(MongoDBOperation.find);
+						operationDescriptor = new MongoDBQueryOperationDescriptor();
+						operationDescriptor.set_operation(MongoDBQueryOperationType.find);
 						FindOperationDescriptor findArguments = new FindOperationDescriptor();
 						findArguments.setQuery(parser.parse(queryToExecute).getAsJsonObject());
 						operationDescriptor.set_operation_args(GSONUtil.getGSONInstance().toJsonTree(findArguments).getAsJsonObject());

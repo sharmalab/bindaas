@@ -1,10 +1,10 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb.operation;
 
-public enum MongoDBOperation {
+public enum MongoDBQueryOperationType {
 
 	find(new FindOperationHandler()),count(new CountOperationHandler()),group(new GroupOperationHandler()),mapReduce(new FindOperationHandler()) ;
 	
-	MongoDBOperation(IOperationHandler handler)
+	MongoDBQueryOperationType(IOperationHandler handler)
 	{
 		this.handler = handler;
 	}

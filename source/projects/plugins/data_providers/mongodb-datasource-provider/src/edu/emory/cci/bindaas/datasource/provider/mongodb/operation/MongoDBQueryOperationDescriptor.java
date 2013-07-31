@@ -3,15 +3,15 @@ package edu.emory.cci.bindaas.datasource.provider.mongodb.operation;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
-public class MongoDBOperationDescriptor {
+public class MongoDBQueryOperationDescriptor {
 
-	@Expose private MongoDBOperation _operation;
+	@Expose private MongoDBQueryOperationType _operation;
 	@Expose private JsonObject _operation_args;
 	
-	public MongoDBOperation get_operation() {
+	public MongoDBQueryOperationType get_operation() {
 		return _operation;
 	}
-	public void set_operation(MongoDBOperation _operation) {
+	public void set_operation(MongoDBQueryOperationType _operation) {
 		this._operation = _operation;
 	}
 	public JsonObject get_operation_args() {
