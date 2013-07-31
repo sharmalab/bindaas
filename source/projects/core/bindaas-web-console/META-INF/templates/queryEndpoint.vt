@@ -544,7 +544,7 @@
 								}
 
 								function deleteEndpoint() {
-									var r = confirm("Are you sure you want to delete this ?");
+									var r = confirm("Are you sure you want to do this ?");
 									if (r == true) {
 										$.ajax({
 											url : "/dashboard/$workspace/$profile/query/$queryEndpoint.getName()",
