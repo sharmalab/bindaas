@@ -97,7 +97,8 @@ public class AIM2SVGQRM implements IQueryResultModifier {
 				
 				try {
 						
-			        javax.xml.transform.Transformer trans = template.newTransformer();
+			        javax.xml.transform.Transformer trans;
+					trans = template.newTransformer();
 			        
 			        String tag = "<results>\n";
 			        servletOutputStream.write(tag.getBytes());
@@ -126,7 +127,6 @@ public class AIM2SVGQRM implements IQueryResultModifier {
 					}
 					tag = "</results>\n";
 					servletOutputStream.write(tag.getBytes());
-			        
 
 				} catch (Exception e) {
 					log.error(e);

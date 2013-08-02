@@ -1,10 +1,8 @@
 package edu.emory.cci.bindaas.dicomaim2pngsvg;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,7 +18,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.imageio.ImageIO;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -41,9 +38,11 @@ import org.osgi.framework.BundleContext;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
+import com.pixelmed.dicom.Attribute;
+import com.pixelmed.dicom.AttributeList;
 import com.pixelmed.dicom.DicomException;
 import com.pixelmed.dicom.DicomInputStream;
-import com.pixelmed.display.SourceImage;
+import com.pixelmed.dicom.TagFromName;
 
 import edu.emory.cci.bindaas.dicomaim2pngsvg.bundle.Activator;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
@@ -58,6 +57,7 @@ import edu.emory.cci.bindaas.framework.provider.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
+import edu.emory.cci.image.convert.FromDICOM;
 
 public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 
@@ -66,6 +66,14 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 	private JsonObject documentation;
 	private final static String sopUIDAttributeName ="sopUID";
 
+	public static final String FORMAT = "format";
+	public static final String SCALE = "scale";
+	public static final String WIDTH = "width";
+	public static final String WINDOW = "window";
+	public static final String LEVEL = "level";
+	public static final String FRAMEID = "frame";
+	
+	
 	private Templates template;
 	private Pattern inPattern;
 	private Pattern outPattern;
@@ -125,7 +133,15 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 			log.error(error);
 			throw new ValidationException(getClass().getName() , 1 ,  error);
 		}
-			
+		
+		String format = "jpeg";
+		if (runtimeParameters.containsKey(FORMAT)) format = runtimeParameters.get(FORMAT);
+
+		final Map<String, String> fRuntimeParameters = runtimeParameters;
+		final String fformat = format;
+		queryResult.setMimeType("image/" + format);
+
+		
 		queryResult.setMimeType(StandardMimeType.ZIP.toString());
 		queryResult.setCallback(new Callback() {
 
@@ -186,15 +202,12 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 				ZipOutputStream zos = new ZipOutputStream(servletOutputStream);
 				try {
 
-					// open the zip entry
-					ZipEntry imageEntry = new ZipEntry(sopInstanceUID + ".png");
-					zos.putNextEntry(imageEntry);
-				
+
 					// convert the dicom image to png
 					try {
-						writeImage(filename, zos);
-					} catch (FileNotFoundException e) {
-						throw e;
+						DicomInputStream dis = new DicomInputStream(new FileInputStream(filename));
+						convert(dis, zos, sopInstanceUID, fformat, fRuntimeParameters);
+						dis.close();
 					} catch (IOException e) {
 						throw e;
 					} catch (DicomException e) {
@@ -268,12 +281,64 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 			}
 
 
-			private void writeImage(String filename, OutputStream os) throws FileNotFoundException, IOException, DicomException {
-				SourceImage si = new SourceImage(new DicomInputStream(new FileInputStream(filename)));
-				BufferedImage bi = si.getBufferedImage(0);
-
-				ImageIO.write(bi, "png", os);
+			private void convert(DicomInputStream dis, OutputStream os, String filename, String format, Map<String,String> runtimeParameters) throws IOException, DicomException {
+			
+			
+				if ("dicom".equalsIgnoreCase(format)) {
+					// just want dicom.  so send it back.
+				    byte[] buffer = new byte[1024]; // Adjust if you want
+				    int bytesRead;
+				    while ((bytesRead = dis.read(buffer)) != -1) {
+				        os.write(buffer, 0, bytesRead);
+				    }
+				    
+				    System.out.println("dicom requested.  directly read from file system.");
+				    
+					return;
+				}
+					
+				// get the parameters from user.  constrain to: 1 or 3 channels, byte, (u)short, float, double.  (bitmap on source side becomes byte).
+	
+				// only applies to gray data.
+				double window = Double.NaN, level = Double.NaN;
+				if (runtimeParameters.containsKey(WINDOW) != runtimeParameters.containsKey(LEVEL)) throw new DicomException("Both Window and Level need to be specified at the same time");
+				if (runtimeParameters.containsKey(WINDOW) && !runtimeParameters.get(WINDOW).isEmpty()) window = Double.parseDouble(runtimeParameters.get(WINDOW));
+				if (runtimeParameters.containsKey(LEVEL) && !runtimeParameters.get(LEVEL).isEmpty()) level = Double.parseDouble(runtimeParameters.get(LEVEL));
+				
+				
+				int width = -1, height=-1;
+				if (runtimeParameters.containsKey(WIDTH) && !runtimeParameters.get(WIDTH).isEmpty()) width = Integer.parseInt(runtimeParameters.get(WIDTH));
+				//if (runtimeParameters.containsKey(HEIGHT) && !runtimeParameters.get(HEIGHT).isEmpty()) height = Integer.parseInt(runtimeParameters.get(HEIGHT));
+				double scale = 1.0;
+				if (runtimeParameters.containsKey(SCALE) && !runtimeParameters.get(SCALE).isEmpty()) scale = Double.parseDouble(runtimeParameters.get(SCALE));
+				
+				AttributeList list = new AttributeList();
+				list.read(dis);
+				int s_width, s_height;
+				s_width		= Attribute.getSingleIntegerValueOrDefault(list,TagFromName.Columns,0);
+				s_height		= Attribute.getSingleIntegerValueOrDefault(list,TagFromName.Rows,0);
+	
+				if (width > 0) {
+					scale = (double)width / (double)s_width;
+					height = (int)(Math.round(scale * (double)s_height)); 
+				} else if (scale != 1.0) {
+					width = (int)(Math.round(scale * (double)s_width));
+					height = (int)(Math.round(scale * (double)s_height));
+				} else {
+					width = -1;
+					height = -1;
+				}
+				
+				
+				// which frame?
+				int frameid = 0;
+				if (runtimeParameters.containsKey(FRAMEID) && !runtimeParameters.get(FRAMEID).isEmpty()) frameid = Integer.parseInt(runtimeParameters.get(FRAMEID));
+				
+				
+				FromDICOM.convertToEightBitImage(list, os, filename, format, level, window, width, height, 0, 0, 0, 0, frameid, frameid, 100, null, 0);
+				
 			}
+
 
 			private void writeAnnotations(InputStream is, String sopUID, OutputStream os) throws ClientProtocolException,
 			IOException, TransformerException {
