@@ -70,7 +70,7 @@ public class PostLoginAction extends HttpServlet {
 							"(name=bindaas.adminconsole)");
 			Set<String> setOfAllowedAdmins = dynamicAdminConsoleConfiguration
 					.getObject().getAdminAccounts();
-			if (setOfAllowedAdmins.contains(principal.getName())) {
+			if (setOfAllowedAdmins.contains(principal.getName()) || setOfAllowedAdmins.contains(principal.getName() + "@" + principal.getDomain())) {
 
 				// generate a api_key for this user if doesnt exist
 

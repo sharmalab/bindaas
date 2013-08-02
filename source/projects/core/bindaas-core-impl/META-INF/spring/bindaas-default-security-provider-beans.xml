@@ -97,7 +97,7 @@
 
 <osgi:service interface="edu.emory.cci.bindaas.security.api.IAuditProvider" ref="auditProvider">
 	<osgi:service-properties>
-		<entry key="class" value="edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider" />
+		<entry key="class" value="edu.emory.cci.bindaas.security.impl.DBAuditProvider" />
 	</osgi:service-properties>
 </osgi:service>
 

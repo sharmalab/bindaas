@@ -46,6 +46,7 @@ public class ServerAdministrationPanelAction implements IAdminAction {
 		@Expose private Boolean enableProxy;
 		@Expose private String webconsoleProxy;
 		@Expose private String middlewareProxy;
+		@Expose private String instanceName;
 		
 		public void save(DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration , DynamicObject<BindaasConfiguration> dynamicConfiguration ) throws Exception
 		{
@@ -65,6 +66,7 @@ public class ServerAdministrationPanelAction implements IAdminAction {
 				bindaasConfiguration.setProxyUrl(middlewareProxy);
 				bindaasConfiguration.setPort(middlewarePort);
 				bindaasConfiguration.setHost(host);
+				bindaasConfiguration.setInstanceName(instanceName);
 				dynamicConfiguration.saveObject();
 			}
 			

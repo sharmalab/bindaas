@@ -14,6 +14,8 @@ import org.apache.cxf.phase.Phase;
 import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -28,7 +30,7 @@ import edu.emory.cci.bindaas.security.model.hibernate.AuditMessage;
 public class AuditInLogger extends AbstractPhaseInterceptor<Message> {
 
 	private Log log = LogFactory.getLog(getClass());
-	private ServiceTracker bindaasConfigServiceTracker;
+	private ServiceTracker<DynamicObject<BindaasConfiguration>,DynamicObject<BindaasConfiguration>> bindaasConfigServiceTracker;
 	
 	private String auditProviderClass;
 
@@ -45,32 +47,34 @@ public class AuditInLogger extends AbstractPhaseInterceptor<Message> {
 			return false;
 		}
 	}
-
 	
-public void init()
+	
+public void init() throws InvalidSyntaxException
 {
-	bindaasConfigServiceTracker = new ServiceTracker(Activator.getContext(), DynamicObject.class, new ServiceTrackerCustomizer() {
+	String filterExpression = "(&(objectclass=edu.emory.cci.bindaas.core.util.DynamicObject)(name=bindaas))";
+	Filter filter = FrameworkUtil.createFilter(filterExpression);
+	bindaasConfigServiceTracker = new ServiceTracker <DynamicObject<BindaasConfiguration>,DynamicObject<BindaasConfiguration>>(Activator.getContext(),filter, new ServiceTrackerCustomizer<DynamicObject<BindaasConfiguration>, DynamicObject<BindaasConfiguration>>() {
 
 		@Override
-		public Object addingService(ServiceReference srf) {
-			if(srf.getProperty("name").equals("bindaas"))
-				return Activator.getContext().getService(srf);
-			else
-				return null;
-		}
-
-		@Override
-		public void modifiedService(ServiceReference arg0, Object arg1) {
-			
+		public DynamicObject<BindaasConfiguration> addingService(
+				ServiceReference<DynamicObject<BindaasConfiguration>> arg0) {
+			return	Activator.getContext().getService(arg0);
 			
 		}
 
 		@Override
-		public void removedService(ServiceReference arg0, Object arg1) {
-			
+		public void modifiedService(
+				ServiceReference<DynamicObject<BindaasConfiguration>> arg0,
+				DynamicObject<BindaasConfiguration> arg1) {
 			
 		}
-		
+
+		@Override
+		public void removedService(
+				ServiceReference<DynamicObject<BindaasConfiguration>> arg0,
+				DynamicObject<BindaasConfiguration> arg1) {
+
+		}
 	});
 	bindaasConfigServiceTracker.open();
 }
@@ -116,19 +120,23 @@ public void init()
 				auditMessage.setSource(request.getRemoteAddr());
 				
 				Message outMessage = message.getExchange().getOutMessage();
-				MessageContentsList objs = MessageContentsList
-						.getContentsList(outMessage);
+				if(outMessage!=null)
+				{
+					MessageContentsList objs = MessageContentsList
+							.getContentsList(outMessage);
 
-				if (objs != null && objs.size() == 1) {
-					Object content = objs.get(0);
+					if (objs != null && objs.size() == 1) {
+						Object content = objs.get(0);
 
-					if (content instanceof Response) {
-						Response resp = (Response) content;
-						auditMessage.setOutcome( resp.getStatus());
+						if (content instanceof Response) {
+							Response resp = (Response) content;
+							auditMessage.setOutcome( resp.getStatus());
 
+						}
 					}
-				}
 
+				}
+				
 				IAuditProvider auditProvider = locateAuditProvider();
 				if (auditProvider != null) {
 					auditProvider.audit(auditMessage);

@@ -1,13 +1,10 @@
 package edu.emory.cci.bindaas.security.impl;
 
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
 import edu.emory.cci.bindaas.core.bundle.Activator;
-import edu.emory.cci.bindaas.core.rest.security.AuthenticationProtocol;
 import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;

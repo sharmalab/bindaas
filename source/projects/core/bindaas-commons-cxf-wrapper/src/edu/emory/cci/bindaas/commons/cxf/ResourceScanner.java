@@ -73,8 +73,11 @@ public class ResourceScanner implements ServiceListener , EventHandler {
 				String publishAddress = (String) srf.getProperty(JAX_RS_SERVICE_ADDRESS); 
 				
 				Long serviceId =  (Long) srf.getProperty("service.id");
+				@SuppressWarnings("unchecked")
 				List<RequestHandler> listOfRequestHandlers = (List<RequestHandler>) srf.getProperty(JAX_RS_PROVIDER);
+				@SuppressWarnings("unchecked")
 				List<Interceptor<? extends Message>> listOfPhaseInInterceptors = (List<Interceptor<? extends Message>>) srf.getProperty(JAX_RS_IN_INTERCEPTOR);
+				@SuppressWarnings("unchecked")
 				List<Interceptor<? extends Message>> listOfPhaseOutInterceptors = (List<Interceptor<? extends Message>>) srf.getProperty(JAX_RS_OUT_INTERCEPTOR);
 				
 				JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();

@@ -22,6 +22,17 @@ public class DynamicObject<T extends ThreadSafe> {
 	private final static String suffix = ".config.json";
 	private String name;
 	private String filename;
+	private Boolean usingDefault;
+	
+	public Boolean getUsingDefault() {
+		return usingDefault;
+	}
+
+	public void setUsingDefault(Boolean usingDefault) {
+		this.usingDefault = usingDefault;
+	}
+
+
 	private Log log = LogFactory.getLog(getClass());
 	private List<DynamicObjectChangeListener<T>> changeListeners;
 
@@ -44,12 +55,14 @@ public class DynamicObject<T extends ThreadSafe> {
 	public void init() throws Exception {
 		if(defaultObject!=null)
 		{
+			usingDefault = true;
 			File file = new File(filename);
 			if(file.isFile() && file.canRead())
 			{
 				// read from the file
 				try {
 						currentObject = (T) GSONUtil.getGSONInstance().fromJson(new FileReader(file),defaultObject.getClass());
+						usingDefault = false;
 				}
 				catch(Exception e)
 				{
@@ -118,6 +131,7 @@ public class DynamicObject<T extends ThreadSafe> {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public synchronized T addChangeListener(DynamicObjectChangeListener<T> changeListener)
 	{
 		changeListeners.add(changeListener);

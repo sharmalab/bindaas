@@ -1,10 +1,7 @@
 package edu.emory.cci.bindaas.junit.mock;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.cxf.helpers.IOUtils;
 
 import com.google.gson.JsonObject;
 

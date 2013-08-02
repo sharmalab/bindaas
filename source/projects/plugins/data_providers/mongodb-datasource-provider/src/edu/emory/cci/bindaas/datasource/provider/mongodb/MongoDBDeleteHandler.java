@@ -1,6 +1,5 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
-import java.io.ByteArrayInputStream;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -8,22 +7,22 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 import com.mongodb.Mongo;
-import com.mongodb.util.JSON;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
+import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.DeleteOperationHandler.DeleteOperationDescriptor;
+import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.IOperationHandler;
+import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.MongoDBModifyOperationDescriptor;
+import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.MongoDBModifyOperationType;
 import edu.emory.cci.bindaas.framework.api.IDeleteHandler;
-import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 import edu.emory.cci.bindaas.framework.provider.exception.DeleteExecutionFailedException;
+import edu.emory.cci.bindaas.framework.provider.exception.QueryExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
-import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
 public class MongoDBDeleteHandler implements IDeleteHandler {
 
@@ -33,30 +32,44 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 	@Override
 	public QueryResult delete(JsonObject dataSource, String deleteQueryToExecute , Map<String,String> runtimeParamters , RequestContext requestContext)
 			throws AbstractHttpCodeException {
-
-		try {
-			DataSourceConfiguration configuration = GSONUtil.getGSONInstance()
-					.fromJson(dataSource, DataSourceConfiguration.class);
+		
+		try{
+			MongoDBModifyOperationDescriptor operationDescriptor = null;
+			try{
+				 operationDescriptor = GSONUtil.getGSONInstance().fromJson(deleteQueryToExecute,MongoDBModifyOperationDescriptor.class);
+				 if(operationDescriptor == null || operationDescriptor.get_operation() == null || operationDescriptor.get_operation_args()==null)
+				 {
+					 throw new Exception("Not a valid query object"); // the query is not annotated properly
+				 }
+			}
+			catch(Exception e)
+			{
+				log.trace(e.getMessage());
+				// default to find query
+				operationDescriptor = new MongoDBModifyOperationDescriptor();
+				operationDescriptor.set_operation(MongoDBModifyOperationType.delete);
+				DeleteOperationDescriptor delArguments = new DeleteOperationDescriptor();
+				delArguments.setQuery(parser.parse(deleteQueryToExecute).getAsJsonObject());
+				operationDescriptor.set_operation_args(GSONUtil.getGSONInstance().toJsonTree(delArguments).getAsJsonObject());
+			}
+			
+			// get DB collection
+			DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
 			Mongo mongo = null;
 			try {
 				mongo = new Mongo(configuration.getHost(),configuration.getPort());
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
-				DBObject query = (DBObject) JSON.parse(deleteQueryToExecute);
-				int count = collection.find(query).count();
-				collection.remove(query);	
-				JsonObject res = new JsonObject();
-				res.add("success", new JsonPrimitive(true));
-				res.add("rowsDeleted", new JsonPrimitive(count));
-				res.add("query", parser.parse(query.toString()));
-				QueryResult queryResult = new QueryResult();
-				queryResult.setData(new ByteArrayInputStream(res.toString().getBytes()));
-				queryResult.setMimeType(StandardMimeType.JSON.toString());
-				return queryResult;
+
+				// use operationDescriptor to route to correct handler
+				
+				IOperationHandler operationHandler = operationDescriptor.get_operation().getHandler();
+				QueryResult result = operationHandler.handleOperation(collection, null , operationDescriptor.get_operation_args(), null);
+				return result;
 				
 			} catch (Exception e) {
 				log.error(e);
-				throw e;
+				throw new DeleteExecutionFailedException(MongoDBProvider.class.getName(), MongoDBProvider.VERSION, e);
 			}
 			finally{
 				if(mongo!=null)
@@ -64,10 +77,18 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 					mongo.close();
 				}
 			}
-		} catch (Exception e) {
-			log.error(e);
-			throw new DeleteExecutionFailedException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
+
 		}
+	catch(AbstractHttpCodeException e)
+	{
+		log.error(e);
+		throw e;
+	}
+	catch(Exception e)
+	{
+		log.error(e);
+		throw new QueryExecutionFailedException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION ,e);
+	}
 
 	}
 

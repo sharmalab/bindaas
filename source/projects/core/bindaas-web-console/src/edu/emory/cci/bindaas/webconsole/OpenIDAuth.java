@@ -9,13 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 
 import edu.emory.cci.bindaas.openid.OpenIDHelper;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
-import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 
 public class OpenIDAuth extends HttpServlet {
 	

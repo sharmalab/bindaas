@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.sql.ResultSet;
 
 import au.com.bytecode.opencsv.CSVWriter;
-
 import edu.emory.cci.bindaas.datasource.provider.genericsql.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.genericsql.model.OutputFormatProps;
 import edu.emory.cci.bindaas.framework.model.QueryResult;

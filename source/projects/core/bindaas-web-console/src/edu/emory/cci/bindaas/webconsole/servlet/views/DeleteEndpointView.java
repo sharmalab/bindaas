@@ -16,6 +16,8 @@ import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.framework.model.DeleteEndpoint;
 import edu.emory.cci.bindaas.framework.model.Profile;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
@@ -156,6 +158,14 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 			JsonObject documentation = providerRegistry.lookupProvider(prof.getProviderId(), prof.getProviderVersion()).getDocumentation(); // TODO : NullPointer Traps here . 
 			context.put("documentation" , documentation);
 			context.put("bindaasUser" , BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
+			
+			@SuppressWarnings("unchecked")
+			DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
+			String serviceUrl = bindaasConfiguration.getObject().getProxyUrl();
+			context.put("serviceUrl", serviceUrl);
+			
+			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
+			context.put("apiKey", admin.getProperty("apiKey"));
 			
 			template.merge(context, response.getWriter());
 		}

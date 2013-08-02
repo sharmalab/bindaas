@@ -47,6 +47,7 @@
 
 		<!-- Initialize JS Plugins -->
 		<script src="/foundation/javascripts/app.js"></script>
+		
 		<script>
 						function randomString(length) {
 			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
@@ -200,6 +201,7 @@
 						<legend>
 							<h3>Delete API : $deleteEndpoint.getName()</h3>
 						</legend>
+						<a data-reveal-id="tryQuery" class="radius small button" href="#">Try Me !!</a>
 						<h6 class="subheader">Last Modified : $deleteEndpoint.getTimeCreated()</h6>
 						<h6 class="subheader">Modified By : $deleteEndpoint.getCreatedBy()</h6>
 						<form class="custom" action="createDeleteTemplate.action" method="get">
@@ -214,7 +216,31 @@
 							</br>
 
 							<div class="panel">
-								<label>Query Template</label>
+							<label>Query Template [ <a id="autoDetectToggle" toggle='on' >Turn Auto Detect OFF</a> ]</label>
+								<script>
+									$("#autoDetectToggle").click (
+										function()
+										{
+											if( $(this).attr('toggle') == 'on' )
+											{
+												$(this).attr('toggle' , 'off');
+												$(this).html('Turn Auto Detect ON');
+												$("#qeTemplate").off("keyup");
+											}
+											else if($(this).attr('toggle') == 'off' )
+											{
+												$(this).attr('toggle' , 'on');
+												$(this).html('Turn Auto Detect OFF');
+												$("#qeTemplate").on("keyup" , function () {
+													
+															validateQueryTempalate();
+													
+												});
+											}
+										}
+									);
+								</script>
+								
 								<textarea name="qeTemplate" id="qeTemplate"></textarea>
 								<fieldset>
 									<legend>
@@ -238,7 +264,11 @@
 							</div>
 							<script>
 								$("form").ajaxError(function(e, jqxhr, settings, exception) {
-									alert(exception);
+									if(! (settings.hasOwnProperty('context') && settings.context.hasOwnProperty('supressGlobalError'))  )
+									{
+										alert(exception);
+									}
+									
 								});
 
 								function submitForm() {
@@ -360,7 +390,7 @@
 									$("#deleteEndpointName").removeAttr("disabled");
 									$("#deleteEndpointName").attr("value", $("#deleteEndpointName").attr('value') + "Clone");
 									$("#deleteEndpointName").focus();
-									$("#qeTemplate").off("keyup");
+									
 								}
 
 							</script>
@@ -390,7 +420,116 @@
 				#end
 			</div>
 		</div>
+		<div id="tryQuery" class="reveal-modal xlarge">
+			<div class="row">
+				<div class="two columns">
+					<a class="radius button alert">DELETE</a>
+				</div>
+				<div class="ten columns left-align" >
+					<h4>$deleteEndpoint.getName()</h4><h4 class="subheader">$serviceUrl/services/$workspace/$profile/delete/$deleteEndpoint.getName()</h4>
+				</div>
+			</div>
 
+			<div class="row">
+				$deleteEndpoint.getDescription()
+			</div>
+			<div class="row">
+				<table>
+					<thead>
+						<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
+					</thead>
+					<tbody>
+						#foreach ($bindVar in $deleteEndpoint.getBindVariables().values())
+						<tr>
+							<td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td>
+							<input type="text" id="$bindVar.getName()" />
+							</td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td>
+						</tr>
+						#end
+
+					</tbody>
+				</table>
+				<a class="button secondary" onclick="executeDeleteAPI('$serviceUrl/services/$workspace/$profile/delete/$deleteEndpoint.getName()' , this)" >Submit</a>
+					
+			</div>
+
+			<a class="close-reveal-modal">&#215;</a>
+		</div>
+		<div id="errorModal">
+			<div id="errorModalContent"></div>
+		</div>
+		
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		
+		<script>
+		function syntaxHighlight(json) {
+ 					   	json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    					return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        				var cls = 'number';
+        					if (/^"/.test(match)) {
+            					if (/:$/.test(match)) {
+                					cls = 'key';
+            						} else {
+                				cls = 'string';
+            					}
+        					} else if (/true|false/.test(match)) {
+            			cls = 'boolean';
+        			} else if (/null/.test(match)) {
+            		cls = 'null';
+        			}
+        			return '<span class="' + cls + '">' + match + '</span>';
+    			});
+			}
+						
+			function executeDeleteAPI(url, buttonClicked) {
+				var queryString = "?api_key=$apiKey&";
+				$(buttonClicked).parent().find("input").each(function() {
+
+					if ($(this).attr("value") && $(this).attr("value") != "") {
+						queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';
+					}
+
+				});
+
+				var encodedUrl = encodeURI(url + queryString);
+				
+				$.ajax({
+   						 url: encodedUrl,
+    					 type: 'DELETE',
+    					 crossDomain : true,
+    					 context : { 'supressGlobalError' : true },
+    					 dataType : 'text',
+         					success: function(result) {
+        					alert('Server Response\n' + result);
+        					
+    					},
+    					error : function(errorObj , textStatusLine , errorThrown)
+    					{
+    						//alert(errorObj.responseText);
+    						var obj = JSON.parse(errorObj.responseText);
+							var str = JSON.stringify(obj, undefined, 4);
+							
+    						$("#errorModalContent").html(syntaxHighlight(str));
+    						$( "#errorModal" ).dialog({
+      														modal: true,
+      														title: 'Execution Error',
+      														width: 500,
+      														buttons: {
+        																Ok: function() {
+          																		$( this ).dialog( "close" );
+        																	}
+      																	}
+    													});
+    						
+    						console.log('Server Error Code:' + errorThrown );
+    						
+    					}
+    					
+					});
+			}
+		</script>
+		
 		<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script>
 	</body>
 </html>

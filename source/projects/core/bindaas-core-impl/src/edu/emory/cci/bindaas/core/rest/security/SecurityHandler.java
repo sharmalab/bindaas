@@ -25,6 +25,8 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -55,7 +57,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.API_KEY; // default
 	public final static String TOKEN = "token";
 	public final static String API_KEY = "api_key";
-	private ServiceTracker bindaasConfigServiceTracker;
+	private ServiceTracker<DynamicObject<BindaasConfiguration>,DynamicObject<BindaasConfiguration>> bindaasConfigServiceTracker;
 	
 	
 	public AuthenticationProtocol getAuthenticationProtocol() {
@@ -71,28 +73,30 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	}
 	public void init() throws Exception
 	{
-		bindaasConfigServiceTracker = new ServiceTracker(Activator.getContext(), DynamicObject.class, new ServiceTrackerCustomizer() {
+		String filterExpression = "(&(objectclass=edu.emory.cci.bindaas.core.util.DynamicObject)(name=bindaas))";
+		Filter filter = FrameworkUtil.createFilter(filterExpression);
+		bindaasConfigServiceTracker = new ServiceTracker <DynamicObject<BindaasConfiguration>,DynamicObject<BindaasConfiguration>>(Activator.getContext(),filter, new ServiceTrackerCustomizer<DynamicObject<BindaasConfiguration>, DynamicObject<BindaasConfiguration>>() {
 
 			@Override
-			public Object addingService(ServiceReference srf) {
-				if(srf.getProperty("name").equals("bindaas"))
-					return Activator.getContext().getService(srf);
-				else
-					return null;
-			}
-
-			@Override
-			public void modifiedService(ServiceReference arg0, Object arg1) {
-				
+			public DynamicObject<BindaasConfiguration> addingService(
+					ServiceReference<DynamicObject<BindaasConfiguration>> arg0) {
+				return	Activator.getContext().getService(arg0);
 				
 			}
 
 			@Override
-			public void removedService(ServiceReference arg0, Object arg1) {
-				
+			public void modifiedService(
+					ServiceReference<DynamicObject<BindaasConfiguration>> arg0,
+					DynamicObject<BindaasConfiguration> arg1) {
 				
 			}
-			
+
+			@Override
+			public void removedService(
+					ServiceReference<DynamicObject<BindaasConfiguration>> arg0,
+					DynamicObject<BindaasConfiguration> arg1) {
+
+			}
 		});
 		bindaasConfigServiceTracker.open();
 		

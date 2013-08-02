@@ -2,8 +2,6 @@ package edu.emory.cci.bindaas.core.impl;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -17,7 +15,6 @@ import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IPersistenceDriver;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.core.api.IValidator;
-import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.exception.DuplicateException;
 import edu.emory.cci.bindaas.core.exception.FrameworkEntityException.Type;
 import edu.emory.cci.bindaas.core.exception.NotFoundException;
@@ -46,15 +43,7 @@ public class ManagementTasksImpl implements IManagementTasks {
 	private IPersistenceDriver persistenceDriver;
 	private IValidator validator;
 	private Log log = LogFactory.getLog(getClass());
-	
-	
-	
-//	public ManagementTasksImpl()
-//	{
-//		Dictionary<String, String> props = new Hashtable<String, String>();
-//		props.put("class", getClass().getName());
-//		Activator.getContext().registerService(IManagementTasks.class.getName(), this, props);
-//	}
+
 	public IProviderRegistry getProviderRegistry() {
 		return providerRegistry;
 	}

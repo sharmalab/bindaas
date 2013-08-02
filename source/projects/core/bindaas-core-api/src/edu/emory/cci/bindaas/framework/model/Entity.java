@@ -1,6 +1,5 @@
 package edu.emory.cci.bindaas.framework.model;
 
-import java.net.URLEncoder;
 import java.util.GregorianCalendar;
 
 import com.google.gson.annotations.Expose;
