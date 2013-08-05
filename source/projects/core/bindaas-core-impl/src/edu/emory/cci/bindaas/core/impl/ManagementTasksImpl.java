@@ -570,7 +570,8 @@ public class ManagementTasksImpl implements IManagementTasks {
 			{
 				log.error(e);
 				log.debug("Restoring old profile");
-				persistenceDriver.saveProfile(workspaceName, oldProfile);
+				if(oldProfile!=null)
+					persistenceDriver.saveProfile(workspaceName, oldProfile);
 				throw e;
 			}
 			
@@ -595,7 +596,8 @@ public class ManagementTasksImpl implements IManagementTasks {
 			{
 				log.error(e);
 				log.debug("Restoring old QueryEndpoint");
-				persistenceDriver.saveQueryEndpoint(workspaceName, profileName, oldQueryEndpoint);
+				if(oldQueryEndpoint!=null)
+					persistenceDriver.saveQueryEndpoint(workspaceName, profileName, oldQueryEndpoint);
 				throw e;
 			}
 			
@@ -620,8 +622,8 @@ public class ManagementTasksImpl implements IManagementTasks {
 			{
 				log.error(e);
 				log.debug("Restoring old DeleteEndpoint");
-				
-				persistenceDriver.saveDeleteEndpoint(workspaceName, profileName, oldDeleteEndpoint);
+				if(oldDeleteEndpoint!=null)
+					persistenceDriver.saveDeleteEndpoint(workspaceName, profileName, oldDeleteEndpoint);
 				throw e;
 			}
 	
@@ -645,7 +647,8 @@ public class ManagementTasksImpl implements IManagementTasks {
 			{
 				log.error(e);
 				log.debug("Restoring old SubmitEndpoint");
-				persistenceDriver.saveSubmitEndpoint(workspaceName, profileName, oldSubmitEndpoint);
+				if(oldSubmitEndpoint!=null)
+					persistenceDriver.saveSubmitEndpoint(workspaceName, profileName, oldSubmitEndpoint);
 				throw e;
 			}
 				
