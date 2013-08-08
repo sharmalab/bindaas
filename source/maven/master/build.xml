@@ -95,7 +95,7 @@
 			<tar tarfile="${dist.location}/${filename}.tar" >
 				<tarfileset dir="${dist.placeholder.dir}" filemode="0555">
 					<include name="**/*"/>
-					<exclude name="${dist.placeholder.dir}/bundles/optional/*"/>
+					<exclude name="bundles/optional/*"/>
 				</tarfileset>
 			</tar>
 			<gzip destfile="${dist.location}/${filename}-min.tar.gz" src="${dist.location}/${filename}.tar" />
