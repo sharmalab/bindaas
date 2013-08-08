@@ -7,7 +7,7 @@
                    
      nadir                                                                
      ====================================================================== -->
-<project name="master" default="deploy">
+<project name="master" default="deploy-min">
 
 
 	<description>
@@ -83,6 +83,25 @@
 		<delete file="${dist.location}/${filename}.tar">
 		</delete>
 	</target>
+
+	<target name="deploy-min" depends="incVersion">
+
+
+			<loadproperties srcfile="build-configuration/bindaas-framework-info.properties">
+			</loadproperties>
+			<copy todir="${dist.placeholder.dir}/bin" file="build-configuration/bindaas-framework-info.properties" />
+			<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}-${bindaas.build.date}">
+			</property>
+			<tar tarfile="${dist.location}/${filename}.tar" >
+				<tarfileset dir="${dist.placeholder.dir}" filemode="0555">
+					<include name="**/*"/>
+					<exclude name="${dist.placeholder.dir}/bundles/optional/*"/>
+				</tarfileset>
+			</tar>
+			<gzip destfile="${dist.location}/${filename}-min.tar.gz" src="${dist.location}/${filename}.tar" />
+			<delete file="${dist.location}/${filename}.tar">
+			</delete>
+		</target>
 
 
 	<target name="clean" depends="dist-clean">
