@@ -18,13 +18,15 @@ public class Entity implements Cloneable{
 	@Expose private String createdBy;
 	@Expose private String description;
 	
+	private static final String VALID_NAME_REGEX = "^[\\w\\-\\.]+$";
+	
 	
 	public void validate() throws Exception
 	{
 		if(name == null || "".equals(name))
 			throw new Exception("name attribute cannot be null");
 		
-		if( name.matches("^\\w+$") == false)
+		if( name.matches(VALID_NAME_REGEX) == false)
 			throw new Exception("name contains illegal characters");
 		if(description == null)
 			description = "";
