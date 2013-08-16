@@ -28,6 +28,7 @@
 
 </bean>
 <bean id="sqlCSV" class="edu.emory.cci.bindaas.datasource.provider.aime.outputformat.SqlCSVHandler"></bean>
+<bean id="sqlJSON" class="edu.emory.cci.bindaas.datasource.provider.aime.outputformat.SqlJSONHandler"></bean>
 
 
 </beans>
