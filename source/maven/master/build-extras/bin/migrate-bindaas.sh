@@ -6,5 +6,6 @@ cp $OLD_BINDAAS/bin/*.json $NEW_BINDAAS/bin
 cp $OLD_BINDAAS/bin/*.db $NEW_BINDAAS/bin
 cp $OLD_BINDAAS/bin/bindaas.*.properties $NEW_BINDAAS/bin
 cp $OLD_BINDAAS/bin/mailService.properties $NEW_BINDAAS/bin
+cp -R $OLD_BINDAAS/bin/projects $NEW_BINDAAS/bin
 echo Done!
 
