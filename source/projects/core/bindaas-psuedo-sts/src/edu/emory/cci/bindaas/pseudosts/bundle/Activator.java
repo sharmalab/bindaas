@@ -9,7 +9,6 @@ import org.osgi.framework.ServiceReference;
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
-	private Log log = LogFactory.getLog(getClass());
 	public static BundleContext getContext() {
 		return context;
 	}
@@ -20,7 +19,6 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		log.trace(String.format("Starting Bundle [%s]", context.getBundle().getSymbolicName()));
 	}
 
 	/*

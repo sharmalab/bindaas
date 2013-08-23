@@ -94,4 +94,9 @@ public class BindaasConfiguration implements ThreadSafe {
 		return GSONUtil.getGSONInstance().fromJson(json, BindaasConfiguration.class);
 		
 	}
+	@Override
+	public void init() throws Exception {
+		// do nothing
+		
+	}
 }

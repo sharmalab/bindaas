@@ -63,17 +63,20 @@ public class DynamicObject<T extends ThreadSafe> {
 				try {
 						currentObject = (T) GSONUtil.getGSONInstance().fromJson(new FileReader(file),defaultObject.getClass());
 						usingDefault = false;
+						currentObject.init();
 				}
 				catch(Exception e)
 				{
 					log.warn("Reading default properties for [" + this.name + "]",e);
 					currentObject = (T) defaultObject.clone();
+					currentObject.init();
 				}
 			}
 			else
 			{
 				log.debug("Reading default properties for [" + this.name + "]");
 				currentObject = (T) defaultObject.clone();
+				currentObject.init();
 				saveObject();
 			}
 		}

@@ -2,8 +2,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-<bean id="psuedoSts" class="edu.emory.cci.bindaas.pseudosts.impl.PseduoSecurityTokenServiceImpl" init-method="init"></bean>
+<bean id="psuedoSts" class="edu.emory.cci.bindaas.pseudosts.impl.PseduoSecurityTokenServiceImpl" init-method="init">
+	<property name="defaultTrustedApplications" ref="trustedApplicationReg"></property>
+</bean>
+<bean id="trustedApplicationReg" class="edu.emory.cci.bindaas.pseudosts.TrustedApplicationRegistry">
+	<property name="trustedApplications">
+		<list>
+			<ref bean="demoApplication"/>
+		</list>
+	</property>
+</bean>
 
+<bean id="demoApplication" class="edu.emory.cci.bindaas.pseudosts.TrustedApplicationRegistry.TrustedApplicationEntry">
+	<property name="name" value="Demo Application"></property>
+	<property name="applicationId" value="demo-id"></property>
+	<property name="applicationKey" value="demo-secret-key"></property>
+</bean>
 </beans>
 
 

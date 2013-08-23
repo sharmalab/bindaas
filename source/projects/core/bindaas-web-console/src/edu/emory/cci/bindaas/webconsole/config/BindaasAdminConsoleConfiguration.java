@@ -200,5 +200,10 @@ public class BindaasAdminConsoleConfiguration implements ThreadSafe{
 		return GSONUtil.getGSONInstance().fromJson(json, BindaasAdminConsoleConfiguration.class);
 		
 	}
+
+	@Override
+	public void init() throws Exception {
+		// do nothing
+	}
 }
 

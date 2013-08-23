@@ -7,4 +7,7 @@ package edu.emory.cci.bindaas.core.util;
 public interface ThreadSafe extends Cloneable{
 
 	public Object clone();
+	
+	// convenience method to be called after cloning a new object
+	public void init() throws Exception;
 }

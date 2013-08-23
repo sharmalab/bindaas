@@ -162,6 +162,12 @@ public class FileSystemAuthorizationProvider implements IAuthorizationProvider{
 			}
 			return appResourceRules;
 		}
+
+		@Override
+		public void init() throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	

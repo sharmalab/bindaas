@@ -46,4 +46,8 @@ public class HeartbeatClientConfiguration implements ThreadSafe {
 		conf.setFrequency(this.frequency);
 		return conf;
 	}
+	@Override
+	public void init() throws Exception {
+		
+	}
 }

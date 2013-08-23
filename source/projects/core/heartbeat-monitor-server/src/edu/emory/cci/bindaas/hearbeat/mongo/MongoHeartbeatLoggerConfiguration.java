@@ -52,4 +52,8 @@ public class MongoHeartbeatLoggerConfiguration implements ThreadSafe {
 		return conf;
 	}
 	
+	@Override
+	public void init() throws Exception {		
+	}
+	
 }

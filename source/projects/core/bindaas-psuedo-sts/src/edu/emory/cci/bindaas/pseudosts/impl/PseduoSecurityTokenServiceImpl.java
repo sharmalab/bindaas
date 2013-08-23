@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.pseudosts.impl;
 
+import java.security.MessageDigest;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -14,6 +15,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +37,8 @@ import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
+import edu.emory.cci.bindaas.pseudosts.TrustedApplicationRegistry;
+import edu.emory.cci.bindaas.pseudosts.TrustedApplicationRegistry.TrustedApplicationEntry;
 import edu.emory.cci.bindaas.pseudosts.api.IPsuedoSecurityTokenService;
 import edu.emory.cci.bindaas.pseudosts.bundle.Activator;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
@@ -48,12 +52,27 @@ public class PseduoSecurityTokenServiceImpl implements
 	private Log log = LogFactory.getLog(getClass());
 	private final static String DEFAULT_CLIENT_ID = "external.org";
 	private final static Integer DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS = 3600;
+	private TrustedApplicationRegistry defaultTrustedApplications;
+	private DynamicObject<TrustedApplicationRegistry> trustedApplicationRegistry;
+	private final static long ROUNDOFF_FACTOR = 100000;
 	
-	public void init() throws InvalidSyntaxException {
+	public TrustedApplicationRegistry getDefaultTrustedApplications() {
+		return defaultTrustedApplications;
+	}
+
+	public void setDefaultTrustedApplications(
+			TrustedApplicationRegistry defaultTrustedApplications) {
+		this.defaultTrustedApplications = defaultTrustedApplications;
+	}
+
+	public void init() throws Exception {
 
 		final BundleContext context = Activator.getContext();
+		trustedApplicationRegistry = new DynamicObject<TrustedApplicationRegistry>("trusted-applications", defaultTrustedApplications, context);
+		
 		String filterExpression = "(&(objectclass=edu.emory.cci.bindaas.core.util.DynamicObject)(name=bindaas))";
 		Filter filter = FrameworkUtil.createFilter(filterExpression);
+		
 		final IPsuedoSecurityTokenService ref = this;
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		ServiceTracker<?,?> serviceTracker = new ServiceTracker(context, filter,
@@ -64,11 +83,6 @@ public class PseduoSecurityTokenServiceImpl implements
 						@SuppressWarnings("unchecked")
 						DynamicObject<BindaasConfiguration> dynamicConfiguration = (DynamicObject<BindaasConfiguration>) context
 								.getService(srf);
-//						Dictionary<String, Object> cxfServiceProps = new Hashtable<String, Object>();
-//						cxfServiceProps.put("service.exported.interfaces", "*");
-//						cxfServiceProps.put("service.exported.intents", "HTTP");
-//						cxfServiceProps.put("service.exported.configs",
-//								"org.apache.cxf.rs");
 						Dictionary<String, Object> testProps = new Hashtable<String, Object>();
 						testProps.put("edu.emory.cci.bindaas.commons.cxf.service.name", "Security Token Service");
 						
@@ -81,11 +95,6 @@ public class PseduoSecurityTokenServiceImpl implements
 									+ configuration.getHost() + ":"
 									+ configuration.getPort();
 							testProps.put("edu.emory.cci.bindaas.commons.cxf.service.address", publishUrl + "/securityTokenService");
-//							cxfServiceProps.put("org.apache.cxf.rs.address",
-//									publishUrl + "/securityTokenService");
-//							context.registerService(
-//									IPsuedoSecurityTokenService.class, ref,
-//									cxfServiceProps);
 							context.registerService(
 									IPsuedoSecurityTokenService.class, ref,
 									testProps);
@@ -350,6 +359,104 @@ public class PseduoSecurityTokenServiceImpl implements
 			super(message);
 		}
 		private static final long serialVersionUID = -5379694325793032341L;
+	}
+
+	@Override
+	@GET
+	@Path("/trustedApplication")
+	public Response getAPIKey(@HeaderParam("_username") String username,
+			@HeaderParam("_applicationID") String applicationID,
+			@HeaderParam("_salt") String salt,
+			@HeaderParam("_digest") String digest,
+			@QueryParam("lifetime") Integer lifetime) {
+		try {
+			try {
+
+				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
+						applicationID, salt, digest , username);
+
+				BindaasUser bindaasUser = new BindaasUser(username);
+				int lifespan = lifetime != null ? lifetime
+						: DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS;
+				String applicationName = trustedAppEntry.getName();
+				try {
+					UserRequest sessionKey = generateApiKey(bindaasUser,
+							lifespan, applicationName);
+					JsonObject retVal = new JsonObject();
+					retVal.add("api_key",
+							new JsonPrimitive(sessionKey.getApiKey()));
+					retVal.add("applicationID",
+							new JsonPrimitive(applicationID));
+					retVal.add("expires", new JsonPrimitive(sessionKey
+							.getDateExpires().toString()));
+					retVal.add("applicationName", new JsonPrimitive(
+							applicationName));
+					return Response.ok().entity(retVal.toString())
+							.type("application/json").build();
+				} catch (AuthenticationException e) {
+					JsonObject retVal = new JsonObject();
+					retVal.add("applicationID",
+							new JsonPrimitive(applicationID));
+					retVal.add("applicationName", new JsonPrimitive(
+							applicationName));
+					retVal.add("error", new JsonPrimitive(e.getMessage()));
+					return Response.status(401).entity(retVal.toString())
+							.type("application/json").build();
+				}
+			} catch (AuthenticationException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new AuthenticationException(e);
+			}
+		}
+
+		catch (AuthenticationException authE) {
+			log.error(authE); // 401
+			return Response.status(401).build();
+		} catch (Exception e) {
+			log.error(e);
+			return Response.serverError().build();
+			// error 500
+		}
+
+	}
+	
+	public static String calculateDigestValue(String applicationID , String applicationKey , String salt , String username) throws Exception
+	{
+		long roundoff = System.currentTimeMillis()/ROUNDOFF_FACTOR;
+		String prenonce = roundoff + "|" + applicationKey;
+		byte[] nonceBytes = MessageDigest.getInstance("SHA-1").digest(prenonce.getBytes("UTF-8"));
+		String nonce = DatatypeConverter.printBase64Binary(nonceBytes);
+		
+		String predigest = String.format("%s|%s|%s|%s", username , nonce , applicationKey , salt);
+		String digest = DatatypeConverter.printBase64Binary(MessageDigest.getInstance("SHA-1").digest(predigest.getBytes("UTF-8")));
+		
+		System.out.println(String.format("digest[%s]=sha1(%s)\t prenonce=[%s]" , digest , predigest , prenonce));
+		return digest;
+	}
+	
+	private TrustedApplicationEntry authenticateTrustedApplication(String applicationID , String salt , String digest , String username) throws Exception
+	{
+		TrustedApplicationRegistry registry = trustedApplicationRegistry.getObject();
+		TrustedApplicationEntry entry = registry.lookup(applicationID);
+		if(entry!=null)
+		{
+			String applicationKey = entry.getApplicationKey();
+			String caclulatedDigest = calculateDigestValue(applicationID, applicationKey, salt,  username);
+			if(caclulatedDigest.equals(digest))
+			{
+				return entry;
+			}
+			else
+				throw new AuthenticationException("Failed to authenticate Trusted Application applicationID=[" + applicationID + "] . Wrong digest value");
+			
+			
+		}
+		else
+		{
+			throw new AuthenticationException("No TrustedApplication found for applicationID=[" + applicationID + "]");
+		}
+		
 	}
 
 }
