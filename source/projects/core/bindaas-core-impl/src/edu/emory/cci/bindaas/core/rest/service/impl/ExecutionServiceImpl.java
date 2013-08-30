@@ -162,16 +162,8 @@ public class ExecutionServiceImpl implements IExecutionService{
 			if(profile.getSubmitEndpoints().containsKey(submitEndpointName) )
 			{
 				SubmitEndpoint submitEndpoint = profile.getSubmitEndpoints().get(submitEndpointName);
-				
-				if(submitEndpoint.getType().equals(Type.MULTIPART))
-				{
-					QueryResult queryResult = executionTask.executeSubmitEndpoint(getUser(), is , profile, submitEndpoint);
-					return queryResultToResponse(queryResult , null , null);
-				}
-				else
-				{
-					throw new Exception("SubmitEndpoint [" + submitEndpointName + "] does not support Multipart/Mime data");
-				}
+				QueryResult queryResult = executionTask.executeSubmitEndpoint(getUser(), is , profile, submitEndpoint);
+				return queryResultToResponse(queryResult , null , null);
 				
 			}
 			else
@@ -234,17 +226,8 @@ public class ExecutionServiceImpl implements IExecutionService{
 			if(profile.getSubmitEndpoints().containsKey(submitEndpointName) )
 			{
 				SubmitEndpoint submitEndpoint = profile.getSubmitEndpoints().get(submitEndpointName);
-				if(submitEndpoint.getType().equals(Type.FORM_DATA))
-				{
-					QueryResult queryResult = executionTask.executeSubmitEndpoint(getUser(), requestBody , profile, submitEndpoint);
-					
-					return queryResultToResponse(queryResult ,  null , null);	
-				}
-				else
-				{
-					throw new Exception("SubmitEndpoint [" + submitEndpointName + "] does not support simple data");
-				}
-				
+				QueryResult queryResult = executionTask.executeSubmitEndpoint(getUser(), requestBody , profile, submitEndpoint);	
+				return queryResultToResponse(queryResult ,  null , null);	
 			}
 			else
 			{
