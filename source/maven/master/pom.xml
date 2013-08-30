@@ -197,5 +197,6 @@
 		<module>dicomaim-to-pngsvg-QRM</module>
 		<module>heartbeat-monitor-client</module>
 		<module>heartbeat-monitor-server</module>
+		<module>native-app-runner-SPM</module>
 	</modules>
 </project>
