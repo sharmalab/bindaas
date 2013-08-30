@@ -105,7 +105,14 @@ public class SqlJSONHandler implements IFormatHandler {
 						obj.add(column_name,
 								new JsonPrimitive(rs.getTimestamp(column_name)
 										.toString()));
-					} else {
+					}
+					else if (rsmd.getColumnType(i) == java.sql.Types.SQLXML) {
+						obj.add(column_name,
+								new JsonPrimitive(rs.getString(column_name)
+										.toString()));
+					}
+					
+					else {
 						obj.add(column_name,
 								new JsonPrimitive(rs.getObject(column_name)
 										.toString()));
