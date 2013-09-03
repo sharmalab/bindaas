@@ -18,6 +18,279 @@ http://www.altova.com/mapforce
 	<xsl:param name="AIM_v3_rv11_XML7" select="'AIM_v3_rv11_XML.xml'"/>
 	<xsl:param name="AIM_v3_rv11_XML8" select="'AIM_v3_rv11_XML.xml'"/>
 	<xsl:param name="AIM_v3_rv11_XML9" select="'AIM_v3_rv11_XML.xml'"/>
+	<xsl:template name="user:TransformMultiPointToPolyline">
+		<xsl:param name="AIMv3r11" select="()"/>
+		<xsl:param name="calculationCollection" select="()"/>
+		<xsl:variable name="var1_spatialCoordinateCollection" as="node()*" select="$AIMv3r11/ns0:spatialCoordinateCollection"/>
+		<xsl:if test="(fn:count($var1_spatialCoordinateCollection/ns0:SpatialCoordinate) &gt; xs:decimal('2'))">
+			<xsl:variable name="var2_shapeIdentifier" as="node()?" select="$AIMv3r11/@shapeIdentifier"/>
+			<xsl:variable name="var3_resultof_exists" as="xs:boolean" select="fn:exists($var2_shapeIdentifier)"/>
+			<xsl:variable name="var4_val" as="node()?">
+				<xsl:if test="$var3_resultof_exists">
+					<xsl:attribute name="id" select="xs:string(xs:integer(fn:string($var2_shapeIdentifier)))"/>
+				</xsl:if>
+			</xsl:variable>
+			<polyline xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<xsl:sequence select="$var4_val"/>
+				<xsl:attribute name="style" namespace="" select="''"/>
+				<xsl:if test="$var3_resultof_exists">
+					<xsl:variable name="var5_resultof_identifierToColor" as="xs:string?">
+						<xsl:call-template name="user:identifierToColor">
+							<xsl:with-param name="input" select="xs:integer(fn:string($var2_shapeIdentifier))" as="xs:integer"/>
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:if test="fn:exists($var5_resultof_identifierToColor)">
+						<xsl:attribute name="stroke" namespace="" select="$var5_resultof_identifierToColor"/>
+					</xsl:if>
+				</xsl:if>
+				<xsl:for-each select="$var1_spatialCoordinateCollection">
+					<xsl:variable name="var9_resultof_filter" as="node()*">
+						<xsl:for-each select="ns0:SpatialCoordinate">
+							<xsl:variable name="var7_" as="node()" select="."/>
+							<xsl:variable name="var6_resultof_map" as="xs:boolean*">
+								<xsl:for-each select="@xsi:type">
+									<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var7_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
+								</xsl:for-each>
+							</xsl:variable>
+							<xsl:variable name="var8_resultof_any" as="xs:boolean" select="fn:exists($var6_resultof_map[.])"/>
+							<xsl:if test="$var8_resultof_any">
+								<xsl:sequence select="."/>
+							</xsl:if>
+						</xsl:for-each>
+					</xsl:variable>
+					<xsl:variable name="var10_resultof_map" as="xs:string*">
+						<xsl:for-each select="$var9_resultof_filter[fn:exists(@x)][fn:exists(@y)]">
+							<xsl:sequence select="fn:concat(fn:concat(xs:string(xs:double(fn:string(@x))), ','), xs:string(xs:double(fn:string(@y))))"/>
+						</xsl:for-each>
+					</xsl:variable>
+					<xsl:attribute name="points" namespace="" select="fn:string-join($var10_resultof_map, ' ')"/>
+				</xsl:for-each>
+				<xsl:if test="$var3_resultof_exists">
+					<xsl:variable name="var11_resultof_TransformCalculationResults" as="node()*">
+						<xsl:call-template name="user:TransformCalculationResults">
+							<xsl:with-param name="AIMv3r11" as="node()">
+								<calculationCollection xmlns="gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM">
+									<xsl:sequence select="($calculationCollection/@node(), $calculationCollection/node())"/>
+								</calculationCollection>
+							</xsl:with-param>
+							<xsl:with-param name="shapeIdentifier" select="xs:integer(fn:string($var2_shapeIdentifier))" as="xs:integer"/>
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:for-each select="$var11_resultof_TransformCalculationResults">
+						<desc>
+							<xsl:if test="fn:exists(@id)">
+								<xsl:attribute name="id" namespace="" select="fn:string(@id)"/>
+							</xsl:if>
+							<xsl:if test="fn:exists(@xml:base)">
+								<xsl:attribute name="xml:base" select="fn:string(@xml:base)"/>
+							</xsl:if>
+							<xsl:if test="fn:exists(@xml:lang)">
+								<xsl:attribute name="xml:lang" select="fn:string(@xml:lang)"/>
+							</xsl:if>
+							<xsl:if test="fn:exists(@xml:space)">
+								<xsl:attribute name="xml:space" select="fn:string(@xml:space)"/>
+							</xsl:if>
+							<xsl:if test="fn:exists(@style)">
+								<xsl:attribute name="style" namespace="" select="fn:string(@style)"/>
+							</xsl:if>
+							<xsl:if test="fn:exists(@class)">
+								<xsl:attribute name="class" namespace="" select="fn:string(@class)"/>
+							</xsl:if>
+							<xsl:for-each select="node()[fn:boolean(self::text())]">
+								<xsl:sequence select="fn:string(.)"/>
+							</xsl:for-each>
+						</desc>
+					</xsl:for-each>
+				</xsl:if>
+				<title>
+					<xsl:sequence select="$var4_val"/>
+				</title>
+			</polyline>
+		</xsl:if>
+	</xsl:template>
+	<xsl:template name="user:TransformMultiPointToLine">
+		<xsl:param name="AIMv3r11" select="()"/>
+		<xsl:param name="calculationCollection" select="()"/>
+		<xsl:variable name="var1_spatialCoordinateCollection" as="node()*" select="$AIMv3r11/ns0:spatialCoordinateCollection"/>
+		<xsl:variable name="var6_resultof_map" as="item()*">
+			<xsl:for-each select="$var1_spatialCoordinateCollection">
+				<xsl:variable name="var5_resultof_filter" as="node()*">
+					<xsl:for-each select="ns0:SpatialCoordinate">
+						<xsl:variable name="var3_" as="node()" select="."/>
+						<xsl:variable name="var2_resultof_map" as="xs:boolean*">
+							<xsl:for-each select="@xsi:type">
+								<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var3_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
+							</xsl:for-each>
+						</xsl:variable>
+						<xsl:variable name="var4_resultof_any" as="xs:boolean" select="fn:exists($var2_resultof_map[.])"/>
+						<xsl:if test="$var4_resultof_any">
+							<xsl:sequence select="."/>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:variable>
+				<xsl:sequence select="$var5_resultof_filter"/>
+			</xsl:for-each>
+		</xsl:variable>
+		<xsl:if test="(fn:count($var6_resultof_map) = xs:decimal('2'))">
+			<xsl:variable name="var7_shapeIdentifier" as="node()?" select="$AIMv3r11/@shapeIdentifier"/>
+			<xsl:variable name="var8_resultof_exists" as="xs:boolean" select="fn:exists($var7_shapeIdentifier)"/>
+			<xsl:variable name="var9_val" as="node()?">
+				<xsl:if test="$var8_resultof_exists">
+					<xsl:attribute name="id" select="xs:string(xs:integer(fn:string($var7_shapeIdentifier)))"/>
+				</xsl:if>
+			</xsl:variable>
+			<line xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<xsl:sequence select="$var9_val"/>
+				<xsl:attribute name="style" namespace="" select="''"/>
+				<xsl:if test="$var8_resultof_exists">
+					<xsl:variable name="var10_resultof_identifierToColor" as="xs:string?">
+						<xsl:call-template name="user:identifierToColor">
+							<xsl:with-param name="input" select="xs:integer(fn:string($var7_shapeIdentifier))" as="xs:integer"/>
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:if test="fn:exists($var10_resultof_identifierToColor)">
+						<xsl:attribute name="stroke" namespace="" select="$var10_resultof_identifierToColor"/>
+					</xsl:if>
+				</xsl:if>
+				<xsl:for-each select="$var1_spatialCoordinateCollection">
+					<xsl:variable name="var14_resultof_filter" as="node()*">
+						<xsl:for-each select="ns0:SpatialCoordinate">
+							<xsl:variable name="var12_" as="node()" select="."/>
+							<xsl:variable name="var11_resultof_map" as="xs:boolean*">
+								<xsl:for-each select="@xsi:type">
+									<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var12_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
+								</xsl:for-each>
+							</xsl:variable>
+							<xsl:variable name="var13_resultof_any" as="xs:boolean" select="fn:exists($var11_resultof_map[.])"/>
+							<xsl:if test="$var13_resultof_any">
+								<xsl:sequence select="."/>
+							</xsl:if>
+						</xsl:for-each>
+					</xsl:variable>
+					<xsl:for-each select="$var14_resultof_filter">
+						<xsl:variable name="var15_x" as="node()?" select="@x"/>
+						<xsl:if test="fn:exists($var15_x)">
+							<xsl:if test="(position() = xs:decimal('1'))">
+								<xsl:attribute name="x1" namespace="" select="xs:string(xs:double(fn:string($var15_x)))"/>
+							</xsl:if>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:for-each>
+				<xsl:for-each select="$var1_spatialCoordinateCollection">
+					<xsl:variable name="var19_resultof_filter" as="node()*">
+						<xsl:for-each select="ns0:SpatialCoordinate">
+							<xsl:variable name="var17_" as="node()" select="."/>
+							<xsl:variable name="var16_resultof_map" as="xs:boolean*">
+								<xsl:for-each select="@xsi:type">
+									<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var17_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
+								</xsl:for-each>
+							</xsl:variable>
+							<xsl:variable name="var18_resultof_any" as="xs:boolean" select="fn:exists($var16_resultof_map[.])"/>
+							<xsl:if test="$var18_resultof_any">
+								<xsl:sequence select="."/>
+							</xsl:if>
+						</xsl:for-each>
+					</xsl:variable>
+					<xsl:for-each select="$var19_resultof_filter">
+						<xsl:variable name="var20_y" as="node()?" select="@y"/>
+						<xsl:if test="fn:exists($var20_y)">
+							<xsl:if test="(position() = xs:decimal('1'))">
+								<xsl:attribute name="y1" namespace="" select="xs:string(xs:double(fn:string($var20_y)))"/>
+							</xsl:if>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:for-each>
+				<xsl:for-each select="$var1_spatialCoordinateCollection">
+					<xsl:variable name="var24_resultof_filter" as="node()*">
+						<xsl:for-each select="ns0:SpatialCoordinate">
+							<xsl:variable name="var22_" as="node()" select="."/>
+							<xsl:variable name="var21_resultof_map" as="xs:boolean*">
+								<xsl:for-each select="@xsi:type">
+									<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var22_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
+								</xsl:for-each>
+							</xsl:variable>
+							<xsl:variable name="var23_resultof_any" as="xs:boolean" select="fn:exists($var21_resultof_map[.])"/>
+							<xsl:if test="$var23_resultof_any">
+								<xsl:sequence select="."/>
+							</xsl:if>
+						</xsl:for-each>
+					</xsl:variable>
+					<xsl:for-each select="$var24_resultof_filter">
+						<xsl:variable name="var25_x" as="node()?" select="@x"/>
+						<xsl:if test="fn:exists($var25_x)">
+							<xsl:if test="fn:not((position() = xs:decimal('1')))">
+								<xsl:attribute name="x2" namespace="" select="xs:string(xs:double(fn:string($var25_x)))"/>
+							</xsl:if>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:for-each>
+				<xsl:for-each select="$var1_spatialCoordinateCollection">
+					<xsl:variable name="var29_resultof_filter" as="node()*">
+						<xsl:for-each select="ns0:SpatialCoordinate">
+							<xsl:variable name="var27_" as="node()" select="."/>
+							<xsl:variable name="var26_resultof_map" as="xs:boolean*">
+								<xsl:for-each select="@xsi:type">
+									<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var27_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
+								</xsl:for-each>
+							</xsl:variable>
+							<xsl:variable name="var28_resultof_any" as="xs:boolean" select="fn:exists($var26_resultof_map[.])"/>
+							<xsl:if test="$var28_resultof_any">
+								<xsl:sequence select="."/>
+							</xsl:if>
+						</xsl:for-each>
+					</xsl:variable>
+					<xsl:for-each select="$var29_resultof_filter">
+						<xsl:variable name="var30_y" as="node()?" select="@y"/>
+						<xsl:if test="fn:exists($var30_y)">
+							<xsl:if test="fn:not((position() = xs:decimal('1')))">
+								<xsl:attribute name="y2" namespace="" select="xs:string(xs:double(fn:string($var30_y)))"/>
+							</xsl:if>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:for-each>
+				<xsl:if test="$var8_resultof_exists">
+					<xsl:variable name="var31_resultof_TransformCalculationResults" as="node()*">
+						<xsl:call-template name="user:TransformCalculationResults">
+							<xsl:with-param name="AIMv3r11" as="node()">
+								<calculationCollection xmlns="gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM">
+									<xsl:sequence select="($calculationCollection/@node(), $calculationCollection/node())"/>
+								</calculationCollection>
+							</xsl:with-param>
+							<xsl:with-param name="shapeIdentifier" select="xs:integer(fn:string($var7_shapeIdentifier))" as="xs:integer"/>
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:for-each select="$var31_resultof_TransformCalculationResults">
+						<desc>
+							<xsl:if test="fn:exists(@id)">
+								<xsl:attribute name="id" namespace="" select="fn:string(@id)"/>
+							</xsl:if>
+							<xsl:if test="fn:exists(@xml:base)">
+								<xsl:attribute name="xml:base" select="fn:string(@xml:base)"/>
+							</xsl:if>
+							<xsl:if test="fn:exists(@xml:lang)">
+								<xsl:attribute name="xml:lang" select="fn:string(@xml:lang)"/>
+							</xsl:if>
+							<xsl:if test="fn:exists(@xml:space)">
+								<xsl:attribute name="xml:space" select="fn:string(@xml:space)"/>
+							</xsl:if>
+							<xsl:if test="fn:exists(@style)">
+								<xsl:attribute name="style" namespace="" select="fn:string(@style)"/>
+							</xsl:if>
+							<xsl:if test="fn:exists(@class)">
+								<xsl:attribute name="class" namespace="" select="fn:string(@class)"/>
+							</xsl:if>
+							<xsl:for-each select="node()[fn:boolean(self::text())]">
+								<xsl:sequence select="fn:string(.)"/>
+							</xsl:for-each>
+						</desc>
+					</xsl:for-each>
+				</xsl:if>
+				<title>
+					<xsl:sequence select="$var9_val"/>
+				</title>
+			</line>
+		</xsl:if>
+	</xsl:template>
 	<xsl:template name="user:TransformEllipse">
 		<xsl:param name="AIMv3r11" select="()"/>
 		<xsl:param name="calculationCollection" select="()"/>
@@ -81,6 +354,7 @@ http://www.altova.com/mapforce
 		<xsl:variable name="var18_resultof_any" as="xs:boolean" select="fn:exists($var17_resultof_map[.])"/>
 		<ellipse xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 			<xsl:sequence select="$var4_val"/>
+			<xsl:attribute name="style" namespace="" select="'fill:none'"/>
 			<xsl:if test="$var3_resultof_exists">
 				<xsl:variable name="var19_resultof_identifierToColor" as="xs:string?">
 					<xsl:call-template name="user:identifierToColor">
@@ -231,277 +505,6 @@ http://www.altova.com/mapforce
 			</title>
 		</ellipse>
 	</xsl:template>
-	<xsl:template name="user:TransformMultiPointToLine">
-		<xsl:param name="AIMv3r11" select="()"/>
-		<xsl:param name="calculationCollection" select="()"/>
-		<xsl:variable name="var1_spatialCoordinateCollection" as="node()*" select="$AIMv3r11/ns0:spatialCoordinateCollection"/>
-		<xsl:variable name="var6_resultof_map" as="item()*">
-			<xsl:for-each select="$var1_spatialCoordinateCollection">
-				<xsl:variable name="var5_resultof_filter" as="node()*">
-					<xsl:for-each select="ns0:SpatialCoordinate">
-						<xsl:variable name="var3_" as="node()" select="."/>
-						<xsl:variable name="var2_resultof_map" as="xs:boolean*">
-							<xsl:for-each select="@xsi:type">
-								<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var3_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
-							</xsl:for-each>
-						</xsl:variable>
-						<xsl:variable name="var4_resultof_any" as="xs:boolean" select="fn:exists($var2_resultof_map[.])"/>
-						<xsl:if test="$var4_resultof_any">
-							<xsl:sequence select="."/>
-						</xsl:if>
-					</xsl:for-each>
-				</xsl:variable>
-				<xsl:sequence select="$var5_resultof_filter"/>
-			</xsl:for-each>
-		</xsl:variable>
-		<xsl:if test="(fn:count($var6_resultof_map) = xs:decimal('2'))">
-			<xsl:variable name="var7_shapeIdentifier" as="node()?" select="$AIMv3r11/@shapeIdentifier"/>
-			<xsl:variable name="var8_resultof_exists" as="xs:boolean" select="fn:exists($var7_shapeIdentifier)"/>
-			<xsl:variable name="var9_val" as="node()?">
-				<xsl:if test="$var8_resultof_exists">
-					<xsl:attribute name="id" select="xs:string(xs:integer(fn:string($var7_shapeIdentifier)))"/>
-				</xsl:if>
-			</xsl:variable>
-			<line xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-				<xsl:sequence select="$var9_val"/>
-				<xsl:if test="$var8_resultof_exists">
-					<xsl:variable name="var10_resultof_identifierToColor" as="xs:string?">
-						<xsl:call-template name="user:identifierToColor">
-							<xsl:with-param name="input" select="xs:integer(fn:string($var7_shapeIdentifier))" as="xs:integer"/>
-						</xsl:call-template>
-					</xsl:variable>
-					<xsl:if test="fn:exists($var10_resultof_identifierToColor)">
-						<xsl:attribute name="stroke" namespace="" select="$var10_resultof_identifierToColor"/>
-					</xsl:if>
-				</xsl:if>
-				<xsl:for-each select="$var1_spatialCoordinateCollection">
-					<xsl:variable name="var14_resultof_filter" as="node()*">
-						<xsl:for-each select="ns0:SpatialCoordinate">
-							<xsl:variable name="var12_" as="node()" select="."/>
-							<xsl:variable name="var11_resultof_map" as="xs:boolean*">
-								<xsl:for-each select="@xsi:type">
-									<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var12_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
-								</xsl:for-each>
-							</xsl:variable>
-							<xsl:variable name="var13_resultof_any" as="xs:boolean" select="fn:exists($var11_resultof_map[.])"/>
-							<xsl:if test="$var13_resultof_any">
-								<xsl:sequence select="."/>
-							</xsl:if>
-						</xsl:for-each>
-					</xsl:variable>
-					<xsl:for-each select="$var14_resultof_filter">
-						<xsl:variable name="var15_x" as="node()?" select="@x"/>
-						<xsl:if test="fn:exists($var15_x)">
-							<xsl:if test="(position() = xs:decimal('1'))">
-								<xsl:attribute name="x1" namespace="" select="xs:string(xs:double(fn:string($var15_x)))"/>
-							</xsl:if>
-						</xsl:if>
-					</xsl:for-each>
-				</xsl:for-each>
-				<xsl:for-each select="$var1_spatialCoordinateCollection">
-					<xsl:variable name="var19_resultof_filter" as="node()*">
-						<xsl:for-each select="ns0:SpatialCoordinate">
-							<xsl:variable name="var17_" as="node()" select="."/>
-							<xsl:variable name="var16_resultof_map" as="xs:boolean*">
-								<xsl:for-each select="@xsi:type">
-									<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var17_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
-								</xsl:for-each>
-							</xsl:variable>
-							<xsl:variable name="var18_resultof_any" as="xs:boolean" select="fn:exists($var16_resultof_map[.])"/>
-							<xsl:if test="$var18_resultof_any">
-								<xsl:sequence select="."/>
-							</xsl:if>
-						</xsl:for-each>
-					</xsl:variable>
-					<xsl:for-each select="$var19_resultof_filter">
-						<xsl:variable name="var20_y" as="node()?" select="@y"/>
-						<xsl:if test="fn:exists($var20_y)">
-							<xsl:if test="(position() = xs:decimal('1'))">
-								<xsl:attribute name="y1" namespace="" select="xs:string(xs:double(fn:string($var20_y)))"/>
-							</xsl:if>
-						</xsl:if>
-					</xsl:for-each>
-				</xsl:for-each>
-				<xsl:for-each select="$var1_spatialCoordinateCollection">
-					<xsl:variable name="var24_resultof_filter" as="node()*">
-						<xsl:for-each select="ns0:SpatialCoordinate">
-							<xsl:variable name="var22_" as="node()" select="."/>
-							<xsl:variable name="var21_resultof_map" as="xs:boolean*">
-								<xsl:for-each select="@xsi:type">
-									<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var22_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
-								</xsl:for-each>
-							</xsl:variable>
-							<xsl:variable name="var23_resultof_any" as="xs:boolean" select="fn:exists($var21_resultof_map[.])"/>
-							<xsl:if test="$var23_resultof_any">
-								<xsl:sequence select="."/>
-							</xsl:if>
-						</xsl:for-each>
-					</xsl:variable>
-					<xsl:for-each select="$var24_resultof_filter">
-						<xsl:variable name="var25_x" as="node()?" select="@x"/>
-						<xsl:if test="fn:exists($var25_x)">
-							<xsl:if test="fn:not((position() = xs:decimal('1')))">
-								<xsl:attribute name="x2" namespace="" select="xs:string(xs:double(fn:string($var25_x)))"/>
-							</xsl:if>
-						</xsl:if>
-					</xsl:for-each>
-				</xsl:for-each>
-				<xsl:for-each select="$var1_spatialCoordinateCollection">
-					<xsl:variable name="var29_resultof_filter" as="node()*">
-						<xsl:for-each select="ns0:SpatialCoordinate">
-							<xsl:variable name="var27_" as="node()" select="."/>
-							<xsl:variable name="var26_resultof_map" as="xs:boolean*">
-								<xsl:for-each select="@xsi:type">
-									<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var27_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
-								</xsl:for-each>
-							</xsl:variable>
-							<xsl:variable name="var28_resultof_any" as="xs:boolean" select="fn:exists($var26_resultof_map[.])"/>
-							<xsl:if test="$var28_resultof_any">
-								<xsl:sequence select="."/>
-							</xsl:if>
-						</xsl:for-each>
-					</xsl:variable>
-					<xsl:for-each select="$var29_resultof_filter">
-						<xsl:variable name="var30_y" as="node()?" select="@y"/>
-						<xsl:if test="fn:exists($var30_y)">
-							<xsl:if test="fn:not((position() = xs:decimal('1')))">
-								<xsl:attribute name="y2" namespace="" select="xs:string(xs:double(fn:string($var30_y)))"/>
-							</xsl:if>
-						</xsl:if>
-					</xsl:for-each>
-				</xsl:for-each>
-				<xsl:if test="$var8_resultof_exists">
-					<xsl:variable name="var31_resultof_TransformCalculationResults" as="node()*">
-						<xsl:call-template name="user:TransformCalculationResults">
-							<xsl:with-param name="AIMv3r11" as="node()">
-								<calculationCollection xmlns="gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM">
-									<xsl:sequence select="($calculationCollection/@node(), $calculationCollection/node())"/>
-								</calculationCollection>
-							</xsl:with-param>
-							<xsl:with-param name="shapeIdentifier" select="xs:integer(fn:string($var7_shapeIdentifier))" as="xs:integer"/>
-						</xsl:call-template>
-					</xsl:variable>
-					<xsl:for-each select="$var31_resultof_TransformCalculationResults">
-						<desc>
-							<xsl:if test="fn:exists(@id)">
-								<xsl:attribute name="id" namespace="" select="fn:string(@id)"/>
-							</xsl:if>
-							<xsl:if test="fn:exists(@xml:base)">
-								<xsl:attribute name="xml:base" select="fn:string(@xml:base)"/>
-							</xsl:if>
-							<xsl:if test="fn:exists(@xml:lang)">
-								<xsl:attribute name="xml:lang" select="fn:string(@xml:lang)"/>
-							</xsl:if>
-							<xsl:if test="fn:exists(@xml:space)">
-								<xsl:attribute name="xml:space" select="fn:string(@xml:space)"/>
-							</xsl:if>
-							<xsl:if test="fn:exists(@style)">
-								<xsl:attribute name="style" namespace="" select="fn:string(@style)"/>
-							</xsl:if>
-							<xsl:if test="fn:exists(@class)">
-								<xsl:attribute name="class" namespace="" select="fn:string(@class)"/>
-							</xsl:if>
-							<xsl:for-each select="node()[fn:boolean(self::text())]">
-								<xsl:sequence select="fn:string(.)"/>
-							</xsl:for-each>
-						</desc>
-					</xsl:for-each>
-				</xsl:if>
-				<title>
-					<xsl:sequence select="$var9_val"/>
-				</title>
-			</line>
-		</xsl:if>
-	</xsl:template>
-	<xsl:template name="user:TransformMultiPointToPolyline">
-		<xsl:param name="AIMv3r11" select="()"/>
-		<xsl:param name="calculationCollection" select="()"/>
-		<xsl:variable name="var1_spatialCoordinateCollection" as="node()*" select="$AIMv3r11/ns0:spatialCoordinateCollection"/>
-		<xsl:if test="(fn:count($var1_spatialCoordinateCollection/ns0:SpatialCoordinate) &gt; xs:decimal('2'))">
-			<xsl:variable name="var2_shapeIdentifier" as="node()?" select="$AIMv3r11/@shapeIdentifier"/>
-			<xsl:variable name="var3_resultof_exists" as="xs:boolean" select="fn:exists($var2_shapeIdentifier)"/>
-			<xsl:variable name="var4_val" as="node()?">
-				<xsl:if test="$var3_resultof_exists">
-					<xsl:attribute name="id" select="xs:string(xs:integer(fn:string($var2_shapeIdentifier)))"/>
-				</xsl:if>
-			</xsl:variable>
-			<polyline xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-				<xsl:sequence select="$var4_val"/>
-				<xsl:if test="$var3_resultof_exists">
-					<xsl:variable name="var5_resultof_identifierToColor" as="xs:string?">
-						<xsl:call-template name="user:identifierToColor">
-							<xsl:with-param name="input" select="xs:integer(fn:string($var2_shapeIdentifier))" as="xs:integer"/>
-						</xsl:call-template>
-					</xsl:variable>
-					<xsl:if test="fn:exists($var5_resultof_identifierToColor)">
-						<xsl:attribute name="stroke" namespace="" select="$var5_resultof_identifierToColor"/>
-					</xsl:if>
-				</xsl:if>
-				<xsl:for-each select="$var1_spatialCoordinateCollection">
-					<xsl:variable name="var9_resultof_filter" as="node()*">
-						<xsl:for-each select="ns0:SpatialCoordinate">
-							<xsl:variable name="var7_" as="node()" select="."/>
-							<xsl:variable name="var6_resultof_map" as="xs:boolean*">
-								<xsl:for-each select="@xsi:type">
-									<xsl:sequence select="(fn:resolve-QName(fn:string(.), $var7_) = xs:QName('ns0:TwoDimensionSpatialCoordinate'))"/>
-								</xsl:for-each>
-							</xsl:variable>
-							<xsl:variable name="var8_resultof_any" as="xs:boolean" select="fn:exists($var6_resultof_map[.])"/>
-							<xsl:if test="$var8_resultof_any">
-								<xsl:sequence select="."/>
-							</xsl:if>
-						</xsl:for-each>
-					</xsl:variable>
-					<xsl:variable name="var10_resultof_map" as="xs:string*">
-						<xsl:for-each select="$var9_resultof_filter[fn:exists(@x)][fn:exists(@y)]">
-							<xsl:sequence select="fn:concat(fn:concat(xs:string(xs:double(fn:string(@x))), ','), xs:string(xs:double(fn:string(@y))))"/>
-						</xsl:for-each>
-					</xsl:variable>
-					<xsl:attribute name="points" namespace="" select="fn:string-join($var10_resultof_map, ' ')"/>
-				</xsl:for-each>
-				<xsl:if test="$var3_resultof_exists">
-					<xsl:variable name="var11_resultof_TransformCalculationResults" as="node()*">
-						<xsl:call-template name="user:TransformCalculationResults">
-							<xsl:with-param name="AIMv3r11" as="node()">
-								<calculationCollection xmlns="gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM">
-									<xsl:sequence select="($calculationCollection/@node(), $calculationCollection/node())"/>
-								</calculationCollection>
-							</xsl:with-param>
-							<xsl:with-param name="shapeIdentifier" select="xs:integer(fn:string($var2_shapeIdentifier))" as="xs:integer"/>
-						</xsl:call-template>
-					</xsl:variable>
-					<xsl:for-each select="$var11_resultof_TransformCalculationResults">
-						<desc>
-							<xsl:if test="fn:exists(@id)">
-								<xsl:attribute name="id" namespace="" select="fn:string(@id)"/>
-							</xsl:if>
-							<xsl:if test="fn:exists(@xml:base)">
-								<xsl:attribute name="xml:base" select="fn:string(@xml:base)"/>
-							</xsl:if>
-							<xsl:if test="fn:exists(@xml:lang)">
-								<xsl:attribute name="xml:lang" select="fn:string(@xml:lang)"/>
-							</xsl:if>
-							<xsl:if test="fn:exists(@xml:space)">
-								<xsl:attribute name="xml:space" select="fn:string(@xml:space)"/>
-							</xsl:if>
-							<xsl:if test="fn:exists(@style)">
-								<xsl:attribute name="style" namespace="" select="fn:string(@style)"/>
-							</xsl:if>
-							<xsl:if test="fn:exists(@class)">
-								<xsl:attribute name="class" namespace="" select="fn:string(@class)"/>
-							</xsl:if>
-							<xsl:for-each select="node()[fn:boolean(self::text())]">
-								<xsl:sequence select="fn:string(.)"/>
-							</xsl:for-each>
-						</desc>
-					</xsl:for-each>
-				</xsl:if>
-				<title>
-					<xsl:sequence select="$var4_val"/>
-				</title>
-			</polyline>
-		</xsl:if>
-	</xsl:template>
 	<xsl:template name="user:identifierToColor">
 		<xsl:param name="input" select="()"/>
 		<xsl:call-template name="vmf:vmf1_inputtoresult">
@@ -611,6 +614,7 @@ http://www.altova.com/mapforce
 		</xsl:variable>
 		<polygon>
 			<xsl:sequence select="$var3_val"/>
+			<xsl:attribute name="style" select="'fill:none'"/>
 			<xsl:if test="$var2_resultof_exists">
 				<xsl:variable name="var4_resultof_identifierToColor" as="xs:string?">
 					<xsl:call-template name="user:identifierToColor">
@@ -707,7 +711,7 @@ http://www.altova.com/mapforce
 		<xsl:param name="input" select="()"/>
 		<xsl:choose>
 			<xsl:when test="$input=xs:integer('0')">
-				<xsl:value-of select="'darkred'"/>
+				<xsl:value-of select="'yellow'"/>
 			</xsl:when>
 			<xsl:when test="$input=xs:integer('1')">
 				<xsl:value-of select="'red'"/>
@@ -719,7 +723,7 @@ http://www.altova.com/mapforce
 				<xsl:value-of select="'gold'"/>
 			</xsl:when>
 			<xsl:when test="$input=xs:integer('4')">
-				<xsl:value-of select="'yellow'"/>
+				<xsl:value-of select="'teal'"/>
 			</xsl:when>
 			<xsl:when test="$input=xs:integer('5')">
 				<xsl:value-of select="'greenyellow'"/>
@@ -728,7 +732,7 @@ http://www.altova.com/mapforce
 				<xsl:value-of select="'green'"/>
 			</xsl:when>
 			<xsl:when test="$input=xs:integer('7')">
-				<xsl:value-of select="'teal'"/>
+				<xsl:value-of select="'darkred'"/>
 			</xsl:when>
 			<xsl:when test="$input=xs:integer('8')">
 				<xsl:value-of select="'blue'"/>
