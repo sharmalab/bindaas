@@ -36,7 +36,6 @@ import edu.emory.cci.bindaas.framework.model.QueryEndpoint;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
-import edu.emory.cci.bindaas.framework.model.SubmitEndpoint.Type;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 
 public class ExecutionServiceImpl implements IExecutionService{
