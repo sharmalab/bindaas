@@ -73,7 +73,8 @@ public class NativeAppRunnerSPM implements ISubmitPayloadModifier{
 				fos.close();
 				
 				File outputFile = new File(tempDir, "output-file");
-				String command = descriptor.commandPattern.replace("$input", inputFile.getAbsolutePath()).replace("$output", outputFile.getAbsolutePath());
+				final String command = descriptor.commandPattern.replace("$input", inputFile.getAbsolutePath()).replace("$output", outputFile.getAbsolutePath());
+				
 				final String[] commandList = command.split(" ");
 				
 				Callable<Integer> callable = new Callable<Integer>() {
@@ -90,7 +91,7 @@ public class NativeAppRunnerSPM implements ISubmitPayloadModifier{
 						{
 							processBuilder.directory(new File(descriptor.workingDirectory));
 						}
-
+						log.debug(String.format("Executing command:\n%s $ %s", descriptor.workingDirectory == null ? "" : descriptor.workingDirectory ,command));
 						Process process = processBuilder.start();
 						int exitCode = process.waitFor();
 						return exitCode;
