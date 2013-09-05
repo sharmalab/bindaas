@@ -55,31 +55,31 @@
 			var timestamp =  new Date($message.getTimestamp().getTime()) ;
   #end
   #if ($message.getRequestUri())
-			var requestUri = '$message.getRequestUri().toString()' ;
+			var requestUri = '$esc.java($message.getRequestUri().toString())' ;
 			#else
 			var requestUri = '' ;
    #end
 
    #if ($message.getQueryString())
-			var queryString = '$message.getQueryString().toString()' ;
+			var queryString = '$esc.java($message.getQueryString().toString())' ;
 			#else
 			var queryString = '' ;
 	#end
 
 	#if ($message.getSubject())
-			var subject = '$message.getSubject().toString()';
+			var subject = '$esc.java($message.getSubject().toString())';
 			#else
 			var subject = '' ;
 	#end
 
 	#if ($message.getSource())
-			var source  = '$message.getSource().toString()' ;
+			var source  = '$esc.java($message.getSource().toString())' ;
 			#else
 			var source = '' ;
 	#end
 
 	#if ($message.getEvent())
-			var event  = '$message.getEvent().toString()' ;
+			var event  = '$esc.java($message.getEvent().toString())' ;
 			#else
 			var event = '';
 	#end
