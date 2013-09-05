@@ -131,6 +131,7 @@ public class AuditView extends AbstractRequestHandler {
 			messages = new ArrayList<AuditMessage>();
 			
 		}
+		context.put("esc", velocityEngineWrapper.getEscapeTool());
 		template.merge(context, response.getWriter());
 	}
 
