@@ -1,4 +1,4 @@
-package edu.emory.cci.bindaas.pseudosts;
+package edu.emory.cci.bindaas.trusted_app;
 
 import java.util.HashMap;
 import java.util.List;

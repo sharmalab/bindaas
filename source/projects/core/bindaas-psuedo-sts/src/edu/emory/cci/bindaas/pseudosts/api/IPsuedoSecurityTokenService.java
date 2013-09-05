@@ -11,11 +11,5 @@ public interface IPsuedoSecurityTokenService {
 	@GET
 	@Path("/")
 	public Response getAPIKey(@HeaderParam("Authorization") String authorizationHeader , @QueryParam("clientId") String clientId , @QueryParam("lifetime") Integer lifetime ) ;
-	
-	@GET
-	@Path("/trustedApplication")
-	public Response getAPIKey(@HeaderParam("_username") String username ,   @HeaderParam("_applicationID") String applicationID ,@HeaderParam("_salt") String salt , @HeaderParam("_digest") String digest  , @QueryParam("lifetime") Integer lifetime ) ;
-	
-	
-
+		
 }

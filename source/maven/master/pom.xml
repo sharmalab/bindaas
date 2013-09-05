@@ -198,5 +198,6 @@
 		<module>heartbeat-monitor-client</module>
 		<module>heartbeat-monitor-server</module>
 		<module>native-app-runner-SPM</module>
+		<module>bindaas-trusted-application-manager</module>
 	</modules>
 </project>
