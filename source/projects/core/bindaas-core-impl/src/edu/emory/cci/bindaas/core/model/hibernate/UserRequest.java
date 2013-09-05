@@ -14,6 +14,10 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 public class UserRequest {
 
+	public enum Stage {
+		pending,accepted,revoked,denied
+	}
+	
 	public UserRequest()
 	{
 		requestDate = new Date();
@@ -39,7 +43,7 @@ public class UserRequest {
 	private String apiKey;
 	
 	@Column(nullable = false)
-	private String stage; // pending|approved|revoked|denied
+	private String stage; // pending|accepted|revoked|denied
 	
 	
 	public Long getId() {
@@ -70,6 +74,11 @@ public class UserRequest {
 	}
 	public String getReason() {
 		return reason;
+	}
+	
+	public void setStage(Stage stage)
+	{
+		this.stage = stage.name();
 	}
 	
 	public void setReason(String reason) {

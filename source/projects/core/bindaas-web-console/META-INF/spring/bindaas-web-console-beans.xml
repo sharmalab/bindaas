@@ -110,7 +110,7 @@
 	<property name="managementTasks" ref="managementTasks"></property>
 	<property name="versionCommand" ref="versionCommand"></property>
 </bean>
-
+<!-- 
 <bean id="manageUserRegistration" class="edu.emory.cci.bindaas.webconsole.servlet.action.ManageUserRegistration" init-method="init">
 	<property name="uriTemplate" value="/administration/manageUserRegistration"></property>
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
@@ -118,7 +118,7 @@
 	<property name="sessionFactory" ref="sessionFactory"></property>
 	<property name="versionCommand" ref="versionCommand"></property>
 </bean>
-
+ -->
 <bean id="serverAdministrationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.ServerAdministrationPanelAction"></bean>
 <bean id="securityConfigurationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.SecurityConfigurationPanelAction"></bean>
 <bean id="userManagementNotificationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.UserManagementNotificationPanelAction"></bean>
@@ -148,7 +148,7 @@
 
 <bean id="userMgmtAction" class="edu.emory.cci.bindaas.webconsole.admin.UserManagementPanelAction">
 	<property name="mailService" ref="mailService"></property>
-	<property name="sessionFactory" ref="sessionFactory"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
 </bean>
 <bean id="checkLDAPConnectionAction" class="edu.emory.cci.bindaas.webconsole.admin.CheckLDAPConnectionAction"></bean>
 
@@ -174,7 +174,7 @@
 			<ref bean="submitEndpointView"/>
 			<ref bean="profileView"/>
 			<ref bean="queryBrowserView"/>
-			<ref bean="manageUserRegistration"/>
+			<!-- <ref bean="manageUserRegistration"/> -->
 			<ref bean="administration"/>
 			<ref bean="logoutAction"/>
 		</list>
@@ -190,7 +190,7 @@
 <bean id="postLoginAction" class="edu.emory.cci.bindaas.webconsole.PostLoginAction">
 	<property name="defaultLoginTarget" value="/dashboard/"></property>
 	<property name="loginView" ref="loginView"></property>
-	<property name="sessionFactory" ref="sessionFactory"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
 </bean>
 
 
@@ -326,6 +326,7 @@
 <osgi:reference interface="edu.emory.cci.bindaas.core.api.IProviderRegistry" id="providerRegistry"></osgi:reference>
 <osgi:reference interface="edu.emory.cci.bindaas.core.api.IModifierRegistry" id="modifierRegistry"></osgi:reference>
 <osgi:reference interface="edu.emory.cci.bindaas.security.api.IAuditProvider" id="auditProvider"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager" id="apiKeyManager"></osgi:reference>
 
 </beans>
 

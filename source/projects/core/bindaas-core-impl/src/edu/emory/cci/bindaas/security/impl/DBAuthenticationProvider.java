@@ -1,18 +1,13 @@
 package edu.emory.cci.bindaas.security.impl;
 
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 
-import edu.emory.cci.bindaas.core.bundle.Activator;
-import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
+import edu.emory.cci.bindaas.core.apikey.api.APIKeyManagerException;
+import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
@@ -21,6 +16,19 @@ public class DBAuthenticationProvider implements IAuthenticationProvider {
 
 		
 	private Log log = LogFactory.getLog(getClass());
+	private IAPIKeyManager apiKeyManager;
+	
+	
+	public IAPIKeyManager getApiKeyManager() {
+		return apiKeyManager;
+	}
+
+
+	public void setApiKeyManager(IAPIKeyManager apiKeyManager) {
+		this.apiKeyManager = apiKeyManager;
+	}
+
+
 	public void init()
 	{
 
@@ -67,37 +75,17 @@ public class DBAuthenticationProvider implements IAuthenticationProvider {
 
 
 	@Override
-	public BindaasUser loginUsingAPIKey(String api_key)
+	public BindaasUser loginUsingAPIKey(String apiKey)
 			throws AuthenticationException {
-		
-		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
-		if(sessionFactory!=null)
-		{
-			Session session = sessionFactory.openSession();
-			try{
-				
-				@SuppressWarnings("unchecked")
-				List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).add(Restrictions.eq("stage",	"accepted")).add(Restrictions.eq("apiKey", api_key)).list();
-				if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
-				{
-					UserRequest request = listOfValidKeys.get(0);
-					if(request.getDateExpires().after(new Date()))
-					{
-						BindaasUser bindaasUser = new BindaasUser(request.getEmailAddress());
-						bindaasUser.addProperty(BindaasUser.EMAIL_ADDRESS, request.getEmailAddress());
-						bindaasUser.addProperty(BindaasUser.FIRST_NAME, request.getFirstName());
-						bindaasUser.addProperty(BindaasUser.LAST_NAME, request.getLastName());
-						return bindaasUser;
-					}
-				}
-			}
-			catch(Exception e)
-			{
-				log.error(e);
-			}
+		try {
+			return apiKeyManager.lookupUser(apiKey);
+		} catch (APIKeyManagerException e) {
+			log.error("Exception in Authentication Module" , e);
+			throw new AuthenticationException(apiKey);
 		}
+		
 	
-		throw new AuthenticationException(api_key);
+		
 	}
 
 }

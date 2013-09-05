@@ -13,6 +13,22 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 public class HistoryLog {
+	public static enum ActivityType{
+		
+		SYSTEM_APPROVE ("system-approve") , APPROVE("approve") , REFRESH("refresh") , REVOKE("revoke") , DENY("deny") ;
+		
+		private String value;
+		
+		ActivityType(String value)
+		{
+			this.value = value;
+		}
+		
+		public String toString(){
+			return value;
+		}
+		
+	}
 
 	public HistoryLog()
 	{
@@ -71,5 +87,8 @@ public class HistoryLog {
 		this.initiatedBy = initiatedBy;
 	}
 	
+	public void setActivityType(ActivityType activityType) {
+		this.activityType = activityType.toString();
+	}
 	
 }

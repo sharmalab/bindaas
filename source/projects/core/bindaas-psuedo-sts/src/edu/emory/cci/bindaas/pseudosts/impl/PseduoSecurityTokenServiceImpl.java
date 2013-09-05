@@ -1,14 +1,9 @@
 package edu.emory.cci.bindaas.pseudosts.impl;
 
 import java.security.MessageDigest;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Dictionary;
-import java.util.GregorianCalendar;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.UUID;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -19,9 +14,6 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
@@ -33,9 +25,9 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import edu.emory.cci.bindaas.core.apikey.api.APIKey;
+import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
-import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
-import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.pseudosts.TrustedApplicationRegistry;
 import edu.emory.cci.bindaas.pseudosts.TrustedApplicationRegistry.TrustedApplicationEntry;
@@ -55,7 +47,17 @@ public class PseduoSecurityTokenServiceImpl implements
 	private TrustedApplicationRegistry defaultTrustedApplications;
 	private DynamicObject<TrustedApplicationRegistry> trustedApplicationRegistry;
 	private final static long ROUNDOFF_FACTOR = 100000;
+	private IAPIKeyManager apiKeyManager;
 	
+	
+	public IAPIKeyManager getApiKeyManager() {
+		return apiKeyManager;
+	}
+
+	public void setApiKeyManager(IAPIKeyManager apiKeyManager) {
+		this.apiKeyManager = apiKeyManager;
+	}
+
 	public TrustedApplicationRegistry getDefaultTrustedApplications() {
 		return defaultTrustedApplications;
 	}
@@ -153,11 +155,11 @@ public class PseduoSecurityTokenServiceImpl implements
 							int lifespan = lifetime!=null ? lifetime : DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS;
 							clientId = clientId!=null ? clientId : DEFAULT_CLIENT_ID ;
 							
-							UserRequest sessionKey = generateApiKey(bindaasUser, lifespan, clientId);
+							APIKey sessionKey = generateApiKey(bindaasUser, lifespan, clientId);
 							JsonObject retVal = new JsonObject();
-							retVal.add("api_key", new JsonPrimitive(sessionKey.getApiKey()));
+							retVal.add("api_key", new JsonPrimitive(sessionKey.getValue()));
 							retVal.add("clientId", new JsonPrimitive(clientId));
-							retVal.add("expires", new JsonPrimitive(sessionKey.getDateExpires().toString()));
+							retVal.add("expires", new JsonPrimitive(sessionKey.getExpires().toString()));
 							
 							return Response.ok().entity(retVal.toString()).type("application/json").build();
 						}
@@ -251,82 +253,10 @@ public class PseduoSecurityTokenServiceImpl implements
 	
 	
 	
-	private UserRequest generateApiKey(BindaasUser principal , Integer lifespan , String clientId) throws Exception {
+	private APIKey generateApiKey(BindaasUser principal , Integer lifespan , String clientId) throws Exception {
 
-		SessionFactory sessionFactory = Activator
-				.getService(SessionFactory.class);
-		if (sessionFactory != null) {
-			Session session = sessionFactory.openSession();
-			try {
-				session.beginTransaction();
-
-				String emailAddress = principal
-						.getProperty(BindaasUser.EMAIL_ADDRESS) != null ? principal
-						.getProperty(BindaasUser.EMAIL_ADDRESS).toString()
-						: principal.getName() + "@" + principal.getDomain();
-				
-
-				@SuppressWarnings("unchecked")
-				List<UserRequest> listOfValidKeys = (List<UserRequest>) session
-						.createCriteria(UserRequest.class)
-						.add(Restrictions.eq("stage", "accepted"))
-						.add(Restrictions.eq("emailAddress", emailAddress))
-						.list();
-
-				if (listOfValidKeys != null && listOfValidKeys.size() > 0) {
-					UserRequest request = listOfValidKeys.get(0); 
-					if (request.getDateExpires().after(new Date())) {
-
-						// generate a short lived api-key for this user
-						UserRequest sessionKey = new UserRequest();
-						sessionKey.setApiKey(UUID.randomUUID().toString());
-						sessionKey.setFirstName(request.getFirstName());
-						sessionKey.setLastName(request.getLastName());
-						sessionKey.setEmailAddress(principal.getName() + "@" + clientId  );
-						sessionKey.setReason(request.getReason());
-						sessionKey.setRequestDate(new Date());
-						sessionKey.setStage("accepted");
-						
-						GregorianCalendar calendar = new GregorianCalendar();
-						
-						calendar.add(Calendar.SECOND , lifespan);
-						Date newExpirationDate = request.getDateExpires().before(calendar.getTime()) ? request.getDateExpires() : calendar.getTime();
-						sessionKey.setDateExpires(newExpirationDate);
-						
-						
-						session.save(sessionKey);
-
-						HistoryLog historyLog = new HistoryLog();
-						historyLog.setActivityType("system-approve");
-						historyLog.setComments("Auto generated by STS");
-						historyLog.setInitiatedBy("system-STS");
-						historyLog.setUserRequest(sessionKey);
-
-						session.save(historyLog);
-						session.getTransaction().commit();
-						
-						return sessionKey;
-					} else {
-						
-						throw new AuthenticationException("The API Key of user [" + principal
-								+ "] has expired. The User must reapply");
-					}
-				} else {
-					throw new AuthenticationException("Cannot generate API-Key for [" + principal + "]. The User must apply for it first!!");
-				}
-
-			} catch (Exception e) {
-				log.error(e);
-				session.getTransaction().rollback();
-				throw e;
-			} finally {
-				session.close();
-			}
-
-		}
-		else
-			throw new Exception("SessionFactory service not available");
-
+		APIKey apiKey = apiKeyManager.createShortLivedAPIKey(principal, lifespan, clientId);
+		return apiKey;
 	}
 	
 	
@@ -380,15 +310,15 @@ public class PseduoSecurityTokenServiceImpl implements
 						: DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS;
 				String applicationName = trustedAppEntry.getName();
 				try {
-					UserRequest sessionKey = generateApiKey(bindaasUser,
+					APIKey sessionKey = generateApiKey(bindaasUser,
 							lifespan, applicationName);
 					JsonObject retVal = new JsonObject();
 					retVal.add("api_key",
-							new JsonPrimitive(sessionKey.getApiKey()));
+							new JsonPrimitive(sessionKey.getValue()));
 					retVal.add("applicationID",
 							new JsonPrimitive(applicationID));
 					retVal.add("expires", new JsonPrimitive(sessionKey
-							.getDateExpires().toString()));
+							.getExpires().toString()));
 					retVal.add("applicationName", new JsonPrimitive(
 							applicationName));
 					return Response.ok().entity(retVal.toString())

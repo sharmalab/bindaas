@@ -20,6 +20,7 @@ import org.hibernate.criterion.Restrictions;
 
 import edu.emory.cci.bindaas.commons.mail.api.IMailService;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
+import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
@@ -29,7 +30,7 @@ import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
 public class PostUserLoginServlet extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	public static final String servletLocation = "/user/postAuthenticate";
 	private static String newRegistrationTemplateName = "seekReason.vt";
@@ -37,135 +38,148 @@ public class PostUserLoginServlet extends HttpServlet {
 	private String loginPage = "/user/login";
 	private String defaultLoginTarget = "/user/dashboard/queryBrowser";
 	private static Template simpleMessageTemplate;
-	
+
 	private static Template newRegistrationTemplate;
-private VelocityEngineWrapper velocityEngineWrapper;
-private IMailService mailService;
-private SessionFactory sessionFactory;
-private VersionCommand versionCommand;
+	private VelocityEngineWrapper velocityEngineWrapper;
+	private IMailService mailService;
+	private SessionFactory sessionFactory;
+	private VersionCommand versionCommand;
 
-public IMailService getMailService() {
-	return mailService;
-}
+	public IMailService getMailService() {
+		return mailService;
+	}
 
-public void setMailService(IMailService mailService) {
-	this.mailService = mailService;
-}
+	public void setMailService(IMailService mailService) {
+		this.mailService = mailService;
+	}
 
-public SessionFactory getSessionFactory() {
-	return sessionFactory;
-}
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
 
-public void setSessionFactory(SessionFactory sessionFactory) {
-	this.sessionFactory = sessionFactory;
-}
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
-public VersionCommand getVersionCommand() {
-	return versionCommand;
-}
+	public VersionCommand getVersionCommand() {
+		return versionCommand;
+	}
 
-public void setVersionCommand(VersionCommand versionCommand) {
-	this.versionCommand = versionCommand;
-}
+	public void setVersionCommand(VersionCommand versionCommand) {
+		this.versionCommand = versionCommand;
+	}
 
-	
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
 	}
 
-	public void setVelocityEngineWrapper(VelocityEngineWrapper velocityEngineWrapper) {
+	public void setVelocityEngineWrapper(
+			VelocityEngineWrapper velocityEngineWrapper) {
 		this.velocityEngineWrapper = velocityEngineWrapper;
 	}
 
-	public void init()
-	{
-		simpleMessageTemplate = velocityEngineWrapper.getVelocityTemplateByName(simpleMessageTemplateName);
-		newRegistrationTemplate = velocityEngineWrapper.getVelocityTemplateByName(newRegistrationTemplateName);
+	public void init() {
+		simpleMessageTemplate = velocityEngineWrapper
+				.getVelocityTemplateByName(simpleMessageTemplateName);
+		newRegistrationTemplate = velocityEngineWrapper
+				.getVelocityTemplateByName(newRegistrationTemplateName);
 	}
-	
-	
+
 	private Log log = LogFactory.getLog(getClass());
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		BindaasUser bindaasUser = (BindaasUser) req.getSession().getAttribute("userLoggedIn");
-		String loginTarget = (String) (req.getSession().getAttribute("loginTarget") != null ? req.getSession().getAttribute("loginTarget") : defaultLoginTarget);
-		
-		if(bindaasUser != null)
-		{
+		BindaasUser bindaasUser = (BindaasUser) req.getSession().getAttribute(
+				"userLoggedIn");
+		String loginTarget = (String) (req.getSession().getAttribute(
+				"loginTarget") != null ? req.getSession().getAttribute(
+				"loginTarget") : defaultLoginTarget);
+
+		if (bindaasUser != null) {
 			try {
-				UserRequest userRequest = getUserRequest(bindaasUser.getProperty(BindaasUser.EMAIL_ADDRESS).toString() , "pending");
-				if(userRequest!=null)
-				{
+				UserRequest userRequest = getUserRequest(bindaasUser
+						.getProperty(BindaasUser.EMAIL_ADDRESS).toString(),
+						"pending");
+				if (userRequest != null) {
 					// pending approval
 					VelocityContext context = new VelocityContext();
-					context.put("message", "Your application is already under review. You shall hear from us shortly.");
+					context.put("message",
+							"Your application is already under review. You shall hear from us shortly.");
 					simpleMessageTemplate.merge(context, resp.getWriter());
-				}
-				else
-				{
-					userRequest = getUserRequest(bindaasUser.getProperty(BindaasUser.EMAIL_ADDRESS).toString() , "accepted");
-					if(userRequest!=null)
-					{
+				} else {
+					userRequest = getUserRequest(
+							bindaasUser.getProperty(BindaasUser.EMAIL_ADDRESS)
+									.toString(), "accepted");
+					if (userRequest != null) {
 						// login
-						bindaasUser.addProperty("apiKey", userRequest.getApiKey());
+						bindaasUser.addProperty("apiKey",
+								userRequest.getApiKey());
 						resp.sendRedirect(loginTarget);
-					}
-					else
-					{
+					} else {
 						// seek reason
 						VelocityContext context = new VelocityContext();
-						context.put("firstName" , bindaasUser.getProperty(BindaasUser.FIRST_NAME).toString() );
-						context.put("lastName" , bindaasUser.getProperty(BindaasUser.LAST_NAME).toString() );
-						context.put("emailAddress" , bindaasUser.getProperty(BindaasUser.EMAIL_ADDRESS).toString() );
-						
+						context.put("firstName",
+								bindaasUser.getProperty(BindaasUser.FIRST_NAME)
+										.toString());
+						context.put("lastName",
+								bindaasUser.getProperty(BindaasUser.LAST_NAME)
+										.toString());
+						context.put(
+								"emailAddress",
+								bindaasUser.getProperty(
+										BindaasUser.EMAIL_ADDRESS).toString());
+
 						/**
 						 * Add version information
 						 */
 						String versionHeader = "";
-						
-						if(versionCommand!=null)
-						{
+
+						if (versionCommand != null) {
 							String frameworkBuilt = "";
-						
+
 							String buildDate = "";
-							try{
-								Properties versionProperties = versionCommand.getProperties();
-								frameworkBuilt = String.format("%s.%s.%s", versionProperties.get("bindaas.framework.version.major") , versionProperties.get("bindaas.framework.version.minor") , versionProperties.get("bindaas.framework.version.revision") );
-						
-								buildDate = versionProperties.getProperty("bindaas.build.date");
-							}catch(NullPointerException e)
-							{
+							try {
+								Properties versionProperties = versionCommand
+										.getProperties();
+								frameworkBuilt = String
+										.format("%s.%s.%s",
+												versionProperties
+														.get("bindaas.framework.version.major"),
+												versionProperties
+														.get("bindaas.framework.version.minor"),
+												versionProperties
+														.get("bindaas.framework.version.revision"));
+
+								buildDate = versionProperties
+										.getProperty("bindaas.build.date");
+							} catch (NullPointerException e) {
 								log.warn("Version Header not set");
 							}
-							versionHeader = String.format("System built <strong>%s</strong>  Build date <strong>%s<strong>", frameworkBuilt,buildDate);
-						}
-						else
-						{
+							versionHeader = String
+									.format("System built <strong>%s</strong>  Build date <strong>%s<strong>",
+											frameworkBuilt, buildDate);
+						} else {
 							log.warn("Version Header not set");
 						}
 						context.put("versionHeader", versionHeader);
-						newRegistrationTemplate.merge(context, resp.getWriter());
+						newRegistrationTemplate
+								.merge(context, resp.getWriter());
 					}
 				}
-			
-			
-			}
-			catch(Exception e)
-			{
+
+			} catch (Exception e) {
 				ErrorView.handleError(resp, e);
 			}
-			//template.merge(context, resp.getWriter());
-			
-		}
-		else
-		{
+			// template.merge(context, resp.getWriter());
+
+		} else {
 			resp.sendRedirect(loginPage);
 		}
 	}
 
-	private UserRequest getUserRequest(String emailAddress,String stage) throws Exception {
+	private UserRequest getUserRequest(String emailAddress, String stage)
+			throws Exception {
 		if (sessionFactory != null) {
 			Session session = sessionFactory.openSession();
 			Transaction transaction = null;
@@ -176,8 +190,7 @@ public void setVersionCommand(VersionCommand versionCommand) {
 				List<UserRequest> list = session
 						.createCriteria(UserRequest.class)
 						.add(Restrictions.eq("emailAddress", emailAddress))
-						.add(Restrictions.eq("stage", stage))
-						.list();
+						.add(Restrictions.eq("stage", stage)).list();
 
 				if (list != null && list.size() > 0) {
 					return list.get(0);
@@ -193,95 +206,96 @@ public void setVersionCommand(VersionCommand versionCommand) {
 
 			} finally {
 				session.close();
-				
+
 			}
-		}
-		else
-		{
+		} else {
 			throw new Exception("Hibernate Service not available");
 		}
 
 	}
 
-	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		BindaasUser bindaasUser = (BindaasUser) req.getSession().getAttribute("userLoggedIn");
+		BindaasUser bindaasUser = (BindaasUser) req.getSession().getAttribute(
+				"userLoggedIn");
 		String reason = req.getParameter("reason");
 		String firstName = req.getParameter("firstName");
 		String lastName = req.getParameter("lastName");
 		String emailAddress = req.getParameter("emailAddress");
-		
-		if(bindaasUser!=null)
-		{
-			
-			
+
+		if (bindaasUser != null) {
+
 			UserRequest userRequest;
 			try {
-					userRequest = getUserRequest(emailAddress, "pending");
-					if(userRequest!=null)
-					{
-						VelocityContext context = new VelocityContext();
-						context.put("message", "Your application is already under review. You shall hear from us shortly.");
-						simpleMessageTemplate.merge(context, resp.getWriter());
-					}
-					else
-					{
-						userRequest = new UserRequest();
-						userRequest.setFirstName(firstName);
-						userRequest.setLastName(lastName);
-						userRequest.setEmailAddress(emailAddress);
-						
-						userRequest.setReason(reason);
-						userRequest.setStage("pending");
-						
-						
-						if (sessionFactory != null) {
-							Session session = sessionFactory.openSession();
-							Transaction transaction = null;
-							try {
-								transaction = session.beginTransaction();
-				
-								session.save(userRequest);
-								transaction.commit();
+				userRequest = getUserRequest(emailAddress, "pending");
+				if (userRequest != null) {
+					VelocityContext context = new VelocityContext();
+					context.put("message",
+							"Your application is already under review. You shall hear from us shortly.");
+					simpleMessageTemplate.merge(context, resp.getWriter());
+				} else {
+					userRequest = new UserRequest();
+					userRequest.setFirstName(firstName);
+					userRequest.setLastName(lastName);
+					userRequest.setEmailAddress(emailAddress);
 
-								VelocityContext context = new VelocityContext();
-								context.put("message",
-										"Your application is under review. You shall hear from us shortly.");
-								simpleMessageTemplate.merge(context, resp.getWriter());
+					userRequest.setReason(reason);
+					userRequest.setStage(Stage.pending);
 
-								// send email notification to the admin
+					if (sessionFactory != null) {
+						Session session = sessionFactory.openSession();
+						Transaction transaction = null;
+						try {
+							transaction = session.beginTransaction();
 
-								@SuppressWarnings("unchecked")
-								DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminconsoleConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas.adminconsole)");
-								
-								if (dynamicAdminconsoleConfiguration != null) {
-									Boolean enabled = dynamicAdminconsoleConfiguration.getObject().getUserAccountManagement().getEnableUserSignupNotification();
-									if (enabled != null && enabled.booleanValue()) {
-										try {
-											 mailService
-													.sendMail(dynamicAdminconsoleConfiguration.getObject().getUserAccountManagement().getNotificationRecepients()
-															,
-															"New User Signup Notification",
-															String.format(
-																	"A new user is requesting access to Bindaas API.\nFirst Name : %s\nLast Name : %s\nEmail Address : %s\nReason : %s",
-																	userRequest
-																			.getFirstName(),
-																	userRequest
-																			.getLastName(),
-																	userRequest
-																			.getEmailAddress(),
-																	userRequest
-																			.getReason()));
-										} catch (Exception e) {
-											log.error("Email notification to the admin was not sent");
-										}
+							session.save(userRequest);
+							transaction.commit();
+
+							VelocityContext context = new VelocityContext();
+							context.put("message",
+									"Your application is under review. You shall hear from us shortly.");
+							simpleMessageTemplate.merge(context,
+									resp.getWriter());
+
+							// send email notification to the admin
+
+							@SuppressWarnings("unchecked")
+							DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminconsoleConfiguration = Activator
+									.getService(DynamicObject.class,
+											"(name=bindaas.adminconsole)");
+
+							if (dynamicAdminconsoleConfiguration != null) {
+								Boolean enabled = dynamicAdminconsoleConfiguration
+										.getObject().getUserAccountManagement()
+										.getEnableUserSignupNotification();
+								if (enabled != null && enabled.booleanValue()) {
+									try {
+										mailService
+												.sendMail(
+														dynamicAdminconsoleConfiguration
+																.getObject()
+																.getUserAccountManagement()
+																.getNotificationRecepients(),
+														"New User Signup Notification",
+														String.format(
+																"A new user is requesting access to Bindaas API.\nFirst Name : %s\nLast Name : %s\nEmail Address : %s\nReason : %s",
+																userRequest
+																		.getFirstName(),
+																userRequest
+																		.getLastName(),
+																userRequest
+																		.getEmailAddress(),
+																userRequest
+																		.getReason()));
+									} catch (Exception e) {
+										log.error("Email notification to the admin was not sent");
 									}
-								} else {
-									log.error("Unable to retrieve Bindaas Properties");
 								}
-							
+							} else {
+								log.error("Unable to retrieve Bindaas Properties");
+							}
+
 						} catch (Exception e) {
 							if (transaction != null)
 								transaction.rollback();
@@ -292,25 +306,20 @@ public void setVersionCommand(VersionCommand versionCommand) {
 							session.close();
 							req.getSession().invalidate();
 						}
-						} else {
-							ErrorView.handleError(resp, new Exception(
-									"Session Factory not available"));
-						}
+					} else {
+						ErrorView.handleError(resp, new Exception(
+								"Session Factory not available"));
+					}
 
-					} 
-					
+				}
+
 			} catch (Exception e1) {
 				ErrorView.handleError(resp, e1);
 			}
-		}
-		else
-		{
+		} else {
 			// send back to login page
 			resp.sendRedirect(loginPage);
 		}
-			
-			
-			
 
 	}
 

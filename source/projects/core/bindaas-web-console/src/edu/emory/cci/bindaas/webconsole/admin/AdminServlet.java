@@ -117,6 +117,7 @@ public class AdminServlet extends AbstractRequestHandler {
 				List<?> acceptedRequests = session
 						.createQuery(
 								"from UserRequest where stage = :stage order by requestDate desc")
+								.setFetchSize(MAX_DISPLAY_THRESHOLD)
 						.setString("stage", "accepted").list();
 				List<?> historyLog = session.createQuery(
 						"from HistoryLog order by activityDate desc").setFetchSize(MAX_DISPLAY_THRESHOLD).list();

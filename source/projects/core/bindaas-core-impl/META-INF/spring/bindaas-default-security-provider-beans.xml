@@ -72,7 +72,9 @@
 	
 	<bean id="dbAuthenticationProvider"
 		class="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"
-		init-method="init"></bean>
+		init-method="init">
+		<property name="apiKeyManager" ref="apiKeyManager"></property>
+		</bean>
 		
 <!-- Blueprint Exports -->
 <osgi:service ref="dbAuthenticationProvider" interface="edu.emory.cci.bindaas.security.api.IAuthenticationProvider">

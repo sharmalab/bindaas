@@ -1,26 +1,22 @@
 package edu.emory.cci.bindaas.webconsole.admin;
 
-import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
 import edu.emory.cci.bindaas.commons.mail.api.IMailService;
-import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
-import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
+import edu.emory.cci.bindaas.core.apikey.api.APIKey;
+import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
+import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
+import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
@@ -29,22 +25,19 @@ public class UserManagementPanelAction implements IAdminAction {
 	private String actionName;
 	private Log log = LogFactory.getLog(getClass());
 	private IMailService mailService;
+	private IAPIKeyManager apiKeyManager;
 	
+	public IAPIKeyManager getApiKeyManager() {
+		return apiKeyManager;
+	}
+	public void setApiKeyManager(IAPIKeyManager apiKeyManager) {
+		this.apiKeyManager = apiKeyManager;
+	}
 	public IMailService getMailService() {
 		return mailService;
 	}
 	public void setMailService(IMailService mailService) {
 		this.mailService = mailService;
-	}
-
-	private SessionFactory sessionFactory;
-
-	
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
 	}
 
 	
@@ -57,104 +50,54 @@ public class UserManagementPanelAction implements IAdminAction {
 		return actionName;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public String doAction(JsonObject payload , HttpServletRequest request) throws Exception {
 		BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
 		Request requestObject = GSONUtil.getGSONInstance().fromJson(payload, Request.class);
 	
-		if(sessionFactory!=null)
+		
+		String emailMessage =  null;
+		String emailAddress = null;
+		if(requestObject.entityAction!=null && (requestObject.entityAction.equals(ActivityType.APPROVE.toString()) || requestObject.entityAction.equals(ActivityType.REFRESH.toString())))
 		{
-			Session session  = sessionFactory.openSession();
 			
-			try {
-					session.beginTransaction();
-					@SuppressWarnings("unchecked")
-					List<UserRequest> list = session.createCriteria(UserRequest.class).add(Restrictions.eq("id", requestObject.entityId)). list();
-					String emailMessage = null;
-					if(list!=null && list.size() > 0)
-					{
-						UserRequest userRequest = list.get(0);
-						HistoryLog historyLog = new HistoryLog();
-						historyLog.setComments(requestObject.entityComments);
-						historyLog.setInitiatedBy(admin.getName());
-						historyLog.setUserRequest(userRequest);
-						
-						
-						
-						if(requestObject.entityAction!=null && (requestObject.entityAction.equals("approve") || requestObject.entityAction.equals("refresh")))
-						{
-							userRequest.setStage("accepted");
-							userRequest.setApiKey( URLEncoder.encode( UUID.randomUUID().toString()  ));
-							userRequest.setDateExpires(requestObject.getExpiration());
-							
-							emailMessage = String.format("Congratulations!\nYour application has been accepted." +
-									"\nYour new API-Key : %s \nExpires On : %s ", userRequest.getApiKey() , userRequest.getDateExpires().toString());
-							
-						}
-						else if(requestObject.entityAction!=null && requestObject.entityAction.equals("revoke") )
-						{
-							userRequest.setStage("revoked");
-							emailMessage = "Your access has been revoked by the administrator";
-							
-							
-						}
-						else if(requestObject.entityAction!=null && requestObject.entityAction.equals("deny") )
-						{
-							userRequest.setStage("denied");
-							emailMessage = "Your application has been denied by the administrator";
-						}
-						else
-						{
-							throw new Exception("Action not defined");
-						}
-						
-						historyLog.setActivityType(requestObject.entityAction);
-						
-						session.save(userRequest);
-						session.save(historyLog);
-						
-//						IMailService mailService = Activator.getService(IMailService.class);
-					
-						if(mailService != null) 
-						{
-							try{
-							mailService.sendMail(userRequest.getEmailAddress() , "Your Bindaas API Key status" , emailMessage);
-							}catch(Exception e)
-							{
-								log.error(String.format("Unable send mail notification. Message [%s] not sent to [%s]" , emailMessage ,userRequest.getEmailAddress() ));
-							}
-						}
-						else
-							log.error(String.format("Mail Service not available. Message [%s] not sent to [%s]" , emailMessage ,userRequest.getEmailAddress() ));
-						
-						
-					}
-					else
-					{
-						throw new Exception("No results found matching id = [" + requestObject.entityId + "]");
-					}
-					
-					session.getTransaction().commit();
-					return "success";
-					
-			}
-			catch(Exception e)
-			{
-				session.getTransaction().rollback();
-				log.error(e);
-				throw e;
-			}
-			finally{
-				session.close();
-			}
+			APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.accepted, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.valueOf(requestObject.entityAction.toUpperCase()) );
+			emailMessage = String.format("Congratulations!\nYour application has been accepted." +
+					"\nYour new API-Key : %s \nExpires On : %s ", apiKey.getValue() , apiKey.getExpires().toString());
+			emailAddress = apiKey.getEmailAddress();
+			
+		}
+		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.REVOKE.toString()) )
+		{
+			APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
+			emailMessage = "Your access has been revoked by the administrator";
+			emailAddress = apiKey.getEmailAddress();
+			
+		}
+		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.DENY.toString()) )
+		{
+			APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.denied, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.DENY );
+			emailMessage = "Your application has been denied by the administrator";
+			emailAddress = apiKey.getEmailAddress();
 		}
 		else
 		{
-			throw new Exception("Session Factory not available");
-			
+			throw new Exception("Action not defined");
 		}
-
+		
+		if(mailService != null) 
+		{
+			try{
+				mailService.sendMail(emailAddress , "Your Bindaas API Key status" , emailMessage);
+			}catch(Exception e)
+			{
+				log.error(String.format("Unable send mail notification. Message [%s] not sent to [%s]" , emailMessage , emailAddress ));
+			}
+		}
+		else
+			log.error(String.format("Mail Service not available. Message [%s] not sent to [%s]" , emailMessage , emailAddress ));
+		
+		return "success";
 	}
 	
 	public static class Request {
