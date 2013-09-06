@@ -7,6 +7,7 @@
   "enableAudit": true,
   "authenticationProviderClass": "edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider",
   "authorizationProviderClass": "edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider",
-  "auditProviderClass": "edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider",
-  "proxyUrl": "http://localhost:9099"
+  "auditProviderClass": "edu.emory.cci.bindaas.security.impl.DBAuditProvider",
+  "proxyUrl": "http://localhost:9099",
+  "instanceName": "Yusuf Nadir Saghar’s MacBook Pro"
 }

@@ -32,6 +32,11 @@
 			<ref bean="errorServlet"/>
 			<ref bean="postLogonServlet"/>
 			<ref bean="usernamePasswordServlet"/>
+			<ref bean="projectExplorerServlet"/>
+			<ref bean="editDataProviderServlet"/>
+			<ref bean="dashboardServlet"/>
+			
+			
 		</list>
 	</property>
 </bean>
@@ -83,6 +88,35 @@
 	<property name="loginServlet" ref="loginServlet"></property>
 	<property name="sessionFactory" ref="sessionFactory"></property>
 </bean>
+
+
+<!-- Dashboard -->
+<bean id="dashboardServlet" class="edu.emory.cci.bindaas.lite.dashboard.DashboardServlet">
+	<property name="errorServlet" ref="errorServlet"></property>
+	<property name="servletPath" value="/bindaas/lite/admin/dashboard"></property>
+	<property name="templateName" value="edu.emory.cci.bindaas.lite.dashboard_dashboard.html"></property>
+	<property name="velocityWrapper" ref="velocityWrapper"></property>
+	<property name="projectExplorerServlet" ref="projectExplorerServlet"></property>
+ </bean>
+
+<!-- Project Explorer -->
+<bean id="projectExplorerServlet" class="edu.emory.cci.bindaas.lite.projects.ProjectExplorerServlet">
+	<property name="errorServlet" ref="errorServlet"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="servletPath" value="/bindaas/lite/admin/projects/explorer"></property>
+	<property name="templateName" value="edu.emory.cci.bindaas.lite.projects_explorer.html"></property>
+	<property name="velocityWrapper" ref="velocityWrapper"></property>
+ </bean>
+
+<bean id="editDataProviderServlet" class="edu.emory.cci.bindaas.lite.projects.EditDataProviderServlet">
+	<property name="errorServlet" ref="errorServlet"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="servletPath" value="/bindaas/lite/admin/projects/dataProvider/edit"></property>
+	
+ </bean>
+
+
+
 
 <!-- Adminconsole Configuration -->
 

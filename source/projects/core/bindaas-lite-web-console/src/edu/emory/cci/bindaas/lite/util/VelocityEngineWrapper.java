@@ -2,6 +2,7 @@ package edu.emory.cci.bindaas.lite.util;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,6 +61,7 @@ public class VelocityEngineWrapper {
 	{
 		VelocityContext velocityContext = new VelocityContext(context);
 		velocityContext.put("esc", escapeTool);
+		velocityContext.put("UUID", UUID.class);
 		return velocityContext;
 	}
 	
@@ -67,6 +69,8 @@ public class VelocityEngineWrapper {
 	{
 		VelocityContext velocityContext = new VelocityContext();
 		velocityContext.put("esc", escapeTool);
+		velocityContext.put("UUID", UUID.class);
+		
 		return velocityContext;
 	}
 }
