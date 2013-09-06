@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -72,6 +73,17 @@ public class NativeAppRunnerSPM implements ISubmitPayloadModifier{
 				IOUtils.copyAndCloseInput(data, fos);
 				fos.close();
 				
+				if(requestContext!=null)
+				{
+					Map<String,Object> attr = requestContext.getAttributes();
+					if(attr == null)
+					{
+						attr = new HashMap<String, Object>();
+						requestContext.setAttributes(attr);
+					}
+					attr.put("source", inputFile.getAbsolutePath());
+				}
+				
 				File outputFile = new File(tempDir, "output-file");
 				final String command = descriptor.commandPattern.replace("$input", inputFile.getAbsolutePath()).replace("$output", outputFile.getAbsolutePath());
 				
@@ -114,6 +126,7 @@ public class NativeAppRunnerSPM implements ISubmitPayloadModifier{
 						zos.close();
 						
 						submitEndpoint.getProperties().add("inputType", new JsonPrimitive("ZIP"));
+						
 						return new FileInputStream(zipFile);
 					}
 				}

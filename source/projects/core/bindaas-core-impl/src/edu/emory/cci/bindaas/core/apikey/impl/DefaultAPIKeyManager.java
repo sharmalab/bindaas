@@ -240,6 +240,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.getProperty(BindaasUser.EMAIL_ADDRESS).toString()
 					: bindaasUser.getName() + "@" + bindaasUser.getDomain();
 			
+			@SuppressWarnings("unchecked")
 			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).add(Restrictions.eq("stage",	Stage.accepted.name())).add(Restrictions.eq("emailAddress", emailAddress)).list();
 			if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
 			{
@@ -273,6 +274,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 		Session session = sessionFactory.openSession();
 		try{
 			
+			@SuppressWarnings("unchecked")
 			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).add(Restrictions.eq("stage",	Stage.accepted.name())).add(Restrictions.eq("apiKey", apiKey)).list();
 			if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
 			{

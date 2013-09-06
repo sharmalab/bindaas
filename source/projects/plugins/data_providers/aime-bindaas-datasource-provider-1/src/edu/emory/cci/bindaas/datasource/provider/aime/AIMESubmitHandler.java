@@ -110,6 +110,15 @@ public class AIMESubmitHandler implements ISubmitHandler {
 		dateFormat = new SimpleDateFormat(dateFormatString);
 	}
 	
+	private String getSource(RequestContext requestContext)
+	{
+		if(requestContext!=null && requestContext.getAttributes()!=null && requestContext.getAttributes().containsKey("source"))
+		{
+			return requestContext.getAttributes().get("source").toString();
+		}
+		else
+			return  AIMEProvider.class.getName() + "#" + AIMEProvider.VERSION;
+	}
 	@Override
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, InputStream is , RequestContext requestContext)
@@ -125,7 +134,10 @@ public class AIMESubmitHandler implements ISubmitHandler {
 				try {
 					DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
 					connection = AIMEProvider.getConnection(configuration);
-					JsonObject retVal = saveAnnotationToDatabase(annotations, connection, seProps.getTableName());
+					
+					
+					String source = getSource(requestContext);
+					JsonObject retVal = saveAnnotationToDatabase(annotations, connection, seProps.getTableName() , source);
 					
 					QueryResult result = new QueryResult();
 					result.setData( new ByteArrayInputStream(retVal.toString().getBytes()));
@@ -357,7 +369,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 		}
 	}
 	
-	private JsonObject saveAnnotationToDatabase(Collection<String> contents , Connection connection , String tableName) throws Exception 
+	private JsonObject saveAnnotationToDatabase(Collection<String> contents , Connection connection , String tableName , String source) throws Exception 
 	{
 		try {
 			Statement st = connection.createStatement();
@@ -373,7 +385,7 @@ public class AIMESubmitHandler implements ISubmitHandler {
 					submissionResult = new JsonObject();
 					submissionResult.add("uid", new JsonPrimitive(aimBean.getUniqueIdentifier()));
 					String insertStatement = String.format(insertQuery, tableName ,aimBean.getUniqueIdentifier() , aimBean.getReviewer() , (new java.sql.Timestamp(aimBean.getDateCreated().getTime())).toString(),
-							aimBean.getPatientId(),aimBean.getXmlContent(),AIMEProvider.class.getName() + "#" + AIMEProvider.VERSION,aimBean.getImageSopInstanceUID() , aimBean.getStudyInstanceUID(),aimBean.getSeriesInstanceUID());
+							aimBean.getPatientId(),aimBean.getXmlContent(), source , aimBean.getImageSopInstanceUID() , aimBean.getStudyInstanceUID(),aimBean.getSeriesInstanceUID());
 					
 					log.debug(insertStatement);
 					st.execute(insertStatement);
