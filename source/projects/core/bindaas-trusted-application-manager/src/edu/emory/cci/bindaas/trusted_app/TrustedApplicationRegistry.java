@@ -42,13 +42,15 @@ public class TrustedApplicationRegistry implements ThreadSafe {
 		this.trustedApplications = trustedApplications;
 	}
 
-	public void registerApplication(String applicationName)
+	public TrustedApplicationEntry registerApplication(String applicationName)
 	{
 		TrustedApplicationEntry entry = new TrustedApplicationEntry();
 		entry.setName(applicationName);
 		entry.setApplicationId(UUID.randomUUID().toString());
 		entry.setApplicationKey(UUID.randomUUID().toString());
 		trustedApplications.add(entry);
+		lookupTable.put(entry.getApplicationId(), entry);
+		return entry;
 	}
 	
 
