@@ -25,6 +25,9 @@
 	<property name="applicationKey" value="demo-secret-key"></property>
 </bean>
 
+<bean id="consoleCommand" class="edu.emory.cci.bindaas.trusted_app.command.ConsoleCommands" init-method="init">
+	<property name="trustedAppManager" ref="psuedoSts"></property>
+</bean>
 <!-- Blueprint References -->
 
 	<osgi:reference interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager" id="apiKeyManager"></osgi:reference>
