@@ -78,7 +78,11 @@ public class DBAuthenticationProvider implements IAuthenticationProvider {
 	public BindaasUser loginUsingAPIKey(String apiKey)
 			throws AuthenticationException {
 		try {
-			return apiKeyManager.lookupUser(apiKey);
+			BindaasUser retVal = apiKeyManager.lookupUser(apiKey); 
+			
+			if(retVal!=null) return retVal;
+				else
+			throw new AuthenticationException(apiKey);
 		} catch (APIKeyManagerException e) {
 			log.error("Exception in Authentication Module" , e);
 			throw new AuthenticationException(apiKey);
