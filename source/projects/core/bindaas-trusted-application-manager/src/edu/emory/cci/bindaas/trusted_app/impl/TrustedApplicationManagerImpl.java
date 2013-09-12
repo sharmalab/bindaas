@@ -239,6 +239,7 @@ public class TrustedApplicationManagerImpl implements
 		String digest = DatatypeConverter.printBase64Binary(MessageDigest
 				.getInstance("SHA-1").digest(predigest.getBytes("UTF-8")));
 
+		System.out.println(String.format("Digest of (%s,%s,%s,%s,%s)=%s", applicationID , applicationKey , salt , username , roundoff + "" , digest));
 		return digest;
 	}
 
