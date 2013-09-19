@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.webconsole.admin;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -13,10 +14,13 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
+import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
@@ -114,21 +118,17 @@ public class AdminServlet extends AbstractRequestHandler {
 						.createQuery(
 								"from UserRequest where stage = :stage order by requestDate desc")
 						.setString("stage", "pending").list();
-				List<?> acceptedRequests = session
-						.createQuery(
-								"from UserRequest where stage = :stage order by requestDate desc")
-								.setFetchSize(MAX_DISPLAY_THRESHOLD)
-						.setString("stage", "accepted").list();
+				List<?> acceptedRequests = session.createCriteria(UserRequest.class).add(Restrictions.eq("stage", "accepted")).
+						add(Restrictions.ge("dateExpires", new Date()))
+						.addOrder(Order.desc("requestDate")).setMaxResults(MAX_DISPLAY_THRESHOLD).list();
 				List<?> historyLog = session.createQuery(
-						"from HistoryLog order by activityDate desc").setFetchSize(MAX_DISPLAY_THRESHOLD).list();
+						"from HistoryLog order by activityDate desc").setMaxResults(MAX_DISPLAY_THRESHOLD).list();
 
 				VelocityContext velocityContext = new VelocityContext();
 				/**
 				 * Add version information
 				 */
 				String versionHeader = "";
-//				VersionCommand versionCommand = Activator
-//						.getService(VersionCommand.class);
 				if (versionCommand != null) {
 					String frameworkBuilt = "";
 

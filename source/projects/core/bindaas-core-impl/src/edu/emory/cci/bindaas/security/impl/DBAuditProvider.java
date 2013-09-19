@@ -55,7 +55,7 @@ public class DBAuditProvider implements IAuditProvider{
 			try{
 				
 				@SuppressWarnings("unchecked")
-				List<AuditMessage> auditMessages = (List<AuditMessage>) session.createCriteria(AuditMessage.class).setFetchSize(MAX_DISPLAY_THRESHOLD).list();
+				List<AuditMessage> auditMessages = (List<AuditMessage>) session.createCriteria(AuditMessage.class).setMaxResults(MAX_DISPLAY_THRESHOLD).list();
 				return auditMessages;
 			}
 			catch(Exception e)
