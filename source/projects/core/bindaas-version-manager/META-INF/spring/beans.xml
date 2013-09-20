@@ -7,7 +7,11 @@
        http://www.springframework.org/schema/osgi  
        http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-<bean id="versionCommand" class="edu.emory.cci.bindaas.installer.command.VersionCommand" init-method="init">
+<bean id="versionCommand" class="edu.emory.cci.bindaas.version_manager.command.VersionCommand" init-method="init">
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+<bean id="versionManager" class="edu.emory.cci.bindaas.version_manager.impl.VersionManagerImpl" init-method="init">
 	<property name="filename" value="bindaas-framework-info.properties"></property>
 	<property name="defaultProperties" >
 		<props>
@@ -17,12 +21,9 @@
 			<prop key="bindaas.build.date">TODAY</prop>
 		</props>
 	</property>
-	<property name="systemInfo" ref="systemInfo"></property>
-</bean>
+ </bean>
 
-<osgi:reference interface="edu.emory.cci.bindaas.core.system.SystemInfo" id="systemInfo"  ></osgi:reference>
-
-
+<osgi:service interface="edu.emory.cci.bindaas.version_manager.api.IVersionManager" ref="versionManager" ></osgi:service>
 </beans>
 
 

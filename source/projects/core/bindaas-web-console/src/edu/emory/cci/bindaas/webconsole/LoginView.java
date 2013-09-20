@@ -1,7 +1,5 @@
 package edu.emory.cci.bindaas.webconsole;
 
-import java.util.Properties;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,7 +9,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
 import edu.emory.cci.bindaas.core.util.DynamicObject;
-import edu.emory.cci.bindaas.installer.command.VersionCommand;
+import edu.emory.cci.bindaas.version_manager.api.IVersionManager;
 import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
@@ -22,17 +20,17 @@ public class LoginView {
 	private  Template template;
 	private  Log log = LogFactory.getLog(LoginView.class);
 	private VelocityEngineWrapper velocityEngineWrapper;
-	private VersionCommand versionCommand;
+	private IVersionManager versionManager;
 	
 	
-	public VersionCommand getVersionCommand() {
-		return versionCommand;
+	public IVersionManager getVersionManager() {
+		return versionManager;
 	}
 
 
 
-	public void setVersionCommand(VersionCommand versionCommand) {
-		this.versionCommand = versionCommand;
+	public void setVersionManager(IVersionManager versionManager) {
+		this.versionManager = versionManager;
 	}
 
 
@@ -56,28 +54,8 @@ public class LoginView {
 		/**
 		 * Add version information
 		 */
-		String versionHeader = "";
-		//VersionCommand versionCommand = Activator.getService(VersionCommand.class);
-		if(versionCommand!=null)
-		{
-			String frameworkBuilt = "";
+		String versionHeader = String.format("System built <strong>%s</strong>  Build date <strong>%s<strong>", versionManager.getSystemBuild() ,versionManager.getSystemBuildDate());
 		
-			String buildDate = "";
-			try{
-				Properties versionProperties = versionCommand.getProperties();
-				frameworkBuilt = String.format("%s.%s.%s", versionProperties.get("bindaas.framework.version.major") , versionProperties.get("bindaas.framework.version.minor") , versionProperties.get("bindaas.framework.version.revision") );
-		
-				buildDate = versionProperties.getProperty("bindaas.build.date");
-			}catch(NullPointerException e)
-			{
-				log.warn("Version Header not set");
-			}
-			versionHeader = String.format("System built <strong>%s</strong>  Build date <strong>%s<strong>", frameworkBuilt,buildDate);
-		}
-		else
-		{
-			log.warn("Version Header not set");
-		}		
 		context.put("versionHeader", versionHeader);
 		context.put("loginTarget", loginTarget);
 		context.put("errorMessage", errorMessage);

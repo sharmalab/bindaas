@@ -166,7 +166,7 @@
 
 
 	<modules>
-		<module>bindaas-installer-updater</module>
+		<module>bindaas-version-manager</module>
 		<module>bindaas-security-api</module>
 		<module>junit-aime-bindaas-datasource-provider-1</module>
 		<module>junit-bindaas-core</module>

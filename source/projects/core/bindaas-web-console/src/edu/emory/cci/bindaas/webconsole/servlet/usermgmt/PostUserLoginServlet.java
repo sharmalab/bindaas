@@ -2,7 +2,6 @@ package edu.emory.cci.bindaas.webconsole.servlet.usermgmt;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,8 +21,8 @@ import edu.emory.cci.bindaas.commons.mail.api.IMailService;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
-import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
+import edu.emory.cci.bindaas.version_manager.api.IVersionManager;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
 import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
@@ -43,7 +42,7 @@ public class PostUserLoginServlet extends HttpServlet {
 	private VelocityEngineWrapper velocityEngineWrapper;
 	private IMailService mailService;
 	private SessionFactory sessionFactory;
-	private VersionCommand versionCommand;
+	private IVersionManager versionManager;
 
 	public IMailService getMailService() {
 		return mailService;
@@ -61,12 +60,12 @@ public class PostUserLoginServlet extends HttpServlet {
 		this.sessionFactory = sessionFactory;
 	}
 
-	public VersionCommand getVersionCommand() {
-		return versionCommand;
+	public IVersionManager getVersionManager() {
+		return versionManager;
 	}
 
-	public void setVersionCommand(VersionCommand versionCommand) {
-		this.versionCommand = versionCommand;
+	public void setVersionManager(IVersionManager versionManager) {
+		this.versionManager = versionManager;
 	}
 
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
@@ -133,35 +132,7 @@ public class PostUserLoginServlet extends HttpServlet {
 						/**
 						 * Add version information
 						 */
-						String versionHeader = "";
-
-						if (versionCommand != null) {
-							String frameworkBuilt = "";
-
-							String buildDate = "";
-							try {
-								Properties versionProperties = versionCommand
-										.getProperties();
-								frameworkBuilt = String
-										.format("%s.%s.%s",
-												versionProperties
-														.get("bindaas.framework.version.major"),
-												versionProperties
-														.get("bindaas.framework.version.minor"),
-												versionProperties
-														.get("bindaas.framework.version.revision"));
-
-								buildDate = versionProperties
-										.getProperty("bindaas.build.date");
-							} catch (NullPointerException e) {
-								log.warn("Version Header not set");
-							}
-							versionHeader = String
-									.format("System built <strong>%s</strong>  Build date <strong>%s<strong>",
-											frameworkBuilt, buildDate);
-						} else {
-							log.warn("Version Header not set");
-						}
+						String versionHeader = String.format("System built <strong>%s</strong>  Build date <strong>%s<strong>", versionManager.getSystemBuild() ,versionManager.getSystemBuildDate());;
 						context.put("versionHeader", versionHeader);
 						newRegistrationTemplate
 								.merge(context, resp.getWriter());
