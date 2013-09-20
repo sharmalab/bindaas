@@ -1,36 +1,27 @@
-package edu.emory.cci.bindaas.installer.command;
+package edu.emory.cci.bindaas.version_manager.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import edu.emory.cci.bindaas.core.system.SystemInfo;
-import edu.emory.cci.bindaas.installer.bundle.Activator;
+import edu.emory.cci.bindaas.version_manager.api.IVersionManager;
 
-
-//import org.apache.felix.service.command.*;
-public class VersionCommand {
+public class VersionManagerImpl implements IVersionManager{
 
 	private Properties properties;
 	private Properties defaultProperties;
 	private String filename ; // bindaas-framework-info.properties
-	private SystemInfo systemInfo;
+	private String systemBuild;
 	
-	public SystemInfo getSystemInfo() {
-		return systemInfo;
-	}
-
-	public void setSystemInfo(SystemInfo systemInfo) {
-		this.systemInfo = systemInfo;
-	}
-
+	private static final String MAJOR = "bindaas.framework.version.major";
+	private static final String MINOR = "bindaas.framework.version.minor";
+	private static final String REVISION = "bindaas.framework.version.revision";
+	private static final String BUILD_DATE = "bindaas.build.date";
+	
 	public String getFilename() {
 		return filename;
 	}
@@ -76,29 +67,37 @@ public class VersionCommand {
 		else
 		{
 			log.warn("Properties for version info could not be read. Using default properties");
-			properties = defaultProperties;
+			this.properties = defaultProperties;
 		}
 		
-		Dictionary<String, Object> dict = new Hashtable<String, Object>();
-		dict.put("osgi.command.scope", "bindaas");
-		dict.put("osgi.command.function", new String[] {"version"});
-		Activator.getContext().registerService(VersionCommand.class, this, dict);
-		
+		this.systemBuild = String.format("%s.%s.%s", this.properties.get(MAJOR) , this.properties.get(MINOR) , this.properties.get(REVISION) );
 	}
-	
-	public void version()
-	{
-		System.out.println("System runtime version :" + systemInfo.getRuntimeVersion());
-		if(properties!=null)
-		{
-			Enumeration<Object> keys = properties.keys();
-			while(keys.hasMoreElements())
-			{
-				Object key = keys.nextElement();
-				Object value = properties.get(key);
-				System.out.println( String.format("%-40s ===> %-100s", key, value )  );
-			}
-		}
+
+	@Override
+	public String getSystemBuild() {
+
+		return this.systemBuild;
+	}
+
+	@Override
+	public String getSystemMajor() {
+
+		return this.properties.getProperty(MAJOR);
+	}
+
+	@Override
+	public String getSystemMinor() {
+		return this.properties.getProperty(MINOR);
+	}
+
+	@Override
+	public String getSystemRevision() {
+		return this.properties.getProperty(REVISION);
+	}
+
+	@Override
+	public String getSystemBuildDate() {
+		return this.properties.getProperty(BUILD_DATE);	
 	}
 	
 }

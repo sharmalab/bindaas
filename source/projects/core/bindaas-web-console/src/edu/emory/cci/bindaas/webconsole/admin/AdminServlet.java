@@ -3,7 +3,6 @@ package edu.emory.cci.bindaas.webconsole.admin;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,8 +23,8 @@ import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
-import edu.emory.cci.bindaas.installer.command.VersionCommand;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
+import edu.emory.cci.bindaas.version_manager.api.IVersionManager;
 import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
 import edu.emory.cci.bindaas.webconsole.bundle.Activator;
@@ -37,15 +36,15 @@ public class AdminServlet extends AbstractRequestHandler {
 	private Template template;
 	private VelocityEngineWrapper velocityEngineWrapper;
 	private SessionFactory sessionFactory;
-	private VersionCommand versionCommand;
+	private IVersionManager versionManager;
 	private static final int MAX_DISPLAY_THRESHOLD = 50;
 	
-	public VersionCommand getVersionCommand() {
-		return versionCommand;
+	public IVersionManager getVersionManager() {
+		return versionManager;
 	}
 
-	public void setVersionCommand(VersionCommand versionCommand) {
-		this.versionCommand = versionCommand;
+	public void setVersionManager(IVersionManager versionManager) {
+		this.versionManager = versionManager;
 	}
 
 	
@@ -128,35 +127,7 @@ public class AdminServlet extends AbstractRequestHandler {
 				/**
 				 * Add version information
 				 */
-				String versionHeader = "";
-				if (versionCommand != null) {
-					String frameworkBuilt = "";
-
-					String buildDate = "";
-					try {
-						Properties versionProperties = versionCommand
-								.getProperties();
-						frameworkBuilt = String
-								.format("%s.%s.%s",
-										versionProperties
-												.get("bindaas.framework.version.major"),
-										versionProperties
-												.get("bindaas.framework.version.minor"),
-										versionProperties
-												.get("bindaas.framework.version.revision"));
-
-						buildDate = versionProperties
-								.getProperty("bindaas.build.date");
-					} catch (NullPointerException e) {
-						log.warn("Version Header not set");
-					}
-					versionHeader = String
-							.format("System built <strong>%s</strong>  Build date <strong>%s<strong>",
-									frameworkBuilt, buildDate);
-				} else {
-					log.warn("Version Header not set");
-				}
-				
+				String versionHeader = String.format("System built <strong>%s</strong>  Build date <strong>%s<strong>", versionManager.getSystemBuild() ,versionManager.getSystemBuildDate());;
 				velocityContext.put("versionHeader", versionHeader);
 
 				// set usermgmt props

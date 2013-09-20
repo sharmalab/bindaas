@@ -13,13 +13,13 @@
 	<property name="uriTemplate" value="/"></property>
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTasks" ref="managementTasks"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 <bean id="auditView" class="edu.emory.cci.bindaas.webconsole.servlet.views.AuditView" init-method="init">
 	<property name="uriTemplate" value="/audit"></property>
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 	<property name="auditProvider" ref="auditProvider"></property>
 </bean>
 
@@ -32,7 +32,7 @@
 	<property name="uriTemplate" value="/workspace/{workspace}"></property>
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTasks" ref="managementTasks"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 
@@ -41,7 +41,7 @@
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTask" ref="managementTasks"></property>
 	<property name="providerRegistry" ref="providerRegistry"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 <bean id="createQueryEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateQueryEndpoint" init-method="init">
@@ -49,7 +49,7 @@
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTask" ref="managementTasks"></property>
 	<property name="providerRegistry" ref="providerRegistry"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 	<property name="modifierRegistry" ref="modifierRegistry"></property>
 </bean>
 
@@ -58,7 +58,7 @@
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTask" ref="managementTasks"></property>
 	<property name="providerRegistry" ref="providerRegistry"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 	<property name="modifierRegistry" ref="modifierRegistry"></property>
 </bean>
 
@@ -67,7 +67,7 @@
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTask" ref="managementTasks"></property>
 	<property name="providerRegistry" ref="providerRegistry"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 <bean id="queryEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryEndpointView" init-method="init">
@@ -75,7 +75,7 @@
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTasks" ref="managementTasks"></property>
 	<property name="providerRegistry" ref="providerRegistry"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 	<property name="modifierRegistry" ref="modifierRegistry"></property>
 </bean>
 
@@ -84,7 +84,7 @@
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTasks" ref="managementTasks"></property>
 	<property name="providerRegistry" ref="providerRegistry"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 <bean id="submitEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.SubmitEndpointView" init-method="init">
@@ -92,7 +92,7 @@
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTasks" ref="managementTasks"></property>
 	<property name="providerRegistry" ref="providerRegistry"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 	<property name="modifierRegistry" ref="modifierRegistry"></property>
 </bean>
 
@@ -101,14 +101,14 @@
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTasks" ref="managementTasks"></property>
 	<property name="providerRegistry" ref="providerRegistry"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 <bean id="queryBrowserView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryBrowserView" init-method="init">
 	<property name="uriTemplate" value="/queryBrowser"></property>
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTasks" ref="managementTasks"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 <!-- 
 <bean id="manageUserRegistration" class="edu.emory.cci.bindaas.webconsole.servlet.action.ManageUserRegistration" init-method="init">
@@ -116,7 +116,7 @@
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="mailService" ref="mailService"></property>
 	<property name="sessionFactory" ref="sessionFactory"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
  -->
 <bean id="serverAdministrationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.ServerAdministrationPanelAction"></bean>
@@ -138,7 +138,7 @@
 		</map>
 	</property>
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 	<property name="sessionFactory" ref="sessionFactory"></property>
 </bean>
 
@@ -226,7 +226,7 @@
 <bean id="userQueryBrowserServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserQueryBrowserServlet">
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="managementTask" ref="managementTasks"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 <bean id="userOpenIDAuthServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserOpenIDAuthServlet">
@@ -236,12 +236,12 @@
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="mailService" ref="mailService"></property>
 	<property name="sessionFactory" ref="sessionFactory"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 <bean id="userLoginServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserLoginServlet">
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 <bean id="logoutServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.LogoutServlet">
@@ -312,14 +312,14 @@
 
 <bean id="loginView" class="edu.emory.cci.bindaas.webconsole.LoginView">
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
-	<property name="versionCommand" ref="versionCommand"></property>
+	<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 
 
 <!-- OSGi Refereces -->
 <osgi:reference interface="edu.emory.cci.bindaas.openid.OpenIDHelper" id="openIdHelper"></osgi:reference>
-<osgi:reference interface="edu.emory.cci.bindaas.installer.command.VersionCommand" id="versionCommand"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.version_manager.api.IVersionManager" id="versionManager"></osgi:reference>
 <osgi:reference interface="org.hibernate.SessionFactory" id="sessionFactory"></osgi:reference>
 <osgi:reference interface="edu.emory.cci.bindaas.commons.mail.api.IMailService" id="mailService"></osgi:reference>
 <osgi:reference interface="edu.emory.cci.bindaas.core.api.IManagementTasks" id="managementTasks"></osgi:reference>
