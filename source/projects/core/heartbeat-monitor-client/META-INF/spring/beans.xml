@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"                               
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:osgi="http://www.springframework.org/schema/osgi"                               
+   xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd                      
+       http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 <bean id="heartbeatClient" class="edu.emory.cci.bindaas.hearbeat.client.impl.HeartbeatMonitorClientImpl" init-method="init">
 <property name="defaultConfiguration" ref="defaultConfiguration"></property>
+<property name="versionManager" ref="versionManager"></property>
 </bean>
 
 <bean id="defaultConfiguration" class="edu.emory.cci.bindaas.hearbeat.client.conf.HeartbeatClientConfiguration">
@@ -12,5 +17,6 @@
 	<property name="serverUrl" value="http://ivi02.cci.emory.edu:3000/heartbeatMonitorService/send"></property>
 </bean>
 
+<osgi:reference interface="edu.emory.cci.bindaas.version_manager.api.IVersionManager" id="versionManager"></osgi:reference>
 </beans>
 

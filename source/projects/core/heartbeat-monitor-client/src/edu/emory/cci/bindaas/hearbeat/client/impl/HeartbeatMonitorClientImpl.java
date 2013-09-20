@@ -27,6 +27,7 @@ import edu.emory.cci.bindaas.hearbeat.client.api.IHearbeatMonitorClient;
 import edu.emory.cci.bindaas.hearbeat.client.bundle.Activator;
 import edu.emory.cci.bindaas.hearbeat.client.conf.HeartbeatClientConfiguration;
 import edu.emory.cci.bindaas.hearbeat.impl.model.Heartbeat;
+import edu.emory.cci.bindaas.version_manager.api.IVersionManager;
 
 
 
@@ -39,7 +40,17 @@ public class HeartbeatMonitorClientImpl implements IHearbeatMonitorClient,Runnab
 	private String lastPingStatus;
 	private String url;
 	private DefaultHttpClient httpClient;
+	private IVersionManager versionManager;
+	private String buildVersion;
 	
+	
+	
+	public IVersionManager getVersionManager() {
+		return versionManager;
+	}
+	public void setVersionManager(IVersionManager versionManager) {
+		this.versionManager = versionManager;
+	}
 	public HeartbeatClientConfiguration getDefaultConfiguration() {
 		return defaultConfiguration;
 	}
@@ -87,6 +98,7 @@ public class HeartbeatMonitorClientImpl implements IHearbeatMonitorClient,Runnab
 			if(this.lastPingStatus == null) this.lastPingStatus = "JUST_STARTED";
 			this.uniqueIdentifier = configuration.getObject().getUniqueIdentifier();
 			this.url = configuration.getObject().getServerUrl();
+			this.buildVersion = versionManager.getSystemBuild();
 			initHttpClient();
 			
 			
@@ -142,6 +154,7 @@ public class HeartbeatMonitorClientImpl implements IHearbeatMonitorClient,Runnab
 		heartbeat.setOsArch(System.getProperty("os.arch"));
 		heartbeat.setOsVersion(System.getProperty("os.version"));
 		heartbeat.setUserAccount(System.getProperty("user.name"));
+		heartbeat.setBindaasBuild(buildVersion);
 		
 		return heartbeat;
 	}

@@ -17,8 +17,19 @@ public class Heartbeat {
 	@Expose private String userAccount;
 	@Expose private String javaVersion;
 	@Expose private String javaVendor;
+	@Expose private String bindaasBuild;
 	
 	
+	public String getBindaasBuild() {
+		return bindaasBuild;
+	}
+
+
+	public void setBindaasBuild(String bindaasBuild) {
+		this.bindaasBuild = bindaasBuild;
+	}
+
+
 	public String getOsName() {
 		return osName;
 	}
