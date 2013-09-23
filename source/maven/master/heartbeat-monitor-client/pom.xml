@@ -11,7 +11,12 @@
 	<version>0.0.1</version>
 
 	<dependencies>
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>bindaas-version-manager</artifactId>
+			<version>0.0.1</version>
 
+		</dependency>
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>bindaas-core-api</artifactId>
@@ -27,6 +32,6 @@
 			<artifactId>http-datasource-provider</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
+
 	</dependencies>
 </project>
