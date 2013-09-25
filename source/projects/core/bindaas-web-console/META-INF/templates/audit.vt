@@ -42,12 +42,12 @@
 			
 			// populate data
 			data.addColumn('date' , 'Timestamp');
-  data.addColumn('string' , 'Request URL');
-  data.addColumn('string' , 'Query Parameters');
-  data.addColumn('string' , 'Requester');
-  data.addColumn('string' , 'Source IP');
-  data.addColumn('string' , 'Event');
-  data.addColumn('number' , 'HTTP Response Code');
+  			data.addColumn('string' , 'Request URL');
+  			data.addColumn('string' , 'Query Parameters');
+  			data.addColumn('string' , 'Requester');
+  			data.addColumn('string' , 'Source IP');
+  			data.addColumn('string' , 'Event');
+  			data.addColumn('number' , 'HTTP Response Code');
   
   #foreach ($message in $auditMessages)
   
@@ -87,7 +87,7 @@
 	#if ($message.getOutcome())
 			var outcome = $message.getOutcome(); 
 			#else
-			var outcome = '';
+			var outcome = Number.NaN;
 	#end
 	
 	data.addRow([timestamp,requestUri,queryString,subject,source,event, outcome ]);
@@ -209,11 +209,11 @@
 						<span style="font-size: 12px;">Number of rows:</span>
 						<select style="font-size: 12px" onchange="setNumberOfPages(this.value)">
 							<option value="">No paging</option>
-							<option value="10">10</option>
 							<option selected="selected" value="20">20</option>
 							<option value="50">50</option>
 							<option value="100">100</option>
 							<option value="200">200</option>
+							<option value="500">500</option>
 						</select>
 						
 					</form>
