@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -65,6 +66,40 @@ public class DBAuditProvider implements IAuditProvider{
 		}
 		return new ArrayList<AuditMessage>();
 
+	}
+
+	private int hqlTruncate(String myTable , Session session){
+	    String hql = String.format("delete from %s",myTable);
+	    Query query = session.createQuery(hql);
+	    return query.executeUpdate();
+	}
+	
+	@Override
+	public int clean() throws Exception {
+		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
+		if(sessionFactory!=null)
+		{
+			Session session = sessionFactory.openSession();
+			try{
+				session.beginTransaction();
+				int rowsDeleted = hqlTruncate(AuditMessage.class.getName(), session);
+				session.getTransaction().commit();
+				return rowsDeleted;
+			}
+			catch(Exception e)
+			{
+				Transaction t = session.getTransaction();
+				if(t!=null)
+					t.rollback();
+				log.error(e);
+				throw e;
+			}
+			finally{
+				session.close();
+			}
+		}
+		return 0;
+		
 	}
 
 }

@@ -134,4 +134,10 @@ public class FileSystemAuditProvider implements IAuditProvider{
 		
 	}
 
+	@Override
+	public int clean() throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
