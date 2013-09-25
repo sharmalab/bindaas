@@ -29,7 +29,16 @@ public class InformationServiceImpl implements IInformationService{
 	private Log log = LogFactory.getLog(getClass());
 	private IProviderRegistry providerRegistry;
 	private IModifierRegistry modifierRegistry;
+	private RestUtils restUtils;
 	
+	public RestUtils getRestUtils() {
+		return restUtils;
+	}
+
+	public void setRestUtils(RestUtils restUtils) {
+		this.restUtils = restUtils;
+	}
+
 	
 	public IProviderRegistry getProviderRegistry() {
 		return providerRegistry;
@@ -83,7 +92,7 @@ public class InformationServiceImpl implements IInformationService{
 			array.add(createJsonFromProvider(provider));
 		}
 		
-		return RestUtils.createSuccessResponse(array.toString(), "application/json");
+		return restUtils.createSuccessResponse(array.toString(), "application/json");
 		
 	}
 
@@ -98,7 +107,7 @@ public class InformationServiceImpl implements IInformationService{
 			array.add(createJsonFromProvider(provider));
 		}
 		
-		return RestUtils.createSuccessResponse(array.toString(), "application/json");
+		return restUtils.createSuccessResponse(array.toString(), "application/json");
 	}
 
 	@Override
@@ -109,12 +118,12 @@ public class InformationServiceImpl implements IInformationService{
 		try{
 		IProvider provider = providerRegistry.lookupProvider(providerId, Integer.parseInt(providerVersion));
 		JsonObject resp = createJsonFromProvider(provider);
-		return RestUtils.createSuccessResponse(resp.toString(), "application/json");
+		return restUtils.createSuccessResponse(resp.toString(), "application/json");
 		}
 		catch(Exception e)
 		{
 			log.error(e);
-			return RestUtils.createErrorResponse("Provider Not Found");
+			return restUtils.createErrorResponse("Provider Not Found");
 		}
 		
 	}
@@ -130,7 +139,7 @@ public class InformationServiceImpl implements IInformationService{
 			array.add(createJsonFromModifier(mod));
 		}
 		
-		return RestUtils.createSuccessResponse(array.toString(), "application/json");
+		return restUtils.createSuccessResponse(array.toString(), "application/json");
 	}
 
 	@Override
@@ -141,11 +150,11 @@ public class InformationServiceImpl implements IInformationService{
 		IQueryModifier mod = modifierRegistry.findQueryModifier(queryModifier);
 		if(mod!=null)
 		{
-			return RestUtils.createSuccessResponse( createJsonFromModifier(mod).toString(), "application/json");
+			return restUtils.createSuccessResponse( createJsonFromModifier(mod).toString(), "application/json");
 		}
 		else
 		{
-			return RestUtils.createErrorResponse("IQueryModifier Not Found [" + queryModifier + "]");
+			return restUtils.createErrorResponse("IQueryModifier Not Found [" + queryModifier + "]");
 		}
 	}
 
@@ -160,7 +169,7 @@ public class InformationServiceImpl implements IInformationService{
 			array.add(createJsonFromModifier(mod));
 		}
 		
-		return RestUtils.createSuccessResponse(array.toString(), "application/json");
+		return restUtils.createSuccessResponse(array.toString(), "application/json");
 	}
 
 	@Override
@@ -171,11 +180,11 @@ public class InformationServiceImpl implements IInformationService{
 		IQueryResultModifier mod = modifierRegistry.findQueryResultModifier(queryResultModifier);
 		if(mod!=null)
 		{
-			return RestUtils.createSuccessResponse( createJsonFromModifier(mod).toString(), "application/json");
+			return restUtils.createSuccessResponse( createJsonFromModifier(mod).toString(), "application/json");
 		}
 		else
 		{
-			return RestUtils.createErrorResponse("IQueryResultModifier Not Found [" + queryResultModifier + "]");
+			return restUtils.createErrorResponse("IQueryResultModifier Not Found [" + queryResultModifier + "]");
 		}
 	}
 
@@ -190,7 +199,7 @@ public class InformationServiceImpl implements IInformationService{
 			array.add(createJsonFromModifier(mod));
 		}
 		
-		return RestUtils.createSuccessResponse(array.toString(), "application/json");
+		return restUtils.createSuccessResponse(array.toString(), "application/json");
 	}
 
 	@Override
@@ -201,11 +210,11 @@ public class InformationServiceImpl implements IInformationService{
 		ISubmitPayloadModifier mod = modifierRegistry.findSubmitPayloadModifier(submitPayloadModifier);
 		if(mod!=null)
 		{
-			return RestUtils.createSuccessResponse( createJsonFromModifier(mod).toString(), "application/json");
+			return restUtils.createSuccessResponse( createJsonFromModifier(mod).toString(), "application/json");
 		}
 		else
 		{
-			return RestUtils.createErrorResponse("ISubmitPayloadModifier Not Found [" + submitPayloadModifier + "]");
+			return restUtils.createErrorResponse("ISubmitPayloadModifier Not Found [" + submitPayloadModifier + "]");
 		}
 	}
 

@@ -43,7 +43,16 @@ public class ExecutionServiceImpl implements IExecutionService{
 	private Log log = LogFactory.getLog(getClass());
 	private IExecutionTasks executionTask;
 	private IManagementTasks managementTask;
+	private RestUtils restUtils;
 	
+	public RestUtils getRestUtils() {
+		return restUtils;
+	}
+
+	public void setRestUtils(RestUtils restUtils) {
+		this.restUtils = restUtils;
+	}
+
 	public IExecutionTasks getExecutionTask() {
 		return executionTask;
 	}
@@ -118,15 +127,15 @@ public class ExecutionServiceImpl implements IExecutionService{
 				}
 			};
 			
-			return RestUtils.createMimeResponse(streamingOutput, queryResult.getMimeType() , headers);
+			return restUtils.createMimeResponse(streamingOutput, queryResult.getMimeType() , headers);
 		}
 		else if(queryResult.isError())
 		{
-			return RestUtils.createErrorResponse(queryResult.getErrorMessage());
+			return restUtils.createErrorResponse(queryResult.getErrorMessage());
 		}
 		else
 		{			
-			return RestUtils.createMimeResponse(queryResult.getData() , queryResult.getMimeType() ,headers);
+			return restUtils.createMimeResponse(queryResult.getData() , queryResult.getMimeType() ,headers);
 		}
 		
 	}
@@ -174,11 +183,11 @@ public class ExecutionServiceImpl implements IExecutionService{
 		catch(AbstractHttpCodeException e)
 		{
 			log.error(e);
-			return RestUtils.createErrorResponse(e);
+			return restUtils.createErrorResponse(e);
 		}
 		catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -195,7 +204,7 @@ public class ExecutionServiceImpl implements IExecutionService{
 			if(profile.getQueryEndpoints().containsKey(queryEndpointName) )
 			{
 				QueryEndpoint queryEndpoint = profile.getQueryEndpoints().get(queryEndpointName);
-				return RestUtils.createJsonResponse(queryEndpoint.getMetaData().toString());
+				return restUtils.createJsonResponse(queryEndpoint.getMetaData().toString());
 			}
 			else
 			{
@@ -205,11 +214,11 @@ public class ExecutionServiceImpl implements IExecutionService{
 		catch(AbstractHttpCodeException e)
 		{
 			log.error(e);
-			return RestUtils.createErrorResponse(e);
+			return restUtils.createErrorResponse(e);
 		}
 		catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -236,11 +245,11 @@ public class ExecutionServiceImpl implements IExecutionService{
 		catch(AbstractHttpCodeException e)
 		{
 			log.error(e);
-			return RestUtils.createErrorResponse(e);
+			return restUtils.createErrorResponse(e);
 		}
 		catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -270,11 +279,11 @@ public class ExecutionServiceImpl implements IExecutionService{
 		catch(AbstractHttpCodeException e)
 		{
 			log.error(e);
-			return RestUtils.createErrorResponse(e);
+			return restUtils.createErrorResponse(e);
 		}
 		catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 		
 	}
@@ -304,12 +313,12 @@ public class ExecutionServiceImpl implements IExecutionService{
 		catch(AbstractHttpCodeException e)
 		{
 			log.error(e);
-			return RestUtils.createErrorResponse(e);
+			return restUtils.createErrorResponse(e);
 		}
 		
 		catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -340,11 +349,11 @@ public class ExecutionServiceImpl implements IExecutionService{
 		catch(AbstractHttpCodeException e)
 		{
 			log.error(e);
-			return RestUtils.createErrorResponse(e);
+			return restUtils.createErrorResponse(e);
 		}
 		catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -370,7 +379,7 @@ public class ExecutionServiceImpl implements IExecutionService{
 		headers.put("Allow", "DELETE,OPTIONS");
 		headers.put("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,HEAD,OPTIONS");
 		headers.put("Access-Control-Allow-Headers", "Authorization, X-Authorization");
-		return RestUtils.createJsonResponse("{}", headers);
+		return restUtils.createJsonResponse("{}", headers);
 		
 	}
 

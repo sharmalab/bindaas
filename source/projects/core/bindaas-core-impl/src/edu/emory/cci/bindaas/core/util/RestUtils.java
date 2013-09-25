@@ -13,44 +13,55 @@ import com.google.gson.JsonPrimitive;
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
+import edu.emory.cci.bindaas.version_manager.api.IVersionManager;
 
 public class RestUtils {
 
+	private IVersionManager versionManager;
 	
-	public static Response createErrorResponse(AbstractHttpCodeException abstractHttpCodeException)
+	
+	public IVersionManager getVersionManager() {
+		return versionManager;
+	}
+	public void setVersionManager(IVersionManager versionManager) {
+		this.versionManager = versionManager;
+	}
+	
+	
+	public  Response createErrorResponse(AbstractHttpCodeException abstractHttpCodeException)
 	{
 		ResponseBuilder builder =  Response.status(abstractHttpCodeException.getHttpStatusCode()).type(StandardMimeType.JSON.toString()) . entity(abstractHttpCodeException.toString());
 		
 		return createResponse(builder);
 	}
-	public static Response createSuccessResponse(String message)
+	public  Response createSuccessResponse(String message)
 	{
 		return createResponse(Response.ok(message).type("text/plain"));
 	}
 	
-	public static Response createJsonResponse(String message)
+	public  Response createJsonResponse(String message)
 	{
 		return createResponse(Response.ok(message).type(StandardMimeType.JSON.toString()));
 	}
 	
 	
-	public static Response createSuccessResponse(String message,String mimeType)
+	public  Response createSuccessResponse(String message,String mimeType)
 	{
 		mimeType = mimeType == null? "text/plain" : mimeType;
 		return createResponse(Response.ok(message).type(mimeType));
 	}
 	
-	public static Response createMimeResponse(byte[] inputData , String mimeType)
+	public  Response createMimeResponse(byte[] inputData , String mimeType)
 	{
 		return createResponse(Response.ok().type(mimeType).entity(inputData));
 	}
 	
-	public static Response createMimeResponse(InputStream inputStream , String mimeType)
+	public  Response createMimeResponse(InputStream inputStream , String mimeType)
 	{
 		return createResponse(Response.ok().type(mimeType).entity(inputStream));
 	}
 	
-	public static Response createErrorResponse(String message)
+	public  Response createErrorResponse(String message)
 	{
 		
 		JsonObject jsonResp = new JsonObject();
@@ -60,12 +71,12 @@ public class RestUtils {
 		return createResponse(builder);
 	}
 	
-	public static Response createResponse(String message, int code)
+	public  Response createResponse(String message, int code)
 	{
 	 	return createResponse(Response.status(code).type(StandardMimeType.JSON.toString()).entity(String.format("{ 'message' : '%s'}", message)));
 	}
 	
-	public static Response createSuccessResponse(String message , Map<String,Object> headers)
+	public  Response createSuccessResponse(String message , Map<String,Object> headers)
 	{
 		ResponseBuilder builder = Response.ok(message).type("text/plain");
 		for(String key : headers.keySet())
@@ -75,7 +86,7 @@ public class RestUtils {
 		return createResponse(builder);
 	}
 	
-	public static Response createJsonResponse(String message, Map<String,Object> headers)
+	public  Response createJsonResponse(String message, Map<String,Object> headers)
 	{
 		ResponseBuilder builder = Response.ok(message).type(StandardMimeType.JSON.toString());
 		for(String key : headers.keySet())
@@ -86,7 +97,7 @@ public class RestUtils {
 	}
 	
 	
-	public static Response createSuccessResponse(String message,String mimeType, Map<String,Object> headers)
+	public  Response createSuccessResponse(String message,String mimeType, Map<String,Object> headers)
 	{
 		
 		mimeType = mimeType == null? "text/plain" : mimeType;
@@ -99,7 +110,7 @@ public class RestUtils {
 		return createResponse(builder);
 	}
 	
-	public static Response createMimeResponse(StreamingOutput streamingOutput , String mimeType, Map<String,Object> headers)
+	public  Response createMimeResponse(StreamingOutput streamingOutput , String mimeType, Map<String,Object> headers)
 	{
 		ResponseBuilder builder = Response.ok(streamingOutput).type(mimeType);
 		for(String key : headers.keySet())
@@ -109,7 +120,7 @@ public class RestUtils {
 		return createResponse(builder);
 	}
 	
-	public static Response createMimeResponse(byte[] inputData , String mimeType, Map<String,Object> headers)
+	public  Response createMimeResponse(byte[] inputData , String mimeType, Map<String,Object> headers)
 	{
 		ResponseBuilder builder = Response.ok().type(mimeType).entity(inputData);
 		for(String key : headers.keySet())
@@ -119,7 +130,7 @@ public class RestUtils {
 		return createResponse(builder);
 	}
 	
-	public static Response createMimeResponse(InputStream inputStream , String mimeType, Map<String,Object> headers)
+	public  Response createMimeResponse(InputStream inputStream , String mimeType, Map<String,Object> headers)
 	{
 		ResponseBuilder builder = Response.ok().type(mimeType).entity(inputStream);
 		for(String key : headers.keySet())
@@ -129,7 +140,7 @@ public class RestUtils {
 		return createResponse(builder);
 	}
 	
-	public static Response createErrorResponse(String message, Map<String,Object> headers)
+	public  Response createErrorResponse(String message, Map<String,Object> headers)
 	{
 		JsonObject jsonResp = new JsonObject();
 		jsonResp.add("errorMessage", new JsonPrimitive(message));
@@ -141,7 +152,7 @@ public class RestUtils {
 		return createResponse(builder);
 	}
 	
-	public static Response createResponse(String message, int code, Map<String,Object> headers)
+	public  Response createResponse(String message, int code, Map<String,Object> headers)
 	{
 		ResponseBuilder builder = Response.status(code).entity(message);
 		for(String key : headers.keySet())
@@ -151,7 +162,7 @@ public class RestUtils {
 		 	return createResponse(builder);
 	}
 	
-	public static Response createResponse(int code, StandardMimeType mime,  Map<String,Object> headers)
+	public  Response createResponse(int code, StandardMimeType mime,  Map<String,Object> headers)
 	{
 		ResponseBuilder builder = Response.status(code).type(mime.toString());
 		for(String key : headers.keySet())
@@ -162,10 +173,10 @@ public class RestUtils {
 	}
 	
 	
-	public static Response createResponse(ResponseBuilder builder)
+	public  Response createResponse(ResponseBuilder builder)
 	{
 		builder = builder.header("Access-Control-Allow-Origin", "*");
-		builder = builder.header("Bindaas-version",  Activator.getContext().getBundle().getHeaders().get("Bundle-Version"));
+		builder = builder.header("Bindaas-version", versionManager.getSystemBuild() );
 		builder = builder.header("Vendor", Activator.getContext().getBundle().getHeaders().get("Bundle-Vendor"));
 		return builder.build();
 	}

@@ -45,6 +45,17 @@ public class ManagementServiceImpl implements IManagementService {
 	private Log log = LogFactory.getLog(getClass());
 	private IManagementTasks managementTask;
 	private JsonParser parser;
+	private RestUtils restUtils;
+	
+	public RestUtils getRestUtils() {
+		return restUtils;
+	}
+
+	public void setRestUtils(RestUtils restUtils) {
+		this.restUtils = restUtils;
+	}
+
+	
 
 	public void init() throws Exception {
 		parser = GSONUtil.getJsonParser();
@@ -85,10 +96,10 @@ public class ManagementServiceImpl implements IManagementService {
 			
 			
 			
-			return RestUtils.createJsonResponse(works.toString());
+			return restUtils.createJsonResponse(works.toString());
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 
 	}
@@ -104,10 +115,10 @@ public class ManagementServiceImpl implements IManagementService {
 			Profile prof = managementTask.createProfile(profile, workspace,
 					parsePostRequest(), user , description);
 		
-			return RestUtils.createJsonResponse(prof.toString());
+			return restUtils.createJsonResponse(prof.toString());
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -126,10 +137,10 @@ public class ManagementServiceImpl implements IManagementService {
 					.createQueryEndpoint(queryEndpoint, workspace, profile,
 							parsePostRequest(), user);
 			
-			return RestUtils.createJsonResponse(qe.toString());
+			return restUtils.createJsonResponse(qe.toString());
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -147,10 +158,10 @@ public class ManagementServiceImpl implements IManagementService {
 					deleteEndpoint, workspace, profile, parsePostRequest(),
 					user);
 			
-			return RestUtils.createJsonResponse(de.toString());
+			return restUtils.createJsonResponse(de.toString());
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -168,10 +179,10 @@ public class ManagementServiceImpl implements IManagementService {
 					submitEndpoint, workspace, profile, parsePostRequest(),
 					user);
 			
-			return RestUtils.createJsonResponse(se.toString());
+			return restUtils.createJsonResponse(se.toString());
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -184,11 +195,11 @@ public class ManagementServiceImpl implements IManagementService {
 
 			managementTask.deleteWorkspace(workspace);
 			
-			return RestUtils.createSuccessResponse("Workspace [" + workspace
+			return restUtils.createSuccessResponse("Workspace [" + workspace
 					+ "] deleted");
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -201,11 +212,11 @@ public class ManagementServiceImpl implements IManagementService {
 
 			managementTask.deleteProfile(workspace, profile);
 			
-			return RestUtils.createSuccessResponse("Profile [" + profile
+			return restUtils.createSuccessResponse("Profile [" + profile
 					+ "] deleted");
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -220,11 +231,11 @@ public class ManagementServiceImpl implements IManagementService {
 			managementTask.deleteQueryEndpoint(workspace, profile,
 					queryEndpoint);
 			
-			return RestUtils.createSuccessResponse("QueryEndpoint ["
+			return restUtils.createSuccessResponse("QueryEndpoint ["
 					+ queryEndpoint + "] deleted");
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -239,11 +250,11 @@ public class ManagementServiceImpl implements IManagementService {
 			managementTask.deleteDeleteEndpoint(workspace, profile,
 					deleteEndpoint);
 			
-			return RestUtils.createSuccessResponse("DeleteEndpoint ["
+			return restUtils.createSuccessResponse("DeleteEndpoint ["
 					+ deleteEndpoint + "] deleted");
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -258,11 +269,11 @@ public class ManagementServiceImpl implements IManagementService {
 			managementTask.deleteSubmitEndpoint(workspace, profile,
 					submitEndpoint);
 			
-			return RestUtils.createSuccessResponse("SubmitEndpoint ["
+			return restUtils.createSuccessResponse("SubmitEndpoint ["
 					+ submitEndpoint + "] deleted");
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -275,10 +286,10 @@ public class ManagementServiceImpl implements IManagementService {
 			Profile profile = managementTask.updateProfile(profileName,
 					workspace, parsePostRequest(), getUser() , description);
 			
-			return RestUtils.createJsonResponse(profile.toString());
+			return restUtils.createJsonResponse(profile.toString());
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 
 	}
@@ -295,10 +306,10 @@ public class ManagementServiceImpl implements IManagementService {
 					queryEndpoint, workspace, profile, parsePostRequest(),
 					getUser());
 			
-			return RestUtils.createJsonResponse(qe.toString());
+			return restUtils.createJsonResponse(qe.toString());
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 
 	}
@@ -315,10 +326,10 @@ public class ManagementServiceImpl implements IManagementService {
 					deleteEndpoint, workspace, profile, parsePostRequest(),
 					getUser());
 			
-			return RestUtils.createJsonResponse(de.toString());
+			return restUtils.createJsonResponse(de.toString());
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -334,10 +345,10 @@ public class ManagementServiceImpl implements IManagementService {
 					submitEndpoint, workspace, profile, parsePostRequest(),
 					getUser());
 			
-			return RestUtils.createJsonResponse(se.toString());
+			return restUtils.createJsonResponse(se.toString());
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -348,13 +359,13 @@ public class ManagementServiceImpl implements IManagementService {
 
 		try {
 			Workspace works = managementTask.getWorkspace(workspace);
-			return RestUtils.createJsonResponse(works.toString());
+			return restUtils.createJsonResponse(works.toString());
 		} catch (NullPointerException ne) {
 			log.error(ne);
-			return RestUtils.createResponse("Resource not found", 404);
+			return restUtils.createResponse("Resource not found", 404);
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -365,13 +376,13 @@ public class ManagementServiceImpl implements IManagementService {
 			@PathParam("profile") String profile) {
 		try {
 			Profile prof = managementTask.getProfile(workspace, profile);
-			return RestUtils.createJsonResponse(prof.toString());
+			return restUtils.createJsonResponse(prof.toString());
 		} catch (NullPointerException ne) {
 			log.error(ne);
-			return RestUtils.createResponse("Resource not found", 404);
+			return restUtils.createResponse("Resource not found", 404);
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -384,13 +395,13 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 			QueryEndpoint qe = managementTask.getQueryEndpoint(workspace,
 					profile, queryEndpoint);
-			return RestUtils.createJsonResponse(qe.toString());
+			return restUtils.createJsonResponse(qe.toString());
 		} catch (NullPointerException ne) {
 			log.error(ne);
-			return RestUtils.createResponse("Resource not found", 404);
+			return restUtils.createResponse("Resource not found", 404);
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -403,13 +414,13 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 			DeleteEndpoint de = managementTask.getDeleteEndpoint(workspace,
 					profile, deleteEndpoint);
-			return RestUtils.createJsonResponse(de.toString());
+			return restUtils.createJsonResponse(de.toString());
 		} catch (NullPointerException ne) {
 			log.error(ne);
-			return RestUtils.createResponse("Resource not found", 404);
+			return restUtils.createResponse("Resource not found", 404);
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -422,13 +433,13 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 			SubmitEndpoint se = managementTask.getSubmitEndpoint(workspace,
 					profile, submitEndpoint);
-			return RestUtils.createSuccessResponse(se.toString());
+			return restUtils.createSuccessResponse(se.toString());
 		} catch (NullPointerException ne) {
 			log.error(ne);
-			return RestUtils.createResponse("Resource not found", 404);
+			return restUtils.createResponse("Resource not found", 404);
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 	}
 
@@ -442,11 +453,11 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 			managementTask.publishQueryEndpoint(workspace, profile,
 					queryEndpoint);
-			return RestUtils.createSuccessResponse("QueryEndpoint ["
+			return restUtils.createSuccessResponse("QueryEndpoint ["
 					+ queryEndpoint + "] published");
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 
 	}
@@ -461,11 +472,11 @@ public class ManagementServiceImpl implements IManagementService {
 		try {
 			managementTask.publishDeleteEndpoint(workspace, profile,
 					deleteEndpoint);
-			return RestUtils.createSuccessResponse("DeleteEndpoint ["
+			return restUtils.createSuccessResponse("DeleteEndpoint ["
 					+ deleteEndpoint + "] published");
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 
 	}
@@ -480,15 +491,15 @@ public class ManagementServiceImpl implements IManagementService {
 			if(listOfWorkspaces!=null)
 			{
 				String jsonStr = GSONUtil.getGSONInstance().toJson(listOfWorkspaces);
-				return RestUtils.createJsonResponse(jsonStr);
+				return restUtils.createJsonResponse(jsonStr);
 			}
 			else
 			{
-				return RestUtils.createJsonResponse("[]");
+				return restUtils.createJsonResponse("[]");
 			}
 		} catch (Exception e) {
 			log.error(e);
-			return RestUtils.createErrorResponse(e.getMessage());
+			return restUtils.createErrorResponse(e.getMessage());
 		}
 		
 	}

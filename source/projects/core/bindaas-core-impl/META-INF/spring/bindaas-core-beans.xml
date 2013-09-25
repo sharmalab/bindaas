@@ -45,16 +45,19 @@
 
 <bean id="managementService" class="edu.emory.cci.bindaas.core.rest.service.impl.ManagementServiceImpl" init-method="init" >
 	<property name="managementTask" ref="managementTask"></property>
+	<property name="restUtils" ref="restUtils"></property>
 </bean>
 
 <bean id="executionService" class="edu.emory.cci.bindaas.core.rest.service.impl.ExecutionServiceImpl" init-method="init" >
 	<property name="managementTask" ref="managementTask"></property>
 	<property name="executionTask" ref="executionTask"></property>
+	<property name="restUtils" ref="restUtils"></property>
 </bean>
 
 <bean id="informationService" class="edu.emory.cci.bindaas.core.rest.service.impl.InformationServiceImpl"  >
 	<property name="modifierRegistry" ref="modifierRegistry"></property>
 	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="restUtils" ref="restUtils"></property>
 </bean>
 
 
@@ -86,28 +89,7 @@
 	
 	<property name="defaultBindaasConfiguration" ref="defaultBindaasConfiguration">
 		
-	</property>
-	<!-- property name="defaultBindaasProperties" >
-		<props>
-			<prop key="host">localhost</prop>
-			<prop key="port">9099</prop>
-			<prop key="protocol">http</prop>
-			<prop key="authentication.status">false</prop>
-			<prop key="authentication.provider.class">edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider</prop> 
-			<prop key="authorization.status">false</prop>
-			<prop key="authorization.provider.class">edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider</prop>
-			<prop key="audit.status">false</prop>
-			<prop key="audit.provider.class">edu.emory.cci.bindaas.security.impl.FileSystemAuditProvider</prop>
-			<prop key="service.ui.url">http://127.0.0.1:8080</prop>
-			<prop key="webconsole.security.admin">admin</prop>
-			<prop key="webconsole.security.userRegistration.notification.enable">true</prop>
-			<prop key="webconsole.security.userRegistration.notification.recepient">admin@mycompany.org</prop>
-			<prop key="webconsole.security.method">default</prop> 
-			
-		</props>
-	
-	</property -->
-	
+	</property>	
 	<property name="executionService" ref="executionService"></property>
 	<property name="managementService" ref="managementService"></property>
 	<property name="informationService" ref="informationService"></property>
@@ -147,6 +129,10 @@
 </bean>
 
 
+<bean id="restUtils" class="edu.emory.cci.bindaas.core.util.RestUtils">
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
 
 <!-- Blueprint Exports -->
 	<osgi:service ref="executionTask" interface="edu.emory.cci.bindaas.core.api.IExecutionTasks"></osgi:service>
@@ -155,9 +141,10 @@
 	<osgi:service ref="providerRegistry" interface="edu.emory.cci.bindaas.core.api.IProviderRegistry"></osgi:service>
 	<osgi:service ref="securityHandler" interface="edu.emory.cci.bindaas.core.api.ISecurityHandler"></osgi:service>
 	<osgi:service ref="apiKeyManager" interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager"></osgi:service>
+	
 <!-- Blueprint References -->
-
 	<osgi:reference interface="org.hibernate.SessionFactory" id="sessionFactory"></osgi:reference>
+	<osgi:reference interface="edu.emory.cci.bindaas.version_manager.api.IVersionManager" id="versionManager"></osgi:reference>
 </beans>
 
 
