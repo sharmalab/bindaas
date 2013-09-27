@@ -147,6 +147,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.createCriteria(UserRequest.class)
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.eq("emailAddress", emailAddress))
+					.add(Restrictions.gt("dateExpires", new Date())) // Fixed very critical bug
 					.list();
 
 			if (listOfValidKeys != null && listOfValidKeys.size() > 0) {
