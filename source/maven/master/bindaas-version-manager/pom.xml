@@ -16,11 +16,7 @@
 			<artifactId>bindaas-core-api</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-		<dependency>
-			<groupId>bindaas</groupId>
-			<artifactId>bindaas-core-impl</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		
 	</dependencies>
 
 </project>
