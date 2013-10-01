@@ -9,6 +9,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.security.api.IAuditProvider;
@@ -17,7 +18,9 @@ import edu.emory.cci.bindaas.security.model.hibernate.AuditMessage;
 public class DBAuditProvider implements IAuditProvider{
 
 	private Log log = LogFactory.getLog(getClass());
-	private static Integer MAX_DISPLAY_THRESHOLD = 1000 ; 
+	private static Integer MAX_DISPLAY_THRESHOLD = 1000 ;
+	private static Integer EXPORT_BATCH_THRESHOLD = 4000 ;
+	
 	
 	@Override
 	public void audit(AuditMessage auditMessage)
@@ -99,6 +102,50 @@ public class DBAuditProvider implements IAuditProvider{
 			}
 		}
 		return 0;
+		
+	}
+
+	@Override
+	public void dump(Writer writer) throws Exception {
+		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
+		if(sessionFactory!=null)
+		{
+			Session session = sessionFactory.openSession();
+			try{
+				
+				Number rowCount = (Number) session.createCriteria(AuditMessage.class).setProjection(Projections.rowCount()).uniqueResult();
+				if(rowCount.intValue() < EXPORT_BATCH_THRESHOLD)
+				{
+					List<AuditMessage> auditMessages = (List<AuditMessage>) session.createCriteria(AuditMessage.class).list();
+					for(AuditMessage auditMessage : auditMessages)
+					{
+						writer.write(auditMessage);
+					}
+				}
+				else
+				{
+					int startingRowCursor = 0;
+					int outstandingRecords = rowCount.intValue();
+					
+					while(outstandingRecords > 0)
+					{
+						int nextWriteBatchSize = Math.min(outstandingRecords, EXPORT_BATCH_THRESHOLD);
+						List<AuditMessage> auditMessages = (List<AuditMessage>) session.createCriteria(AuditMessage.class).setFirstResult(startingRowCursor).setMaxResults(nextWriteBatchSize).list();
+						for(AuditMessage auditMessage : auditMessages)
+						{
+							writer.write(auditMessage);
+						}
+						
+						outstandingRecords -= nextWriteBatchSize;
+						startingRowCursor += nextWriteBatchSize;
+					}
+				}
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+			}
+		}
 		
 	}
 

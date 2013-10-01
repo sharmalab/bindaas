@@ -140,4 +140,10 @@ public class FileSystemAuditProvider implements IAuditProvider{
 		return 0;
 	}
 
+	@Override
+	public void dump(Writer writer) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
