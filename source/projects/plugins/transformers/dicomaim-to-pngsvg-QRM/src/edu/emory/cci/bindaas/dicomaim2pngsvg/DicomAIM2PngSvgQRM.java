@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -56,6 +57,7 @@ import edu.emory.cci.bindaas.framework.provider.exception.UpstreamContentAsserti
 import edu.emory.cci.bindaas.framework.provider.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+import edu.emory.cci.bindaas.framework.util.IOUtils;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import edu.emory.cci.image.convert.FromDICOM;
 
@@ -64,7 +66,7 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 	private Log log = LogFactory.getLog(getClass());
 	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
 	private JsonObject documentation;
-	private final static String sopUIDAttributeName ="sopUID";
+	private final static String sopUIDAttributeName = "sopUID";
 
 	public static final String FORMAT = "format";
 	public static final String SCALE = "scale";
@@ -72,13 +74,11 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 	public static final String WINDOW = "window";
 	public static final String LEVEL = "level";
 	public static final String FRAMEID = "frame";
-	
-	
+
 	private Templates template;
 	private Pattern inPattern;
 	private Pattern outPattern;
 
-	
 	@Override
 	public JsonObject getDocumentation() {
 
@@ -87,24 +87,28 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 
 	public void init() throws IOException, TransformerConfigurationException {
 		BundleContext context = Activator.getContext();
-		
+
 		InputStream xslt;
 		try {
-			xslt = context.getBundle().getEntry("META-INF/AIMv3r11MapToSVG11.xslt").openStream();
+			xslt = context.getBundle()
+					.getEntry("META-INF/AIMv3r11MapToSVG11.xslt").openStream();
 		} catch (IOException e1) {
 			log.error(e1);
-			throw e1;			
+			throw e1;
 		}
 
 		TransformerFactory transFact = new net.sf.saxon.TransformerFactoryImpl();
-        try {
-			template = transFact.newTemplates(new javax.xml.transform.stream.StreamSource(xslt));
+		try {
+			template = transFact
+					.newTemplates(new javax.xml.transform.stream.StreamSource(
+							xslt));
 		} catch (TransformerConfigurationException e) {
 			log.error(e);
 			throw e;
 		}
-        inPattern = Pattern.compile("<ImageAnnotation.*?</ImageAnnotation>", Pattern.DOTALL);
-        outPattern = Pattern.compile("<svg.*</svg>", Pattern.DOTALL);
+		inPattern = Pattern.compile("<ImageAnnotation.*?</ImageAnnotation>",
+				Pattern.DOTALL);
+		outPattern = Pattern.compile("<svg.*</svg>", Pattern.DOTALL);
 
 		documentation = DocumentationUtil.getProviderDocumentation(context,
 				DOCUMENTATION_RESOURCES_LOCATION);
@@ -122,26 +126,26 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 
 	@Override
 	public QueryResult modifyQueryResult(final QueryResult queryResult,
-			JsonObject dataSource, RequestContext requestContext, JsonObject modifierProperties , Map<String,String> runtimeParameters)
+			JsonObject dataSource, RequestContext requestContext,
+			JsonObject modifierProperties, Map<String, String> runtimeParameters)
 			throws AbstractHttpCodeException {
-		
-		
+
 		final DicomAIM2PngSvgQRMProperties props = GSONUtil.getGSONInstance()
-				.fromJson(modifierProperties, DicomAIM2PngSvgQRMProperties.class);
+				.fromJson(modifierProperties,
+						DicomAIM2PngSvgQRMProperties.class);
 		if (props == null || props.aimURL == null) {
 			String error = "QRM properties missing attribute imageUrl";
 			log.error(error);
-			throw new ValidationException(getClass().getName() , 1 ,  error);
+			throw new ValidationException(getClass().getName(), 1, error);
 		}
-		
+
 		String format = "jpeg";
-		if (runtimeParameters.containsKey(FORMAT)) format = runtimeParameters.get(FORMAT);
+		if (runtimeParameters.containsKey(FORMAT))
+			format = runtimeParameters.get(FORMAT);
 
 		final Map<String, String> fRuntimeParameters = runtimeParameters;
 		final String fformat = format;
-		queryResult.setMimeType("image/" + format);
 
-		
 		queryResult.setMimeType(StandardMimeType.ZIP.toString());
 		queryResult.setCallback(new Callback() {
 
@@ -149,79 +153,115 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 			public void callback(OutputStream servletOutputStream,
 					Properties context) throws AbstractHttpCodeException {
 
-				// results returned: if no image, error.  if no annotation, return empty xml + image.  if both, return both.
-				
+				// results returned: if no image, error. if no annotation,
+				// return empty xml + image. if both, return both.
+
 				InputStream ais = null;
 				String filename = new String();
 				String sopInstanceUID = new String();
-				try{
+				try {
 
 					// check to see if we get the right kind of data
 					if (queryResult.getIntermediateResult() == null) {
-						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "Upstream query result did not set a json element variable.");
+						throw new UpstreamContentAssertionFailedException(
+								getClass().getName(), 1,
+								"Upstream query result did not set a json element variable.");
 					}
 
-					JsonArray resultSet = queryResult.getIntermediateResult().getAsJsonArray();
+					JsonArray resultSet = queryResult.getIntermediateResult()
+							.getAsJsonArray();
 					if (resultSet.size() > 1) {
-						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "Number of upstream image query results is more than 1.");
+						throw new UpstreamContentAssertionFailedException(
+								getClass().getName(), 1,
+								"Number of upstream image query results is more than 1.");
 					} else if (resultSet.size() == 0) {
-						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "No image results found to transform to PNG.");
+						throw new UpstreamContentAssertionFailedException(
+								getClass().getName(), 1,
+								"No image results found to transform to PNG.");
 					}
 					JsonObject jobj = resultSet.get(0).getAsJsonObject();
 
 					// get the sop instance UID
 					if (jobj.has("SOPInstanceUID")) {
-						sopInstanceUID = jobj.get("SOPInstanceUID").getAsString();
+						sopInstanceUID = jobj.get("SOPInstanceUID")
+								.getAsString();
 					}
 					if (sopInstanceUID.isEmpty()) {
-						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "Query result is missing SOPInstanceUID attribute.");
+						throw new UpstreamContentAssertionFailedException(
+								getClass().getName(), 1,
+								"Query result is missing SOPInstanceUID attribute.");
 					}
 
 					// get the image filename
-					if (jobj.has("filepath")) {
+					if (!props.useWado() && jobj.has("filepath")) {
 						filename = jobj.get("filepath").getAsString();
 					}
-					if (filename.isEmpty()) {
-						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "Query result is missing filepath attribute.");
+					if (!props.useWado() && filename.isEmpty()) {
+						throw new UpstreamContentAssertionFailedException(
+								getClass().getName(), 1,
+								"Query result is missing filepath attribute.");
 					}
 
-				} 
-				
-				catch(AbstractHttpCodeException e)
-				{
-					log.error(e);
-					throw e;
-				}
-				catch (Exception e) {
-					log.error(e);
-					throw new ModifierExecutionFailedException(getClass().getName(), 1 , e);
 				}
 
+				catch (AbstractHttpCodeException e) {
+					log.error(e);
+					throw e;
+				} catch (Exception e) {
+					log.error(e);
+					throw new ModifierExecutionFailedException(getClass()
+							.getName(), 1, e);
+				}
 
 				// open the zip output stream first
 				ZipOutputStream zos = new ZipOutputStream(servletOutputStream);
 				try {
 
+					if (props.useWado()) {
+						// using wado service
+						try {
 
-					// convert the dicom image to png
-					try {
-						DicomInputStream dis = new DicomInputStream(new FileInputStream(filename));
-						convert(dis, zos, sopInstanceUID, fformat, fRuntimeParameters);
-						dis.close();
-					} catch (IOException e) {
-						throw e;
-					} catch (DicomException e) {
-						throw e;
-					} finally {
-						zos.closeEntry();
+							URL url = new URL(props
+									.getWadoServiceURL(sopInstanceUID));
+							InputStream content = url.openStream();
+
+							ZipEntry imageEntry = new ZipEntry(sopInstanceUID
+									+ ".jpeg");
+							zos.putNextEntry(imageEntry);
+							IOUtils.copy(content, zos, 2048);
+							zos.closeEntry();
+						} catch (Exception e) {
+							log.error("Failed to query WADO service", e);
+
+						}
+					} else {
+						// load image from filesystem
+						// convert the dicom image to png
+						try {
+							DicomInputStream dis = new DicomInputStream(
+									new FileInputStream(filename));
+							convert(dis, zos, sopInstanceUID, fformat,
+									fRuntimeParameters);
+							dis.close();
+						} catch (IOException e) {
+							throw e;
+						} catch (DicomException e) {
+							throw e;
+						} finally {
+							zos.closeEntry();
+						}
+
 					}
 
-
-					// now get the annotations.  - put this here because if there is no annotation or annotation failed, may still want to get the image.
-					ais = queryAnnotations(props.aimURL, props.apiKey, sopInstanceUID);
+					// now get the annotations. - put this here because if there
+					// is no annotation or annotation failed, may still want to
+					// get the image.
+					ais = queryAnnotations(props.aimURL, props.apiKey,
+							sopInstanceUID);
 
 					// open the zip entry
-					ZipEntry annotationDir = new ZipEntry(sopInstanceUID + "_svg.xml");
+					ZipEntry annotationDir = new ZipEntry(sopInstanceUID
+							+ "_svg.xml");
 					zos.putNextEntry(annotationDir);
 
 					// convert the annotations
@@ -239,112 +279,134 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 
 				} catch (Exception e) {
 					log.error(e);
-					throw new ModifierExecutionFailedException(getClass().getName(), 1 , e);
-					
+					throw new ModifierExecutionFailedException(getClass()
+							.getName(), 1, e);
+
 				} finally {
 					try {
 						zos.close();
 					} catch (IOException e) {
 						log.error(e);
-						throw new ModifierExecutionFailedException(getClass().getName(), 1 , e);
+						throw new ModifierExecutionFailedException(getClass()
+								.getName(), 1, e);
 					}
 				}
 
 			}
 
-
 			private InputStream queryAnnotations(String imageUrlToFetchAIM,
-					String apiKey , String sopUID) throws ClientProtocolException, IOException {
+					String apiKey, String sopUID)
+					throws ClientProtocolException, IOException {
 
 				// construct URL and query
 				HttpPost post = new HttpPost(imageUrlToFetchAIM);
 				post.addHeader("api_key", apiKey);
 
-				List <NameValuePair> nvps = new ArrayList <NameValuePair>();
-				nvps.add(new BasicNameValuePair(sopUIDAttributeName, sopUID)) ;
+				List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+				nvps.add(new BasicNameValuePair(sopUIDAttributeName, sopUID));
 				post.setEntity(new UrlEncodedFormEntity(nvps));
 
 				HttpClient httpClient = new DefaultHttpClient();
 				HttpResponse response = httpClient.execute(post);
 
-				if (response != null && response.getStatusLine().getStatusCode() == 200 && response.getEntity() != null) {
+				if (response != null
+						&& response.getStatusLine().getStatusCode() == 200
+						&& response.getEntity() != null) {
 					return response.getEntity().getContent();
-				}
-				else
-				{
-					if(response!=null)
-						throw new IOException("Request to url [" + imageUrlToFetchAIM + "] failed. Reason=[" + response.getStatusLine().toString() + "]");
+				} else {
+					if (response != null)
+						throw new IOException("Request to url ["
+								+ imageUrlToFetchAIM + "] failed. Reason=["
+								+ response.getStatusLine().toString() + "]");
 
 					else
-						throw new IOException("Request to url [" + imageUrlToFetchAIM + "] failed");
+						throw new IOException("Request to url ["
+								+ imageUrlToFetchAIM + "] failed");
 				}
 			}
 
+			private void convert(DicomInputStream dis, OutputStream os,
+					String filename, String format,
+					Map<String, String> runtimeParameters) throws IOException,
+					DicomException {
 
-			private void convert(DicomInputStream dis, OutputStream os, String filename, String format, Map<String,String> runtimeParameters) throws IOException, DicomException {
-			
-			
 				if ("dicom".equalsIgnoreCase(format)) {
-					// just want dicom.  so send it back.
-				    byte[] buffer = new byte[1024]; // Adjust if you want
-				    int bytesRead;
-				    while ((bytesRead = dis.read(buffer)) != -1) {
-				        os.write(buffer, 0, bytesRead);
-				    }
-				    
-				    System.out.println("dicom requested.  directly read from file system.");
-				    
+					// just want dicom. so send it back.
+					byte[] buffer = new byte[1024]; // Adjust if you want
+					int bytesRead;
+					while ((bytesRead = dis.read(buffer)) != -1) {
+						os.write(buffer, 0, bytesRead);
+					}
+
+					log.debug("dicom requested.  directly read from file system.");
+
 					return;
 				}
-					
-				// get the parameters from user.  constrain to: 1 or 3 channels, byte, (u)short, float, double.  (bitmap on source side becomes byte).
-	
+
+				// get the parameters from user. constrain to: 1 or 3 channels,
+				// byte, (u)short, float, double. (bitmap on source side becomes
+				// byte).
+
 				// only applies to gray data.
 				double window = Double.NaN, level = Double.NaN;
-				if (runtimeParameters.containsKey(WINDOW) != runtimeParameters.containsKey(LEVEL)) throw new DicomException("Both Window and Level need to be specified at the same time");
-				if (runtimeParameters.containsKey(WINDOW) && !runtimeParameters.get(WINDOW).isEmpty()) window = Double.parseDouble(runtimeParameters.get(WINDOW));
-				if (runtimeParameters.containsKey(LEVEL) && !runtimeParameters.get(LEVEL).isEmpty()) level = Double.parseDouble(runtimeParameters.get(LEVEL));
-				
-				
-				int width = -1, height=-1;
-				if (runtimeParameters.containsKey(WIDTH) && !runtimeParameters.get(WIDTH).isEmpty()) width = Integer.parseInt(runtimeParameters.get(WIDTH));
-				//if (runtimeParameters.containsKey(HEIGHT) && !runtimeParameters.get(HEIGHT).isEmpty()) height = Integer.parseInt(runtimeParameters.get(HEIGHT));
+				if (runtimeParameters.containsKey(WINDOW) != runtimeParameters
+						.containsKey(LEVEL))
+					throw new DicomException(
+							"Both Window and Level need to be specified at the same time");
+				if (runtimeParameters.containsKey(WINDOW)
+						&& !runtimeParameters.get(WINDOW).isEmpty())
+					window = Double.parseDouble(runtimeParameters.get(WINDOW));
+				if (runtimeParameters.containsKey(LEVEL)
+						&& !runtimeParameters.get(LEVEL).isEmpty())
+					level = Double.parseDouble(runtimeParameters.get(LEVEL));
+
+				int width = -1, height = -1;
+				if (runtimeParameters.containsKey(WIDTH)
+						&& !runtimeParameters.get(WIDTH).isEmpty())
+					width = Integer.parseInt(runtimeParameters.get(WIDTH));
+
 				double scale = 1.0;
-				if (runtimeParameters.containsKey(SCALE) && !runtimeParameters.get(SCALE).isEmpty()) scale = Double.parseDouble(runtimeParameters.get(SCALE));
-				
+				if (runtimeParameters.containsKey(SCALE)
+						&& !runtimeParameters.get(SCALE).isEmpty())
+					scale = Double.parseDouble(runtimeParameters.get(SCALE));
+
 				AttributeList list = new AttributeList();
 				list.read(dis);
 				int s_width, s_height;
-				s_width		= Attribute.getSingleIntegerValueOrDefault(list,TagFromName.Columns,0);
-				s_height		= Attribute.getSingleIntegerValueOrDefault(list,TagFromName.Rows,0);
-	
+				s_width = Attribute.getSingleIntegerValueOrDefault(list,
+						TagFromName.Columns, 0);
+				s_height = Attribute.getSingleIntegerValueOrDefault(list,
+						TagFromName.Rows, 0);
+
 				if (width > 0) {
-					scale = (double)width / (double)s_width;
-					height = (int)(Math.round(scale * (double)s_height)); 
+					scale = (double) width / (double) s_width;
+					height = (int) (Math.round(scale * (double) s_height));
 				} else if (scale != 1.0) {
-					width = (int)(Math.round(scale * (double)s_width));
-					height = (int)(Math.round(scale * (double)s_height));
+					width = (int) (Math.round(scale * (double) s_width));
+					height = (int) (Math.round(scale * (double) s_height));
 				} else {
 					width = -1;
 					height = -1;
 				}
-				
-				
+
 				// which frame?
 				int frameid = 0;
-				if (runtimeParameters.containsKey(FRAMEID) && !runtimeParameters.get(FRAMEID).isEmpty()) frameid = Integer.parseInt(runtimeParameters.get(FRAMEID));
-				
-				
-				FromDICOM.convertToEightBitImage(list, os, filename, format, level, window, width, height, 0, 0, 0, 0, frameid, frameid, 100, null, 0);
-				
+				if (runtimeParameters.containsKey(FRAMEID)
+						&& !runtimeParameters.get(FRAMEID).isEmpty())
+					frameid = Integer.parseInt(runtimeParameters.get(FRAMEID));
+
+				FromDICOM.convertToEightBitImage(list, os, filename, format,
+						level, window, width, height, 0, 0, 0, 0, frameid,
+						frameid, 100, null, 0);
+
 			}
 
+			private void writeAnnotations(InputStream is, String sopUID,
+					OutputStream os) throws ClientProtocolException,
+					IOException, TransformerException {
 
-			private void writeAnnotations(InputStream is, String sopUID, OutputStream os) throws ClientProtocolException,
-			IOException, TransformerException {
-
-
-				javax.xml.transform.Transformer trans = template.newTransformer();
+				javax.xml.transform.Transformer trans = template
+						.newTransformer();
 
 				String tag = "<results>\n";
 				os.write(tag.getBytes());
@@ -353,16 +415,17 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 				Scanner s = new Scanner(is);
 				String nextMatch = s.findWithinHorizon(inPattern, 0);
 				while (nextMatch != null) {
-					//						System.out.println("query result: " + nextMatch);
+					// System.out.println("query result: " + nextMatch);
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					javax.xml.transform.Result result =
-							new javax.xml.transform.stream.StreamResult(baos);
+					javax.xml.transform.Result result = new javax.xml.transform.stream.StreamResult(
+							baos);
 
-					javax.xml.transform.Source xmlSource =
-							new javax.xml.transform.stream.StreamSource(new StringReader(nextMatch));
+					javax.xml.transform.Source xmlSource = new javax.xml.transform.stream.StreamSource(
+							new StringReader(nextMatch));
 					trans.transform(xmlSource, result);
 
-					ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+					ByteArrayInputStream bais = new ByteArrayInputStream(baos
+							.toByteArray());
 					Scanner s2 = new Scanner(bais);
 					String svg = s2.findWithinHorizon(outPattern, 0);
 
@@ -386,11 +449,28 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 		private String aimURL;
 		@Expose
 		private String apiKey;
+		@Expose
+		private String wadoServer;
+		@Expose
+		private Boolean useWado;
+
+		public String getWadoServiceURL(String SOPInstanceUID) {
+			String url = String
+					.format("%s/wado?requestType=WADO&studyUID=&seriesUID=&objectUID=%s&contentType=image/jpeg", wadoServer,
+							SOPInstanceUID);
+			return url;
+		}
+
+		public boolean useWado() {
+			if (useWado != null && useWado)
+				return true;
+			else
+				return false;
+		}
 
 		public String getAimURL(String SOPInstanceUID) {
 			if (aimURL != null) {
-				String aimURL = this.aimURL + "?sopUID="
-						+ SOPInstanceUID;
+				String aimURL = this.aimURL + "?sopUID=" + SOPInstanceUID;
 				return aimURL;
 			} else
 				return null;
