@@ -78,7 +78,7 @@
 
 				<div class="row">
 					<ul class="breadcrumbs">
-						<li class="current">
+						<li >
 							<a href="/dashboard/"><strong>Dashboard</strong></a>
 						</li>
 						<li>
