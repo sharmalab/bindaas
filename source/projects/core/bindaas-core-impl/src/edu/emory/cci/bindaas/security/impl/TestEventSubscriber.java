@@ -18,7 +18,7 @@ public class TestEventSubscriber implements EventHandler {
 		if(event instanceof BindaasEvent)
 		{
 			BindaasEvent be = (BindaasEvent) event;
-			System.out.println(be.getRequestId());
+			
 		}
 		
 	}

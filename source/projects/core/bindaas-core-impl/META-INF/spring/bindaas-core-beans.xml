@@ -134,6 +134,19 @@
 </bean>
 
 
+<bean id="systemHealthCheckService" class="edu.emory.cci.bindaas.core.system.SystemHealthCheckService" init-method="init">
+	<property name="pollInterval" value="3600000"></property> <!-- every hour -->
+	<property name="diskspaceThreshold" value="95"></property> <!-- 95% -->
+	<property name="memoryThreshold" value="95"></property> <!-- 95% -->
+</bean>
+
+<bean id="eventLoggerService" class="edu.emory.cci.bindaas.core.system.event.handler.EventLoggerService" init-method="init">
+	<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+
+<bean id="eventInfoCommand" class="edu.emory.cci.bindaas.core.system.command.EventInfoCommand" init-method="init">
+	<property name="eventLoggerService" ref="eventLoggerService"></property>
+</bean>
 <!-- Blueprint Exports -->
 	<osgi:service ref="executionTask" interface="edu.emory.cci.bindaas.core.api.IExecutionTasks"></osgi:service>
 	<osgi:service ref="managementTask" interface="edu.emory.cci.bindaas.core.api.IManagementTasks"></osgi:service>

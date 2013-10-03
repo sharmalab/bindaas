@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.core.system.command;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -40,7 +41,8 @@ public class AuditCommand {
 	
 	public void dump(String filename) throws Exception
 	{
-		final CSVWriter csvWriter = new CSVWriter(new FileWriter(filename));
+		File file = new File(filename);
+		final CSVWriter csvWriter = new CSVWriter(new FileWriter(file));
 		csvWriter.writeNext(new String[]{"Timestamp" , "Request URL" , "Query Parameters" , "Requester" , "Source IP" , "Event" , "HTTP Response Code"});
 		IAuditProvider.Writer writer  = new IAuditProvider.Writer() {
 			
@@ -60,6 +62,7 @@ public class AuditCommand {
 		};
 		auditProvider.dump(writer);
 		csvWriter.close();
+		System.out.println("Dump written to [" + file.getAbsolutePath() + "]");
 	}
 	
 	public void dump() throws Exception
