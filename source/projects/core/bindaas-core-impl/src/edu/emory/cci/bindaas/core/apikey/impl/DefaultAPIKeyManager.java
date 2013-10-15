@@ -15,6 +15,7 @@ import org.hibernate.criterion.Restrictions;
 
 import edu.emory.cci.bindaas.core.apikey.api.APIKey;
 import edu.emory.cci.bindaas.core.apikey.api.APIKeyManagerException;
+import edu.emory.cci.bindaas.core.apikey.api.APIKeyManagerException.Reason;
 import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
@@ -83,7 +84,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 				UserRequest request = listOfValidKeys.get(0);
 				if(throwErrorIfAlreadyExists)
 				{
-					throw new APIKeyManagerException("APIKey for the user already exists");
+					throw new APIKeyManagerException("APIKey for the user already exists" , Reason.KEY_ALREADY_EXIST);
 				}
 				else
 				{
@@ -114,10 +115,13 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 				session.getTransaction().commit();
 				return userRequestToAPIKey(userRequest);
 
-		} catch (Exception e) {
+		} 
+		
+		catch (APIKeyManagerException e) { throw e ;}
+		catch (Exception e) {
 			log.error(e);
 			session.getTransaction().rollback();
-			throw new APIKeyManagerException(e);
+			throw new APIKeyManagerException(e , Reason.PROCESSING_ERROR);
 		} finally {
 			session.close();
 		}
@@ -178,13 +182,15 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					return userRequestToAPIKey(sessionKey);
 				
 			} else {
-				throw new APIKeyManagerException("Cannot generate API-Key for [" + bindaasUser + "]. The User must apply for it first!!");
+				throw new APIKeyManagerException("Cannot generate API-Key for [" + bindaasUser + "]. The User must apply for it first!!" , Reason.KEY_DOES_NOT_EXIST);
 			}
 
-		} catch (Exception e) {
+		} 
+		catch (APIKeyManagerException e) { throw e ;}
+		catch (Exception e) {
 			log.error(e);
 			session.getTransaction().rollback();
-			throw new APIKeyManagerException(e);
+			throw new APIKeyManagerException(e, Reason.PROCESSING_ERROR);
 		} finally {
 			session.close();
 		}
@@ -216,7 +222,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 		catch(Exception e)
 		{
 			log.error(e);
-			throw new APIKeyManagerException(e);
+			throw new APIKeyManagerException(e , Reason.PROCESSING_ERROR);
 		}
 		
 		return null;
@@ -252,7 +258,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 		{
 			log.error(e);
 			session.getTransaction().rollback();
-			throw new APIKeyManagerException(e);
+			throw new APIKeyManagerException(e ,Reason.PROCESSING_ERROR);
 		}
 		finally{
 			if(session!=null)
@@ -286,7 +292,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 		{
 			log.error(e);
 			session.getTransaction().rollback();
-			throw new APIKeyManagerException(e);
+			throw new APIKeyManagerException(e , Reason.PROCESSING_ERROR);
 		}
 		finally{
 			if(session!=null)
@@ -298,7 +304,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 	public APIKey createAPIKeyRequest(BindaasUser bindaasUser,
 			Date dateExpires, String initiatedBy, String comments,
 			ActivityType activityType) throws APIKeyManagerException {
-		throw new APIKeyManagerException("Method Not Implemented"); // TODO : implement this later
+		throw new APIKeyManagerException("Method Not Implemented", Reason.METHOD_NOT_IMPLEMENTED); // TODO : implement this later
 	}
 
 	@Override
@@ -348,7 +354,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 		} catch (Exception e) {
 			session.getTransaction().rollback();
 			log.error(e);
-			throw new APIKeyManagerException(e);
+			throw new APIKeyManagerException(e , Reason.PROCESSING_ERROR);
 		} finally {
 			session.close();
 		}
@@ -370,7 +376,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 			return listOfValidKeys;
 		} catch (Exception e) {
 			log.error(e);
-			throw new APIKeyManagerException(e);
+			throw new APIKeyManagerException(e , Reason.PROCESSING_ERROR);
 		} finally {
 			session.close();
 		}
@@ -400,7 +406,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 		} catch (Exception e) {
 			log.error(e);
 			session.getTransaction().rollback();
-			throw new APIKeyManagerException(e);
+			throw new APIKeyManagerException(e , Reason.PROCESSING_ERROR);
 		} finally {
 			session.close();
 		}

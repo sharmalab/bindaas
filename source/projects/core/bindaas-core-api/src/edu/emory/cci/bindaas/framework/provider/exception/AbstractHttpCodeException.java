@@ -81,6 +81,15 @@ public abstract class AbstractHttpCodeException extends ProviderException {
 
 	public abstract Integer getHttpStatusCode();
 	
+	public JsonObject toJson()
+	{
+		JsonObject responseObj = new JsonObject();
+		responseObj.add("errorDescription",  new JsonPrimitive(this.getErrorDescription()));
+		responseObj.add("suggestedAction",  new JsonPrimitive(this.getSuggestedAction()));
+		responseObj.add("detailedMessage",  new JsonPrimitive(this.getMessage()));
+		return responseObj;
+	}
+	
 	public String toString()
 	{
 		JsonObject responseObj = new JsonObject();
