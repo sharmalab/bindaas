@@ -3,8 +3,6 @@ package edu.emory.cci.bindaas.webconsole;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
@@ -18,7 +16,6 @@ public class LoginView {
 	
 	private  String templateName = "login.vt";
 	private  Template template;
-	private  Log log = LogFactory.getLog(LoginView.class);
 	private VelocityEngineWrapper velocityEngineWrapper;
 	private IVersionManager versionManager;
 	
