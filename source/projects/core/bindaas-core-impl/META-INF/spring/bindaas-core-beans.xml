@@ -98,7 +98,7 @@
 	
 </bean>
 
-<bean id="apiKeyManager" class="edu.emory.cci.bindaas.core.apikey.impl.DefaultAPIKeyManager" >
+<bean id="apiKeyManager" class="edu.emory.cci.bindaas.core.apikey.impl.DefaultAPIKeyManager" init-method="init">
 	<property name="sessionFactory" ref="sessionFactory"></property>
 </bean>
 
