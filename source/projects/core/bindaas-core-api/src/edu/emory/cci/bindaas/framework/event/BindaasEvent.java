@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.framework.event;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -8,6 +10,8 @@ import java.util.UUID;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
+
+import com.google.gson.JsonObject;
 
 import edu.emory.cci.bindaas.framework.bundle.Activator;
 
@@ -30,8 +34,44 @@ public class BindaasEvent extends Event{
 		topicsEnabled.remove(topic);
 	}
 	
-	private String requestId;
+	private Date timestamp;
 	
+	// identifies the requesting thread. set automatically
+	private String threadId;
+	
+	// provide a reference for this event.It can be used to associate multiple events,log messages, etc.
+	private String referenceId;
+	
+	// information about the event
+	private JsonObject eventData;
+	
+	
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
+	}
+
+	public JsonObject getEventData() {
+		return eventData;
+	}
+
+	public void setEventData(JsonObject eventData) {
+		this.eventData = eventData;
+	}
+
+	public BindaasEvent(String topic)
+	{
+		this(topic , new HashMap<String, Object>());
+		timestamp = new Date();
+	}
+	
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
 	public BindaasEvent(String topic , Map<String,Object> properties) {
 		super(topic, properties);
 		
@@ -40,16 +80,17 @@ public class BindaasEvent extends Event{
 			requestIdThreadLocal.set(UUID.randomUUID().toString());
 		}
 		
-		this.requestId = requestIdThreadLocal.get();
+		this.threadId = requestIdThreadLocal.get();
 		
 	}
 
-	public String getRequestId() {
-		return requestId;
+	
+	public String getThreadId() {
+		return threadId;
 	}
 
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
+	public void setThreadId(String threadId) {
+		this.threadId = threadId;
 	}
 
 	public void emitSynchronously()
