@@ -21,5 +21,7 @@ public interface ITrustedApplicationManager {
 	@Path("/revokeUser")
 	public Response revokeAccess(@HeaderParam("_username") String username ,   @HeaderParam("_applicationID") String applicationID ,@HeaderParam("_salt") String salt , @HeaderParam("_digest") String digest ,  @QueryParam("comments") String comments);
 	
-
+	@GET
+	@Path("/listAPIkeys")
+	public Response listAPIKeys(@HeaderParam("_username") String username ,   @HeaderParam("_applicationID") String applicationID ,@HeaderParam("_salt") String salt , @HeaderParam("_digest") String digest );
 }

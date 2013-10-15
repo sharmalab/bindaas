@@ -11,6 +11,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.google.gson.annotations.Expose;
+
 @Entity
 public class UserRequest {
 
@@ -28,20 +30,28 @@ public class UserRequest {
 	@GenericGenerator(name="increment", strategy = "increment")
 	private Long id;
 	
+	@Expose
 	private String emailAddress;
 	
+	@Expose
 	private String firstName;
+	@Expose
 	private String lastName;
+	@Expose
 	private String reason;
 	
+	@Expose
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date requestDate;
 	
+	@Expose
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateExpires;
 	
+	@Expose
 	private String apiKey;
 	
+	@Expose
 	@Column(nullable = false)
 	private String stage; // pending|accepted|revoked|denied
 	

@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,6 +23,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -29,7 +31,9 @@ import edu.emory.cci.bindaas.core.apikey.api.APIKey;
 import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
+import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
+import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.trusted_app.TrustedApplicationRegistry;
 import edu.emory.cci.bindaas.trusted_app.TrustedApplicationRegistry.TrustedApplicationEntry;
@@ -302,9 +306,7 @@ public class TrustedApplicationManagerImpl implements
 
                         } catch (AuthenticationException e) {
                                 throw e;
-                        } catch (Exception e) {
-                                throw new AuthenticationException(e);
-                        }
+                        } 
                 }
 
                 catch (AuthenticationException authE) {
@@ -365,5 +367,49 @@ public class TrustedApplicationManagerImpl implements
                 }
 
         }
+
+		@Override
+		@GET
+		@Path("/listAPIkeys")
+		public Response listAPIKeys(@HeaderParam("_username") String username,
+				@HeaderParam("_applicationID") String applicationID,
+				@HeaderParam("_salt") String salt,
+				@HeaderParam("_digest") String digest) {
+			 try {
+                 try {
+
+                         TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
+                                         applicationID, salt, digest, username);
+
+                         List<UserRequest> listOfApiKeys = apiKeyManager.listAPIKeys();
+                         JsonArray array = GSONUtil.getGSONInstance().toJsonTree(listOfApiKeys).getAsJsonArray();
+                         
+                         JsonObject retVal = new JsonObject();
+
+                         retVal.add("apiKeys", array);
+                         retVal.add("applicationID", new JsonPrimitive(applicationID));
+                         retVal.add("applicationName",
+                                         new JsonPrimitive(trustedAppEntry.getName()));
+                         return Response.ok().entity(retVal.toString())
+                                         .type("application/json").build();
+
+                 } catch (AuthenticationException e) {
+                         throw e;
+                 } catch (Exception e) {
+                         throw new AuthenticationException(e);
+                 }
+         }
+
+         catch (AuthenticationException authE) {
+                 log.error(authE); // 401
+                 return Response.status(401).build();
+         } catch (Exception e) {
+                 log.error(e);
+                 return Response.serverError().build();
+                 // error 500
+         }
+
+
+		}
 
 }
