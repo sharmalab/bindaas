@@ -49,6 +49,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 	
 	
 	
+	
 	@Override
 	public APIKey generateAPIKey(BindaasUser bindaasUser , Date dateExpires, String initiatedBy ,String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists)
 			throws APIKeyManagerException { 
@@ -73,27 +74,20 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.createCriteria(UserRequest.class)
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.eq("emailAddress", emailAddress))
+					.add(Restrictions.gt("dateExpires", new Date()))
 					.list();
 
 			if (listOfValidKeys != null && listOfValidKeys.size() > 0) {
 				
 				
 				UserRequest request = listOfValidKeys.get(0);
-				if (request.getDateExpires().after(new Date())) {
-					if(throwErrorIfAlreadyExists)
-					{
-						throw new APIKeyManagerException("APIKey for the user already exists");
-					}
-					else
-					{
-						return userRequestToAPIKey(request);
-					}
-					
-				} else {
-					log.warn("The API Key of user [" + bindaasUser
-							+ "] has expired");
-					request.setStage("expired");
-					session.save(request);
+				if(throwErrorIfAlreadyExists)
+				{
+					throw new APIKeyManagerException("APIKey for the user already exists");
+				}
+				else
+				{
+					return userRequestToAPIKey(request);
 				}
 			} 
 				
@@ -151,8 +145,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.list();
 
 			if (listOfValidKeys != null && listOfValidKeys.size() > 0) {
-				UserRequest request = listOfValidKeys.get(0); 
-				if (request.getDateExpires().after(new Date())) {
+					UserRequest request = listOfValidKeys.get(0); 
 
 					// generate a short lived api-key for this user
 					UserRequest sessionKey = new UserRequest();
@@ -183,11 +176,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					session.getTransaction().commit();
 					
 					return userRequestToAPIKey(sessionKey);
-				} else {
-					
-					throw new APIKeyManagerException("The API Key of user [" + bindaasUser
-							+ "] has expired. The User must reapply");
-				}
+				
 			} else {
 				throw new APIKeyManagerException("Cannot generate API-Key for [" + bindaasUser + "]. The User must apply for it first!!");
 			}
@@ -208,18 +197,20 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 		try{
 			
 			@SuppressWarnings("unchecked")
-			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).add(Restrictions.eq("stage",	Stage.accepted.name())).add(Restrictions.eq("apiKey", apiKey)).list();
+			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).
+			add(Restrictions.eq("stage",	Stage.accepted.name())).
+			add(Restrictions.eq("apiKey", apiKey)).
+			add(Restrictions.gt("dateExpires", new Date())).
+			list();
+			
 			if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
 			{
 				UserRequest request = listOfValidKeys.get(0);
-				if(request.getDateExpires().after(new Date()))
-				{
-					BindaasUser bindaasUser = new BindaasUser(request.getEmailAddress());
-					bindaasUser.addProperty(BindaasUser.EMAIL_ADDRESS, request.getEmailAddress());
-					bindaasUser.addProperty(BindaasUser.FIRST_NAME, request.getFirstName());
-					bindaasUser.addProperty(BindaasUser.LAST_NAME, request.getLastName());
-					return bindaasUser;
-				}
+				BindaasUser bindaasUser = new BindaasUser(request.getEmailAddress());
+				bindaasUser.addProperty(BindaasUser.EMAIL_ADDRESS, request.getEmailAddress());
+				bindaasUser.addProperty(BindaasUser.FIRST_NAME, request.getFirstName());
+				bindaasUser.addProperty(BindaasUser.LAST_NAME, request.getLastName());
+				return bindaasUser;
 			}
 		}
 		catch(Exception e)
@@ -362,6 +353,98 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 			session.close();
 		}
 
+	}
+
+	
+	@Override
+	public List<UserRequest> listAPIKeys() throws APIKeyManagerException {
+		Session session = sessionFactory.openSession();
+		try {
+			
+			@SuppressWarnings("unchecked")
+			List<UserRequest> listOfValidKeys = (List<UserRequest>) session
+					.createCriteria(UserRequest.class)
+					.add(Restrictions.eq("stage", Stage.accepted.name()))
+					.add(Restrictions.gt("dateExpires", new Date()))
+					.list();
+			return listOfValidKeys;
+		} catch (Exception e) {
+			log.error(e);
+			throw new APIKeyManagerException(e);
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public synchronized Integer purgeExpiredKeys() throws APIKeyManagerException {
+		Session session = sessionFactory.openSession();
+		try {
+			session.beginTransaction();
+			
+			@SuppressWarnings("unchecked")
+			List<UserRequest> list = session.createCriteria(UserRequest.class).add(Restrictions.lt("dateExpires", new Date())).list();
+			
+			for(UserRequest usr : list)
+			{
+				@SuppressWarnings("unchecked")
+				List<HistoryLog> historyLogs = session.createCriteria(HistoryLog.class).add(Restrictions.eq("userRequest", usr)).list();
+				for(HistoryLog histLog : historyLogs)
+					session.delete(histLog);
+				session.delete(usr);
+			}
+			session.getTransaction().commit();
+			int rowsDeleted = list.size(); 
+			return rowsDeleted;
+		
+		} catch (Exception e) {
+			log.error(e);
+			session.getTransaction().rollback();
+			throw new APIKeyManagerException(e);
+		} finally {
+			session.close();
+		}
+	}
+	
+	public void init() throws Exception
+	{
+		// start ExpireKeysJob and run every 24 hours
+		ExpireKeysJob expireKeysJob = new ExpireKeysJob(24 * 3600 * 1000L , this);
+		Thread t = new Thread(expireKeysJob, "Expire-API-Keys-Job");
+		t.start();
+	}
+	
+	public static class ExpireKeysJob  implements Runnable {
+		private DefaultAPIKeyManager apiKeyManager;
+		private Long frequency;
+		private Log log = LogFactory.getLog(ExpireKeysJob.class);
+		
+		public ExpireKeysJob(Long frequency , DefaultAPIKeyManager apiKeyManager)
+		{
+			this.apiKeyManager = apiKeyManager;
+			this.frequency = frequency;
+		}
+
+		@Override
+		public void run() {
+			while(true)
+			{
+				try {
+					int count = apiKeyManager.purgeExpiredKeys();
+					log.info("Purged [" + count + "] expired API Keys from the database");
+				} catch (APIKeyManagerException e) {
+						log.error(e);
+				}
+				finally{
+					try {
+						Thread.sleep(frequency);
+					} catch (InterruptedException e) {
+						log.error(e);
+					}
+				}
+			}
+			
+		}
 	}
 
 }
