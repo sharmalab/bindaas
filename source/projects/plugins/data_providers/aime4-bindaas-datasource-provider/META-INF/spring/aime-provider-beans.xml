@@ -25,10 +25,11 @@
 <property name="initializationTemplate">
 <value>
 {
-      &quot;dataSource&quot;: {},
+      &quot;dataSource&quot;: {
+      },
       &quot;queryEndpoints&quot;: {
         &quot;find&quot;: {
-          &quot;queryTemplate&quot;: &quot;XQUERY \ndeclare namespace ns1\u003d\&quot;gme://caCORE.caCORE/4.4/edu.northwestern.radiology.AIM\&quot;; \ndeclare namespace iso\u003d\&quot;uri:iso.org:21090\&quot;;\n\nfor $y in db2-fn:xmlcolumn(\&quot;AIMEDS.%s.XMLCOLUMN\&quot;)/ns1:ImageAnnotationCollection \nwhere $y/ns1:user/ns1:name[starts-with(@value,\u0027$username$\u0027)] \nand $y//ns1:ImagingPhysicalEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicalEntity$\u0027)]\nand $y//ns1:ImagingPhysicalEntityCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicEntityCharacteristic$\u0027)]\nand $y//ns1:ImagingObservationEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntity$\u0027)]\nand $y//ns1:ImagingObservationCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntityCharacteristic$\u0027)]\nand $y/ns1:imageAnnotations/ns1:ImageAnnotation/ns1:imageReferenceEntityCollection/ns1:ImageReferenceEntity/ns1:imageStudy/ns1:instanceUid[starts-with(@root,\u0027$studyInstanceUID$\u0027)]\nand $y/ns1:person/ns1:name[starts-with(@value,\u0027$patientName$\u0027)]\nand $y/ns1:person/ns1:id[starts-with(@value,\u0027$patientID$\u0027)]\nand $y/ns1:imageAnnotations/ns1:ImageAnnotation/ns1:name[starts-with(@value,\u0027$annotationName$\u0027)]\nand (boolean(($annotationContainerUID$)) \u003d fn:false() or $y/ns1:uniqueIdentifier/@root \u003d ($annotationContainerUID$) )\nreturn $y \n &quot;,
+          &quot;queryTemplate&quot;: &quot;XQUERY \ndeclare namespace ns1\u003d\&quot;gme://caCORE.caCORE/4.4/edu.northwestern.radiology.AIM\&quot;; \ndeclare namespace iso\u003d\&quot;uri:iso.org:21090\&quot;;\n\nfor $y in db2-fn:xmlcolumn(\&quot;AIMEDS.%s.XMLCOLUMN\&quot;)/ns1:ImageAnnotationCollection \nwhere ( (exists($y/ns1:user/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$username$\u0027 ) or $y/ns1:user/ns1:name[starts-with(@value,\u0027$username$\u0027)]) \nand ( (exists($y//ns1:ImagingPhysicalEntity/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$anatomicalEntity$\u0027) or $y//ns1:ImagingPhysicalEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicalEntity$\u0027)])\nand ( (exists($y//ns1:ImagingPhysicalEntityCharacteristic/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$anatomicEntityCharacteristic$\u0027) or $y//ns1:ImagingPhysicalEntityCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicEntityCharacteristic$\u0027)])\nand ( (exists($y//ns1:ImagingObservationEntity/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$imagingObservationEntity$\u0027) or $y//ns1:ImagingObservationEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntity$\u0027)])\nand ( (exists($y//ns1:ImagingObservationCharacteristic/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$imagingObservationEntityCharacteristic$\u0027 ) or $y//ns1:ImagingObservationCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntityCharacteristic$\u0027)])\nand ( (exists($y//ns1:ImageAnnotation/ns1:imageReferenceEntityCollection/ns1:ImageReferenceEntity/ns1:imageStudy/ns1:instanceUid/@root) \u003d fn:false() and \u0027\u0027 \u003d \u0027$studyInstanceUID$\u0027 ) or $y//ns1:ImageAnnotation/ns1:imageReferenceEntityCollection/ns1:ImageReferenceEntity/ns1:imageStudy/ns1:instanceUid[starts-with(@root,\u0027$studyInstanceUID$\u0027)])\nand ( (exists($y/ns1:person/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$patientName$\u0027 ) or $y/ns1:person/ns1:name[starts-with(@value,\u0027$patientName$\u0027)])\nand ( (exists($y/ns1:person/ns1:id/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$patientID$\u0027 ) or $y/ns1:person/ns1:id[starts-with(@value,\u0027$patientID$\u0027)])\nand ( (exists($y//ns1:ImageAnnotation/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$annotationName$\u0027 )  or $y//ns1:ImageAnnotation/ns1:name[starts-with(@value,\u0027$annotationName$\u0027)])\nand (boolean(($annotationContainerUID$)) \u003d fn:false() or $y/ns1:uniqueIdentifier/@root \u003d ($annotationContainerUID$) )\nreturn $y   &quot;,
           &quot;metaData&quot;: {},
           &quot;tags&quot;: [],
           &quot;bindVariables&quot;: {
@@ -90,7 +91,7 @@
               &quot;name&quot;: &quot;annotationContainerUID&quot;,
               &quot;required&quot;: false,
               &quot;defaultValue&quot;: &quot;&quot;,
-              &quot;description&quot;: &quot;Comma-separated list of annotationContainerUID . MUST be enclosed within single-quotes as in : \u0027id1\u0027,\u0027id2\u0027 ....&quot;
+              &quot;description&quot;: &quot;Comma-separated list of annotationContainerUID . MUST be enclosed within single-quotes as in : &quot;
             }
           },
           &quot;stage&quot;: &quot;UNVERIFIED&quot;,
@@ -102,12 +103,12 @@
             ]
           },
           &quot;name&quot;: &quot;find&quot;,
-          &quot;timeCreated&quot;: &quot;Thu May 09 17:42:09 EDT 2013&quot;,
+          &quot;timeCreated&quot;: &quot;Fri Sep 06 12:30:10 EDT 2013&quot;,
           &quot;createdBy&quot;: &quot;admin&quot;,
-          &quot;description&quot;: &quot;Find annotation metadata matching attributes specified &quot;
+          &quot;description&quot;: &quot;Find annotation metadata matching attributes specified         &quot;
         },
         &quot;retrieve&quot;: {
-          &quot;queryTemplate&quot;: &quot;XQUERY \ndeclare namespace ns1\u003d\&quot;gme://caCORE.caCORE/4.4/edu.northwestern.radiology.AIM\&quot;; \ndeclare namespace iso\u003d\&quot;uri:iso.org:21090\&quot;;\n\nfor $y in db2-fn:xmlcolumn(\&quot;AIMEDS.%s.XMLCOLUMN\&quot;)/ns1:ImageAnnotationCollection \nwhere $y/ns1:user/ns1:name[starts-with(@value,\u0027$username$\u0027)] \nand $y//ns1:ImagingPhysicalEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicalEntity$\u0027)]\nand $y//ns1:ImagingPhysicalEntityCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicEntityCharacteristic$\u0027)]\nand $y//ns1:ImagingObservationEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntity$\u0027)]\nand $y//ns1:ImagingObservationCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntityCharacteristic$\u0027)]\nand $y/ns1:imageAnnotations/ns1:ImageAnnotation/ns1:imageReferenceEntityCollection/ns1:ImageReferenceEntity/ns1:imageStudy/ns1:instanceUid[starts-with(@root,\u0027$studyInstanceUID$\u0027)]\nand $y/ns1:person/ns1:name[starts-with(@value,\u0027$patientName$\u0027)]\nand $y/ns1:person/ns1:id[starts-with(@value,\u0027$patientID$\u0027)]\nand $y/ns1:imageAnnotations/ns1:ImageAnnotation/ns1:name[starts-with(@value,\u0027$annotationName$\u0027)]\nand (boolean(($annotationContainerUID$)) \u003d fn:false() or $y/ns1:uniqueIdentifier/@root \u003d ($annotationContainerUID$) )\nreturn $y \n  &quot;,
+          &quot;queryTemplate&quot;: &quot;XQUERY \ndeclare namespace ns1\u003d\&quot;gme://caCORE.caCORE/4.4/edu.northwestern.radiology.AIM\&quot;; \ndeclare namespace iso\u003d\&quot;uri:iso.org:21090\&quot;;\n\nfor $y in db2-fn:xmlcolumn(\&quot;AIMEDS.%s.XMLCOLUMN\&quot;)/ns1:ImageAnnotationCollection \nwhere ( (exists($y/ns1:user/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$username$\u0027 ) or $y/ns1:user/ns1:name[starts-with(@value,\u0027$username$\u0027)]) \nand ( (exists($y//ns1:ImagingPhysicalEntity/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$anatomicalEntity$\u0027) or $y//ns1:ImagingPhysicalEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicalEntity$\u0027)])\nand ( (exists($y//ns1:ImagingPhysicalEntityCharacteristic/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$anatomicEntityCharacteristic$\u0027) or $y//ns1:ImagingPhysicalEntityCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicEntityCharacteristic$\u0027)])\nand ( (exists($y//ns1:ImagingObservationEntity/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$imagingObservationEntity$\u0027) or $y//ns1:ImagingObservationEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntity$\u0027)])\nand ( (exists($y//ns1:ImagingObservationCharacteristic/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$imagingObservationEntityCharacteristic$\u0027 ) or $y//ns1:ImagingObservationCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntityCharacteristic$\u0027)])\nand ( (exists($y//ns1:ImageAnnotation/ns1:imageReferenceEntityCollection/ns1:ImageReferenceEntity/ns1:imageStudy/ns1:instanceUid/@root) \u003d fn:false() and \u0027\u0027 \u003d \u0027$studyInstanceUID$\u0027 ) or $y//ns1:ImageAnnotation/ns1:imageReferenceEntityCollection/ns1:ImageReferenceEntity/ns1:imageStudy/ns1:instanceUid[starts-with(@root,\u0027$studyInstanceUID$\u0027)])\nand ( (exists($y/ns1:person/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$patientName$\u0027 ) or $y/ns1:person/ns1:name[starts-with(@value,\u0027$patientName$\u0027)])\nand ( (exists($y/ns1:person/ns1:id/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$patientID$\u0027 ) or $y/ns1:person/ns1:id[starts-with(@value,\u0027$patientID$\u0027)])\nand ( (exists($y//ns1:ImageAnnotation/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$annotationName$\u0027 )  or $y//ns1:ImageAnnotation/ns1:name[starts-with(@value,\u0027$annotationName$\u0027)])\nand (boolean(($annotationContainerUID$)) \u003d fn:false() or $y/ns1:uniqueIdentifier/@root \u003d ($annotationContainerUID$) )\nreturn $y   &quot;,
           &quot;metaData&quot;: {},
           &quot;tags&quot;: [],
           &quot;bindVariables&quot;: {
@@ -169,7 +170,7 @@
               &quot;name&quot;: &quot;annotationContainerUID&quot;,
               &quot;required&quot;: false,
               &quot;defaultValue&quot;: &quot;&quot;,
-              &quot;description&quot;: &quot;Comma-separated list of annotationContainerUID . MUST be enclosed within single-quotes as in : \u0027id1\u0027,\u0027id2\u0027 ....&quot;
+              &quot;description&quot;: &quot;Comma-separated list of annotationContainerUID . MUST be enclosed within single-quotes as in : &quot;
             }
           },
           &quot;stage&quot;: &quot;UNVERIFIED&quot;,
@@ -181,9 +182,9 @@
             ]
           },
           &quot;name&quot;: &quot;retrieve&quot;,
-          &quot;timeCreated&quot;: &quot;Thu May 09 17:43:13 EDT 2013&quot;,
+          &quot;timeCreated&quot;: &quot;Fri Sep 06 12:32:54 EDT 2013&quot;,
           &quot;createdBy&quot;: &quot;admin&quot;,
-          &quot;description&quot;: &quot;Retrieve annotations matching attributes specified  &quot;
+          &quot;description&quot;: &quot;Retrieve annotations matching attributes specified      &quot;
         }
       },
       &quot;deleteEndpoints&quot;: {
@@ -200,7 +201,7 @@
           },
           &quot;stage&quot;: &quot;UNVERIFIED&quot;,
           &quot;name&quot;: &quot;byUID&quot;,
-          &quot;timeCreated&quot;: &quot;Thu May 09 17:41:12 EDT 2013&quot;,
+          &quot;timeCreated&quot;: &quot;Fri May 10 16:45:54 EDT 2013&quot;,
           &quot;createdBy&quot;: &quot;admin&quot;,
           &quot;description&quot;: &quot;Delete by annotationContainerUID&quot;
         }
@@ -213,16 +214,17 @@
             &quot;inputType&quot;: &quot;XML&quot;
           },
           &quot;name&quot;: &quot;xml&quot;,
-          &quot;timeCreated&quot;: &quot;Wed May 08 17:56:54 EDT 2013&quot;,
-          &quot;createdBy&quot;: &quot;nadirsaghar@gmail.com&quot;
+          &quot;timeCreated&quot;: &quot;Fri May 10 16:45:54 EDT 2013&quot;,
+          &quot;createdBy&quot;: &quot;admin&quot;,
+          &quot;description&quot;: &quot;&quot;
         }
       },
       &quot;providerId&quot;: &quot;edu.emory.cci.bindaas.datasource.provider.aime4.AIMEProvider&quot;,
       &quot;providerVersion&quot;: 1,
       &quot;name&quot;: &quot;AIME4&quot;,
-      &quot;timeCreated&quot;: &quot;Wed May 08 17:56:41 EDT 2013&quot;,
-      &quot;createdBy&quot;: &quot;nadirsaghar@gmail.com&quot;,
-      &quot;description&quot;: &quot;AIME4&quot;
+      &quot;timeCreated&quot;: &quot;Mon Oct 21 11:02:49 EDT 2013&quot;,
+      &quot;createdBy&quot;: &quot;admin&quot;,
+      &quot;description&quot;: &quot;AIME based on AIM 4.0 Data Model&quot;
     }
 </value>
 </property>
