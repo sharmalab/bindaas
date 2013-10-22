@@ -52,7 +52,7 @@ public class SqlHTMLHandler implements IFormatHandler {
 		    throws Exception {
 		 
 		 StringBuilder builder = new StringBuilder();
-		 builder.append("<HTML><BODY>").append(headSectionContent);
+		 builder.append("<HTML>").append(headSectionContent).append("<BODY>");
 		 builder.append("<P ALIGN='center'><TABLE id='data' BORDER=1>").append("\n");
 		 ResultSetMetaData rsmd = rs.getMetaData();
 		 int columnCount = rsmd.getColumnCount();
