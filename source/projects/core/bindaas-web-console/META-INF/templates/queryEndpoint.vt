@@ -503,7 +503,7 @@
 
 									$("#qeDescription").removeAttr("disabled");
 									$("#qeMetada").removeAttr("disabled");
-									$("#qeTemplate").removeAttr("disabled");
+									$("#qeTemplate").removeAttr("readonly");
 									$("#queryModifier").removeAttr("disabled");
 									$("#queryModifierProperties").removeAttr("disabled");
 									$("#queryResultModifier").removeAttr("disabled");
@@ -525,7 +525,7 @@
 									$("#qeName").attr("disabled", "disabled");
 									$("#qeDescription").attr("disabled", "disabled");
 									$("#qeMetada").attr("disabled", "disabled");
-									$("#qeTemplate").attr("disabled", "disabled");
+									$("#qeTemplate").attr("readonly", "readonly");
 									$("#queryModifier").attr("disabled", "disabled");
 									$("#queryModifierProperties").attr("disabled", "disabled");
 									$("#queryResultModifier").attr("disabled", "disabled");
