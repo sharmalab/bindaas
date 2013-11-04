@@ -8,6 +8,13 @@
 
 <bean id="psuedoSts" class="edu.emory.cci.bindaas.pseudosts.impl.PseduoSecurityTokenServiceImpl" init-method="init">
 	<property name="apiKeyManager" ref="apiKeyManager"></property>
+	<property name="defaultConfiguration" ref="defaultConfig"></property>
+</bean>
+
+<bean id="defaultConfig" class="edu.emory.cci.bindaas.pseudosts.conf.Configuration">
+	<property name="ldapProviderClass" value="edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider"></property>
+	<property name="defaultClientId" value="external.org"></property>
+	<property name="defaultLifespanOfKeysInSeconds" value="3600"></property>
 </bean>
 
 <!-- Blueprint References -->

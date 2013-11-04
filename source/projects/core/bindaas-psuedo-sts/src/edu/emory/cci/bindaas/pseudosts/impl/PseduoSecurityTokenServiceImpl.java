@@ -29,6 +29,7 @@ import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.pseudosts.api.IPsuedoSecurityTokenService;
 import edu.emory.cci.bindaas.pseudosts.bundle.Activator;
+import edu.emory.cci.bindaas.pseudosts.conf.Configuration;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
@@ -38,12 +39,21 @@ public class PseduoSecurityTokenServiceImpl implements
 		IPsuedoSecurityTokenService {
 
 	private Log log = LogFactory.getLog(getClass());
-	private final static String DEFAULT_CLIENT_ID = "external.org";
-	private final static Integer DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS = 3600;
+	
+	private Configuration defaultConfiguration;
+	private DynamicObject<Configuration> dynamicConfiguration;
 	
 	private IAPIKeyManager apiKeyManager;
 	
 	
+	public Configuration getDefaultConfiguration() {
+		return defaultConfiguration;
+	}
+
+	public void setDefaultConfiguration(Configuration defaultConfiguration) {
+		this.defaultConfiguration = defaultConfiguration;
+	}
+
 	public IAPIKeyManager getApiKeyManager() {
 		return apiKeyManager;
 	}
@@ -55,7 +65,8 @@ public class PseduoSecurityTokenServiceImpl implements
 	public void init() throws Exception {
 
 		final BundleContext context = Activator.getContext();
-	
+		
+		this.dynamicConfiguration = new DynamicObject<Configuration>("bindaas-pseudo-sts", defaultConfiguration, context);
 		
 		String filterExpression = "(&(objectclass=edu.emory.cci.bindaas.core.util.DynamicObject)(name=bindaas))";
 		Filter filter = FrameworkUtil.createFilter(filterExpression);
@@ -137,8 +148,8 @@ public class PseduoSecurityTokenServiceImpl implements
 						
 							BindaasUser bindaasUser = authProvider.login(userPass[0] , userPass[1]);
 							bindaasUser = new BindaasUser(userPass[0]);
-							int lifespan = lifetime!=null ? lifetime : DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS;
-							clientId = clientId!=null ? clientId : DEFAULT_CLIENT_ID ;
+							int lifespan = lifetime!=null ? lifetime : this.dynamicConfiguration.getObject().getDefaultLifespanOfKeysInSeconds();
+							clientId = clientId!=null ? clientId : this.dynamicConfiguration.getObject().getDefaultClientId() ;
 							
 							APIKey sessionKey = generateApiKey(bindaasUser, lifespan, clientId);
 							JsonObject retVal = new JsonObject();
@@ -211,7 +222,7 @@ public class PseduoSecurityTokenServiceImpl implements
 	private IAuthenticationProvider getAuthenticationProvider() throws Exception
 	{
 		BundleContext context = Activator.getContext();
-		Collection<ServiceReference<IAuthenticationProvider>> srfs = context.getServiceReferences( IAuthenticationProvider.class , "(class=edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider)");
+		Collection<ServiceReference<IAuthenticationProvider>> srfs = context.getServiceReferences( IAuthenticationProvider.class , String.format("(class=%s)", this.dynamicConfiguration.getObject().getLdapProviderClass()));
 		if(srfs!=null && srfs.size() > 0 )
 		{
 			IAuthenticationProvider authProvider = context.getService(srfs.iterator().next());
