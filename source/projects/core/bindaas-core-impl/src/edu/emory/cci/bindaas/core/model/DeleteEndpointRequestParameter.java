@@ -50,4 +50,13 @@ public class DeleteEndpointRequestParameter {
 		
 		return deleteEndpoint;
 	}
+	public static DeleteEndpointRequestParameter convert(
+			DeleteEndpoint deleteEndpoint) {
+		DeleteEndpointRequestParameter derp = new DeleteEndpointRequestParameter();
+		derp.setBindVariables(deleteEndpoint.getBindVariables());
+		derp.setQueryTemplate(deleteEndpoint.getQueryTemplate());
+		derp.setDescription(deleteEndpoint.getDescription());
+		derp.setTags(deleteEndpoint.getTags());
+		return derp;
+	}
 }

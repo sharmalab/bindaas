@@ -74,6 +74,20 @@ public class QueryEndpointRequestParameter {
 		this.queryResultModifiers = queryResultModifiers;
 	}
 	
+	public static QueryEndpointRequestParameter convert(QueryEndpoint queryEndpoint) 
+	{
+		QueryEndpointRequestParameter qerp = new QueryEndpointRequestParameter();
+		qerp.setBindVariables(queryEndpoint.getBindVariables());
+		qerp.setMetaData(queryEndpoint.getMetaData());
+		qerp.setOutputFormat(queryEndpoint.getOutputFormat());
+		qerp.setQueryModifiers(queryEndpoint.getQueryModifiers());
+		qerp.setQueryResultModifiers(queryEndpoint.getQueryResultModifiers());
+		qerp.setQueryTemplate(queryEndpoint.getQueryTemplate());
+		qerp.setTags(queryEndpoint.getTags());
+		qerp.setDescription(queryEndpoint.getDescription());
+		return qerp;
+	}
+	
 	public QueryEndpoint getQueryEndpoint(QueryEndpoint queryEndpoint) throws Exception
 	{
 		queryEndpoint.setBindVariables(getBindVariables());

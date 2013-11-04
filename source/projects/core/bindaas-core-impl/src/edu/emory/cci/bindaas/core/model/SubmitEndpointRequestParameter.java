@@ -37,4 +37,12 @@ public class SubmitEndpointRequestParameter {
 		submitEndpoint.setDescription(getDescription());
 		return submitEndpoint;
 	}
+	public static SubmitEndpointRequestParameter convert(
+			SubmitEndpoint submitEndpoint) {
+		SubmitEndpointRequestParameter serp = new SubmitEndpointRequestParameter();
+		serp.setProperties(submitEndpoint.getProperties());
+		serp.setSubmitPayloadModifiers(submitEndpoint.getSubmitPayloadModifiers());
+		serp.setDescription(submitEndpoint.getDescription());
+		return serp;
+	}
 }
