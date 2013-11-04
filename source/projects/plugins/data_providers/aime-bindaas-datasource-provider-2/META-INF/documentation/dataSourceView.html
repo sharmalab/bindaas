@@ -1,0 +1,301 @@
+<div id="aimeWebapp">
+	<label>Username</label>
+	 <span class="has-tip tip-left" data-width="210"	title="username for connecting to IBM DB2 database">  <input	type="text" name="username" /></span> 
+	<label>Password</label>
+	 <span class="has-tip tip-left" data-width="210" title="password for connecting to IBM DB2 database"><input type="password" name="password" /> </span>
+	 <label>JDBC Url</label> 
+	 <span class="has-tip tip-left" data-width="210"	title="JDBC URL example: jdbc:db2://localhost:50000/XMLDB"> <input type="text" name="url" /> </span>
+	<span class="has-tip tip-left" data-width="210"
+		title="This option will generate a submit API if checked">
+	<label	for="auto_init"> <input type="checkbox" CHECKED name="auto_init"> Auto Generate Submit API</label></span> 
+	<br>
+	<div id="auto_init_container">
+		<label for="aime_table">Database Table to store annotations</label>
+		 <span
+			class="has-tip tip-left" data-width="210"
+			title="Mandatory if Auto Generate Submit API is checked"> <input
+			type="text" name="aime_table" />
+		</span>
+		 <br>
+		
+		 <span
+			class="has-tip tip-left" data-width="210"
+			title="Delete existing annotations from the table">  <label><input
+			type="checkbox" name="aime_dropTable" /> Delete existing annotations if table exists</label> 
+		</span>
+		<br>
+
+		<button type="button" class="round small button" name="addRule" >Add Validation Rule</button>
+		<br><br><br>
+		<table>
+			<thead>
+			<tr>
+				<th>Shape</th>
+				<th>Min Occurence</th>
+				<th>Max Occurence</th>
+				<th>Enforce Rule</th>
+				<th>Action</th>
+			</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+	<table class='hide' >
+	<tbody id='addRuleTemplate'>
+	<tr>
+					<td>
+					<select name="shape">
+							<option value="ELLIPTICAL">ELLIPTICAL</option>
+							<option value="MULTI_POINT" selected="selected">MULTI_POINT</option>
+							<option value="POLY_LINE">POLY_LINE</option>
+							<option value="TEXT_CALLOUT">TEXT_CALLOUT</option>
+					</select>
+					</td>
+					<td><input type="text" name="min" value="1"></td>
+					<td><input type="text" name="max" value="" placeholder="Leave Blank for Unbounded" size="30"></td>
+					<td>
+						<select name="enforce">
+							<option value="true" selected="selected">YES</option>
+							<option value="false">NO</option>
+						</select>
+					</td>
+					<td><button type="button" name='removeRuleButton' >Remove</button></td>
+	</tr>
+	</tbody>
+	</table>
+	
+	<script>
+		var aimeWebapp = {};
+		aimeWebapp.parent = $("#aimeWebapp");
+		aimeWebapp.updateProviderField = function(){
+			var dataSourceJson = {};
+			dataSourceJson.username = $(aimeWebapp.parent).find("input[name='username']").attr("value");
+			dataSourceJson.password = $(aimeWebapp.parent).find("input[name='password']").attr("value");
+			dataSourceJson.url = $(aimeWebapp.parent).find("input[name='url']").attr("value");
+			dataSourceJson.tableName = $(aimeWebapp.parent).find("input[name='aime_table']").attr("value");
+			dataSourceJson.dropTable = $(aimeWebapp.parent).find("input[name='aime_dropTable']:checked").attr('value') ? true : false;
+			dataSourceJson.validationRules = [];
+			
+			if ($(aimeWebapp.parent).find("input[name='auto_init']").attr('checked')) {
+				dataSourceJson.autoInitialize = true;
+				
+				// check validation rules
+				$("#auto_init_container tbody tr").each(function(){
+					var validationRule = {};
+					validationRule.shape = $(this).find("select[name='shape'] option:selected").attr("value");
+					validationRule.enforce = $(this).find("select[name='enforce'] option:selected").attr("value");
+					validationRule.max = $(this).find("input[name='max']").attr("value");
+					validationRule.min = $(this).find("input[name='min']").attr("value");
+					
+					validationRule.max = parseInt(validationRule.max , 10);
+					if(isNaN(validationRule.max))
+						{
+							validationRule.max = null ;
+						}
+					
+					validationRule.min = parseInt(validationRule.min , 10);
+					
+					if(isNaN(validationRule.min))
+					{
+						validationRule.min = 0 ;
+					}
+					
+					dataSourceJson.validationRules.push(validationRule);
+					console.log(validationRule);
+				});
+				
+				$("#auto_init_container").show();
+			} else {
+				dataSourceJson.autoInitialize = false;
+				$("#auto_init_container").hide();
+			}
+
+			console.log(JSON.stringify(dataSourceJson));
+			$("#dataSource").attr("value", JSON.stringify(dataSourceJson));
+			
+			aimeWebapp.validate();
+
+		} ;
+		
+		aimeWebapp.reverseUpdateDataSourceView = function(){
+			try {
+				var dataSourceJson = $("#dataSource").attr("value");
+				dataSourceJson = jQuery.parseJSON(dataSourceJson);
+				
+				$(aimeWebapp.parent).find("input[name='username']").attr("value", dataSourceJson.username);
+				$(aimeWebapp.parent).find("input[name='password']").attr("value", dataSourceJson.password);
+				$(aimeWebapp.parent).find("input[name='url']").attr("value", dataSourceJson.url);
+				$(aimeWebapp.parent).find("input[name='aime_table']").attr("value", dataSourceJson.tableName);
+				if (dataSourceJson.autoInitialize == true) {
+
+					$(aimeWebapp.parent).find("input[name='auto_init']").attr('checked', "true");
+					$("#auto_init_container").show();
+					
+					
+					$.each(dataSourceJson.validationRules, function(index,element){
+						aimeWebapp.addValidationRule(element.shape , element.min , element.max , element.enforce);
+					});
+					
+					if(dataSourceJson.dropTable)
+					{
+						$(aimeWebapp.parent).find("input[name='aime_dropTable']").attr("checked" , "checked") ;
+					}
+					
+				} else {
+					$(aimeWebapp.parent).find("input[name='auto_init']").removeAttr('checked');
+					$("#auto_init_container").hide();
+				}
+
+			} catch (e) {
+				console.log(e);
+			}
+			
+		};
+		
+		
+		aimeWebapp.validate = function(){
+			
+			if ($("#AIMEWebappProvider").is(":visible")) {
+				var username = $(aimeWebapp.parent).find("input[name='username']");
+				ValidationObject.addConstraint("aimeWebapp_username", $(
+						username).attr("value")
+						&& $(username).attr("value") != "", function() {
+					alert("Username not specified");
+					$(username).focus();
+				});
+
+				var password = $(aimeWebapp.parent).find("input[name='password']");
+				ValidationObject.addConstraint("aimeWebapp_password", $(
+						password).attr("value")
+						&& $(password).attr("value") != "", function() {
+					alert("Password not specified");
+					$(password).focus();
+				});
+
+				var url = $(aimeWebapp.parent).find("input[name='url']");
+				ValidationObject.addConstraint("aimeWebapp_url", $(url).attr(
+						"value")
+						&& $(url).attr("value") != "", function() {
+					alert("URL not specified");
+					$(url).focus();
+				});
+
+				var autoInit = $(aimeWebapp.parent).find("input[name='auto_init']");
+				if ($(autoInit).attr('checked')) {
+					// aime table
+					var aimeTable = $(aimeWebapp.parent).find("input[name='aime_table']");
+					ValidationObject.addConstraint("aimeWebapp_table", $(aimeTable)
+							.attr("value")
+							&& $(aimeTable).attr("value") != "",
+							function() {
+								alert("Database Table not specified");
+								$(aimeTable).focus();
+
+							});
+					// shape validation rules here
+					
+					
+				} else {
+					ValidationObject.addConstraint("aimeWebapp_table", true,
+							function() {
+								alert("Database Table not specified");
+							});
+				}
+
+			} else {
+
+				ValidationObject.removeConstraint("aimeWebapp_username");
+
+				ValidationObject.removeConstraint("aimeWebapp_password");
+
+				ValidationObject.removeConstraint("aimeWebapp_url");
+
+				ValidationObject.removeConstraint("aimeWebapp_table");
+
+			}
+	
+		};
+		
+		
+		aimeWebapp.addValidationRule = function(shape,min,max,enforce){
+			var htmlContent = $("#addRuleTemplate").html();
+			$("#auto_init_container").find("tbody").each(
+			function(){
+				$(this).append(htmlContent);
+				
+				if(shape)
+				{
+					$(this).find("tr:last select[name='shape']").val(shape) ;
+				}
+				
+				if(min)
+					{ $(this).find("tr:last input[name='min']").attr("value", min ); }
+				if(max)
+					{ $(this).find("tr:last input[name='max']").attr("value", max ); }
+				if(enforce != null)
+				{	
+					$(this).find("tr:last select[name='enforce']").val(enforce.toString()); 
+				}
+				
+				
+				// register handlers
+				$(this).find("tr:last select").change(function() {
+					aimeWebapp.updateProviderField();
+				});
+				
+				$(this).find("tr:last input").keyup(function() {
+					aimeWebapp.updateProviderField();
+					// only numeric field allowed
+					
+					var val = $(this).attr('value');
+					if(val && isNaN(parseInt(val)))
+						{
+							val = val.substr(0, val.length - 2);
+							$(this).attr('value' , val);
+							alert("Only Integer Values are allowed");
+							$(this).focus();
+						}
+					
+				});
+				
+				
+				$(this).find("button[name='removeRuleButton']:last").click(
+						function(){
+							$(this).closest("tr").remove();
+							aimeWebapp.updateProviderField();
+						}	);	
+				}		
+			);
+		};
+		
+		aimeWebapp.registerHandlers = function(){
+			
+			$(aimeWebapp.parent).find("input").keyup(function() {
+				aimeWebapp.updateProviderField();
+			});
+			
+			$(aimeWebapp.parent).find("input").click(function() {
+				aimeWebapp.updateProviderField();
+			});
+			
+			$(aimeWebapp.parent).find("input").change(function() {
+				aimeWebapp.updateProviderField();
+			});
+			
+			
+			
+			$(aimeWebapp.parent).find("button[name='addRule']").click(
+			function(){
+				aimeWebapp.addValidationRule();
+				aimeWebapp.updateProviderField();
+			});
+			
+		};
+		
+		aimeWebapp.registerHandlers();
+		aimeWebapp.reverseUpdateDataSourceView();
+	
+	</script>
+</div>
