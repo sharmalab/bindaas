@@ -175,7 +175,9 @@
 							</div>
 							<script>
 								$("form").ajaxError(function(e, jqxhr, settings, exception) {
-									alert(exception);
+									alert(jqxhr.responseText);
+									console.log("Server Error Code: " + exception);
+									console.log("Message: " + jqxhr.responseText);
 									$("#trySubmit").trigger('reveal:close');
 								});
 							function performValidation() {

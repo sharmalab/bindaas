@@ -134,7 +134,23 @@
 				var text = $(button).parent().find("textarea[name='inputText']").first().attr("value");
 				$.post(url, text, function(data, status, response) {
 					alert(response.responseText);
-				});
+		
+				}).fail(function(data) {	
+					var obj = JSON.parse(data.responseText);
+					var str = JSON.stringify(obj, undefined, 4);
+    				$("#errorModalContent").html(syntaxHighlight(str));
+    					
+    				$( "#errorModal" ).dialog({
+      														modal: true,
+      														title: 'Execution Error',
+      														width: 500,
+      														buttons: {
+        																Ok: function() {
+          																		$( this ).dialog( "close" );
+        																	}
+      																	}
+    													});
+  				});
 
 			}
 
