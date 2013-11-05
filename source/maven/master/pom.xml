@@ -199,5 +199,6 @@
 		<module>heartbeat-monitor-server</module>
 		<module>native-app-runner-SPM</module>
 		<module>bindaas-trusted-application-manager</module>
+		<module>aime-bindaas-datasource-provider-2</module>
 	</modules>
 </project>
