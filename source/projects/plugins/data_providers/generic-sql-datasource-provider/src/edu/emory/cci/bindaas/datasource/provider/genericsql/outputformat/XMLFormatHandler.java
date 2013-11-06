@@ -47,7 +47,7 @@ public class XMLFormatHandler extends AbstractFormatHandler {
 
 	            for (int i = 1; i <= colCount; i++)
 	            {
-	                String columnName = rsmd.getColumnName(i);
+	                String columnName = rsmd.getColumnLabel(i);
 	                Object value = rs.getObject(i);
 	                xml.append("<" + columnName).append(" type='" + rsmd.getColumnTypeName(i) + "' >");
 

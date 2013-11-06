@@ -55,7 +55,7 @@ public class SqlXMLHandler implements IFormatHandler {
 
             for (int i = 1; i <= colCount; i++)
             {
-                String columnName = rsmd.getColumnName(i);
+                String columnName = rsmd.getColumnLabel(i);
                 String value = rs.getString(i);
                 xml.append("<" + columnName).append(" type='" + rsmd.getColumnTypeName(i) + "' >");
 

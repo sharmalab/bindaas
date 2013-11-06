@@ -53,7 +53,7 @@ public class JSONFormatHandler extends AbstractFormatHandler {
 			JsonObject obj = new JsonObject();
 
 			for (int i = 1; i < numColumns + 1; i++) {
-				String column_name = rsmd.getColumnName(i);
+				String column_name = rsmd.getColumnLabel(i);
 				try {
 
 					if (rsmd.getColumnType(i) == java.sql.Types.ARRAY) {
