@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.Properties;
 
-import com.google.gson.JsonElement;
-
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 
 
@@ -16,7 +14,7 @@ public class QueryResult {
 	private String errorMessage;
 	private String mimeType; 
 	private InputStream data;
-	private JsonElement intermediateResult;
+	private ResultSetIterator intermediateResult;
 	private Callback callback;
 	private Map<String,Object> responseHeaders;
 	
@@ -26,13 +24,14 @@ public class QueryResult {
 	public void setResponseHeaders(Map<String, Object> responseHeaders) {
 		this.responseHeaders = responseHeaders;
 	}
-	public JsonElement getIntermediateResult() {
+	
+	
+	public ResultSetIterator getIntermediateResult() {
 		return intermediateResult;
 	}
-	public void setIntermediateResult(JsonElement intermediateResult) {
+	public void setIntermediateResult(ResultSetIterator intermediateResult) {
 		this.intermediateResult = intermediateResult;
 	}
-	
 	public Callback getCallback() {
 		return callback;
 	}

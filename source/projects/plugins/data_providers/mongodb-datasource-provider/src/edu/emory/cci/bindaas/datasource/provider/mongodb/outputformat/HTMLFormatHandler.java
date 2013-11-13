@@ -30,13 +30,21 @@ public class HTMLFormatHandler extends AbstractFormatHandler{
 
 	@Override
 	public QueryResult format(OutputFormatProps outputFormatProps,
-			DBCursor cursor) throws Exception {
+			DBCursor cursor, OnFinishHandler finishHandler) throws Exception {
+		try{
+			String htmlContent = toHTML(cursor);
+			QueryResult queryResult = new QueryResult();
+			queryResult.setData(new ByteArrayInputStream(htmlContent.getBytes()));
+			queryResult.setMimeType(StandardMimeType.HTML.toString());
+			return queryResult;
+		}catch(Exception e)
+		{
+			throw e;
+		}
+		finally{
+			finishHandler.finish() ; // TODO implement streaming
+		}
 		
-		String htmlContent = toHTML(cursor);
-		QueryResult queryResult = new QueryResult();
-		queryResult.setData(new ByteArrayInputStream(htmlContent.getBytes()));
-		queryResult.setMimeType(StandardMimeType.HTML.toString());
-		return queryResult;
 		
 	}
 

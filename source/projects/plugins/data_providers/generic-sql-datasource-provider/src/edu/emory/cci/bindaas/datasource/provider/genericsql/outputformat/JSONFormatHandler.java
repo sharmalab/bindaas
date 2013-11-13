@@ -1,6 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -14,6 +14,9 @@ import com.google.gson.JsonPrimitive;
 
 import edu.emory.cci.bindaas.datasource.provider.genericsql.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.genericsql.model.OutputFormatProps;
+import edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.util.JDBCResultSetIterator;
+import edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.util.JSONResultSetInputStream;
+import edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.util.JSONResultSetInputStream.OnCloseHandler;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
@@ -23,11 +26,26 @@ public class JSONFormatHandler extends AbstractFormatHandler {
 
 	@Override
 	public QueryResult format(OutputFormatProps outputFormatProps,
-			ResultSet queryResult) throws Exception {
+			ResultSet queryResult , final OnFinishHandler finishHandler) throws Exception {
 		QueryResult qr = new QueryResult();
-		JsonArray intermediateResult = convert(queryResult);
-		qr.setData( new ByteArrayInputStream(intermediateResult.toString().getBytes()));
-		qr.setIntermediateResult(intermediateResult);
+		JDBCResultSetIterator resultSetIterator = new JDBCResultSetIterator(queryResult, finishHandler);
+		
+		OnCloseHandler closeHandler = new OnCloseHandler() {
+			
+			@Override
+			public void close() throws IOException {
+					try {
+							finishHandler.finish();
+					} catch (Exception e) {
+						throw new IOException(e);
+					}
+				
+			}
+		};
+		
+		JSONResultSetInputStream dataInputStream = new JSONResultSetInputStream(queryResult, closeHandler);
+		qr.setData(dataInputStream);
+		qr.setIntermediateResult(resultSetIterator);
 		qr.setMimeType(StandardMimeType.JSON.toString());
 		return qr;
 	}

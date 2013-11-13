@@ -15,6 +15,7 @@ import edu.emory.cci.bindaas.datasource.provider.genericsql.model.DataSourceConf
 import edu.emory.cci.bindaas.datasource.provider.genericsql.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.genericsql.model.OutputFormatProps;
 import edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.IFormatHandler;
+import edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.IFormatHandler.OnFinishHandler;
 import edu.emory.cci.bindaas.datasource.provider.genericsql.outputformat.OutputFormatRegistry;
 import edu.emory.cci.bindaas.framework.api.IQueryHandler;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
@@ -73,24 +74,40 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 						}
 			IFormatHandler formatHandler = getOutputFormatRegistry().getHandler(outputFormat);
 			if (formatHandler != null) {
-				Connection connection = null;
+				
 				try {
 					DataSourceConfiguration configuration = GSONUtil
 							.getGSONInstance().fromJson(dataSource,
 									DataSourceConfiguration.class);
-					connection = provider.getConnection(configuration);
-					Statement statement = connection.createStatement();
+					final Connection connection = provider.getConnection(configuration);
+					Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,
+                            ResultSet.CONCUR_READ_ONLY);
 					ResultSet resultSet = statement
 							.executeQuery(queryToExecute);
+					
+					OnFinishHandler finishHandler = new OnFinishHandler() {
+						private boolean finished = false;
+						@Override
+						public synchronized void finish() throws Exception {
+							if(!finished)
+								connection.close();
+							this.finished = true;
+						}
+
+						@Override
+						public boolean isFinished() {
+
+							return this.finished;
+						}
+					};
+					
 					QueryResult queryResult = formatHandler.format(props,
-							resultSet);
+							resultSet , finishHandler);
+					
 					return queryResult;
 				} catch (Exception er) {
 					log.error(er);
 					throw er;
-				} finally {
-					if (connection != null)
-						connection.close();
 				}
 			} else {
 				throw new Exception("No Handler for OutputFormat=[" + outputFormat + "]");
@@ -136,7 +153,6 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 	
 	@Override
 	public JsonObject getOutputFormatSchema() {
-		// TODO: later
 		return new JsonObject();
 	}
 

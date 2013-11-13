@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="commons-lang3-3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="saxon9-unpack.jar"/>
 	<classpathentry exported="true" kind="lib" path="saxon9he.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-xml2json-0.0.1-jar-with-dependencies.jar"/>

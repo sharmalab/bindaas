@@ -13,7 +13,7 @@ public class IOUtils {
 	public static String toString(InputStream in) throws IOException
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buffer = new byte[2048];
+		byte[] buffer = new byte[1024*100];
 		int bytesRead = -1;
 		
 		while((bytesRead = in.read(buffer)) > 0)

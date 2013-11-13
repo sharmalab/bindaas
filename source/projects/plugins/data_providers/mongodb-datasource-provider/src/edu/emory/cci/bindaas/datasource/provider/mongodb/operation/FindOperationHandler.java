@@ -14,6 +14,7 @@ import edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat.IFormatHandler;
+import edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat.IFormatHandler.OnFinishHandler;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat.OutputFormatRegistry;
 import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
@@ -57,7 +58,21 @@ public class FindOperationHandler implements IOperationHandler {
 					cursor = cursor.limit(operationDescriptor.limit);
 				}
 				
-				QueryResult queryResult = formatHandler.format(outputFormatProps, cursor);
+				OnFinishHandler finishHandler = new OnFinishHandler() {
+					private boolean finished = false;
+					@Override
+					public boolean isFinished() {
+
+						return finished;
+					}
+					
+					@Override
+					public void finish() throws Exception {
+						finished = true;
+					}
+				};
+				
+				QueryResult queryResult = formatHandler.format(outputFormatProps, cursor , finishHandler);
 				return queryResult;
 				
 			}

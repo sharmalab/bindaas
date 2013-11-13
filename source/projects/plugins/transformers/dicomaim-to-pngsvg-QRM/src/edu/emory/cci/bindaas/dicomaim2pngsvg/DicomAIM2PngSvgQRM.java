@@ -36,7 +36,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.osgi.framework.BundleContext;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.pixelmed.dicom.Attribute;
@@ -51,6 +50,7 @@ import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.model.ResultSetIterator;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 import edu.emory.cci.bindaas.framework.provider.exception.ModifierExecutionFailedException;
 import edu.emory.cci.bindaas.framework.provider.exception.UpstreamContentAssertionFailedException;
@@ -145,153 +145,167 @@ public class DicomAIM2PngSvgQRM implements IQueryResultModifier {
 
 		final Map<String, String> fRuntimeParameters = runtimeParameters;
 		final String fformat = format;
-
+		final ResultSetIterator iterator = queryResult.getIntermediateResult();
 		queryResult.setMimeType(StandardMimeType.ZIP.toString());
 		queryResult.setCallback(new Callback() {
 
 			@Override
 			public void callback(OutputStream servletOutputStream,
 					Properties context) throws AbstractHttpCodeException {
+					try{
 
-				// results returned: if no image, error. if no annotation,
-				// return empty xml + image. if both, return both.
-
-				InputStream ais = null;
-				String filename = new String();
-				String sopInstanceUID = new String();
-				try {
-
-					// check to see if we get the right kind of data
-					if (queryResult.getIntermediateResult() == null) {
-						throw new UpstreamContentAssertionFailedException(
-								getClass().getName(), 1,
-								"Upstream query result did not set a json element variable.");
-					}
-
-					JsonArray resultSet = queryResult.getIntermediateResult()
-							.getAsJsonArray();
-					if (resultSet.size() > 1) {
-						throw new UpstreamContentAssertionFailedException(
-								getClass().getName(), 1,
-								"Number of upstream image query results is more than 1.");
-					} else if (resultSet.size() == 0) {
-						throw new UpstreamContentAssertionFailedException(
-								getClass().getName(), 1,
-								"No image results found to transform to PNG.");
-					}
-					JsonObject jobj = resultSet.get(0).getAsJsonObject();
-
-					// get the sop instance UID
-					if (jobj.has("SOPInstanceUID")) {
-						sopInstanceUID = jobj.get("SOPInstanceUID")
-								.getAsString();
-					}
-					if (sopInstanceUID.isEmpty()) {
-						throw new UpstreamContentAssertionFailedException(
-								getClass().getName(), 1,
-								"Query result is missing SOPInstanceUID attribute.");
-					}
-
-					// get the image filename
-					if (!props.useWado() && jobj.has("filepath")) {
-						filename = jobj.get("filepath").getAsString();
-					}
-					if (!props.useWado() && filename.isEmpty()) {
-						throw new UpstreamContentAssertionFailedException(
-								getClass().getName(), 1,
-								"Query result is missing filepath attribute.");
-					}
-
-				}
-
-				catch (AbstractHttpCodeException e) {
-					log.error(e);
-					throw e;
-				} catch (Exception e) {
-					log.error(e);
-					throw new ModifierExecutionFailedException(getClass()
-							.getName(), 1, e);
-				}
-
-				// open the zip output stream first
-				ZipOutputStream zos = new ZipOutputStream(servletOutputStream);
-				try {
-
-					if (props.useWado()) {
-						// using wado service
+						// results returned: if no image, error. if no annotation,
+						// return empty xml + image. if both, return both.
+						
+						InputStream ais = null;
+						String filename = new String();
+						String sopInstanceUID = new String();
 						try {
+								
+							
+							// check to see if we get the right kind of data
+							if (iterator == null) {
+								throw new UpstreamContentAssertionFailedException(
+										getClass().getName(), 1,
+										"Upstream query result did not set a json element variable.");
+							}
 
-							URL url = new URL(props
-									.getWadoServiceURL(sopInstanceUID));
-							InputStream content = url.openStream();
+							
+							if (iterator.size() > 1) {
+								throw new UpstreamContentAssertionFailedException(
+										getClass().getName(), 1,
+										"Number of upstream image query results is more than 1.");
+							} else if (iterator.size() == 0) {
+								throw new UpstreamContentAssertionFailedException(
+										getClass().getName(), 1,
+										"No image results found to transform to PNG.");
+							}
+							
+							
+							JsonObject jobj = iterator.next();
+							
+							// get the sop instance UID
+							if (jobj.has("SOPInstanceUID")) {
+								sopInstanceUID = jobj.get("SOPInstanceUID")
+										.getAsString();
+							}
+							if (sopInstanceUID.isEmpty()) {
+								throw new UpstreamContentAssertionFailedException(
+										getClass().getName(), 1,
+										"Query result is missing SOPInstanceUID attribute.");
+							}
 
-							ZipEntry imageEntry = new ZipEntry(sopInstanceUID
-									+ ".jpeg");
-							zos.putNextEntry(imageEntry);
-							IOUtils.copy(content, zos, 2048);
-							zos.closeEntry();
+							// get the image filename
+							if (!props.useWado() && jobj.has("filepath")) {
+								filename = jobj.get("filepath").getAsString();
+							}
+							if (!props.useWado() && filename.isEmpty()) {
+								throw new UpstreamContentAssertionFailedException(
+										getClass().getName(), 1,
+										"Query result is missing filepath attribute.");
+							}
+
+						}
+
+						catch (AbstractHttpCodeException e) {
+							log.error(e);
+							throw e;
 						} catch (Exception e) {
-							log.error("Failed to query WADO service", e);
-
+							log.error(e);
+							throw new ModifierExecutionFailedException(getClass()
+									.getName(), 1, e);
 						}
-					} else {
-						// load image from filesystem
-						// convert the dicom image to png
+
+						// open the zip output stream first
+						ZipOutputStream zos = new ZipOutputStream(servletOutputStream);
 						try {
-							DicomInputStream dis = new DicomInputStream(
-									new FileInputStream(filename));
-							convert(dis, zos, sopInstanceUID, fformat,
-									fRuntimeParameters);
-							dis.close();
-						} catch (IOException e) {
-							throw e;
-						} catch (DicomException e) {
-							throw e;
+
+							if (props.useWado()) {
+								// using wado service
+								try {
+
+									URL url = new URL(props
+											.getWadoServiceURL(sopInstanceUID));
+									InputStream content = url.openStream();
+
+									ZipEntry imageEntry = new ZipEntry(sopInstanceUID
+											+ ".jpeg");
+									zos.putNextEntry(imageEntry);
+									IOUtils.copy(content, zos, 2048);
+									zos.closeEntry();
+								} catch (Exception e) {
+									log.error("Failed to query WADO service", e);
+
+								}
+							} else {
+								// load image from filesystem
+								// convert the dicom image to png
+								try {
+									DicomInputStream dis = new DicomInputStream(
+											new FileInputStream(filename));
+									convert(dis, zos, sopInstanceUID, fformat,
+											fRuntimeParameters);
+									dis.close();
+								} catch (IOException e) {
+									throw e;
+								} catch (DicomException e) {
+									throw e;
+								} finally {
+									zos.closeEntry();
+								}
+
+							}
+
+							// now get the annotations. - put this here because if there
+							// is no annotation or annotation failed, may still want to
+							// get the image.
+							ais = queryAnnotations(props.aimURL, props.apiKey,
+									sopInstanceUID);
+
+							// open the zip entry
+							ZipEntry annotationDir = new ZipEntry(sopInstanceUID
+									+ "_svg.xml");
+							zos.putNextEntry(annotationDir);
+
+							// convert the annotations
+							try {
+								writeAnnotations(ais, sopInstanceUID, zos);
+							} catch (ClientProtocolException e) {
+								throw e;
+							} catch (IOException e) {
+								throw e;
+							} catch (TransformerException e) {
+								throw e;
+							} finally {
+								zos.closeEntry();
+							}
+
+						} catch (Exception e) {
+							log.error(e);
+							throw new ModifierExecutionFailedException(getClass()
+									.getName(), 1, e);
+
 						} finally {
-							zos.closeEntry();
+							try {
+								zos.close();
+							} catch (IOException e) {
+								log.error(e);
+								throw new ModifierExecutionFailedException(getClass()
+										.getName(), 1, e);
+							}
 						}
 
 					}
-
-					// now get the annotations. - put this here because if there
-					// is no annotation or annotation failed, may still want to
-					// get the image.
-					ais = queryAnnotations(props.aimURL, props.apiKey,
-							sopInstanceUID);
-
-					// open the zip entry
-					ZipEntry annotationDir = new ZipEntry(sopInstanceUID
-							+ "_svg.xml");
-					zos.putNextEntry(annotationDir);
-
-					// convert the annotations
-					try {
-						writeAnnotations(ais, sopInstanceUID, zos);
-					} catch (ClientProtocolException e) {
+					catch(AbstractHttpCodeException e)
+					{
 						throw e;
-					} catch (IOException e) {
-						throw e;
-					} catch (TransformerException e) {
-						throw e;
-					} finally {
-						zos.closeEntry();
+					}finally{
+						try {
+							iterator.close();
+						} catch (IOException e) {
+							log.fatal("Unable to close ResultSetIterator" , e);
+						}
 					}
-
-				} catch (Exception e) {
-					log.error(e);
-					throw new ModifierExecutionFailedException(getClass()
-							.getName(), 1, e);
-
-				} finally {
-					try {
-						zos.close();
-					} catch (IOException e) {
-						log.error(e);
-						throw new ModifierExecutionFailedException(getClass()
-								.getName(), 1, e);
-					}
-				}
-
 			}
 
 			private InputStream queryAnnotations(String imageUrlToFetchAIM,

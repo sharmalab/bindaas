@@ -10,14 +10,15 @@ import com.google.gson.JsonParser;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
+import com.mongodb.MongoURI;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.FindOperationHandler.FindOperationDescriptor;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.IOperationHandler;
-import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.MongoDBQueryOperationType;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.MongoDBQueryOperationDescriptor;
+import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.MongoDBQueryOperationType;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat.IFormatHandler;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.outputformat.OutputFormatRegistry;
 import edu.emory.cci.bindaas.framework.api.IQueryHandler;
@@ -99,7 +100,8 @@ public class MongoDBQueryHandler implements IQueryHandler {
 					DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
 					Mongo mongo = null;
 					try {
-						mongo = new Mongo(configuration.getHost(),configuration.getPort());
+						MongoURI uri = new MongoURI(String.format("mongodb://%s:%s" ,configuration.getHost() , configuration.getPort() ));
+						mongo = new Mongo(uri);
 						DB db = mongo.getDB(configuration.getDb());
 						DBCollection collection = db.getCollection(configuration.getCollection());
 
@@ -110,16 +112,9 @@ public class MongoDBQueryHandler implements IQueryHandler {
 						return result;
 						
 					} catch (Exception e) {
-						log.error(e);
+						log.error("",e);
 						throw e;
 					}
-					finally{
-						if(mongo!=null)
-						{
-							mongo.close();
-						}
-					}
-					
 					
 				}
 				else

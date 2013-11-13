@@ -13,7 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.pixelmed.dicom.Attribute;
@@ -28,6 +27,7 @@ import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.model.ResultSetIterator;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 import edu.emory.cci.bindaas.framework.provider.exception.ModifierExecutionFailedException;
 import edu.emory.cci.bindaas.framework.provider.exception.UpstreamContentAssertionFailedException;
@@ -80,24 +80,25 @@ public class Dicom2PNGQRM implements IQueryResultModifier {
 		final String fformat = format;
 		queryResult.setMimeType("image/" + format);
 		
-		
+		final ResultSetIterator iterator = queryResult.getIntermediateResult();
 		queryResult.setCallback(new Callback() {
 			
 			@Override
 			public void callback(OutputStream servletOutputStream,
 					Properties context) throws AbstractHttpCodeException {
 				try {
-					if (queryResult.getIntermediateResult() == null) {
+					
+					if (iterator == null) {
 						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "Upstream query result did not set a json element variable.");
 					}
-					 JsonArray resultSet = queryResult.getIntermediateResult().getAsJsonArray();
-					 if (resultSet.size() > 1) {
+					 
+					 if (iterator.size() > 1) {
 						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "Number of upstream image query results is more than 1.");
-					 } else if (resultSet.size() == 0) {
+					 } else if (iterator.size() == 0) {
 						throw new UpstreamContentAssertionFailedException(getClass().getName(), 1 , "No image results found to transform to PNG.");
 					 }
 					 String filename = new String();
-					 JsonObject jobj = resultSet.get(0).getAsJsonObject();
+					 JsonObject jobj = iterator.next();
 					 if (jobj.has("filepath")) {
 						 filename = jobj.get("filepath").getAsString();
 					 }
@@ -123,6 +124,12 @@ public class Dicom2PNGQRM implements IQueryResultModifier {
 				} catch (Exception e) {
 					log.error(e);
 					throw new ModifierExecutionFailedException(getClass().getName() , 1 , e);
+				}finally{
+					try {
+						iterator.close();
+					} catch (IOException e) {
+						log.fatal("Unable to close ResultSetIterator" , e);
+					}
 				}
 				
 			}

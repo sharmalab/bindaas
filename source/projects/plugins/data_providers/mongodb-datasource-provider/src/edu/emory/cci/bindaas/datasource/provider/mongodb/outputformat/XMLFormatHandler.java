@@ -11,16 +11,24 @@ import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
-//TODO implement this later
+
 public class XMLFormatHandler extends AbstractFormatHandler {
 	@Override
 	public QueryResult format(OutputFormatProps outputFormatProps,
-			DBCursor cursor) throws Exception {
-		String xmlContent = toXML(cursor);
-		QueryResult queryResult = new QueryResult();
-		queryResult.setData(new ByteArrayInputStream(xmlContent.getBytes()));
-		queryResult.setMimeType(StandardMimeType.XML.toString());
-		return queryResult;
+			DBCursor cursor, OnFinishHandler finishHandler) throws Exception {
+		try{
+			String xmlContent = toXML(cursor);
+			QueryResult queryResult = new QueryResult();
+			queryResult.setData(new ByteArrayInputStream(xmlContent.getBytes()));
+			queryResult.setMimeType(StandardMimeType.XML.toString());
+			return queryResult;
+		}catch(Exception e)
+		{
+			throw e;
+		}
+		finally{
+			finishHandler.finish() ; // TODO implement streaming
+		}
 		
 	}
 

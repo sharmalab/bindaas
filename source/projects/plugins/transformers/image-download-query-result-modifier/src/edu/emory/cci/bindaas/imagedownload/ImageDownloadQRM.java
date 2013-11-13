@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -18,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.Expose;
@@ -28,6 +26,7 @@ import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.model.ResultSetIterator;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 import edu.emory.cci.bindaas.framework.provider.exception.ModifierExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.DocumentationUtil;
@@ -51,7 +50,6 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 
 	@Override
 	public void validate() throws ModifierException {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -69,15 +67,14 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 			JsonObject dataSource, RequestContext requestContext, final  JsonObject modifierProperties ,  Map<String,String> queryParams)
 			throws AbstractHttpCodeException {
 		final ImageDownloadQRMProperties props = GSONUtil.getGSONInstance().fromJson(modifierProperties, ImageDownloadQRMProperties.class);
-		final JsonArray results = queryResult.getIntermediateResult().getAsJsonArray();
-		final Iterator<JsonElement> iterator = results.iterator();
+		final ResultSetIterator iterator = queryResult.getIntermediateResult();
 		
-
+		
 		queryResult.setMimeType(StandardMimeType.ZIP.toString());
 		
 		Map<String,Object> responseHeaders = new HashMap<String, Object>();
-		responseHeaders.put("imageCount", results.size() + ""); // Add image count to the responseHeader to provide better heuristic about the download size expected
-		responseHeaders.put("Content-Disposition","attachment;filename=\"images-" + results.size() + ".zip\"");
+		responseHeaders.put("imageCount", iterator.size() + ""); // Add image count to the responseHeader to provide better heuristic about the download size expected
+		responseHeaders.put("Content-Disposition","attachment;filename=\"images-" + iterator.size() + ".zip\"");
 		queryResult.setResponseHeaders(responseHeaders);
 		
 		
@@ -91,9 +88,11 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 					ZipEntry imagedDirectory = new ZipEntry(IMAGE_LOCATION + "/");
 					zos.putNextEntry(imagedDirectory);
 					int counter = 0;
+					JsonArray jsonArray = new JsonArray();
 					while(iterator.hasNext())
 					{
-						JsonObject currentRecord = iterator.next().getAsJsonObject();
+						JsonObject currentRecord = iterator.next();
+						
 						String imageLink = currentRecord.has(props.imageLinkAttribute) ? currentRecord.get(props.imageLinkAttribute).getAsString() : null;
 						if(imageLink!=null)
 						{
@@ -112,16 +111,24 @@ public class ImageDownloadQRM implements IQueryResultModifier {
 								currentRecord.add(props.imageLinkAttribute, new JsonPrimitive("error retrieving file"));
 							}
 						}
+						
+						jsonArray.add(currentRecord);
 					}
 					zos.closeEntry();
 					
 					
-					writeBytes(results.toString(), zos, "results.json");
+					writeBytes(jsonArray.toString(), zos, "results.json");
 					zos.close();
 				}catch(Exception e)
 				{
 					log.error(e);
 					throw new ModifierExecutionFailedException(getClass().getName(), 1 , e);
+				}finally{
+					try {
+						iterator.close();
+					} catch (IOException e) {
+						log.fatal("Unable to close ResultSetIterator" , e);
+					}
 				}
 							
 			}

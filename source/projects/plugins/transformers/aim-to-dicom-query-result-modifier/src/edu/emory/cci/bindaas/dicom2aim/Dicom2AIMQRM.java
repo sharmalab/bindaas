@@ -25,7 +25,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.osgi.framework.BundleContext;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
@@ -33,8 +32,9 @@ import edu.emory.cci.bindaas.aim2dicom.bundle.Activator;
 import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
-import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.QueryResult.Callback;
+import edu.emory.cci.bindaas.framework.model.RequestContext;
+import edu.emory.cci.bindaas.framework.model.ResultSetIterator;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 import edu.emory.cci.bindaas.framework.provider.exception.ModifierExecutionFailedException;
 import edu.emory.cci.bindaas.framework.provider.exception.ValidationException;
@@ -80,7 +80,7 @@ public class Dicom2AIMQRM implements IQueryResultModifier {
 		final Dicom2AIMQRMProperties props = GSONUtil.getGSONInstance()
 				.fromJson(modifierProperties, Dicom2AIMQRMProperties.class);
 		if (props != null && props.aimURL != null) {
-			
+			final ResultSetIterator iterator = queryResult.getIntermediateResult();
 			queryResult.setMimeType(StandardMimeType.XML.toString());
 			queryResult.setCallback(new Callback() {
 
@@ -90,12 +90,11 @@ public class Dicom2AIMQRM implements IQueryResultModifier {
 					
 					try{
 						// get array of raw dicom objects
-						
-						JsonArray dicomArray = queryResult.getIntermediateResult().getAsJsonArray();
+
 						Set<String> setOfUniqueSeries = new HashSet<String>();
-						Iterator<JsonElement> dicomArrayIterator = dicomArray.iterator();
+						Iterator<JsonObject> dicomArrayIterator = iterator;
 						while(dicomArrayIterator.hasNext()) {
-							JsonObject dicomObj = dicomArrayIterator.next().getAsJsonObject();
+							JsonObject dicomObj = dicomArrayIterator.next();
 							if(dicomObj.get(seriesUIDAttributeName)!=null)
 							{
 								String seriesUID = dicomObj.get(seriesUIDAttributeName)
@@ -121,6 +120,12 @@ public class Dicom2AIMQRM implements IQueryResultModifier {
 					} catch (Exception e) {
 						log.error(e);
 						throw new ModifierExecutionFailedException(getClass().getName(), 1 , e);
+					}finally{
+						try {
+							iterator.close();
+						} catch (IOException e) {
+							log.fatal("Unable to close ResultSetIterator" , e);
+						}
 					}
 					
 				}
