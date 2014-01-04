@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+		<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
+	</head>
+	<title>Bindaas - Administrator Login </title>
+	<body>
+		<div class="row" header >
+			<div class="col-lg-1" left-margin>
+
+			</div>
+			<div class="col-lg-10">
+
+				<h1>Bindaas</h1>
+				<h4>Be worry free !</h4>
+				<h5>sytem build <code>
+					1.0.0</code></h5>
+				<hr />
+			</div>
+			<div class="col-lg-1" right-margin>
+
+			</div>
+		</div>
+		<div class="row" body >
+			<div class="col-4" left-margin>
+
+			</div>
+			<div class="col-3 ">
+			 #if ($isLdapOrDefault)
+				<form action="$usernamePasswordLoginServletPath" method='post'>
+					<fieldset>
+						<legend>
+							<h2>Administrator Login</h2>
+						</legend>
+						<div class="form-group">
+							<label for="username">Username</label>
+							<input type="text" class="form-control" name="username" placeholder="username">
+						</div>
+						<div class="form-group">
+							<label for="password">Password</label>
+							<input type="password" class="form-control" name="password" placeholder="password">
+							<input type="hidden" class="form-control" name="loginTarget" value="$loginTarget">
+						</div>
+						#if (  $error  )
+						<div class='panel alert'> $error </div>
+						#end
+						<button type="submit" class="btn btn-primary">
+							Login
+						</button>
+						
+					</fieldset>
+				</form>
+			#end
+			#if ($isOpenID)	
+				<fieldset>
+						<legend>
+							<h2>Administrator Login</h2>
+						</legend>
+						<div class="row">
+							<div class="col-lg-6">
+							#if ($adminconsoleConfiguration.getAdminConfiguration().getOpenIdProviders().get("google"))
+								<form action="$googleUrl" method="post" name="google">
+								<a href="javascript:document.google.submit()">
+										<img src="/foundation/images/GoogleButton.png" width="100" height="40" border="0" alt="Google" name="sub_but" />
+								</a>
+								</form>		
+							#end
+							
+							</div>
+							<div class="col-lg-6">
+							#if ($adminconsoleConfiguration.getAdminConfiguration().getOpenIdProviders().get("yahoo"))
+								<form action="$yahooUrl" method="post" name="yahoo">
+								<a href="javascript:document.yahoo.submit()">
+									<img src="/foundation/images/YahooButton.png" width="100" height="40" border="0" alt="Yahoo" name="sub_but" />
+								</a>
+								</form>		
+							#end
+							</div>
+						</div>
+					#if ( $error  )	
+						<div class="row">
+							<div class='panel alert'>$error</div>
+						</div>
+					#end				
+					</fieldset>
+			#end	
+			</div>
+			<div class="col-5" right-margin>
+
+			</div>
+		</div>
+		 <div class="navbar navbar-fixed-bottom" footer>
+					<div class="row">
+						<div class="col-lg-4"></div>
+						<div class="col-lg-4">
+							<p>Bindaas is produced by <a href="http://www.bmi.emory.edu/">Department of Biomedical Informatics Emory University</a></p>
+							
+						</div>
+						<div class="col-lg-4"></div>
+					</div>
+					
+			</div>	
+
+	</body>
+</html>
