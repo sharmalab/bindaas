@@ -2,18 +2,19 @@ package edu.emory.cci.bindaas.security_dashboard.util;
 
 import java.util.Set;
 
+import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
 import edu.emory.cci.bindaas.security_dashboard.config.SecurityDashboardConfiguration;
 import edu.emory.cci.bindaas.security_dashboard.model.Group;
 import edu.emory.cci.bindaas.security_dashboard.model.User;
 
 public class RakshakUtils {
 
-	public static Set<User> getAllUsers(SecurityDashboardConfiguration config)
+	public static Set<User> getAllUsers(SecurityDashboardConfiguration config , IAPIKeyManager apiKeyManager)
 	{
 		return null;
 	}
 	
-	public static Set<User> getUsersHavingAPIKey(SecurityDashboardConfiguration config)
+	public static Set<User> getUsersHavingAPIKey(SecurityDashboardConfiguration config , IAPIKeyManager apiKeyManager )
 	{
 		return null;
 	}

@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -65,12 +67,12 @@ public class VelocityEngineWrapper {
 		return velocityContext;
 	}
 	
-	public VelocityContext createVelocityContext()
+	public VelocityContext createVelocityContext(HttpServletRequest request)
 	{
 		VelocityContext velocityContext = new VelocityContext();
 		velocityContext.put("esc", escapeTool);
 		velocityContext.put("UUID", UUID.class);
-		
+		velocityContext.put("admin", request.getSession().getAttribute("loggedInUser"));
 		return velocityContext;
 	}
 }

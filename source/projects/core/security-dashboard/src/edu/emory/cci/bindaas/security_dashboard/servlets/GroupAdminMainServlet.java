@@ -2,7 +2,6 @@ package edu.emory.cci.bindaas.security_dashboard.servlets;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,18 +12,20 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
+import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.security_dashboard.RegistrableServlet;
 import edu.emory.cci.bindaas.security_dashboard.api.IPolicyManager;
+import edu.emory.cci.bindaas.security_dashboard.config.SecurityDashboardConfiguration;
 import edu.emory.cci.bindaas.security_dashboard.model.Group;
 import edu.emory.cci.bindaas.security_dashboard.util.RakshakUtils;
 
-public class PolicyAdminRemoveGroupServlet extends RegistrableServlet{
+public class GroupAdminMainServlet extends RegistrableServlet{
 
 	private static final long serialVersionUID = 1L;
 	private String templateName;
 	private Template template;
+	private IManagementTasks managementTask;
 	private Log log = LogFactory.getLog(getClass());
-	
 	private IPolicyManager policyManager;
 	
 
@@ -40,46 +41,48 @@ public class PolicyAdminRemoveGroupServlet extends RegistrableServlet{
 	public void init()
 	{
 		template = getVelocityEngineWrapper().getVelocityTemplateByName(templateName);
+		
 	}
+
+	public String getTemplateName() {
+		return templateName;
+	}
+
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
+	}
+
+
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
+	
 		try {
-		
-		String project = req.getParameter("project");
-		String dataProvider = req.getParameter("dataProvider");
-		String type = req.getParameter("type");
-		String apiName = req.getParameter("apiName");
-		
-		String resource = String.format("%s/%s/%s/%s", project , dataProvider , type , apiName);
-		
-		Set<String> alreadyAddedGroups = policyManager.getAuthorizedGroups(resource);
-		Set<Group> remoteGroups = RakshakUtils.getAllGroups(getConfiguration());
-		Set<Group> finalGroups = new TreeSet<Group>();
-		for(Group group : remoteGroups)
-		{
-			if(alreadyAddedGroups.contains(group.getName())){
-				finalGroups.add(group);
-			}
-		}
-		
-		VelocityContext context = getVelocityEngineWrapper().createVelocityContext(req);
-		context.put("groups" , finalGroups);
-		
-		template.merge(context, resp.getWriter());
-		}
-		catch(Exception e)
-		{
+			  SecurityDashboardConfiguration config = getConfiguration();
+			  Set<Group> groups = RakshakUtils.getAllGroups(config);
+			  VelocityContext context = getVelocityEngineWrapper().createVelocityContext(req);
+			  
+			  context.put("groups", groups);
+			  template.merge(context, resp.getWriter());
+			  
+		} catch (Exception e) {
 			log.error(e);
 			throw new ServletException(e);
 		}
+		
 	}
 	
 	
 	
-	
+	public IManagementTasks getManagementTask() {
+		return managementTask;
+	}
+
+	public void setManagementTask(IManagementTasks managementTask) {
+		this.managementTask = managementTask;
+	}
 	
 	
 

@@ -25,7 +25,6 @@ import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.model.Workspace;
 import edu.emory.cci.bindaas.security_dashboard.RegistrableServlet;
 import edu.emory.cci.bindaas.security_dashboard.api.IPolicyManager;
-import edu.emory.cci.bindaas.security_dashboard.model.Group;
 
 public class PolicyAdminMainServlet extends RegistrableServlet{
 
@@ -67,7 +66,7 @@ public class PolicyAdminMainServlet extends RegistrableServlet{
 					for(QueryEndpoint queryAPI : dataProvider.getQueryEndpoints().values())
 					{
 						String resource = String.format("%s/%s/%s/%s", project.getName() , dataProvider.getName() , "query" , queryAPI.getName());
-						Set<Group> listOfGroups = policyManager.getAuthorizedGroups(resource);
+						Set<String> listOfGroups = policyManager.getAuthorizedGroups(resource);
 						String authorizedGroups = null;
 						if(listOfGroups == null || listOfGroups.size() == 0)
 						{
@@ -92,7 +91,7 @@ public class PolicyAdminMainServlet extends RegistrableServlet{
 					for(SubmitEndpoint submitAPI : dataProvider.getSubmitEndpoints().values())
 					{
 						String resource = String.format("%s/%s/%s/%s", project.getName() , dataProvider.getName() , "submit" , submitAPI.getName());
-						Set<Group> listOfGroups = policyManager.getAuthorizedGroups(resource);
+						Set<String> listOfGroups = policyManager.getAuthorizedGroups(resource);
 						String authorizedGroups = null;
 						if(listOfGroups == null || listOfGroups.size() == 0)
 						{
@@ -117,7 +116,7 @@ public class PolicyAdminMainServlet extends RegistrableServlet{
 					for(DeleteEndpoint deleteAPI : dataProvider.getDeleteEndpoints().values())
 					{
 						String resource = String.format("%s/%s/%s/%s", project.getName() , dataProvider.getName() , "delete" , deleteAPI.getName());
-						Set<Group> listOfGroups = policyManager.getAuthorizedGroups(resource);
+						Set<String> listOfGroups = policyManager.getAuthorizedGroups(resource);
 						String authorizedGroups = null;
 						if(listOfGroups == null || listOfGroups.size() == 0)
 						{
@@ -142,7 +141,7 @@ public class PolicyAdminMainServlet extends RegistrableServlet{
 			}
 			
 			
-			VelocityContext context = getVelocityEngineWrapper().createVelocityContext();
+			VelocityContext context = getVelocityEngineWrapper().createVelocityContext(req);
 			context.put("tableEntries", listOfTableEntries);
 			template.merge(context, resp.getWriter());
 			
