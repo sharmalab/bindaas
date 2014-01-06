@@ -4,12 +4,16 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.tools.generic.EscapeTool;
+
+import edu.emory.cci.bindaas.security.api.BindaasUser;
 
 public class VelocityEngineWrapper {
 	
@@ -65,12 +69,12 @@ public class VelocityEngineWrapper {
 		return velocityContext;
 	}
 	
-	public VelocityContext createVelocityContext()
+	public VelocityContext createVelocityContext(HttpServletRequest request)
 	{
 		VelocityContext velocityContext = new VelocityContext();
 		velocityContext.put("esc", escapeTool);
 		velocityContext.put("UUID", UUID.class);
-		
+		velocityContext.put("admin", BindaasUser.class.cast(request.getSession().getAttribute("loggedInUser")).getName());
 		return velocityContext;
 	}
 }

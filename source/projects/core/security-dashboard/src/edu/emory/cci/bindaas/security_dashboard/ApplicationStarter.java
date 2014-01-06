@@ -23,8 +23,7 @@ public class ApplicationStarter {
 	private SecurityDashboardConfiguration defaultSecurityDashboardConfiguration;
 	private String securityDashboardConfigFileName;
 	private VelocityEngineWrapper velocityEngineWrapper;
-	
-	
+		
 
 	public VelocityEngineWrapper getVelocityEngineWrapper() {
 		return velocityEngineWrapper;
@@ -34,11 +33,6 @@ public class ApplicationStarter {
 		this.velocityEngineWrapper = velocityEngineWrapper;
 	}
 
-	
-	
-	
-	
-	
 	public String getSecurityDashboardConfigFileName() {
 		return securityDashboardConfigFileName;
 	}
@@ -66,17 +60,9 @@ public class ApplicationStarter {
 	}
 
 	
-	public SecurityDashboardConfiguration getDefaultAdminconsoleConfiguration() {
-		return defaultAdminconsoleConfiguration;
-	}
-
-	public void setDefaultAdminconsoleConfiguration(
-			SecurityDashboardConfiguration defaultAdminconsoleConfiguration) {
-		this.defaultAdminconsoleConfiguration = defaultAdminconsoleConfiguration;
-	}
-
+	
 	private final static String WEBCONTENT_DIRECTORY=  "/webcontent";
-	private SecurityDashboardConfiguration defaultAdminconsoleConfiguration;
+	
 	
 	public void init() throws Exception
 	{
@@ -89,10 +75,6 @@ public class ApplicationStarter {
 		
 		final SecurityDashboardConfiguration config = dynamicConfig.getObject();
 		
-		if(config.isSyncOnStartup())
-		{
-			syncOnStartup(config);
-		}
 		
 		ServiceTracker<HttpService,HttpService> serviceTracker = new ServiceTracker<HttpService,HttpService>(context, HttpService.class, new ServiceTrackerCustomizer<HttpService, HttpService>() {
 
@@ -117,13 +99,6 @@ public class ApplicationStarter {
 		serviceTracker.open();
 	}
 	
-	
-	private void syncOnStartup(SecurityDashboardConfiguration config) {
-		
-		// check if apiKey group exist
-		// scan thru users and add users to the list of this group
-		
-	}
 
 	private void registerResources(HttpService httpService , SecurityDashboardConfiguration config) 
 	{

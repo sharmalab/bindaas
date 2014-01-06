@@ -7,7 +7,7 @@ import com.google.gson.annotations.Expose;
 
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
-public class Group {
+public class Group implements Comparable<Group> {
 
 	@Expose private String name;
 	@Expose private Map<String,String> properties;
@@ -57,6 +57,11 @@ public class Group {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	@Override
+	public int compareTo(Group o) {
+		return o.name.compareTo(this.name);
 	}
 	
 }
