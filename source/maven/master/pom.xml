@@ -200,5 +200,6 @@
 		<module>native-app-runner-SPM</module>
 		<module>bindaas-trusted-application-manager</module>
 		<module>aime-bindaas-datasource-provider-2</module>
+		<module>security-dashboard</module>
 	</modules>
 </project>

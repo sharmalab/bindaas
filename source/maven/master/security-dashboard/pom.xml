@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>bindaas</groupId>
+		<artifactId>master</artifactId>
+		<version>0.0.1</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<artifactId>security-dashboard</artifactId>
+	<version>0.0.1</version>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>bindaas-core-api</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>bindaas-core-impl</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity-tools</artifactId>
+			<version>2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.http</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>bindaas-commons-h2-hibernate</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>bindaas-commons-mail</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>bindaas-commons-openid-helper</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>bindaas-core-api</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>bindaas</groupId>
+			<version>0.0.1-SNAPSHOT</version>
+			<artifactId>ldap-bindaas-authentication-provider</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>bindaas-version-manager</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>bindaas-security-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>
