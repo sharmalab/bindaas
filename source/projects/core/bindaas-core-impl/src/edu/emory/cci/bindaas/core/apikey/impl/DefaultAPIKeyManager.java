@@ -453,4 +453,32 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 		}
 	}
 
+	@Override
+	public APIKey lookupAPIKeyByUsername(String username)
+			throws APIKeyManagerException {
+		Session session = sessionFactory.openSession();
+		try {
+			
+			@SuppressWarnings("unchecked")
+			List<UserRequest> userKeys = (List<UserRequest>) session
+					.createCriteria(UserRequest.class)
+					.add(Restrictions.eq("stage", Stage.accepted.name()))
+					.add(Restrictions.gt("dateExpires", new Date()))
+					.add(Restrictions.eq("emailAddress", username + "@localhost"))
+					.list();
+			
+			if(userKeys!=null && userKeys.size() > 0)
+			{
+				return userRequestToAPIKey(userKeys.get(0));
+			}
+			else
+				return null;
+		} catch (Exception e) {
+			log.error(e);
+			throw new APIKeyManagerException(e , Reason.PROCESSING_ERROR);
+		} finally {
+			session.close();
+		}
+	}
+
 }

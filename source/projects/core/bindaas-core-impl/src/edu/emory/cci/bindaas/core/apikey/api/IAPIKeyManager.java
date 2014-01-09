@@ -19,4 +19,5 @@ public interface IAPIKeyManager {
 	public Integer revokeAPIKey(String apiKey,String initiatedBy ,String comments , ActivityType activityType) throws APIKeyManagerException;
 	public List<UserRequest> listAPIKeys() throws APIKeyManagerException;
 	public Integer purgeExpiredKeys() throws APIKeyManagerException;
+	public APIKey lookupAPIKeyByUsername(String username) throws APIKeyManagerException;
 }
