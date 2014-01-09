@@ -12,3 +12,6 @@ mvn archetype:generate   -DinteractiveMode=false -DarchetypeArtifactId=maven-arc
 mvn archetype:generate   -DinteractiveMode=false -DarchetypeArtifactId=maven-archetype-quickstart   -DgroupId=bindaas   -DartifactId=junit-aime-bindaas-datasource-provider-1
 mvn archetype:generate   -DinteractiveMode=false -DarchetypeArtifactId=maven-archetype-quickstart   -DgroupId=bindaas   -DartifactId=junit-mongodb-datasource-provider
 mvn archetype:generate   -DinteractiveMode=false -DarchetypeArtifactId=maven-archetype-quickstart   -DgroupId=bindaas   -DartifactId=junit-bindaas-core
+
+
+#modified to test
