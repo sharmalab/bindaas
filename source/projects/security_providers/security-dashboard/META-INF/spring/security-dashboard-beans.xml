@@ -110,12 +110,28 @@
 	
 </bean>
 
+<!-- AuthorizationProviderImpl -->
+
+<bean id="authorizationProvider" class="edu.emory.cci.bindaas.security_dashboard.service.AuthorizationProviderImpl" init-method="init">
+	
+	<property name="policyManager" ref="policyManager" ></property>
+	
+</bean>
 
 <!-- OSGi Refereces -->
 
 <osgi:reference interface="org.hibernate.SessionFactory" id="sessionFactory"></osgi:reference>
 <osgi:reference interface="edu.emory.cci.bindaas.core.api.IManagementTasks" id="managementTasks"></osgi:reference>
 <osgi:reference interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager" id="apiKeyManager"></osgi:reference>
+
+
+<!-- OSGi Exports -->
+
+<osgi:service interface="edu.emory.cci.bindaas.security.api.IAuthorizationProvider" ref="authorizationProvider">
+	<osgi:service-properties>
+		<entry key="class" value="edu.emory.cci.bindaas.security_dashboard.service.AuthorizationProviderImpl" />
+	</osgi:service-properties>
+</osgi:service>
 
 </beans>
 
