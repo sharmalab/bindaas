@@ -63,7 +63,10 @@
 					<div class="input-group ">
 								<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
 								<input id="searchBar" type="text" class="form-control" placeholder="Search by typing username">
-							</div>
+								<button type="button" class="btn btn-default " name="showAllButton">
+  									Show All
+								</button>
+					</div>
 							<div class="row">
 								<br />
 							</div>
@@ -148,9 +151,17 @@
 				request.username = $(this).attr("bindaas-username");
 				
 				var url = "/dashboard/security/apikey-admin/main";
-				
+				var button = $(this) ;
 				$.post( url , JSON.stringify(request)).done(function(){
-						window.location = url + "?searchBarStartValue=" + $("#searchBar").val();
+						if($(button).attr("bindaas-show-all"))
+							{
+								window.location = url + "?showAll=true&searchBarStartValue=" + $("#searchBar").val();	
+							}
+						else
+							{
+								window.location = url + "?searchBarStartValue=" + $("#searchBar").val();
+							}
+						
 				}).fail(
 								function(err)
 								{
@@ -177,9 +188,16 @@
 				if(con == true)
 				{
 					var url = "/dashboard/security/apikey-admin/main";
-					
+					var button = $(this) ;
 					$.post( url , JSON.stringify(request)).done(function(){
-						window.location = url + "?searchBarStartValue=" + $("#searchBar").val();
+						if($(button).attr("bindaas-show-all"))
+						{
+							window.location = url + "?showAll=true&searchBarStartValue=" + $("#searchBar").val();	
+						}
+					else
+						{
+							window.location = url + "?searchBarStartValue=" + $("#searchBar").val();
+						}
 					}).fail(
 									function(err)
 									{
@@ -194,7 +212,37 @@
 		}
 		
 		$("#searchBar").val("$searchBarStartValue");
-		$("#searchBar").trigger("keyup");		
+		$("#searchBar").trigger("keyup");
+		
+		$("button[name='showAllButton']").click(function(){
+			var htmlContent = "";
+			$.each(indexedUserList , function(key,arrayOfEntries){
+				
+				$.each(arrayOfEntries , function(index , value){
+					
+						if('apiKey' in value)
+						{
+							var row = "<tr><td>"+ value["firstName"]  +"</td><td>" + value["lastName"] + "</td><td>" +value["name"] + "</td><td><p class='text-success'><code>"+ value["apiKey"]+ "</code></p><p class='text-success'>expires on </p>" + value["expirationDate"] + "</td><td><button bindaas-show-all='true' name='revokeButton' class=\"btn btn-danger  btn-xs\" bindaas-username='"  + value["name"] + "'>Revoke API-Key</button></td></tr>" ;
+							htmlContent = htmlContent + row;
+						}
+						else
+						{
+							var row = "<tr><td>"+ value["firstName"]  +"</td><td>" + value["lastName"] + "</td><td>" + value["name"] + "</td><td><p class='text-danger'>No Key issued</p></td><td><button bindaas-show-all='true' name='issueButton' class=\"btn btn-success  btn-xs\" bindaas-username='"  + value["name"] + "'>Generate API-Key</button></td></tr>" ;
+							htmlContent = htmlContent + row;
+						}
+						
+					
+				});
+				
+			});
+			$("#data").html(htmlContent);
+			addHandlers();
+		});
+		
+		if($showAll)
+			{
+				$("button[name='showAllButton']").trigger("click");
+			}
 		</script>
 	</body>
 </html>

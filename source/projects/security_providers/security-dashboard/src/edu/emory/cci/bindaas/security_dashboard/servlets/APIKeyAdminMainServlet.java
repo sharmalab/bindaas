@@ -145,6 +145,15 @@ public class APIKeyAdminMainServlet extends RegistrableServlet{
 				context.put("searchBarStartValue", "");
 			}
 			
+			if(req.getParameter("showAll")!=null)
+			{
+				context.put("showAll", "true");
+			}
+			else
+			{
+				context.put("showAll", "false");
+			}
+			
 			template.merge(context, resp.getWriter());
 			
 		}catch(Exception e)

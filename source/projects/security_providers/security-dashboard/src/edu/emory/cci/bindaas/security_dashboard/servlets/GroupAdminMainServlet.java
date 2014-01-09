@@ -13,6 +13,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
+import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
 import edu.emory.cci.bindaas.security_dashboard.RegistrableServlet;
 import edu.emory.cci.bindaas.security_dashboard.api.IPolicyManager;
 import edu.emory.cci.bindaas.security_dashboard.config.SecurityDashboardConfiguration;
@@ -32,6 +33,16 @@ public class GroupAdminMainServlet extends RegistrableServlet{
 	private IManagementTasks managementTask;
 	private Log log = LogFactory.getLog(getClass());
 	private IPolicyManager policyManager;
+	private IAPIKeyManager apiKeyManager;
+	
+	public IAPIKeyManager getApiKeyManager() {
+		return apiKeyManager;
+	}
+
+	public void setApiKeyManager(IAPIKeyManager apiKeyManager) {
+		this.apiKeyManager = apiKeyManager;
+	}
+
 	
 
 	public IPolicyManager getPolicyManager() {
@@ -80,7 +91,7 @@ public class GroupAdminMainServlet extends RegistrableServlet{
 	
 		try {
 			  SecurityDashboardConfiguration config = getConfiguration();
-			  Set<Group> groups = RakshakUtils.getAllGroups(config);
+			  Set<Group> groups = RakshakUtils.getAllGroups(config , apiKeyManager);
 			  VelocityContext context = getVelocityEngineWrapper().createVelocityContext(req);
 			  
 			  context.put("groups", groups);

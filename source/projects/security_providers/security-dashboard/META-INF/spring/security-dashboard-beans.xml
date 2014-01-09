@@ -59,12 +59,14 @@
 	<property name="policyManager" ref="policyManager"></property>
 	<property name="managementTask" ref="managementTasks"></property>
 	<property name="templateName" value="policy-admin-main.html"></property>
+	
 </bean>
 
 <bean id="policyAdminAddGroupServlet" class="edu.emory.cci.bindaas.security_dashboard.servlets.PolicyAdminAddGroupServlet" >
 	<property name="servletPath" value="/dashboard/security/policy-admin/add-group"></property>
 	<property name="policyManager" ref="policyManager"></property>
 	<property name="templateName" value="policy-admin-add-group.html"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
 </bean>
 
 <bean id="groupAdminViewEditServlet" class="edu.emory.cci.bindaas.security_dashboard.servlets.GroupAdminViewEditGroupServlet" >
@@ -79,6 +81,7 @@
 	<property name="policyManager" ref="policyManager"></property>
 	<property name="managementTask" ref="managementTasks"></property>
 	<property name="templateName" value="group-admin-main.html"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
 </bean>
 
 

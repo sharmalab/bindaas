@@ -15,6 +15,7 @@ import org.apache.velocity.VelocityContext;
 
 import com.google.gson.annotations.Expose;
 
+import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.IOUtils;
 import edu.emory.cci.bindaas.security_dashboard.RegistrableServlet;
@@ -35,6 +36,16 @@ public class PolicyAdminRemoveGroupServlet extends RegistrableServlet{
 	private Log log = LogFactory.getLog(getClass());
 	
 	private IPolicyManager policyManager;
+	private IAPIKeyManager apiKeyManager;
+	
+	public IAPIKeyManager getApiKeyManager() {
+		return apiKeyManager;
+	}
+
+	public void setApiKeyManager(IAPIKeyManager apiKeyManager) {
+		this.apiKeyManager = apiKeyManager;
+	}
+
 	
 
 	public IPolicyManager getPolicyManager() {
@@ -87,7 +98,7 @@ public class PolicyAdminRemoveGroupServlet extends RegistrableServlet{
 		String resource = String.format("%s/%s/%s/%s", project , dataProvider , type , apiName);
 		
 		Set<String> alreadyAddedGroups = policyManager.getAuthorizedGroups(resource);
-		Set<Group> remoteGroups = RakshakUtils.getAllGroups(getConfiguration());
+		Set<Group> remoteGroups = RakshakUtils.getAllGroups(getConfiguration() , apiKeyManager);
 		Set<Group> finalGroups = new TreeSet<Group>();
 		for(Group group : remoteGroups)
 		{

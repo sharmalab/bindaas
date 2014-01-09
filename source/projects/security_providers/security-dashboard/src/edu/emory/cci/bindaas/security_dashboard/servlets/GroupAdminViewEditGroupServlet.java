@@ -104,7 +104,7 @@ public class GroupAdminViewEditGroupServlet extends RegistrableServlet{
 			
 			SecurityDashboardConfiguration config = getConfiguration();
 			 
-			Group group = RakshakUtils.getGroup(config, groupName);
+			Group group = RakshakUtils.getGroup(config, groupName , apiKeyManager);
 			
 			Set<User> users = RakshakUtils.getUsersHavingAPIKey(config , apiKeyManager);
 			  VelocityContext context = getVelocityEngineWrapper().createVelocityContext(req);

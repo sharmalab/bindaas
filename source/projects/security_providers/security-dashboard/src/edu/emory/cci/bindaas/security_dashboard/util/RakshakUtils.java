@@ -2,6 +2,7 @@ package edu.emory.cci.bindaas.security_dashboard.util;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -135,7 +136,7 @@ public class RakshakUtils {
 	}
 	
 	
-	public static Set<Group> getAllGroups(SecurityDashboardConfiguration config) throws Exception
+	public static Set<Group> getAllGroups(SecurityDashboardConfiguration config , IAPIKeyManager apiKeyManager) throws Exception
 	{
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		try{
@@ -150,6 +151,21 @@ public class RakshakUtils {
 			{
 				String content = IOUtils.toString(is);
 				Set<Group> groups = GSONUtil.getGSONInstance().fromJson(content, groupSetType);
+				
+				// filter users who do not have apiKey
+				
+				for(Group group : groups)
+				{
+					Set<String> users = group.getUsers();
+					Iterator<String> iter = users.iterator();
+					while(iter.hasNext())
+					{
+						String user = iter.next();
+						APIKey apiKey = apiKeyManager.lookupAPIKeyByUsername(user);
+						if(apiKey == null) iter.remove();
+					}
+				}
+				
 				return groups;	
 			}
 			else
@@ -270,9 +286,9 @@ public class RakshakUtils {
 		}
 	}
 	
-	public static Group getGroup(SecurityDashboardConfiguration config , String groupName) throws Exception
+	public static Group getGroup(SecurityDashboardConfiguration config , String groupName , IAPIKeyManager apiManager) throws Exception
 	{
-		Set<Group> allGroups = getAllGroups(config);
+		Set<Group> allGroups = getAllGroups(config , apiManager);
 		for(Group g : allGroups)
 		{
 			if(g.getName().equals(groupName))
