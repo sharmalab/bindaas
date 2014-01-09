@@ -282,7 +282,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 					return Response.serverError().entity("Error communicating with Authorization Module").build();
 				}
 				try{
-					
+					log.debug("Performing Authorization");
 					boolean grantAccess = performAuthorization( message , authenticatedUser , authorizationProvider);
 						if(!grantAccess)
 						{
