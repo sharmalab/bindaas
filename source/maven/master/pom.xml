@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>bindaas</groupId>
+	<groupId>aime</groupId>
 	<artifactId>master</artifactId>
 	<version>0.0.1</version>
 	<packaging>pom</packaging>
@@ -168,12 +168,7 @@
 	<modules>
 		<module>bindaas-version-manager</module>
 		<module>bindaas-security-api</module>
-		<module>junit-aime-bindaas-datasource-provider-1</module>
-		<module>junit-bindaas-core</module>
-		<module>junit-mongodb-datasource-provider</module>
 		<module>ldap-bindaas-authentication-provider</module>
-		<module>mongodb-datasource-provider</module>
-		<module>mysql-datasource-provider</module>
 		<module>aime-bindaas-datasource-provider-1</module>
 		<module>aime4-bindaas-datasource-provider</module>
 		<module>bindaas-core-api</module>
@@ -182,22 +177,10 @@
 		<module>bindaas-commons-h2-hibernate</module>
 		<module>bindaas-commons-mail</module>
 		<module>bindaas-commons-openid-helper</module>
-		<module>image-download-query-result-modifier</module>
-		<module>postgres-datasource-provider</module>
-		<module>aim-to-dicom-query-result-modifier</module>
-		<module>../../projects/misc/commons-xml2json</module>
-		<module>db2-datasource-provider</module>
 		<module>log4j.config</module>
 		<module>generic-sql-datasource-provider</module>
-		<module>http-datasource-provider</module>
 		<module>bindaas-psuedo-sts</module>
 		<module>bindaas-commons-cxf-wrapper</module>
-		<module>dicom-to-png-query-result-modifier</module>
-		<module>aim-to-svg-query-result-modifier</module>
-		<module>dicomaim-to-pngsvg-QRM</module>
-		<module>heartbeat-monitor-client</module>
-		<module>heartbeat-monitor-server</module>
-		<module>native-app-runner-SPM</module>
 		<module>bindaas-trusted-application-manager</module>
 		<module>aime-bindaas-datasource-provider-2</module>
 		<module>security-dashboard</module>
