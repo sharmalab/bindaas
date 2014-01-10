@@ -13,7 +13,7 @@
 		<!-- Set the viewport width to device width for mobile -->
 		<meta name="viewport" content="width=device-width" />
 
-		<title>Create Data Provider</title>
+		<title>Create AIME Instance</title>
 
 		<!-- Included CSS Files (Uncompressed) -->
 		<!--
@@ -82,9 +82,9 @@
 
 		<div class="row">
 			<div class="six columns">
-				<h2>Bindaas</h2>
+				<h2>AIME</h2>
 				<p>
-					<strong>Be worry free!</strong>
+					<strong>The AIM Data Service</strong>
 				</p>
 				<p>
 					$versionHeader
@@ -132,7 +132,7 @@
 				<div class="row">
 					<fieldset>
 						<legend>
-							<h3>Create Data Provider</h3>
+							<h3>Create AIME Instance</h3>
 						</legend>
 						<form class="custom" action="createProfile.action" method="get">
 							<input type="hidden" value="${workspace}"  name="workspace"/>
@@ -141,7 +141,7 @@
 							<input type="text" placeholder="name" name="profileName" id="profileName"/>
 							<label>Description</label>
 							<input type="text" placeholder="description" name="description" id="description"/>
-							<label for="provider">Choose Database</label>
+							<label for="provider">Choose Version</label>
 							<select  name="provider" id="provider">
 								<option value="">--- Select ---</option>
 								#foreach ($provider in $providers)
@@ -173,7 +173,7 @@
 							</div>
 							
 							<div class="panel">
-								<label for="dataSource">Data Source Configuration</label>
+								<label for="dataSource">Configuration</label>
 								<textarea name="dataSource" id="dataSource"></textarea>
 								<script>
 									function enableDataSource() {

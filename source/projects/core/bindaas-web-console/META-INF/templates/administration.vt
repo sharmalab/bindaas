@@ -60,9 +60,9 @@
 
 		<div class="row">
 			<div class="six columns">
-				<h2>Bindaas</h2>
+				<h2>AIME</h2>
 				<p>
-					<strong>Be worry free!</strong>
+					<strong>The AIM Data Service</strong>
 				</p>
 				<p>
 					$versionHeader
@@ -602,7 +602,7 @@
 											<h5>Authorization</h5>
 										</legend>
 										<div class='row'>
-											<i>This is a tech preview. Click <a href="#">here</a> for more details</i>
+											<i>Create/Edit AIME authorization policies</i>
 										</div>
 										<div class='row'>
 											<div class='six columns'>

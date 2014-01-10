@@ -50,9 +50,9 @@
 
 		<div class="row">
 			<div class="six columns">
-				<h2>Bindaas</h2>
+				<h2>AIME</h2>
 				<p>
-					<strong>Be worry free!</strong>
+					<strong>The AIM Data Service</strong>
 				</p>
 				<p>
 					$versionHeader
@@ -107,7 +107,7 @@
 								Description <kbd>$workspace.getDescription()</kbd>
 							</p>
 
-							<h6>Data Providers</h6>
+							<h6>AIME Instances</h6>
 							<table>
 								<thead>
 									<tr>
@@ -161,7 +161,7 @@
 									</tr>
 									#end
 									<tr>
-										<td><a href="/dashboard/$workspace.getName()/createProfile.action" class="medium">Create New Data Provider >>> </a></td>
+										<td><a href="/dashboard/$workspace.getName()/createProfile.action" class="medium">Create New AIME Instance >>> </a></td>
 									</tr>
 								</tbody>
 							</table>
