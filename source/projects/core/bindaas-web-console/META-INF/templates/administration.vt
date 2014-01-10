@@ -573,9 +573,9 @@
 									</fieldset>
 									<fieldset>
 										<legend>
-											<h5>Authorization</h5>
+											<h5>Admin Accounts</h5>
 										</legend>
-										<label>Admin Accounts</label>
+										<label>These accounts can administer this instance</label>
 										<input type="text" id="sc_authorization_admin_accounts" />
 
 									</fieldset>
@@ -595,6 +595,29 @@
 													<input type="radio" name='sc_audit' value="false" />
 													Disable</label>
 											</div>
+										</div>
+									</fieldset>
+									<fieldset>
+										<legend>
+											<h5>Authorization</h5>
+										</legend>
+										<div class='row'>
+											<i>This is a tech preview. Click <a href="#">here</a> for more details</i>
+										</div>
+										<div class='row'>
+											<div class='six columns'>
+												<label>
+													<input type="radio" name='sc_authorization' value="true" />
+													Enable</label>
+											</div>
+											<div class='six columns'>
+												<label>
+													<input type="radio" name='sc_authorization' value="false" />
+													Disable</label>
+											</div>
+										</div>
+										<div class='row' name="security-dashboard-view">
+											<a href="/dashboard/security/policy-admin/main">Launch Security Dashboard</a>
 										</div>
 									</fieldset>
 									<i class="button" onclick="saveSecurityConfigurationPanel()">Save</i>
@@ -771,9 +794,34 @@
 											#else
 												$("input[name='sc_audit'][value='false']").attr("checked","true");
 											#end
+											
+											#if($middlewareConfiguration.getEnableAuthorization())
+												$("input[name='sc_authorization'][value='true']").attr("checked","true");
+												$("div[name='security-dashboard-view']").show();
+											#else
+												$("input[name='sc_authorization'][value='false']").attr("checked","true");
+												$("div[name='security-dashboard-view']").hide();
+											#end
+											
+											$("input[name='sc_authorization']").click(
+													function(){
+															
+															if( $(this).attr('value') == 'true' )
+															{
+																$("div[name='security-dashboard-view']").show();
+															}
+															else
+															{
+																$("div[name='security-dashboard-view']").hide();
+															}
+													}
+											);
+											
 										}
 										
 										initSecurityConfigurationPanelAction();
+										
+										
 																				
 									</script>
 									
@@ -821,6 +869,7 @@
 										
 
 										req.authorization.adminAccounts = $("#sc_authorization_admin_accounts").attr("value").split(",");
+										req.authorization.enableMethodAuthorization = $("input[name='sc_authorization']:checked").attr("value");
 										
 										req.audit.enable = $("input[name='sc_audit']:checked").attr("value");
 										

@@ -79,7 +79,7 @@
 	<property name="enableAuthentication" value="true"></property>
 	<property name="authenticationProviderClass" value="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"></property>
 	<property name="enableAuthorization" value="false"></property>
-	<property name="authorizationProviderClass" value="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider"></property>
+	<property name="authorizationProviderClass" value="edu.emory.cci.bindaas.security_dashboard.service.AuthorizationProviderImpl"></property>
 	<property name="enableAudit" value="true"></property>
 	<property name="auditProviderClass" value="edu.emory.cci.bindaas.security.impl.DBAuditProvider"></property>
 	

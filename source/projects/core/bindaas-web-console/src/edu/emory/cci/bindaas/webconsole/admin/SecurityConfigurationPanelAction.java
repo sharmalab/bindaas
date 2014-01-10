@@ -78,6 +78,7 @@ public class SecurityConfigurationPanelAction implements IAdminAction{
 			synchronized (bindaasConfiguration) {
 				bindaasConfiguration.setEnableAudit(this.audit.enable);
 				bindaasConfiguration.setEnableAuthentication(adminConsoleConfiguration.getUserConfiguration().getAuthenticationMethod() == AuthenticationMethod.none ? false : true);
+				bindaasConfiguration.setEnableAuthorization(this.authorization.enableMethodAuthorization);
 				dynamicConfiguration.saveObject();
 			}
 			
@@ -103,6 +104,7 @@ public class SecurityConfigurationPanelAction implements IAdminAction{
 	}
 	public static class AuthorizationPanel {
 		@Expose private Set<String> adminAccounts;
+		@Expose private boolean enableMethodAuthorization;
 	}
 	public static class AuditPanel {
 		@Expose private Boolean enable;
