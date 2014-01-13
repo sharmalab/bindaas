@@ -48,6 +48,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private Log log = LogFactory.getLog(getClass());
 	private static final Long DECISION_CACHE_MAX = 1000l;
 	private static final Long DECISION_CACHE_TIMEOUT_MINUTES = 60l;
+	private static final Long DECISION_CACHE_TIMEOUT_SECONDS = 1l;
 	private Cache<String,AuthenticationResponseEntry> authenticationDecisionCache;
 	private Cache<AuthorizationRequestEntry ,Boolean> authorizationDecisionCache;
 	
@@ -102,7 +103,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		
 		// initialize caches
 		authenticationDecisionCache = CacheBuilder.newBuilder().expireAfterAccess(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
-		authorizationDecisionCache = CacheBuilder.newBuilder().expireAfterAccess(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
+		authorizationDecisionCache = CacheBuilder.newBuilder().expireAfterAccess(DECISION_CACHE_TIMEOUT_SECONDS, TimeUnit.SECONDS).maximumSize(DECISION_CACHE_MAX).build();
 	}
 	
 	private Principal handleHTTP_BASIC(Message message , IAuthenticationProvider authenticationProvider) throws Exception
