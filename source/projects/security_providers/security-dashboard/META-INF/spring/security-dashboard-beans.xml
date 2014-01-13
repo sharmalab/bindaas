@@ -52,6 +52,7 @@
 	<property name="servletPath" value="/dashboard/security/policy-admin/remove-group"></property>
 	<property name="policyManager" ref="policyManager"></property>
 	<property name="templateName" value="policy-admin-remove-group.html"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
 </bean>
 
 <bean id="policyAdminMainServlet" class="edu.emory.cci.bindaas.security_dashboard.servlets.PolicyAdminMainServlet" >
@@ -59,6 +60,7 @@
 	<property name="policyManager" ref="policyManager"></property>
 	<property name="managementTask" ref="managementTasks"></property>
 	<property name="templateName" value="policy-admin-main.html"></property>
+	
 	
 </bean>
 
