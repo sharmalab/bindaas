@@ -1,4 +1,4 @@
-package edu.emory.cci.sample.qrm;
+package edu.emory.cci.sample.modifiers;
 
 import java.util.Map;
 

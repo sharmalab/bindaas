@@ -1,4 +1,4 @@
-package edu.emory.cci.sample.qrm.bundle;
+package edu.emory.cci.sample.modifiers.bundle;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
