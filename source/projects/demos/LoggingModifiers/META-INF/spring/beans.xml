@@ -15,6 +15,24 @@
 	<bean id="spm" class="edu.emory.cci.sample.modifiers.LoggingSPM">
 	</bean>
 	
+	<osgi:service interface="edu.emory.cci.bindaas.framework.api.IQueryResultModifier" ref="qrm">
+	<osgi:service-properties>
+		<entry key="class" value="edu.emory.cci.sample.modifiers.LoggingQRM" />
+	</osgi:service-properties>
+	</osgi:service>
+	
+	<osgi:service interface="edu.emory.cci.bindaas.framework.api.IQueryModifier" ref="qm">
+	<osgi:service-properties>
+		<entry key="class" value="edu.emory.cci.sample.modifiers.LoggingQM" />
+	</osgi:service-properties>
+	</osgi:service>
+	
+	<osgi:service interface="edu.emory.cci.bindaas.framework.api.ISubmitPayloadModifier" ref="spm">
+	<osgi:service-properties>
+		<entry key="class" value="edu.emory.cci.sample.modifiers.LoggingSPM" />
+	</osgi:service-properties>
+	</osgi:service>
+	
 </beans>
 
 

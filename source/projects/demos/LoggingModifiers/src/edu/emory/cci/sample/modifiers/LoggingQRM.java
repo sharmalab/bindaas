@@ -1,24 +1,24 @@
 package edu.emory.cci.sample.modifiers;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.JsonObject;
 
-import edu.emory.cci.bindaas.framework.api.ISubmitPayloadModifier;
+import edu.emory.cci.bindaas.framework.api.IQueryResultModifier;
 import edu.emory.cci.bindaas.framework.model.ModifierException;
+import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
-import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
-import edu.emory.cci.bindaas.framework.provider.exception.SubmitExecutionFailedException;
+import edu.emory.cci.bindaas.framework.provider.exception.QueryExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.IOUtils;
+import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
-public class LoggingQRM implements ISubmitPayloadModifier{
+public class LoggingQRM implements IQueryResultModifier{
 
 	private Log log = LogFactory.getLog(getClass());
 	@Override
@@ -26,39 +26,40 @@ public class LoggingQRM implements ISubmitPayloadModifier{
 
 		return new JsonObject();
 	}
+
 	@Override
 	public void validate() throws ModifierException {
-		// not implemented	
+		// not implemented
+		
 	}
 
 	@Override
 	public String getDescriptiveName() {
 
-		return "Plugin for logging submit payload";
-	}
-	
-	@Override
-	public InputStream transformPayload(InputStream data, SubmitEndpoint submitEndpoint, JsonObject modifierProperties, RequestContext requestContext) throws AbstractHttpCodeException {
-		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			IOUtils.copyAndCloseInput(data, bos);
-			bos.close();
-			byte[] rawBytes = bos.toByteArray();
-			log.info("Payload of [" + rawBytes.length + "] intercepted");
-			return new ByteArrayInputStream(rawBytes);
-		} catch (IOException e) {
-			log.error("Error in handling payload",e);
-			throw new SubmitExecutionFailedException(getClass().getName(), 1);
-		}
-		
-	}
-	@Override
-	public String transformPayload(String data, SubmitEndpoint submitEndpoint,
-			JsonObject modifierProperties, RequestContext requestContext)
-			throws AbstractHttpCodeException {
-		log.info("Data received from HTTP POST [" + data + "]");
-		return data;
+		return "Plugin for logging query results";
 	}
 
-	
+	@Override
+	public QueryResult modifyQueryResult(QueryResult queryResult,
+			JsonObject dataSource, RequestContext requestContext,
+			JsonObject modifierProperties, Map<String, String> queryParams)
+			throws AbstractHttpCodeException {
+		String data;
+		try {
+			
+			// intercepting the response and logging it
+			data = IOUtils.toString(queryResult.getData());
+			log.info("Request received from [" + requestContext.getUser() + "]");
+			log.info("Response [" + data + "]");
+			// overriding the response by a custom message
+			queryResult.setMimeType(StandardMimeType.TEXT.toString());
+			queryResult.setData(new ByteArrayInputStream(new String("Response from the QueryHandler was consumed by LoggingSPM").getBytes()));
+			return queryResult;
+		} catch (IOException e) {
+			log.error("Execution of LoggingSPM failed");
+			throw new QueryExecutionFailedException(getClass().getName(), 1);
+		}
+
+	}
+
 }
