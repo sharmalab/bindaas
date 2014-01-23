@@ -9,6 +9,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 
 import edu.emory.cci.bindaas.core.bundle.Activator;
@@ -18,7 +19,7 @@ import edu.emory.cci.bindaas.security.model.hibernate.AuditMessage;
 public class DBAuditProvider implements IAuditProvider{
 
 	private Log log = LogFactory.getLog(getClass());
-	private static Integer MAX_DISPLAY_THRESHOLD = 1000 ;
+	private static Integer MAX_DISPLAY_THRESHOLD = 10000 ;
 	private static Integer EXPORT_BATCH_THRESHOLD = 4000 ;
 	
 	
@@ -59,7 +60,7 @@ public class DBAuditProvider implements IAuditProvider{
 			try{
 				
 				@SuppressWarnings("unchecked")
-				List<AuditMessage> auditMessages = (List<AuditMessage>) session.createCriteria(AuditMessage.class).setMaxResults(MAX_DISPLAY_THRESHOLD).list();
+				List<AuditMessage> auditMessages = (List<AuditMessage>) session.createCriteria(AuditMessage.class).setMaxResults(MAX_DISPLAY_THRESHOLD).addOrder(Order.desc("timestamp")).list();
 				return auditMessages;
 			}
 			catch(Exception e)
