@@ -404,7 +404,12 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 
 			@Override
 			public Boolean call() throws Exception {
+				try{
 				return authorizationProvider.isAuthorized(userAttributes, authenticatedUser.getName(), pathInfo, actionId);
+				}catch(Exception e){
+					log.error("Error in making authorization decision",e);
+					throw e;
+				}
 			}
 		});
 		 

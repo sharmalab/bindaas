@@ -167,10 +167,7 @@ public class DefaultPolicyManagerImpl implements IPolicyManager {
 			{
 				return ;
 			}
-
 		} 
-		
-	
 		catch (Exception e) {
 			log.error("Rolling back transaction" ,e);
 			session.getTransaction().rollback();
@@ -189,17 +186,15 @@ public class DefaultPolicyManagerImpl implements IPolicyManager {
 		Set<String> authorizedGroups = getAuthorizedGroups(resource);
 		Set<User> setOfUsers = RakshakUtils.getUsersHavingAPIKey(configuration , apiKeyManager );
 		
-		for(User usr : setOfUsers)
-		{
-			if(usr.getName().equals(user))
-			{
+		for (User usr : setOfUsers) {
+			String name = usr.getName();
+			if (name != null && name.equals(user)) {
 				Set<String> userGroups = usr.getGroups();
-				
-				for(String groupName : userGroups)
-				{
-					if(authorizedGroups.contains(groupName))
-					{
-						return true;
+				if (userGroups != null) {
+					for (String groupName : userGroups) {
+						if (authorizedGroups.contains(groupName)) {
+							return true;
+						}
 					}
 				}
 			}
