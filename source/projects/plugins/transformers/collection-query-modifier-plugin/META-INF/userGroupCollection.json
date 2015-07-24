@@ -1,0 +1,24 @@
+{
+
+	"userGroups": [
+		{
+    		"admin":  ["LIDC-IDRI", "BREAST-DIAGNOSIS","TCGA-BRCA"]
+    	}
+    	
+    ],
+    
+    "groupCollection": [
+    
+    	{
+    		"LIDC-IDRI":"LIDC-IDRI"
+    	},
+     	{
+     		"BREAST-DIAGNOSIS":"BREAST-DIAGNOSIS"
+     	},
+     	{
+     		"TCGA-BRCA":"TCGA-BRCA"
+     	}
+    ]
+
+
+}
