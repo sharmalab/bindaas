@@ -28,328 +28,325 @@ import edu.emory.cci.bindaas.security_dashboard.model.User;
 public class RakshakUtils {
 
 	private static Log log = LogFactory.getLog(RakshakUtils.class);
-	private static Type userSetType ;
-	private static Type groupSetType ;
-	
+	private static Type userSetType;
+	private static Type groupSetType;
+
 	static {
-		userSetType = new TypeToken<Set<User>>(){}.getType();
-		groupSetType = new TypeToken<Set<Group>>(){}.getType();
-		
+		userSetType = new TypeToken<Set<User>>() {
+		}.getType();
+		groupSetType = new TypeToken<Set<Group>>() {
+		}.getType();
+
 	}
-	
-	public static Set<User> getAllUsers(SecurityDashboardConfiguration config , IAPIKeyManager apiKeyManager) throws Exception
-	{
+
+	public static Set<User> getAllUsers(SecurityDashboardConfiguration config,
+			IAPIKeyManager apiKeyManager) throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		try{
-			
-			String url = String.format("%s/extensions/getUsers", config.getRakshakBaseUrl());
+		try {
+
+			String url = String.format("%s/extensions/getUsers",
+					config.getRakshakBaseUrl());
 			HttpGet getRequest = new HttpGet(url);
 			HttpResponse resp = httpClient.execute(getRequest);
 			InputStream is = null;
-			
-			if(resp.getStatusLine().getStatusCode() == 200 && resp.getEntity()!=null && (is = resp.getEntity().getContent())!=null)
-			{
+
+			if (resp.getStatusLine().getStatusCode() == 200
+					&& resp.getEntity() != null
+					&& (is = resp.getEntity().getContent()) != null) {
 				String content = IOUtils.toString(is);
-				Set<User> users = GSONUtil.getGSONInstance().fromJson(content, userSetType);
-				for(User user : users)
-				{
-					APIKey apiKey = apiKeyManager.lookupAPIKeyByUsername(user.getName());
-					if(apiKey!=null)
-					{
-						user.setApiKey(apiKey.getValue()); 
+				Set<User> users = GSONUtil.getGSONInstance().fromJson(content,
+						userSetType);
+				for (User user : users) {
+					APIKey apiKey = apiKeyManager.lookupAPIKeyByUsername(user
+							.getName());
+					if (apiKey != null) {
+						user.setApiKey(apiKey.getValue());
 						user.setExpirationDate(apiKey.getExpires().toString());
 					}
 				}
-				
+
 				return users;
-				
-			}
-			else{
-				
+
+			} else {
+
 				String message = resp.getStatusLine().toString();
-				if(resp.getEntity()!=null && (is = resp.getEntity().getContent())!=null)
-				{
+				if (resp.getEntity() != null
+						&& (is = resp.getEntity().getContent()) != null) {
 					message += "\n" + IOUtils.toString(is);
 				}
 				throw new Exception(message);
 			}
-				
-			
-		}catch(Exception e)
-		{
+
+		} catch (Exception e) {
 			log.error(e);
 			throw e;
-		}
-		finally{
+		} finally {
 			httpClient.getConnectionManager().closeExpiredConnections();
 		}
-		
+
 	}
-	
-	public static Set<User> getUsersHavingAPIKey(SecurityDashboardConfiguration config , IAPIKeyManager apiKeyManager ) throws Exception
-	{
+
+	public static Set<User> getUsersHavingAPIKey(
+			SecurityDashboardConfiguration config, IAPIKeyManager apiKeyManager)
+			throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		try{
-			
-			String url = String.format("%s/extensions/getUsers", config.getRakshakBaseUrl());
+		try {
+
+			String url = String.format("%s/extensions/getUsers",
+					config.getRakshakBaseUrl());
 			HttpGet getRequest = new HttpGet(url);
 			HttpResponse resp = httpClient.execute(getRequest);
 			InputStream is = null;
 			Set<User> retVal = new TreeSet<User>();
-			
-			if(resp.getStatusLine().getStatusCode() == 200 && resp.getEntity()!=null && (is = resp.getEntity().getContent())!=null)
-			{
+
+			if (resp.getStatusLine().getStatusCode() == 200
+					&& resp.getEntity() != null
+					&& (is = resp.getEntity().getContent()) != null) {
 				String content = IOUtils.toString(is);
-				Set<User> users = GSONUtil.getGSONInstance().fromJson(content, userSetType);
-				for(User user : users)
-				{
-					APIKey apiKey = apiKeyManager.lookupAPIKeyByUsername(user.getName());
-					if(apiKey!=null)
-					{
+				Set<User> users = GSONUtil.getGSONInstance().fromJson(content,
+						userSetType);
+				for (User user : users) {
+					APIKey apiKey = apiKeyManager.lookupAPIKeyByUsername(user
+							.getName());
+					if (apiKey != null) {
 						user.setApiKey(apiKey.getValue());
 						user.setExpirationDate(apiKey.getExpires().toString());
 						retVal.add(user);
 					}
 				}
-				
+
 				return retVal;
-				
-			}
-			else
-				{
+
+			} else {
 				String message = resp.getStatusLine().toString();
-				if(resp.getEntity()!=null && (is = resp.getEntity().getContent())!=null)
-				{
+				if (resp.getEntity() != null
+						&& (is = resp.getEntity().getContent()) != null) {
 					message += "\n" + IOUtils.toString(is);
 				}
 				throw new Exception(message);
-				}
-			
-		}catch(Exception e)
-		{
+			}
+
+		} catch (Exception e) {
 			log.error(e);
 			throw e;
-		}
-		finally{
+		} finally {
 			httpClient.getConnectionManager().closeExpiredConnections();
 		}
 	}
-	
-	
-	public static Set<Group> getAllGroups(SecurityDashboardConfiguration config , IAPIKeyManager apiKeyManager) throws Exception
-	{
+
+	public static Set<Group> getAllGroups(
+			SecurityDashboardConfiguration config, IAPIKeyManager apiKeyManager)
+			throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		try{
-			
-			String url = String.format("%s/extensions/getGroups", config.getRakshakBaseUrl());
+		try {
+
+			String url = String.format("%s/extensions/getGroups",
+					config.getRakshakBaseUrl());
 			HttpGet getRequest = new HttpGet(url);
 			HttpResponse resp = httpClient.execute(getRequest);
 			InputStream is = null;
-			
-			
-			if(resp.getStatusLine().getStatusCode() == 200 && resp.getEntity()!=null && (is = resp.getEntity().getContent())!=null)
-			{
+
+			if (resp.getStatusLine().getStatusCode() == 200
+					&& resp.getEntity() != null
+					&& (is = resp.getEntity().getContent()) != null) {
 				String content = IOUtils.toString(is);
-				Set<Group> groups = GSONUtil.getGSONInstance().fromJson(content, groupSetType);
-				
+				Set<Group> groups = GSONUtil.getGSONInstance().fromJson(
+						content, groupSetType);
+
 				// filter users who do not have apiKey
-				
-				for(Group group : groups)
-				{
+
+				for (Group group : groups) {
 					Set<String> users = group.getUsers();
 					Iterator<String> iter = users.iterator();
-					while(iter.hasNext())
-					{
+					while (iter.hasNext()) {
 						String user = iter.next();
-						APIKey apiKey = apiKeyManager.lookupAPIKeyByUsername(user);
-						if(apiKey == null) iter.remove();
+						APIKey apiKey = apiKeyManager
+								.lookupAPIKeyByUsername(user);
+						if (apiKey == null)
+							iter.remove();
 					}
 				}
-				
-				return groups;	
+
+				return groups;
+			} else {
+				String message = resp.getStatusLine().toString();
+				if (resp.getEntity() != null
+						&& (is = resp.getEntity().getContent()) != null) {
+					message += "\n" + IOUtils.toString(is);
+				}
+				throw new Exception(message);
 			}
-			else
-			{
-			String message = resp.getStatusLine().toString();
-			if(resp.getEntity()!=null && (is = resp.getEntity().getContent())!=null)
-			{
-				message += "\n" + IOUtils.toString(is);
-			}
-			throw new Exception(message);
-			}
-			
-		}catch(Exception e)
-		{
+
+		} catch (Exception e) {
 			log.error(e);
 			throw e;
-		}
-		finally{
+		} finally {
 			httpClient.getConnectionManager().closeExpiredConnections();
 		}
 	}
-	
-	
-	public static void addNewGroup(SecurityDashboardConfiguration config , Set<String> users , String group , String description) throws Exception
-	{
+
+	public static void addNewGroup(SecurityDashboardConfiguration config,
+			Set<String> users, String group, String description)
+			throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		try{
-			
-			String url = String.format("%s/extensions/createOrModifyGroup", config.getRakshakBaseUrl());
+		try {
+
+			String url = String.format("%s/extensions/createOrModifyGroup",
+					config.getRakshakBaseUrl());
 			HttpPost postRequest = new HttpPost(url);
 			CreateOrModifyGroupPayload createOrModifyGroupPayload = new CreateOrModifyGroupPayload();
 			createOrModifyGroupPayload.createGroupIfNotExist = true;
 			createOrModifyGroupPayload.groupDescription = description;
 			createOrModifyGroupPayload.groupName = group;
 			createOrModifyGroupPayload.users = users;
-			
-			String jsonized = GSONUtil.getGSONInstance().toJson(createOrModifyGroupPayload);
+
+			String jsonized = GSONUtil.getGSONInstance().toJson(
+					createOrModifyGroupPayload);
 			postRequest.setEntity(new StringEntity(jsonized));
 			HttpResponse resp = httpClient.execute(postRequest);
-			
-			if(resp.getStatusLine().getStatusCode() != 200)
-			{
-				throw new Exception("Request to Rakshshak returned with error code [" + resp.getStatusLine().getStatusCode() + "]");
+
+			if (resp.getStatusLine().getStatusCode() != 200) {
+				throw new Exception(
+						"Request to Rakshshak returned with error code ["
+								+ resp.getStatusLine().getStatusCode() + "]");
 			}
-			
-			
-		}catch(Exception e)
-		{
+
+		} catch (Exception e) {
 			log.error(e);
 			throw e;
-		}
-		finally{
+		} finally {
 			httpClient.getConnectionManager().closeExpiredConnections();
 		}
 	}
-	
-	public static void addUsersToGroup(SecurityDashboardConfiguration config , Set<String> users , String group) throws Exception
-	{
+
+	public static void addUsersToGroup(SecurityDashboardConfiguration config,
+			Set<String> users, String group) throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		try{
-			
-			String url = String.format("%s/extensions/createOrModifyGroup", config.getRakshakBaseUrl());
+		try {
+
+			String url = String.format("%s/extensions/createOrModifyGroup",
+					config.getRakshakBaseUrl());
 			HttpPost postRequest = new HttpPost(url);
 			CreateOrModifyGroupPayload createOrModifyGroupPayload = new CreateOrModifyGroupPayload();
 			createOrModifyGroupPayload.createGroupIfNotExist = false;
 			createOrModifyGroupPayload.groupName = group;
 			createOrModifyGroupPayload.users = users;
-			
-			String jsonized = GSONUtil.getGSONInstance().toJson(createOrModifyGroupPayload);
+
+			String jsonized = GSONUtil.getGSONInstance().toJson(
+					createOrModifyGroupPayload);
 			postRequest.setEntity(new StringEntity(jsonized));
 			HttpResponse resp = httpClient.execute(postRequest);
-			
-			if(resp.getStatusLine().getStatusCode() != 200)
-			{
-				throw new Exception("Request to Rakshshak returned with error code [" + resp.getStatusLine().getStatusCode() + "]");
+
+			if (resp.getStatusLine().getStatusCode() != 200) {
+				throw new Exception(
+						"Request to Rakshshak returned with error code ["
+								+ resp.getStatusLine().getStatusCode() + "]");
 			}
-			
-			
-		}catch(Exception e)
-		{
+
+		} catch (Exception e) {
 			log.error(e);
 			throw e;
-		}
-		finally{
+		} finally {
 			httpClient.getConnectionManager().closeExpiredConnections();
 		}
 	}
-	
-	public static void removeUsersFromGroup(SecurityDashboardConfiguration config , Set<String> users , String group) throws Exception
-	{
+
+	public static void removeUsersFromGroup(
+			SecurityDashboardConfiguration config, Set<String> users,
+			String group) throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		try{
-			
-			String url = String.format("%s/extensions/removeUsersFromGroup", config.getRakshakBaseUrl());
+		try {
+
+			String url = String.format("%s/extensions/removeUsersFromGroup",
+					config.getRakshakBaseUrl());
 			HttpPost postRequest = new HttpPost(url);
 			RemoveUsersFromGroupPayload payload = new RemoveUsersFromGroupPayload();
-			
+
 			payload.group = group;
 			payload.users = users;
-			
+
 			String jsonized = GSONUtil.getGSONInstance().toJson(payload);
 			postRequest.setEntity(new StringEntity(jsonized));
 			HttpResponse resp = httpClient.execute(postRequest);
-			
-			if(resp.getStatusLine().getStatusCode() != 200)
-			{
-				throw new Exception("Request to Rakshshak returned with error code [" + resp.getStatusLine().getStatusCode() + "]");
+
+			if (resp.getStatusLine().getStatusCode() != 200) {
+				throw new Exception(
+						"Request to Rakshshak returned with error code ["
+								+ resp.getStatusLine().getStatusCode() + "]");
 			}
-			
-			
-		}catch(Exception e)
-		{
+
+		} catch (Exception e) {
 			log.error(e);
 			throw e;
-		}
-		finally{
+		} finally {
 			httpClient.getConnectionManager().closeExpiredConnections();
 		}
 	}
-	
-	public static Group getGroup(SecurityDashboardConfiguration config , String groupName , IAPIKeyManager apiManager) throws Exception
-	{
-		Set<Group> allGroups = getAllGroups(config , apiManager);
-		for(Group g : allGroups)
-		{
-			if(g.getName().equals(groupName))
-			{
+
+	public static Group getGroup(SecurityDashboardConfiguration config,
+			String groupName, IAPIKeyManager apiManager) throws Exception {
+		Set<Group> allGroups = getAllGroups(config, apiManager);
+		for (Group g : allGroups) {
+			if (g.getName().equals(groupName)) {
 				return g;
 			}
 		}
 		return null;
 	}
-	
-	public static void removeGroup(SecurityDashboardConfiguration config , String groupName) throws Exception
-	{
+
+	public static void removeGroup(SecurityDashboardConfiguration config,
+			String groupName) throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		try{
-			
-			String url = String.format("%s/extensions/removeGroup", config.getRakshakBaseUrl());
+		try {
+
+			String url = String.format("%s/extensions/removeGroup",
+					config.getRakshakBaseUrl());
 			HttpPost postRequest = new HttpPost(url);
 			RemoveGroupPayload payload = new RemoveGroupPayload();
-			
+
 			payload.group = groupName;
-			
+
 			String jsonized = GSONUtil.getGSONInstance().toJson(payload);
 			postRequest.setEntity(new StringEntity(jsonized));
 			HttpResponse resp = httpClient.execute(postRequest);
-			
-			if(resp.getStatusLine().getStatusCode() != 200)
-			{
-				throw new Exception("Request to Rakshshak returned with error code [" + resp.getStatusLine().getStatusCode() + "]");
+
+			if (resp.getStatusLine().getStatusCode() != 200) {
+				throw new Exception(
+						"Request to Rakshshak returned with error code ["
+								+ resp.getStatusLine().getStatusCode() + "]");
 			}
-			
-			
-		}catch(Exception e)
-		{
+
+		} catch (Exception e) {
 			log.error(e);
 			throw e;
-		}
-		finally{
+		} finally {
 			httpClient.getConnectionManager().closeExpiredConnections();
 		}
 	}
-	
 
-	public static class CreateOrModifyGroupPayload{
-		@Expose private String groupName;
-		@Expose private String groupDescription;
-		@Expose private Set<String> users;
-		@Expose private boolean createGroupIfNotExist;
-		
+	public static class CreateOrModifyGroupPayload {
+		@Expose
+		private String groupName;
+		@Expose
+		private String groupDescription;
+		@Expose
+		private Set<String> users;
+		@Expose
+		private boolean createGroupIfNotExist;
+
 	}
-	
-	
-	
+
 	public static class RemoveUsersFromGroupPayload {
-		@Expose private String group;
-		@Expose private Set<String> users;
-		
+		@Expose
+		private String group;
+		@Expose
+		private Set<String> users;
+
 	}
-	
+
 	public static class RemoveGroupPayload {
-		@Expose private String group;
+		@Expose
+		private String group;
 	}
-	
-	
+
 }
