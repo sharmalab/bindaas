@@ -27,4 +27,4 @@ Bundle-ClassPath: db2jcc4-9.7-osgi.jar,
 Export-Package: edu.emory.cci.bindaas.datasource.provider.aime4,
  edu.emory.cci.bindaas.datasource.provider.aime4.model,
  edu.emory.cci.bindaas.datasource.provider.aime4.outputformat
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

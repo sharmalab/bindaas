@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Bindaas Core API
 Bundle-SymbolicName: bindaas-core-api
 Bundle-Version: 1.0.0
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.gson;version="2.1.0",
  com.google.gson.annotations;version="2.1.0",
  com.google.gson.internal;version="2.1.0",

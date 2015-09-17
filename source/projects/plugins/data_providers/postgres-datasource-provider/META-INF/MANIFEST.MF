@@ -5,7 +5,7 @@ Bundle-SymbolicName: postgres-datasource-provider
 Bundle-Version: 1.0.1
 Bundle-Activator: edu.emory.cci.bindaas.datasource.provider.postgres.bundle.Activator
 Bundle-Vendor: CCI Emory University
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.gson;version="2.1.0",
  com.google.gson.annotations;version="2.1.0",
  com.google.gson.internal;version="2.1.0",

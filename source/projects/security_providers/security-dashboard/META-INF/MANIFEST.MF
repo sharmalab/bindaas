@@ -7,7 +7,7 @@ Bundle-Activator: edu.emory.cci.bindaas.security_dashboard.bundle.Activator
 Bundle-Vendor: CCI Emory University
 Spring-Context: *
 Hibernate-Entity: edu.emory.cci.bindaas.security_dashboard.model.hibernate.Policy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.annotations;version="14.0.1",
  com.google.common.base;version="14.0.1",
  com.google.common.base.internal;version="14.0.1",

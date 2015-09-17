@@ -5,7 +5,7 @@ Bundle-SymbolicName: bindaas-security-api
 Bundle-Version: 1.0.0
 Bundle-Activator: edu.emory.cci.bindaas.security.bundle.Activator
 Bundle-Vendor: CCI Emory University
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javassist.util.proxy,
  javax.persistence,
  org.apache.commons.logging;version="1.1.1",

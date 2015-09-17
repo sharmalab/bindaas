@@ -5,7 +5,7 @@ Bundle-SymbolicName: LoggingModifiers
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.emory.cci.sample.modifiers.bundle.Activator
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.gson;version="2.1.0",
  com.google.gson.annotations;version="2.1.0",
  com.google.gson.internal;version="2.1.0",

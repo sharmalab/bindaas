@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0
 Bundle-Activator: edu.emory.cci.bindaas.commons.mail.bundle.Activator
 Bundle-Vendor: CCI Emory University
 Spring-Context: *
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: edu.emory.cci.bindaas.core.util,
  javax.activation;resolution:=optional,
  org.apache.commons.logging;version="1.1.1",
