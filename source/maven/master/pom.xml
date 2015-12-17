@@ -105,9 +105,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>bindaas-osgi</groupId>
-			<artifactId>org.eclipse.osgi</artifactId>
-			<version>3.8.2.v20130124</version>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>4.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>bindaas</groupId>
