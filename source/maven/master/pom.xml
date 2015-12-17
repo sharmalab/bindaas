@@ -109,6 +109,13 @@
 			<artifactId>org.osgi.core</artifactId>
 			<version>6.0.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.eclipse.equinox</groupId>
+			<artifactId>osgi</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>org.apache.felix.eventadmin</artifactId>
