@@ -105,7 +105,8 @@ public class MongoDBQueryHandler implements IQueryHandler {
                         
                     // get DB collection
                     DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
-                    if (! dbCollectionMap.containsKey(configuration.getDb()) ) {
+                    String dbCollectionKey = configuration.getDb() + "-" + configuration.getCollection();
+                    if (! dbCollectionMap.containsKey(dbCollectionKey) ) {
                         Mongo mongo = null;
                         try {
                             MongoOptions options = new MongoOptions();
@@ -115,7 +116,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
                             mongo = new Mongo(new ServerAddress(configuration.getHost(), configuration.getPort()), options);
                             DB db = mongo.getDB(configuration.getDb());
                             DBCollection mongoDbCollection = db.getCollection(configuration.getCollection());
-                            dbCollectionMap.put(configuration.getDb(), mongoDbCollection);
+                            dbCollectionMap.put(dbCollectionKey, mongoDbCollection);
 
                             
                         } catch (Exception e) {
@@ -126,7 +127,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
                     // use operationDescriptor to route to correct handler
                     
                     IOperationHandler operationHandler = operationDescriptor.get_operation().getHandler();
-                    QueryResult result = operationHandler.handleOperation(dbCollectionMap.get(configuration.getDb()), props , operationDescriptor.get_operation_args(), registry);
+                    QueryResult result = operationHandler.handleOperation(dbCollectionMap.get(dbCollectionKey), props , operationDescriptor.get_operation_args(), registry);
                     return result;
                     
                     
@@ -206,4 +207,5 @@ public class MongoDBQueryHandler implements IQueryHandler {
     }
 
 }
+
 
