@@ -14,7 +14,6 @@
 
     <modules>
         <module>core</module>
-        <module>log4j.config</module>
         <module>misc</module>
         <module>plugins</module>
         <module>security_providers</module>
