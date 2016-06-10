@@ -13,9 +13,9 @@
     <name>core</name>
 
     <modules>
+        <module>bindaas-core-api</module>
         <module>bindaas-version-manager</module>
         <module>bindaas-security-api</module>
-        <module>bindaas-core-api</module>
         <module>bindaas-core-impl</module>
         <module>bindaas-web-console</module>
         <module>bindaas-commons-h2-hibernate</module>
