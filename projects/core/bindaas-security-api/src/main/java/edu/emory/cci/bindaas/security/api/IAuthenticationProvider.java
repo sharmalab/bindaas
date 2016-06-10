@@ -25,7 +25,6 @@ public interface IAuthenticationProvider {
 	 * 
 	 * @param username 
 	 * @param password
-	 * @param props used to configure this provider. May contain props to connect to underlying Idp
 	 * @return
 	 * @throws Exception when authentication fails
 	 */
@@ -34,7 +33,6 @@ public interface IAuthenticationProvider {
 	/**
 	 * 
 	 * @param securityToken
-	 * @param props
 	 * @return Username of the authentication user
 	 * @throws Exception when authentication fails
 	 */
