@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>bindaas</groupId>
+        <artifactId>plugins</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>transformers</artifactId>
+    <packaging>pom</packaging>
+    <name>transformers</name>
+
+    <modules>
+        <module>image-download-query-result-modifier</module>
+        <module>aim-to-dicom-query-result-modifier</module>
+        <module>dicom-to-png-query-result-modifier</module>
+        <module>aim-to-svg-query-result-modifier</module>
+        <module>dicomaim-to-pngsvg-QRM</module>
+        <module>native-app-runner-SPM</module>
+    </modules>
+</project>

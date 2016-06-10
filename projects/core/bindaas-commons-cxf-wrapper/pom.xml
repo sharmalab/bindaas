@@ -3,9 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>bindaas</groupId>
-		<artifactId>master</artifactId>
+		<artifactId>core</artifactId>
 		<version>0.0.1</version>
-		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>bindaas-commons-cxf-wrapper</artifactId>
 	<version>0.0.1</version>

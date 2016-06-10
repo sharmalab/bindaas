@@ -1,218 +1,158 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>bindaas</groupId>
-	<artifactId>master</artifactId>
-	<version>0.0.1</version>
-	<packaging>pom</packaging>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>bindaas</groupId>
+    <artifactId>master</artifactId>
+    <version>0.0.1</version>
+    <packaging>pom</packaging>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.4.2</version>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<verbose>true</verbose>
-					<fork>true</fork>
-					<executable><!-- path-to-javac -->
-					</executable>
-					<compilerVersion>1.7</compilerVersion>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>clean</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<ant antfile="${basedir}/build.xml" target="clean" />
-							</tasks>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<ant antfile="${basedir}/build.xml" target="copyProject" />
-							</tasks>
-						</configuration>
-					</execution>
-					<execution>
-						<id>compile-dist</id>
-						<phase>package</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<ant antfile="${basedir}/build.xml" target="dist" />
-							</tasks>
-						</configuration>
-					</execution>
-					<!-- <execution> <id>move-dist</id> <phase>deploy</phase> <goals> <goal>run</goal> 
-						</goals> <configuration> <tasks> <ant antfile="${basedir}/build.xml" target="deploy"/> 
-						</tasks> </configuration> </execution> -->
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<archive>
-						<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
-					</archive>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.6.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-bundle</artifactId>
-			<version>2.7.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>14.0.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>6.0.0</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.eclipse.equinox</groupId>
-			<artifactId>osgi</artifactId>
-			<version>3.1.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.eventadmin</artifactId>
-			<version>1.3.2</version>
-		</dependency>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>3.2.2.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>4.1.9.Final</version>
-		</dependency>
-
-		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
-			<version>1.2.15</version> </dependency> -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>1.5.6</version>
-		</dependency>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.4.2</version>
+                    <configuration>
+                        <skipTests>true</skipTests>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <remoteTagging>true</remoteTagging>
+                        <preparationGoals>clean install</preparationGoals>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.8</version>
+                    <executions>
+                        <execution>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${session.executionRootDirectory}/lib</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.6</version>
+                    <configuration>
+                        <archive>
+                            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+                        </archive>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 
 
-	</dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.6.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-bundle</artifactId>
+                <version>2.7.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>14.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>6.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.equinox</groupId>
+                <artifactId>osgi</artifactId>
+                <version>3.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.eventadmin</artifactId>
+                <version>1.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>3.2.2.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>4.1.9.Final</version>
+            </dependency>
+            <!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId>
+                <version>1.2.15</version> </dependency> -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>1.5.6</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
-	<repositories>
-		<repository>
-			<id>maven-cci</id>
-			<url>http://maven.cci.emory.edu:8081/nexus/content/groups/public/</url>
-		</repository>
+    <repositories>
+        <repository>
+            <id>maven-cci</id>
+            <url>http://maven.cci.emory.edu:8081/nexus/content/groups/public/</url>
+        </repository>
 
-	</repositories>
-	<distributionManagement>
-		<!-- Publish the versioned releases here -->
-		<repository>
-			<id>maven-cci</id>
-			<name>CCI Release</name>
-			<url>http://maven.cci.emory.edu:8081/nexus/content/repositories/releases/</url>
-		</repository>
+    </repositories>
 
-		<!-- Publish the versioned releases here -->
-		<snapshotRepository>
-			<id>maven-cci</id>
-			<name>CCI Snapshot</name>
-			<url>http://maven.cci.emory.edu:8081/nexus/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
+    <distributionManagement>
+        <!-- Publish the versioned releases here -->
+        <repository>
+            <id>maven-cci</id>
+            <name>CCI Release</name>
+            <url>http://maven.cci.emory.edu:8081/nexus/content/repositories/releases/</url>
+        </repository>
+
+        <!-- Publish the versioned releases here -->
+        <snapshotRepository>
+            <id>maven-cci</id>
+            <name>CCI Snapshot</name>
+            <url>http://maven.cci.emory.edu:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 
-
-	<modules>
-		<module>projects/core/bindaas-version-manager</module>
-		<module>projects/core/bindaas-security-api</module>
-		<module>tests/junit-aime-bindaas-datasource-provider-1</module>
-		<module>tests/junit-bindaas-core</module>
-		<module>tests/junit-mongodb-datasource-provider</module>
-		<module>projects/security_providers/ldap-bindaas-authentication-provider</module>
-		<module>projects/plugins/data_providers/mongodb-datasource-provider</module>
-		<module>projects/plugins/data_providers/mysql-datasource-provider</module>
-		<module>projects/plugins/data_providers/aime-bindaas-datasource-provider-1</module>
-		<module>projects/plugins/data_providers/aime4-bindaas-datasource-provider</module>
-		<module>projects/core/bindaas-core-api</module>
-		<module>projects/core/bindaas-core-impl</module>
-		<module>projects/core/bindaas-web-console</module>
-		<module>projects/core/bindaas-commons-h2-hibernate</module>
-		<module>projects/core/bindaas-commons-mail</module>
-		<module>projects/core/bindaas-commons-openid-helper</module>
-		<module>projects/plugins/transformers/image-download-query-result-modifier</module>
-		<module>projects/plugins/data_providers/postgres-datasource-provider</module>
-		<module>projects/plugins/transformers/aim-to-dicom-query-result-modifier</module>
-		<module>projects/misc/commons-xml2json</module>
-		<module>projects/plugins/data_providers/db2-datasource-provider</module>
-		<module>projects/log4j.config</module>
-		<module>projects/plugins/data_providers/generic-sql-datasource-provider</module>
-		<module>projects/plugins/data_providers/http-datasource-provider</module>
-		<module>projects/core/bindaas-psuedo-sts</module>
-		<module>projects/core/bindaas-commons-cxf-wrapper</module>
-		<module>projects/plugins/transformers/dicom-to-png-query-result-modifier</module>
-		<module>projects/plugins/transformers/aim-to-svg-query-result-modifier</module>
-		<module>projects/plugins/transformers/dicomaim-to-pngsvg-QRM</module>
-		<module>projects/core/heartbeat-monitor-client</module>
-		<module>projects/core/heartbeat-monitor-server</module>
-		<module>projects/plugins/transformers/native-app-runner-SPM</module>
-		<module>projects/core/bindaas-trusted-application-manager</module>
-		<module>projects/plugins/data_providers/aime-bindaas-datasource-provider-2</module>
-		<module>projects/security_providers/security-dashboard</module>
-	</modules>
+    <modules>
+        <module>tests</module>
+        <module>projects</module>
+    </modules>
 </project>

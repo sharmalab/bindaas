@@ -1,14 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>bindaas</groupId>
-        <artifactId>core</artifactId>
+        <artifactId>projects</artifactId>
         <version>0.0.1</version>
     </parent>
-    <artifactId>bindaas-core-api</artifactId>
-    <version>0.0.1</version>
-    <packaging>jar</packaging>
 
+    <artifactId>plugins</artifactId>
+    <packaging>pom</packaging>
+    <name>plugins</name>
 
+    <modules>
+        <module>data_providers</module>
+        <module>transformers</module>
+    </modules>
 </project>
