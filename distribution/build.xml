@@ -95,9 +95,15 @@
             </fileset>
         </copy>
 
-        <copy todir="${dist.placeholder.dir}/bundles/system/" flatten="true"> <!--todo: separate: system and optional-->
+        <copy todir="${dist.placeholder.dir}/bundles/system/" flatten="true">
             <fileset dir="../projects/plugins/data_providers">
-                <include name="**/target/*.jar" />
+                <include name="*/target/*.jar" />
+            </fileset>
+        </copy>
+
+        <copy todir="${dist.placeholder.dir}/bundles/optional/" flatten="true">
+            <fileset dir="../projects/plugins/data_providers/aime">
+                <include name="*/target/*.jar" />
             </fileset>
         </copy>
 

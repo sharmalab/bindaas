@@ -1,0 +1,124 @@
+<label>Query Language</label>
+		
+			<select id="aime_qe_of_queryLang">
+				<option  selected value="">---Select---</option>
+				<option value="SQL">SQL</option>
+				<option value="XQUERY">XQUERY</option>
+			</select>
+		
+		<label>Output Format</label>
+		<span class="has-tip tip-left" data-width="210" title="Choose how you want to format the results">
+			
+			<select id="aime_qe_of_outputFormat">
+				<option value="" selected >---Select---</option>
+				<option value="HTML">HTML</option>
+				<option value="CSV">CSV</option>
+				<option value="XML">XML</option>
+				<option value="JSON">JSON</option>
+				<option value="ANY">ANY</option>
+			</select>
+		</span>
+		
+		<div id="csvChoosen" class="hide">
+			<label>CSV Header</label>
+			<span class="has-tip tip-left" data-width="300" title="(Optional) Specify a comma delimeted list of  column names that will become the header of CSV document returned.If not specified, the CSV file will not include column names"><input type="text" id="aime_qe_of_csvColumns" /></span>	
+		</div>
+		
+		
+		<script>
+			// validation stuff
+			
+		
+			$("#aime_qe_of_queryLang").change(function ()
+			{
+				updateOutputFormatField();
+			});
+			
+			$("#aime_qe_of_outputFormat").change(function ()
+			{
+				var outputFormat = $("#aime_qe_of_outputFormat option:selected").attr("value");
+				var queryLang = $("#aime_qe_of_queryLang option:selected").attr("value");
+				if(outputFormat == "CSV" && queryLang == "XQUERY" )
+				{
+					$("#csvChoosen").removeClass("hide");	
+				}
+				
+				else
+				{
+					$("#csvChoosen").addClass("hide");
+				}
+				updateOutputFormatField();
+			});
+			
+			$("#aime_qe_of_csvColumns").keyup(function ()
+			{
+				updateOutputFormatField();
+			});
+			
+			
+			
+			   
+		   function updateOutputFormatField()
+		   {
+		   	 var outputFormatJson = {};
+		   	 outputFormatJson.queryType = $("#aime_qe_of_queryLang option:selected").attr("value");
+		   	 outputFormatJson.outputFormat = $("#aime_qe_of_outputFormat option:selected").attr("value");
+		   	 outputFormatJson.csvHeader = [];
+		   	 try{
+		   	 	
+		   	 	var csvHeader = $("#aime_qe_of_csvColumns").attr("value");
+		   	 	if(csvHeader)
+		   	 	{
+		   	 		var columns = csvHeader.split(",");
+		   	 		outputFormatJson.csvHeader = columns;
+		   	 	}
+		   	 }
+		   	 catch(e)
+		   	 {
+		   	 	alert(e);
+		   	 }
+		   	 
+		   	 
+		   	 $("#qeOutputFormat").attr("value" , JSON.stringify(outputFormatJson));
+		   	ValidationObject.addConstraint("Query Language", $("#aime_qe_of_queryLang option:selected").attr("value") && $("#aime_qe_of_queryLang option:selected").attr("value") != "" , function(){
+				alert("Query Language not specified");
+				});
+			ValidationObject.addConstraint("Output Format", $("#aime_qe_of_outputFormat option:selected").attr("value") && $("#aime_qe_of_outputFormat option:selected").attr("value") != "" , function(){
+				alert("Output Format not specified");
+				});
+
+		   }
+		   
+		   function reverseUpdateOutputFormatField()
+		   {
+			   try{
+				   var outputFormatJson = $("#qeOutputFormat").attr("value") ;
+				  
+				   outputFormatJson = jQuery.parseJSON( outputFormatJson ) ;
+				   $("#aime_qe_of_queryLang option:selected").removeAttr("selected");
+				   $("#aime_qe_of_outputFormat option:selected").removeAttr("selected");
+				   
+				   $("#aime_qe_of_queryLang option").
+				   filter( function () { return $(this).attr('value') == outputFormatJson.queryType; })
+				   .attr("selected" , "true");
+				   
+				   $("#aime_qe_of_outputFormat option").
+				   filter( function () {  return $(this).attr('value') == outputFormatJson.outputFormat; })
+				   .attr("selected" , "true");
+				   $("#aime_qe_of_csvColumns").attr("value" , JSON.stringify(outputFormatJson.csvHeader));
+				   
+			   	    
+			   }
+			   catch(e){
+				   console.log(e);
+			   }
+		   }
+		   reverseUpdateOutputFormatField();
+		   ValidationObject.addConstraint("Query Language", $("#aime_qe_of_queryLang option:selected").attr("value") && $("#aime_qe_of_queryLang option:selected").attr("value") != "" , function(){
+				alert("Query Language not specified");
+				});
+			ValidationObject.addConstraint("Output Format", $("#aime_qe_of_outputFormat option:selected").attr("value") && $("#aime_qe_of_outputFormat option:selected").attr("value") != "" , function(){
+				alert("Output Format not specified");
+				});
+
+		</script>

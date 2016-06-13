@@ -1,0 +1,23 @@
+Schema for Table storing AIM objects is as follows :
+<p>
+<table>
+	<thead>
+		<th>Column Name</th><th>Description</th><th>Data Type</th>
+	</thead>
+	<tbody>
+		<tr><td>UNIQUE_ID</td><td>extracted from <em>ImageAnnotation/@uniqueIdentifier</em> (Primary Key) </td><td>varchar(64)</td></tr>
+		<tr><td>REVIEWER</td><td>extracted from <em>ImageAnnotation/user/User/@loginName</em> </td><td>varchar(64)</td></tr>
+		<tr><td>DATE_CREATED</td><td> extracted from <em>ImageAnnotation/@dateTime</em> </td><td>timestamp</td></tr>
+		<tr><td>PATIENT_ID</td><td> extracted from <em>ImageAnnotation/person/Person/@id</em> </td><td>varchar(64)</td></tr>
+		<tr><td>XMLCOLUMN</td><td>Entire AIM object in XML format </td><td>xml</td></tr>
+		<tr><td>DATA_SOURCE</td><td> Contains source of AIM object. For example : bindaas, etc. </td><td>varchar(120)</td></tr>
+		<tr><td>IMAGE_UID</td><td> extracted from <em>ImageAnnotation/imageReferenceCollection/ImageReference/imageStudy/ImageStudy/imageSeries/ImageSeries/imageCollection/Image/@sopInstanceUID</em> </td><td>varchar(64)</td></tr>
+		<tr><td>STUDY_UID</td><td> extracted from <em>ImageAnnotation/imageReferenceCollection/ImageReference/imageStudy/ImageStudy/@instanceUID</em> </td><td>varchar(64)</td></tr>
+		<tr><td>SERIES_UID</td><td> extracted from <em>ImageAnnotation/imageReferenceCollection/ImageReference/imageStudy/ImageStudy/imageSeries/ImageSeries/@instanceUID</em> </td><td>varchar(64)</td></tr>
+	</tbody>
+</table>
+<p>
+
+Guidelines for writing a delete query :
+<p>It must have a delete statement. Example : <kbd>DELETE from XMLDS.AIMTABLE where UNIQUE_ID=$uid$</kbd> </p>
+
