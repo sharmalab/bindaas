@@ -64,19 +64,37 @@
 		</copy>
 
         <echo>Copying Bindaas Projects Bundles</echo>
+
         <copy todir="${dist.placeholder.dir}/bundles/system/" flatten="true">
-            <fileset dir="../projects">
+            <fileset dir="../projects/security_providers">
                 <include name="**/target/*.jar" />
             </fileset>
         </copy>
-        <chmod dir="${dist.placeholder.dir}/bin" perm="a+rx" includes="*.*"/>
 
-        <echo>Copying Bindaas Tests Bundles</echo>
+        <copy todir="${dist.placeholder.dir}/bundles/optional/" flatten="true">
+            <fileset dir="../projects/plugins/transformers">
+                <include name="**/target/*.jar" />
+            </fileset>
+        </copy>
+
         <copy todir="${dist.placeholder.dir}/bundles/optional/" flatten="true">
             <fileset dir="../tests">
                 <include name="**/target/*.jar" />
             </fileset>
         </copy>
+
+        <copy todir="${dist.placeholder.dir}/bundles/system/" flatten="true"> <!--todo: separate: system and optional-->
+            <fileset dir="../projects/core">
+                <include name="**/target/*.jar" />
+            </fileset>
+        </copy>
+
+        <copy todir="${dist.placeholder.dir}/bundles/system/" flatten="true"> <!--todo: separate: system and optional-->
+            <fileset dir="../projects/plugins/data_providers">
+                <include name="**/target/*.jar" />
+            </fileset>
+        </copy>
+
         <chmod dir="${dist.placeholder.dir}/bin" perm="a+rx" includes="*.*"/>
 
 	</target>
