@@ -83,9 +83,15 @@
             </fileset>
         </copy>
 
-        <copy todir="${dist.placeholder.dir}/bundles/system/" flatten="true"> <!--todo: separate: system and optional-->
-            <fileset dir="../projects/core">
+        <copy todir="${dist.placeholder.dir}/bundles/optional/" flatten="true">
+            <fileset dir="../projects/core/heartbeat-monitor">
                 <include name="**/target/*.jar" />
+            </fileset>
+        </copy>
+
+        <copy todir="${dist.placeholder.dir}/bundles/system/" flatten="true">
+            <fileset dir="../projects/core">
+                <include name="*/target/*.jar" />
             </fileset>
         </copy>
 

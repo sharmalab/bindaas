@@ -23,8 +23,8 @@
         <module>bindaas-commons-openid-helper</module>
         <module>bindaas-psuedo-sts</module>
         <module>bindaas-commons-cxf-wrapper</module>
-        <module>heartbeat-monitor-client</module>
-        <module>heartbeat-monitor-server</module>
+        <module>heartbeat-monitor/heartbeat-monitor-client</module>
+        <module>heartbeat-monitor/heartbeat-monitor-server</module>
         <module>bindaas-trusted-application-manager</module>
         <module>log4j.config</module>
     </modules>
