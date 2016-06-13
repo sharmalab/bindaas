@@ -13,8 +13,25 @@
 
 
     <build>
-        <finalName>bindaas-${project.version}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>build-configuration/bindaas-framework-info.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -40,6 +57,7 @@
                 <version>2.8</version>
             </plugin>
         </plugins>
+        <finalName>bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}-${bindaas.build.date}-min</finalName>
     </build>
 
     <dependencies>
