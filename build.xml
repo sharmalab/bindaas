@@ -21,13 +21,13 @@
 	</property>
 	<property name="tmp.location" value="tmp">
 	</property>
-	<property name="build.configuration" value="build-configuration">
+	<property name="build.configuration" value="distribution/build-configuration">
 	</property>
 
 
-	<property name="third-party.bundle.repo" value="../../dependencies/bundles/third-party" />
-	<property name="startup.bundle.repo" value="../../dependencies/bundles/startup" />
-	<property name="build.extras" value="build-extras" />
+	<property name="third-party.bundle.repo" value="dependencies/bundles/third-party" />
+	<property name="startup.bundle.repo" value="dependencies/bundles/startup" />
+	<property name="build.extras" value="distribution/build-extras" />
 
 	<target name="copyProject" description="default build file">
 
@@ -44,7 +44,7 @@
 	
 		<echo>Copying Configuration</echo>
 		<copy todir="${dist.placeholder.dir}/bin/">
-			<fileset dir="../../dependencies">
+			<fileset dir="dependencies">
 				<include name="**/configuration/*" />
 			</fileset>
 		</copy>

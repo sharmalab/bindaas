@@ -173,6 +173,5 @@
     <modules>
         <module>projects</module>
         <module>tests</module>
-        <module>distribution</module>
     </modules>
 </project>
