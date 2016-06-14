@@ -75,8 +75,17 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <resources>
+            <resource>
+                <directory>.</directory>
+                <excludes>
+                    <exclude>src/</exclude>
+                    <exclude>*.iml</exclude>
+                    <exclude>pom.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
     </build>
-
 
 
     <dependencyManagement>
