@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>bindaas</groupId>
+        <artifactId>data-providers</artifactId>
+        <version>0.0.1</version>
+    </parent>
+	<artifactId>db2-datasource-provider</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<dependencies>
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>bindaas-core-api</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>generic-sql-datasource-provider</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>db2</groupId>
+			<artifactId>db2jcc4</artifactId>
+			<version>9.7</version>
+		</dependency>
+
+	</dependencies>
+</project>

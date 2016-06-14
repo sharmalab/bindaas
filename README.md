@@ -6,7 +6,7 @@ Data Cafe can be built using Apache Maven 3.x and Java 1.7.x or higher.
 
  $ mvn clean install
 
-Built and tested with Apache Maven 3.1.1 and Oracle Java 1.8.0.
+Built and tested with Apache Maven 3.1.1 and Oracle Java 1.7.
 
 
 ## Executing Bindaas
