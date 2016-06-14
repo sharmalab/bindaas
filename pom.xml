@@ -84,6 +84,10 @@
                     <exclude>pom.xml</exclude>
                 </excludes>
             </resource>
+            <resource>
+                <directory>src/main/resources/META-INF</directory>
+                <targetPath>META-INF</targetPath>
+            </resource>
         </resources>
     </build>
 

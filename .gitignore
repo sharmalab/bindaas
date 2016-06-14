@@ -6,3 +6,4 @@ source/projects/core/bindaas-test-runtime-directory/
 .idea/*
 .settings/*
 .project
+**/target/classes/
