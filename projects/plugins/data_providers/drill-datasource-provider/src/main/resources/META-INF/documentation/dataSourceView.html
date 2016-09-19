@@ -1,10 +1,10 @@
 <label>Username</label>
-		<span class="has-tip tip-left" data-width="210" title="username for connecting to MySQL database"> <input type="text" id="mysql_username" /></span>
+		<span class="has-tip tip-left" data-width="210" title="username for connecting to Apache Drill"> <input type="text" id="mysql_username" /></span>
 		<label>Password</label>
-		<span class="has-tip tip-left" data-width="210" title="password for connecting to MySQL database"><input type="password" id="mysql_password" /></span>
-		<label>JDBC Url</label>
-		<span class="has-tip tip-left" data-width="210" title="JDBC URL example: jdbc:mysql://localhost:3306/sakila?profileSQL=true"><input type="text" id="mysql_url" /></span>
-				
+		<span class="has-tip tip-left" data-width="210" title="password for connecting to Apache Drill"><input type="password" id="mysql_password" /></span>
+		<label>Drill JDBC Url</label>
+		<span class="has-tip tip-left" data-width="210" title="Apache Drill JDBC URL example: jdbc:drill:drillbit=localhost:31010"><input type="text" id="mysql_url" /></span>
+
 		<script>
 			
 			$("#mysql_username").keyup(function ()
