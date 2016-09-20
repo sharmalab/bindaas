@@ -5,6 +5,7 @@
         <groupId>bindaas</groupId>
         <artifactId>data-providers</artifactId>
         <version>0.0.1</version>
+        <relativePath>../..</relativePath>
     </parent>
 	<artifactId>aime-bindaas-datasource-provider-2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>

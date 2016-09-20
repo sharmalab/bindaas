@@ -181,6 +181,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>drill-datasource-provider</artifactId>
+            <version>${project.snapshot.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>postgres-datasource-provider</artifactId>
             <version>${project.snapshot.version}</version>
             <type>jar</type>
