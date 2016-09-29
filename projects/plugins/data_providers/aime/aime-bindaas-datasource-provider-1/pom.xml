@@ -10,11 +10,13 @@
 	<artifactId>aime-bindaas-datasource-provider-1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
-		<dependency>
-			<groupId>db2</groupId>
-			<artifactId>db2jcc4</artifactId>
-			<version>9.7</version>
-		</dependency>
+        <dependency>
+            <groupId>db2</groupId>
+            <artifactId>db2jcc4</artifactId>
+            <version>9.7</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/db2jcc4-9.7-osgi.jar</systemPath>
+        </dependency>
 
 		<dependency>
 			<groupId>bindaas</groupId>
