@@ -24,8 +24,6 @@
             <groupId>db2</groupId>
             <artifactId>db2jcc4</artifactId>
             <version>9.7</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/db2jcc4-9.7-osgi.jar</systemPath>
         </dependency>
 
 	</dependencies>
