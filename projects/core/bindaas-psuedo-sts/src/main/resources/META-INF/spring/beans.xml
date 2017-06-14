@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd  http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+<bean id="psuedoSts" class="edu.emory.cci.bindaas.pseudosts.impl.PseduoSecurityTokenServiceImpl" init-method="init">
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+	<property name="defaultConfiguration" ref="defaultConfig"></property>
+</bean>
+
+<bean id="defaultConfig" class="edu.emory.cci.bindaas.pseudosts.conf.Configuration">
+	<property name="ldapProviderClass" value="edu.emory.cci.bindaas.security.ldap.LDAPAuthenticationProvider"></property>
+	<property name="defaultClientId" value="external.org"></property>
+	<property name="defaultLifespanOfKeysInSeconds" value="3600"></property>
+</bean>
+
+<!-- Blueprint References -->
+
+<osgi:reference interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager" id="apiKeyManager"></osgi:reference>
+
+
+</beans>
+
+
+

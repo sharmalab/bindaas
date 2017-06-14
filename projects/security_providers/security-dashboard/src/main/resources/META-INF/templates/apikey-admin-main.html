@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+		<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+		<!-- Latest compiled and minified CSS -->
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+		
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+		
+	</head>
+	<title> Security Dashboard </title>
+	<body style="padding-top: 10px;">
+
+		<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+			<div class="navbar-header">
+
+				<a class="navbar-brand" href="#"><h1>Security Dashboard</h1></a>
+			</div>
+
+			<ul class="nav navbar-nav navbar-right">
+
+				<li  class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown"><h5>$admin</h5></a>
+					<ul class="dropdown-menu navbar-inverse">
+						<li>
+							<a class="navbar-link" href="?doAction=logout">Logout</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+
+		<div class="row" body >
+			<div class="col-lg-2" left-margin>
+				<ul class="nav nav-pills nav-stacked">
+					<li >
+						<a href="/dashboard/security/policy-admin/main">Authorization Policies</a>
+					</li>
+					<li>
+						<a href="/dashboard/security/group-admin/main">Group Management</a>
+					</li>
+					<li>
+						<a href="/dashboard/security/apikey-admin/main">API-Key Management</a>
+					</li>
+				</ul>
+			</div>
+			<div class="col-lg-8" center>
+				<div class="row">
+					<h2>API-Key Management</h2>
+				</div>
+				<div class="row">
+					<h2><small>Use this console to manage API-Keys of the users</small></h2>
+				</div>
+				<div class="row">
+					<div class="input-group ">
+								<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+								<input id="searchBar" type="text" class="form-control" placeholder="Search by typing username">
+								<button type="button" class="btn btn-default " name="showAllButton">
+  									Show All
+								</button>
+					</div>
+							<div class="row">
+								<br />
+							</div>
+							<div class="row">
+						<div class="col-lg-12">
+							<table class="table table-striped table-hover table-bordered">
+								<thead>
+									<th>First Name</th><th>Last Name</th><th>Username</th><th>API-Key</th><th>Action</th>
+								</thead>
+								<tbody id="data">
+									
+								</tbody>
+								
+							</table>
+							
+							<script>
+							</script>
+
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+			<div class="col-lg-2" right-margin>
+
+			</div>
+		</div>
+		<script>
+			var indexedUserList = $indexedUserList ;
+				
+		$("#searchBar").keyup(
+			function()
+			{
+				var searchTerm = $(this).val();
+				if(searchTerm.length > 1 )
+				{
+					
+					var arrayOfEntries = indexedUserList[ searchTerm.substring(0,2) ] ;
+					if(arrayOfEntries)
+					{
+						var htmlContent = "";
+						
+						$.each(arrayOfEntries , function(index , value){
+							
+							if(value["name"].substring(0,searchTerm.length) === searchTerm )
+							{
+								if('apiKey' in value)
+								{
+									var row = "<tr><td>"+ value["firstName"]  +"</td><td>" + value["lastName"] + "</td><td>" +value["name"] + "</td><td><p class='text-success'><code>"+ value["apiKey"]+ "</code></p><p class='text-success'>expires on </p>" + value["expirationDate"] + "</td><td><button name='revokeButton' class=\"btn btn-danger  btn-xs\" bindaas-username='"  + value["name"] + "'>Revoke API-Key</button></td></tr>" ;
+									htmlContent = htmlContent + row;
+								}
+								else
+								{
+									var row = "<tr><td>"+ value["firstName"]  +"</td><td>" + value["lastName"] + "</td><td>" + value["name"] + "</td><td><p class='text-danger'>No Key issued</p></td><td><button name='issueButton' class=\"btn btn-success  btn-xs\" bindaas-username='"  + value["name"] + "'>Generate API-Key</button></td></tr>" ;
+									htmlContent = htmlContent + row;
+								}
+								
+							}
+						});
+						
+						$("#data").html(htmlContent);
+						addHandlers();
+					}
+					else{
+						$("#data").html("");
+					}
+				}
+				else
+				{
+					$("#data").html("");
+				}
+			}
+		);
+		
+		
+		function addHandlers(){
+			$("button[name='issueButton']").click(
+			function(){
+				var request = {};
+				request.requestType = "issueKey";
+				request.username = $(this).attr("bindaas-username");
+				
+				var url = "/dashboard/security/apikey-admin/main";
+				var button = $(this) ;
+				$.post( url , JSON.stringify(request)).done(function(){
+						if($(button).attr("bindaas-show-all"))
+							{
+								window.location = url + "?showAll=true&searchBarStartValue=" + $("#searchBar").val();	
+							}
+						else
+							{
+								window.location = url + "?searchBarStartValue=" + $("#searchBar").val();
+							}
+						
+				}).fail(
+								function(err)
+								{
+										console.log(err);
+										alert("Server Error occured. See console logs for details");
+								}
+						);
+				
+			}
+		);
+		
+		$("button[name='revokeButton']").click(
+			function(){
+				
+				
+				
+				
+				var request = {};
+				request.requestType = "revokeKey";
+				request.username = $(this).attr("bindaas-username");
+				
+				var con = confirm("You are about to revoke API-Key for user [" + request.username + "]");
+				
+				if(con == true)
+				{
+					var url = "/dashboard/security/apikey-admin/main";
+					var button = $(this) ;
+					$.post( url , JSON.stringify(request)).done(function(){
+						if($(button).attr("bindaas-show-all"))
+						{
+							window.location = url + "?showAll=true&searchBarStartValue=" + $("#searchBar").val();	
+						}
+					else
+						{
+							window.location = url + "?searchBarStartValue=" + $("#searchBar").val();
+						}
+					}).fail(
+									function(err)
+									{
+											console.log(err);
+											alert("Server Error occured. See console logs for details");
+									}
+							);		
+				}
+			}
+		);
+	
+		}
+		
+		$("#searchBar").val("$searchBarStartValue");
+		$("#searchBar").trigger("keyup");
+		
+		$("button[name='showAllButton']").click(function(){
+			var htmlContent = "";
+			$.each(indexedUserList , function(key,arrayOfEntries){
+				
+				$.each(arrayOfEntries , function(index , value){
+					
+						if('apiKey' in value)
+						{
+							var row = "<tr><td>"+ value["firstName"]  +"</td><td>" + value["lastName"] + "</td><td>" +value["name"] + "</td><td><p class='text-success'><code>"+ value["apiKey"]+ "</code></p><p class='text-success'>expires on </p>" + value["expirationDate"] + "</td><td><button bindaas-show-all='true' name='revokeButton' class=\"btn btn-danger  btn-xs\" bindaas-username='"  + value["name"] + "'>Revoke API-Key</button></td></tr>" ;
+							htmlContent = htmlContent + row;
+						}
+						else
+						{
+							var row = "<tr><td>"+ value["firstName"]  +"</td><td>" + value["lastName"] + "</td><td>" + value["name"] + "</td><td><p class='text-danger'>No Key issued</p></td><td><button bindaas-show-all='true' name='issueButton' class=\"btn btn-success  btn-xs\" bindaas-username='"  + value["name"] + "'>Generate API-Key</button></td></tr>" ;
+							htmlContent = htmlContent + row;
+						}
+						
+					
+				});
+				
+			});
+			$("#data").html(htmlContent);
+			addHandlers();
+		});
+		
+		if($showAll)
+			{
+				$("button[name='showAllButton']").trigger("click");
+			}
+		</script>
+	</body>
+</html>

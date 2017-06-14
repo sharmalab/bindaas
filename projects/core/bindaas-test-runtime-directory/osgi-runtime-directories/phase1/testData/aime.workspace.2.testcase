@@ -1,0 +1,309 @@
+{
+  "profiles": {
+    "GBM": {
+      "dataSource": {
+        "username": "db2inst1",
+        "password": "aim03@cci",
+        "url": "jdbc:db2://hudson.cci.emory.edu:50000/XMLDB",
+        "autoInitialize": "false",
+        "tableName": "TEST_GBM"
+      },
+      "queryEndpoints": {
+        "fetchXML": {
+          "queryTemplate": "XQUERY declare namespace ns1\u003d\"gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM\"; for $y in db2-fn:xmlcolumn(\"XMLDS.TEST_GBM.XMLCOLUMN\")/ns1:ImageAnnotation where ($y/ns1:anatomicEntityCollection/ns1:AnatomicEntity[starts-with(@codeMeaning,\u0027$anatomicEntities$\u0027)] or fn:exists($y/ns1:anatomicEntityCollection/ns1:AnatomicEntity) \u003d fn:false() ) and ( $y/ns1:anatomicEntityCollection/ns1:AnatomicEntity/ns1:anatomicEntityCharacteristicCollection/ns1:AnatomicEntityCharacteristic[starts-with(@codeMeaning,\u0027$anatomicEntityCharacteristics$\u0027)] or fn:exists($y/ns1:anatomicEntityCollection/ns1:AnatomicEntity/ns1:anatomicEntityCharacteristicCollection/ns1:AnatomicEntityCharacteristic) \u003d fn:false() ) and ( $y/ns1:user/ns1:User[starts-with(@loginName,\u0027$username$\u0027)] or fn:exists($y/ns1:user/ns1:User) \u003d fn:false() ) and ( $y/ns1:imagingObservationCollection/ns1:ImagingObservation[starts-with(@codeMeaning,\u0027$imageObservation$\u0027)]  or fn:exists($y/ns1:imagingObservationCollection/ns1:ImagingObservation) \u003d fn:false() ) and ( $y/ns1:imagingObservationCollection/ns1:ImagingObservation/ns1:imagingObservationCharacteristicCollection/ns1:ImagingObservationCharacteristic[starts-with(@codeMeaning,\u0027$imageObservationCharacteristic$\u0027)] or fn:exists($y/ns1:imagingObservationCollection/ns1:ImagingObservation/ns1:imagingObservationCharacteristicCollection/ns1:ImagingObservationCharacteristic) \u003d fn:false()  ) and ( $y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy[starts-with(@instanceUID,\u0027$studyInstanceUID$\u0027)] or fn:exists($y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy) \u003d fn:false() ) and ( $y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries[starts-with(@instanceUID,\u0027$seriesInstanceUID$\u0027)]  or fn:exists($y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries) \u003d fn:false() ) and ( $y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries/ns1:imageCollection/ns1:Image[starts-with(@sopInstanceUID,\u0027$imageSopInstanceUID$\u0027)] or fn:exists($y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries/ns1:imageCollection/ns1:Image) \u003d fn:false() ) and ( $y/ns1:person/ns1:Person[starts-with(@id,\u0027$patientName$\u0027)] or fn:exists($y/ns1:person/ns1:Person) \u003d fn:false() ) and  ( $y[starts-with(@name,\u0027$annotationName$\u0027)] or fn:exists($y) \u003d fn:false() ) and  ( $y[starts-with(@uniqueIdentifier,\u0027$uniqueIdentifier$\u0027)]  or fn:exists($y) \u003d fn:false() ) return $y",
+          "bindVariables": {
+            "studyInstanceUID": {
+              "name": "studyInstanceUID",
+              "required": false,
+              "defaultValue": "",
+              "description": "studyInstanceUID"
+            },
+            "username": {
+              "name": "username",
+              "required": false,
+              "defaultValue": "",
+              "description": "username"
+            },
+            "annotationName": {
+              "name": "annotationName",
+              "required": false,
+              "defaultValue": "",
+              "description": "annotationName"
+            },
+            "patientName": {
+              "name": "patientName",
+              "required": false,
+              "defaultValue": "",
+              "description": "patientName"
+            },
+            "uniqueIdentifier": {
+              "name": "uniqueIdentifier",
+              "required": false,
+              "defaultValue": "",
+              "description": "uniqueIdentifier"
+            },
+            "anatomicEntityCharacteristics": {
+              "name": "anatomicEntityCharacteristics",
+              "required": false,
+              "defaultValue": "",
+              "description": "anatomicEntityCharacteristics"
+            },
+            "imageSopInstanceUID": {
+              "name": "imageSopInstanceUID",
+              "required": false,
+              "defaultValue": "",
+              "description": "imageSopInstanceUID"
+            },
+            "imageObservationCharacteristic": {
+              "name": "imageObservationCharacteristic",
+              "required": false,
+              "defaultValue": "",
+              "description": "imageObservationCharacteristic"
+            },
+            "seriesInstanceUID": {
+              "name": "seriesInstanceUID",
+              "required": false,
+              "defaultValue": "",
+              "description": "seriesInstanceUID"
+            },
+            "imageObservation": {
+              "name": "imageObservation",
+              "required": false,
+              "defaultValue": "",
+              "description": "imageObservation"
+            },
+            "anatomicEntities": {
+              "name": "anatomicEntities",
+              "required": false,
+              "defaultValue": "",
+              "description": "anatomicEntities"
+            }
+          },
+          "outputFormat": {
+            "queryType": "XQUERY",
+            "outputFormat": "XML",
+            "rootElement": "results"
+          },
+          "description": "Fetch all AIME objects matching attributes specified in the query string. Supported attributes are \u0027uniqueIdentifier\u0027,\u0027annotationName\u0027,\u0027patientName\u0027,\u0027imageSopInstanceUID\u0027,\u0027seriesInstanceUID\u0027,\u0027studyInstanceUID\u0027, \u0027imageObservationCharacteristic\u0027,\u0027imageObservation\u0027,\u0027username\u0027,\u0027anatomicEntities\u0027,\u0027anatomicEntityCharacteristics\u0027",
+          "name": "fetchXML",
+          "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
+          "createdBy": "junit"
+        },
+        "fetchCSV": {
+          "queryTemplate": "XQUERY declare namespace ns1\u003d\"gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM\"; for $y in db2-fn:xmlcolumn(\"XMLDS.TEST_GBM.XMLCOLUMN\")/ns1:ImageAnnotation where ($y/ns1:anatomicEntityCollection/ns1:AnatomicEntity[starts-with(@codeMeaning,\u0027$anatomicEntities$\u0027)] or fn:exists($y/ns1:anatomicEntityCollection/ns1:AnatomicEntity) \u003d fn:false() ) and ( $y/ns1:anatomicEntityCollection/ns1:AnatomicEntity/ns1:anatomicEntityCharacteristicCollection/ns1:AnatomicEntityCharacteristic[starts-with(@codeMeaning,\u0027$anatomicEntityCharacteristics$\u0027)] or fn:exists($y/ns1:anatomicEntityCollection/ns1:AnatomicEntity/ns1:anatomicEntityCharacteristicCollection/ns1:AnatomicEntityCharacteristic) \u003d fn:false() ) and ( $y/ns1:user/ns1:User[starts-with(@loginName,\u0027$username$\u0027)] or fn:exists($y/ns1:user/ns1:User) \u003d fn:false() ) and ( $y/ns1:imagingObservationCollection/ns1:ImagingObservation[starts-with(@codeMeaning,\u0027$imageObservation$\u0027)]  or fn:exists($y/ns1:imagingObservationCollection/ns1:ImagingObservation) \u003d fn:false() ) and ( $y/ns1:imagingObservationCollection/ns1:ImagingObservation/ns1:imagingObservationCharacteristicCollection/ns1:ImagingObservationCharacteristic[starts-with(@codeMeaning,\u0027$imageObservationCharacteristic$\u0027)] or fn:exists($y/ns1:imagingObservationCollection/ns1:ImagingObservation/ns1:imagingObservationCharacteristicCollection/ns1:ImagingObservationCharacteristic) \u003d fn:false()  ) and ( $y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy[starts-with(@instanceUID,\u0027$studyInstanceUID$\u0027)] or fn:exists($y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy) \u003d fn:false() ) and ( $y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries[starts-with(@instanceUID,\u0027$seriesInstanceUID$\u0027)]  or fn:exists($y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries) \u003d fn:false() ) and ( $y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries/ns1:imageCollection/ns1:Image[starts-with(@sopInstanceUID,\u0027$imageSopInstanceUID$\u0027)] or fn:exists($y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries/ns1:imageCollection/ns1:Image) \u003d fn:false() ) and ( $y/ns1:person/ns1:Person[starts-with(@id,\u0027$patientName$\u0027)] or fn:exists($y/ns1:person/ns1:Person) \u003d fn:false() ) and  ( $y[starts-with(@name,\u0027$annotationName$\u0027)] or fn:exists($y) \u003d fn:false() ) and  ( $y[starts-with(@uniqueIdentifier,\u0027$uniqueIdentifier$\u0027)]  or fn:exists($y) \u003d fn:false() ) return  concat(data($y/@name), \",\" , data($y/@uniqueIdentifier) , \",\",data($y/@dateTime)  , \",\",  data($y/ns1:user/ns1:User/@loginName) , \",\" ,  data($y/ns1:person/ns1:Person/@id) , \",\" , data($y/ns1:calculationCollection/ns1:Calculation[1]/ns1:calculationResultCollection/ns1:CalculationResult/ns1:calculationDataCollection/ns1:CalculationData/@value) , \",\" , data($y/ns1:calculationCollection/ns1:Calculation[2]/ns1:calculationResultCollection/ns1:CalculationResult/ns1:calculationDataCollection/ns1:CalculationData/@value) )",
+          "bindVariables": {
+            "studyInstanceUID": {
+              "name": "studyInstanceUID",
+              "required": false,
+              "defaultValue": "",
+              "description": "studyInstanceUID"
+            },
+            "username": {
+              "name": "username",
+              "required": false,
+              "defaultValue": "",
+              "description": "username"
+            },
+            "annotationName": {
+              "name": "annotationName",
+              "required": false,
+              "defaultValue": "",
+              "description": "annotationName"
+            },
+            "patientName": {
+              "name": "patientName",
+              "required": false,
+              "defaultValue": "",
+              "description": "patientName"
+            },
+            "uniqueIdentifier": {
+              "name": "uniqueIdentifier",
+              "required": false,
+              "defaultValue": "",
+              "description": "uniqueIdentifier"
+            },
+            "anatomicEntityCharacteristics": {
+              "name": "anatomicEntityCharacteristics",
+              "required": false,
+              "defaultValue": "",
+              "description": "anatomicEntityCharacteristics"
+            },
+            "imageSopInstanceUID": {
+              "name": "imageSopInstanceUID",
+              "required": false,
+              "defaultValue": "",
+              "description": "imageSopInstanceUID"
+            },
+            "imageObservationCharacteristic": {
+              "name": "imageObservationCharacteristic",
+              "required": false,
+              "defaultValue": "",
+              "description": "imageObservationCharacteristic"
+            },
+            "seriesInstanceUID": {
+              "name": "seriesInstanceUID",
+              "required": false,
+              "defaultValue": "",
+              "description": "seriesInstanceUID"
+            },
+            "imageObservation": {
+              "name": "imageObservation",
+              "required": false,
+              "defaultValue": "",
+              "description": "imageObservation"
+            },
+            "anatomicEntities": {
+              "name": "anatomicEntities",
+              "required": false,
+              "defaultValue": "",
+              "description": "anatomicEntities"
+            }
+          },
+          "outputFormat": {
+            "queryType": "XQUERY",
+            "outputFormat": "CSV",
+            "rootElement": "results"
+          },
+          "description": "Fetch all AIME objects matching attributes specified in the query string. Supported attributes are \u0027uniqueIdentifier\u0027,\u0027annotationName\u0027,\u0027patientName\u0027,\u0027imageSopInstanceUID\u0027,\u0027seriesInstanceUID\u0027,\u0027studyInstanceUID\u0027, \u0027imageObservationCharacteristic\u0027,\u0027imageObservation\u0027,\u0027username\u0027,\u0027anatomicEntities\u0027,\u0027anatomicEntityCharacteristics\u0027",
+          "name": "fetchCSV",
+          "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
+          "createdBy": "junit"
+        },
+        "fetchHTML": {
+          "queryTemplate": "XQUERY declare namespace ns1\u003d\"gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM\"; \u003chtml\u003e\u003ctitle\u003eAIM Annotations\u003c/title\u003e\u003cbody\u003e \u003ctable border\u003d\u00271\u0027\u003e \u003cthead\u003e\u003ctr\u003e\u003cth\u003eAnnotation Name\u003c/th\u003e\u003cth\u003eUnique Identifier\u003c/th\u003e \u003cth\u003eDate Time\u003c/th\u003e \u003cth\u003eReviewer\u003c/th\u003e \u003cth\u003ePatient/Case\u003c/th\u003e \u003cth\u003eMeasurement 1\u003c/th\u003e \u003cth\u003eMeasurement 2\u003c/th\u003e\u003c/tr\u003e\u003c/thead\u003e \u003ctbody\u003e { for $y in db2-fn:xmlcolumn(\"XMLDS.TEST_GBM.XMLCOLUMN\")/ns1:ImageAnnotation where ($y/ns1:anatomicEntityCollection/ns1:AnatomicEntity[starts-with(@codeMeaning,\u0027$anatomicEntities$\u0027)] or fn:exists($y/ns1:anatomicEntityCollection/ns1:AnatomicEntity) \u003d fn:false() ) and ( $y/ns1:anatomicEntityCollection/ns1:AnatomicEntity/ns1:anatomicEntityCharacteristicCollection/ns1:AnatomicEntityCharacteristic[starts-with(@codeMeaning,\u0027$anatomicEntityCharacteristics$\u0027)] or fn:exists($y/ns1:anatomicEntityCollection/ns1:AnatomicEntity/ns1:anatomicEntityCharacteristicCollection/ns1:AnatomicEntityCharacteristic) \u003d fn:false() ) and ( $y/ns1:user/ns1:User[starts-with(@loginName,\u0027$username$\u0027)] or fn:exists($y/ns1:user/ns1:User) \u003d fn:false() ) and ( $y/ns1:imagingObservationCollection/ns1:ImagingObservation[starts-with(@codeMeaning,\u0027$imageObservation$\u0027)]  or fn:exists($y/ns1:imagingObservationCollection/ns1:ImagingObservation) \u003d fn:false() ) and ( $y/ns1:imagingObservationCollection/ns1:ImagingObservation/ns1:imagingObservationCharacteristicCollection/ns1:ImagingObservationCharacteristic[starts-with(@codeMeaning,\u0027$imageObservationCharacteristic$\u0027)] or fn:exists($y/ns1:imagingObservationCollection/ns1:ImagingObservation/ns1:imagingObservationCharacteristicCollection/ns1:ImagingObservationCharacteristic) \u003d fn:false()  ) and ( $y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy[starts-with(@instanceUID,\u0027$studyInstanceUID$\u0027)] or fn:exists($y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy) \u003d fn:false() ) and ( $y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries[starts-with(@instanceUID,\u0027$seriesInstanceUID$\u0027)]  or fn:exists($y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries) \u003d fn:false() ) and ( $y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries/ns1:imageCollection/ns1:Image[starts-with(@sopInstanceUID,\u0027$imageSopInstanceUID$\u0027)] or fn:exists($y/ns1:imageReferenceCollection/ns1:ImageReference/ns1:imageStudy/ns1:ImageStudy/ns1:imageSeries/ns1:ImageSeries/ns1:imageCollection/ns1:Image) \u003d fn:false() ) and ( $y/ns1:person/ns1:Person[starts-with(@id,\u0027$patientName$\u0027)] or fn:exists($y/ns1:person/ns1:Person) \u003d fn:false() ) and  ( $y[starts-with(@name,\u0027$annotationName$\u0027)] or fn:exists($y) \u003d fn:false() ) and  ( $y[starts-with(@uniqueIdentifier,\u0027$uniqueIdentifier$\u0027)]  or fn:exists($y) \u003d fn:false() ) return \n \u003ctr\u003e\n\u003ctd\u003e { data($y/@name) } \u003c/td\u003e\n \u003ctd\u003e { data($y/@uniqueIdentifier) } \u003c/td\u003e\n \u003ctd\u003e { data($y/@dateTime) } \u003c/td\u003e\n\u003ctd\u003e { data($y/ns1:user/ns1:User/@loginName) } \u003c/td\u003e\n \u003ctd\u003e { data($y/ns1:person/ns1:Person/@id) } \u003c/td\u003e\n\u003ctd\u003e {  data($y/ns1:calculationCollection/ns1:Calculation[1]/ns1:calculationResultCollection/ns1:CalculationResult/ns1:calculationDataCollection/ns1:CalculationData/@value) } \u003c/td\u003e\n\u003ctd\u003e { data($y/ns1:calculationCollection/ns1:Calculation[2]/ns1:calculationResultCollection/ns1:CalculationResult/ns1:calculationDataCollection/ns1:CalculationData/@value) } \u003c/td\u003e\n\u003c/tr\u003e\n\n } \u003c/tbody\u003e \u003c/table\u003e \u003c/body\u003e \u003c/html\u003e",
+          "bindVariables": {
+            "studyInstanceUID": {
+              "name": "studyInstanceUID",
+              "required": false,
+              "defaultValue": "",
+              "description": "studyInstanceUID"
+            },
+            "username": {
+              "name": "username",
+              "required": false,
+              "defaultValue": "",
+              "description": "username"
+            },
+            "annotationName": {
+              "name": "annotationName",
+              "required": false,
+              "defaultValue": "",
+              "description": "annotationName"
+            },
+            "patientName": {
+              "name": "patientName",
+              "required": false,
+              "defaultValue": "",
+              "description": "patientName"
+            },
+            "uniqueIdentifier": {
+              "name": "uniqueIdentifier",
+              "required": false,
+              "defaultValue": "",
+              "description": "uniqueIdentifier"
+            },
+            "anatomicEntityCharacteristics": {
+              "name": "anatomicEntityCharacteristics",
+              "required": false,
+              "defaultValue": "",
+              "description": "anatomicEntityCharacteristics"
+            },
+            "imageSopInstanceUID": {
+              "name": "imageSopInstanceUID",
+              "required": false,
+              "defaultValue": "",
+              "description": "imageSopInstanceUID"
+            },
+            "imageObservationCharacteristic": {
+              "name": "imageObservationCharacteristic",
+              "required": false,
+              "defaultValue": "",
+              "description": "imageObservationCharacteristic"
+            },
+            "seriesInstanceUID": {
+              "name": "seriesInstanceUID",
+              "required": false,
+              "defaultValue": "",
+              "description": "seriesInstanceUID"
+            },
+            "imageObservation": {
+              "name": "imageObservation",
+              "required": false,
+              "defaultValue": "",
+              "description": "imageObservation"
+            },
+            "anatomicEntities": {
+              "name": "anatomicEntities",
+              "required": false,
+              "defaultValue": "",
+              "description": "anatomicEntities"
+            }
+          },
+          "outputFormat": {
+            "queryType": "XQUERY",
+            "outputFormat": "HTML",
+            "rootElement": "results"
+          },
+          "description": "Fetch all AIME objects matching attributes specified in the query string. Supported attributes are \u0027uniqueIdentifier\u0027,\u0027annotationName\u0027,\u0027patientName\u0027,\u0027imageSopInstanceUID\u0027,\u0027seriesInstanceUID\u0027,\u0027studyInstanceUID\u0027, \u0027imageObservationCharacteristic\u0027,\u0027imageObservation\u0027,\u0027username\u0027,\u0027anatomicEntities\u0027,\u0027anatomicEntityCharacteristics\u0027",
+          "name": "fetchHTML",
+          "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
+          "createdBy": "junit"
+        },
+        "sqlXML" : {
+          "queryTemplate": "SELECT * FROM XMLDS.TEST_GBM",
+          "bindVariables": {},
+          "outputFormat": {
+            "queryType": "SQL",
+            "outputFormat": "XML",
+            "rootElement": "results"
+          },
+          "description": "SQL to select all objects",
+          "name": "sqlXML",
+          "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
+          "createdBy": "junit"
+        },
+         "sqlCSV" : {
+          "queryTemplate": "SELECT * FROM XMLDS.TEST_GBM",
+          "bindVariables": {},
+          "outputFormat": {
+            "queryType": "SQL",
+            "outputFormat": "CSV",
+            "rootElement": "results"
+          },
+          "description": "SQL to select all objects",
+          "name": "sqlCSV",
+          "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
+          "createdBy": "junit"
+        },
+         "sqlHTML" : {
+          "queryTemplate": "SELECT * FROM XMLDS.TEST_GBM",
+          "bindVariables": {},
+          "outputFormat": {
+            "queryType": "SQL",
+            "outputFormat": "HTML",
+            "rootElement": "results"
+          },
+          "description": "SQL to select all objects",
+          "name": "sqlHTML",
+          "timeCreated": "Mon Sep 17 17:43:13 EDT 2012",
+          "createdBy": "junit"
+        }
+       
+    },
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.aime.AIMEProvider",
+      "providerVersion": 1,
+      "name": "GBM",
+      "timeCreated": "Fri Sep 14 16:37:59 EDT 2012",
+      "createdBy": "junit"
+    }
+  },
+  "params": {
+    "description": "AIM Data Service"
+  },
+
+  "name": "aime_junit",
+  "timeCreated": "Wed Sep 12 11:55:24 EDT 2012",
+  "createdBy": "junit"
+}

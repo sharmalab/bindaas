@@ -1,0 +1,57 @@
+<label>URL of remote Bindaas Service</label>
+<input type="text" id="remoteURL" >
+<label>Key Attribute in ResultSet</label>
+<input type="text" id="keyAttribute" >
+<label>Key Query Parameter</label>
+<input type="text" id="keyQueryParameter" >
+<label>API Key</label>
+<input type="text" id="apiKey" >
+
+
+<script>
+	function initView()
+	{
+		$("#queryResultModifierProperties,label[for='queryResultModifierProperties']").hide();
+		$("#remoteURL").keyup(function() {
+			updateModel();
+		});
+		$("#keyAttribute").keyup(function() {
+			updateModel();
+		});
+		$("#keyQueryParameter").keyup(function() {
+			updateModel();
+		});
+		$("#apiKey").keyup(function() {
+			updateModel();
+		});
+		updateView();
+		
+	}
+	
+	// update the model i.e modifier props
+	function updateModel()
+	{
+		var parent = {};
+		parent.remoteURL = $("#remoteURL").attr("value");
+		parent.keyAttribute = $("#keyAttribute").attr("value");
+		parent.keyQueryParameter = $("#keyQueryParameter").attr("value");
+		
+		parent.apiKey = $("#apiKey").attr("value");
+		$("#queryResultModifierProperties").attr("value", JSON.stringify(parent));
+		
+		
+	}
+	// update the view i.e textbox
+	function updateView()
+	{
+		var props = $("#queryResultModifierProperties").attr("value");
+		var propsJson = $.parseJSON(props);
+		$("#remoteURL").attr("value" , propsJson.remoteURL);
+		$("#keyAttribute").attr("value" , propsJson.keyAttribute);
+		$("#keyQueryParameter").attr("value" , propsJson.keyQueryParameter);
+		$("#apiKey").attr("value" , propsJson.apiKey);
+		
+	}
+	initView();
+	
+</script>

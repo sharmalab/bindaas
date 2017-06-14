@@ -1,0 +1,10 @@
+{
+	"queryTemplate" : "select * from tab1 where q1='$q1$'" ,
+	"tags" : [ 'aim' ,'dicom'] ,
+	"bindVariables" : {
+	
+	"q1" : { 'name' : 'q1' , 'required' : 'true' , 'description' : 'my first query' }
+	
+	} ,
+	
+}

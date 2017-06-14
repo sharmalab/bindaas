@@ -1,0 +1,79 @@
+<p> 
+All queries must follow following syntax
+<textarea disabled="disabled" >
+{
+	"_operation" : operation,
+	"_operation_args" : operation_args
+}
+</textarea>
+<br>
+<div>
+<h5> Following Operations are supported : </h5>
+<ul class="disc">
+  <li><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#find(com.mongodb.DBObject, com.mongodb.DBObject)">find</a></li>
+  <li><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#count(com.mongodb.DBObject)">count</a></li>
+  <li><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#group(com.mongodb.DBObject, com.mongodb.DBObject, com.mongodb.DBObject, java.lang.String)">group</a></li>
+  <li><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#mapReduce(java.lang.String, java.lang.String, java.lang.String, com.mongodb.DBObject)">mapreduce</a></li>
+</ul>
+</div>
+
+<div>
+	<h5>find</h5>
+	<textarea readonly="readonly" >
+{
+	"_operation" : "find" ,
+	"_operation_args" : {
+							"query" : { 'patientId' : 'x' } ,
+							"fields" :{ '_id' : 0 },
+							"skip" : 3,
+							"limit" : 1000
+						}
+}
+</textarea>
+</div>
+
+<div>
+	<h5>count</h5>
+	<textarea readonly="readonly">
+{
+	"_operation" : "count" ,
+	"_operation_args" : {
+							"query" : { 'patientId' : 'x' } ,
+						}
+}
+</textarea>
+</div>
+
+<div>
+	<h5>group</h5>
+	<textarea readonly="readonly">
+{
+	"_operation" : "group" ,
+	"_operation_args" : {
+							"key" : {  }  ,
+							"condition" : { }  ,
+							"initial" : { }  ,
+							"reduce" :  'function(){}' ,
+							"finalize" :  'function(){}'  
+						}
+}
+</textarea>
+</div>
+
+<div>
+	<h5>mapreduce</h5>
+	<textarea readonly="readonly">
+{
+	"_operation" : "mapreduce" ,
+	"_operation_args" : {
+							"query" : {  } ,
+							"map" : "function(){}" , 
+							"reduce" : "function(){}" , 
+							"outputCollection" : "outputcollection"    
+						}
+}
+</textarea>
+</div>
+
+</p>
+

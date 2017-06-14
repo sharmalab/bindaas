@@ -1,0 +1,60 @@
+<label>Output Format</label>
+		<span class="has-tip tip-left" data-width="210" title="Choose how you want to format the results">
+			
+			<select id="mongo_qe_of_outputFormat">
+				<option value="" selected >---Select---</option>
+				<option value="JSON">JSON</option>
+				<option value="HTML">HTML</option>
+				<option value="CSV">CSV</option>
+				<option value="XML">XML</option>
+				<option value="ANY">ANY</option>
+				
+			</select>
+		</span>
+		
+		<script>
+			
+			$("#mongo_qe_of_outputFormat").change(function ()
+			{
+				updateOutputFormatFieldMongo();
+			});
+						
+			
+			   
+		   function updateOutputFormatFieldMongo()
+		   {
+		   	 var outputFormatJson = {};
+		   	 
+		   	 outputFormatJson.outputFormat = $("#mongo_qe_of_outputFormat option:selected").attr("value");
+		   	 
+		   	 $("#qeOutputFormat").attr("value" , JSON.stringify(outputFormatJson));
+		   	 ValidationObject.addConstraint("Output Format", $("#mongo_qe_of_outputFormat option:selected").attr("value") && $("#mongo_qe_of_outputFormat option:selected").attr("value") != "" , function(){
+				alert("Output Format not specified");
+				});
+		   }    
+		   
+		   function reverseUpdateOutputFormatField()
+		   {
+			   try{
+				   var outputFormatJson = $("#qeOutputFormat").attr("value") ;
+				  
+				   outputFormatJson = jQuery.parseJSON( outputFormatJson ) ;
+				   $("#mongo_qe_of_outputFormat option:selected").removeAttr("selected");
+				 
+				   
+				   $("#mongo_qe_of_outputFormat option").
+				   filter( function () { return $(this).attr('value') == outputFormatJson.outputFormat; })
+				   .attr("selected" , "true");
+				       
+			   }
+			   catch(e){
+				   console.log(e);
+			   }
+		   }
+		   
+		   reverseUpdateOutputFormatField();
+		   ValidationObject.addConstraint("Output Format", $("#mongo_qe_of_outputFormat option:selected").attr("value") && $("#mongo_qe_of_outputFormat option:selected").attr("value") != "" , function(){
+				alert("Output Format not specified");
+				});
+			
+		</script>

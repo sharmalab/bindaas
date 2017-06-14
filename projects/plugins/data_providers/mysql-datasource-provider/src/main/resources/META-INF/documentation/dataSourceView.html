@@ -1,0 +1,90 @@
+<label>Username</label>
+		<span class="has-tip tip-left" data-width="210" title="username for connecting to MySQL database"> <input type="text" id="mysql_username" /></span>
+		<label>Password</label>
+		<span class="has-tip tip-left" data-width="210" title="password for connecting to MySQL database"><input type="password" id="mysql_password" /></span>
+		<label>JDBC Url</label>
+		<span class="has-tip tip-left" data-width="210" title="JDBC URL example: jdbc:mysql://localhost:3306/sakila?profileSQL=true"><input type="text" id="mysql_url" /></span>
+				
+		<script>
+			
+			$("#mysql_username").keyup(function ()
+			{
+				updateProviderFieldMySql();
+			});
+			$("#mysql_password").keyup(function ()
+			{
+				updateProviderFieldMySql();
+			});
+			
+			$("#mysql_url").keyup(function ()
+			{
+				updateProviderFieldMySql();
+			});
+			
+			
+						
+			   
+		   function updateProviderFieldMySql()
+		   {
+		   	 var dataSourceJson = {};
+		   	 dataSourceJson.username = $("#mysql_username").attr("value");
+		   	 dataSourceJson.password = $("#mysql_password").attr("value");
+		   	 dataSourceJson.url = $("#mysql_url").attr("value");
+		   	 $("#dataSource").attr("value" , JSON.stringify(dataSourceJson));
+		   	mysqlValidate();
+		   }    
+		   
+		   function reverseUpdateDataSourceViewMySQL()
+		   {
+			   try{
+				   var dataSourceJson =  $("#dataSource").attr("value");
+				   dataSourceJson = jQuery.parseJSON( dataSourceJson ) ;
+				   $("#mysql_username").attr("value", dataSourceJson.username);
+				   $("#mysql_password").attr("value", dataSourceJson.password);
+				   $("#mysql_url").attr("value", dataSourceJson.url);
+				   
+			   }catch(e){}
+			   
+		   }
+		   
+		   function mysqlValidate() {
+				
+				if ($("#MySQLProvider").is(":visible")) {
+					ValidationObject.addConstraint("mysql_username", $("#mysql_username").attr("value") && $("#mysql_username").attr("value") != "", function() {
+						alert("Username not specified");
+						 $("#mysql_username").focus();
+					});
+
+					ValidationObject.addConstraint("mysql_password", $("#mysql_password").attr("value") && $("#mysql_password").attr("value") != "", function() {
+						alert("Password not specified");
+						$("#mysql_password").focus();
+					});
+
+					ValidationObject.addConstraint("mysql_url", $("#mysql_url").attr("value") && $("#mysql_url").attr("value") != "", function() {
+						alert("URL not specified");
+						$("#mysql_url").focus();
+					});
+
+					
+
+				} else {
+
+					ValidationObject.removeConstraint("mysql_username");
+
+					ValidationObject.removeConstraint("mysql_password");
+
+					ValidationObject.removeConstraint("mysql_url");
+
+				}
+
+			}
+		   
+		   reverseUpdateDataSourceViewMySQL();
+		   
+		   $("#MySQLProvider").bind("onaftershow" , function(e){
+			   mysqlValidate(); 	
+			});
+			$("#MySQLProvider").bind("onafterhide" , function(e){
+				mysqlValidate(); 	
+			});
+		</script>

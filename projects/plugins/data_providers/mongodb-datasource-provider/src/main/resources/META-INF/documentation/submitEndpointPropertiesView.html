@@ -1,0 +1,72 @@
+<label>Input Type</label>
+
+<select id="inputType">
+	<option selected value="">---Select---</option>
+	<option value="CSV">CSV</option>
+	<option value="JSON">JSON</option>
+	<option value="CSV_FILE">CSV File (Multipart/MIME data)</option>
+	<option value="JSON_FILE">JSON File (Multipart/MIME data)</option>
+</select>
+
+<label for="csvHeader">CSV Column Header (Optional. If not specified the first line of the CSV file is assumed as the header)</label>
+<input type="text" id="csvHeader" >
+
+<script>
+	function setInitialView()
+	{
+		 var sePropsJson = $("#seProps").attr("value") ;
+		  
+		 sePropsJson = jQuery.parseJSON( sePropsJson ) ;
+		   
+		   $("#inputType option").
+		   filter( function () { return $(this).attr('value') == sePropsJson.inputType; })
+		   .attr("selected" , "true");
+		   $("#csvHeader").attr("value", sePropsJson.csvHeader.join(","));
+	}
+	
+	function updateModel()
+	{
+		var sePropsJson = {};
+		sePropsJson.inputType = $("#inputType option:selected").attr('value');
+		sePropsJson.csvHeader = $("#csvHeader").attr("value").split(",");
+		$("#seProps").attr("value" , JSON.stringify(sePropsJson));
+	
+	   
+		
+	 ValidationObject.addConstraint("inputType", $("#inputType option:selected").attr("value") && $("#inputType option:selected").attr("value") != "" , function(){
+			alert("Input Type not selected");
+			$("#inputType").focus();
+			});
+	}
+	
+	$("#csvHeader").keyup(
+			
+		function()
+		{
+			updateModel();
+		}
+	);
+	
+	$("#inputType").change(
+			
+			function()
+			{
+				if($("#inputType option:selected").attr("value").substring(0,3) == "CSV")
+				   {
+				   	$("#csvHeader,label[for='csvHeader']").show();
+				   }
+			   	else
+				   {
+				   	$("#csvHeader,label[for='csvHeader']").hide();
+				   }
+				updateModel();
+			}
+		);
+	
+	
+ ValidationObject.addConstraint("inputType", $("#inputType option:selected").attr("value") && $("#inputType option:selected").attr("value") != "" , function(){
+		alert("Input Type not selected");
+		$("#inputType").focus();
+		});
+	 setInitialView();
+</script>

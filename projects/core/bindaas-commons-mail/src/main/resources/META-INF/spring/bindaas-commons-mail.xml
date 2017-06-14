@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"                               
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:osgi="http://www.springframework.org/schema/osgi"                               
+   xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd                      
+       http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+<!-- Request Handlers -->
+
+<bean id="mailService" class="edu.emory.cci.bindaas.commons.mail.impl.MailServiceImpl" init-method="init" >
+
+	<property name="defaultProperties">
+		<props>
+			<prop key="mail.smtp.auth">true</prop>
+			<prop key="mail.smtp.starttls.enable">true</prop>
+			<prop key="mail.smtp.host">smtp.gmail.com</prop>
+			<prop key="mail.smtp.port">587</prop>
+			<prop key="username">bindaas.app@gmail.com</prop>
+			<prop key="password">*****</prop>			
+		</props>
+	</property>
+</bean>
+
+<osgi:service interface="edu.emory.cci.bindaas.commons.mail.api.IMailService" ref="mailService"></osgi:service>
+</beans>
+
+
+

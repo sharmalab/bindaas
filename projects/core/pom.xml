@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>bindaas</groupId>
+        <artifactId>projects</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>core</artifactId>
+    <packaging>pom</packaging>
+    <name>core</name>
+
+    <modules>
+        <module>bindaas-core-api</module>
+        <module>bindaas-version-manager</module>
+        <module>bindaas-security-api</module>
+        <module>bindaas-core-impl</module>
+        <module>bindaas-web-console</module>
+        <module>bindaas-commons-h2-hibernate</module>
+        <module>bindaas-commons-mail</module>
+        <module>bindaas-commons-openid-helper</module>
+        <module>bindaas-psuedo-sts</module>
+        <module>bindaas-commons-cxf-wrapper</module>
+        <module>heartbeat-monitor/heartbeat-monitor-client</module>
+        <module>heartbeat-monitor/heartbeat-monitor-server</module>
+        <module>bindaas-trusted-application-manager</module>
+        <module>log4j.config</module>
+    </modules>
+</project>

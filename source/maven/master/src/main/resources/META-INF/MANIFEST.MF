@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Description: Master build for Bindaas
-Version: 0.0.1
-Author: Nadir Saghar
-Email: nadirsaghar@emory.edu

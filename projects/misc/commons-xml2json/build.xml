@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Nov 12, 2012 2:48:35 PM                                                        
+
+     commons-xml2json    
+     Copy project to do maven build
+                   
+     nadir                                                                
+     ====================================================================== -->
+<project name="commons-xml2json" default="copyProject">
+	
+	
+    <description>
+            Copy project to do maven build
+    </description>
+
+	<!-- ================================= 
+          target: copyProject              
+         ================================= -->
+    <target name="copyProject" depends="clean" description="Copy project to do maven build">
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: clean                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="clean">
+        	
+    </target>
+	<target name="dist">
+	</target>
+
+	<target name="deploy"></target>
+</project>

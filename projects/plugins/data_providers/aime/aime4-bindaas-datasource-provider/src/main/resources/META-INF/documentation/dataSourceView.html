@@ -1,0 +1,151 @@
+<label>Username</label>
+<span class="has-tip tip-left" data-width="210"
+title="username for connecting to IBM DB2 database">
+	<input
+	type="text" id="aime4_username" />
+</span>
+<label>Password</label>
+<span class="has-tip tip-left" data-width="210"
+title="password for connecting to IBM DB2 database">
+	<input
+	type="password" id="aime4_password" />
+</span>
+<label>JDBC Url</label>
+<span class="has-tip tip-left" data-width="210"
+title="JDBC URL example: jdbc:db2://localhost:50000/XMLDB">
+	<input
+	type="text" id="aime4_url" />
+</span>
+<span class="has-tip tip-left" data-width="210"
+title="This option will generate a submit API if checked"><label
+	for="aime4_auto_init">
+		<input type="checkbox" CHECKED
+		id="aime4_auto_init">
+		Auto Generate Submit API</label></span>
+<br>
+<label for="aime4_table">Database Table to store annotations</label>
+<span class="has-tip tip-left" data-width="210"
+title="Mandatory if Auto Generate Submit API is checked">
+	<input
+	type="text" id="aime4_table" />
+</span>
+
+<script>
+	$("#aime4_username").keyup(function() {
+		updateProviderField4();
+	});
+	$("#aime4_password").keyup(function() {
+		updateProviderField4();
+	});
+
+	$("#aime4_url").keyup(function() {
+		updateProviderField4();
+	});
+
+	$("#aime4_table").keyup(function() {
+		updateProviderField4();
+	});
+
+	$("#aime4_auto_init").click(function() {
+		updateProviderField4();
+	});
+
+	$("#aime4_auto_init").change(function() {
+		updateProviderField4();
+	});
+
+	function updateProviderField4() {
+		var dataSourceJson = {};
+		dataSourceJson.username = $("#aime4_username").attr("value");
+		dataSourceJson.password = $("#aime4_password").attr("value");
+		dataSourceJson.url = $("#aime4_url").attr("value");
+		dataSourceJson.tableName = $("#aime4_table").attr("value");
+
+		if ($('#aime4_auto_init').attr('checked')) {
+			dataSourceJson.autoInitialize = true;
+			$("#aime4_table,label[for=aime4_table]").show();
+		} else {
+			dataSourceJson.autoInitialize = false;
+			$("#aime4_table,label[for=aime4_table]").hide();
+		}
+
+		$("#dataSource").attr("value", JSON.stringify(dataSourceJson));
+		aime4Validate();
+	}
+
+	function reverseUpdateDataSourceViewAIME4() {
+		try {
+			var dataSourceJson = $("#dataSource").attr("value");
+			dataSourceJson = jQuery.parseJSON(dataSourceJson);
+			$("#aime4_username").attr("value", dataSourceJson.username);
+			$("#aime4_password").attr("value", dataSourceJson.password);
+			$("#aime4_url").attr("value", dataSourceJson.url);
+			$("#aime4_table").attr("value", dataSourceJson.tableName);
+			if (dataSourceJson.autoInitialize == true) {
+
+				$('#aime4_auto_init').attr('checked', "true");
+				$("#aime4_table,label[for=aime4_table]").show();
+			} else {
+				$('#aime4_auto_init').removeAttr('checked');
+				$("#aime4_table,label[for=aime4_table]").hide();
+			}
+
+		} catch (e) {
+		}
+
+	}
+
+	function aime4Validate() {
+		var status = true;
+		if ($("#AIME4Provider").is(":visible")) {
+			ValidationObject.addConstraint("AIME4Username", $("#aime4_username").attr("value") && $("#aime4_username").attr("value") != "", function() {
+				alert("Username not specified");
+				 $("#aime4_username").focus();
+			});
+
+			ValidationObject.addConstraint("AIME4Password", $("#aime4_password").attr("value") && $("#aime4_password").attr("value") != "", function() {
+				alert("Password not specified");
+				$("#aime4_password").focus();
+			});
+
+			ValidationObject.addConstraint("AIME4URL", $("#aime4_url").attr("value") && $("#aime4_url").attr("value") != "", function() {
+				alert("URL not specified");
+				$("#aime4_url").focus();
+			});
+
+			if ($('#aime4_auto_init').attr('checked')) {
+				ValidationObject.addConstraint("AIME4Table", $("#aime4_table").attr("value") && $("#aime4_table").attr("value") != "", function() {
+					alert("Database Table not specified");
+					$("#aime4_table").focus();
+
+				});
+			} else {
+				ValidationObject.addConstraint("AIME4Table", true, function() {
+					alert("Database Table not specified");
+				});
+			}
+
+		} else {
+
+			ValidationObject.removeConstraint("AIME4Username");
+
+			ValidationObject.removeConstraint("AIME4Password");
+
+			ValidationObject.removeConstraint("AIME4URL");
+
+			ValidationObject.removeConstraint("AIME4Table");
+
+		}
+
+	}
+
+	reverseUpdateDataSourceViewAIME4();
+	
+	
+	$("#AIME4Provider").bind("onaftershow" , function(e){
+		aime4Validate(); 	
+	});
+	$("#AIME4Provider").bind("onafterhide" , function(e){
+		aime4Validate(); 	
+	});
+</script>

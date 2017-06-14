@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+
+		<!-- Set the viewport width to device width for mobile -->
+		<meta name="viewport" content="width=device-width" />
+
+		<title>Delete API : $deleteEndpoint.getName()</title>
+
+		<!-- Included CSS Files (Uncompressed) -->
+		<!--
+		<link rel="stylesheet" href="stylesheets/foundation.css">
+		-->
+
+		<!-- Included CSS Files (Compressed) -->
+		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+		<script src="/foundation/javascripts/modernizr.foundation.js"></script>
+
+		<!-- IE Fix for HTML5 Tags -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+	</head>
+	<body>
+		<!-- Page Layout HTML here -->
+
+		<!-- Latest version of jQuery -->
+		<script src="/foundation/javascripts/jquery.js"></script>
+
+		<!-- Included JS Files (Unminified) -->
+		<!-- [JS Files] -->
+		<!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+		<!-- Included JS Files (Minified) -->
+		<script src="/foundation/javascripts/foundation.min.js"></script>
+
+		<!-- Initialize JS Plugins -->
+		<script src="/foundation/javascripts/app.js"></script>
+		
+		<script>
+						function randomString(length) {
+			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
+
+			if (! length) {
+			length = Math.floor(Math.random() * chars.length);
+			}
+
+			var str = '';
+			for (var i = 0; i < length; i++) {
+			str += chars[Math.floor(Math.random() * chars.length)];
+			}
+			return str;
+			}
+
+			function validateQueryTempalate()
+			{
+			#[[ var regex = /\$[a-zA-Z0-9_]+\$/g; ]]#
+			var text = $("#qeTemplate").attr('value');
+			var matches = text.match(regex);
+
+			// first reset the container
+
+			$("#bindVarContainer").html("");
+			for(var count in matches) {
+
+			addBindVariable(matches[count].replace(/\$/g,""));
+			}
+			}
+
+			function addBindVariable(variableName) {
+			var bindVariable = document.createElement("div");
+			bindVariable.id = randomString(8);
+			bindVariable.className = "panel callout radius";
+			bindVariable.innerHTML = $("#bindVarTemplate").html();
+			var removeLink = document.createElement("a");
+			removeLink.href = "#";
+			removeLink.text = "remove";
+			bindVariable.appendChild(removeLink);
+			removeLink.onclick = function(event)
+			{
+			var parent = bindVariable.parentNode;
+			parent.removeChild(bindVariable);
+			};
+
+			$("#bindVarContainer").append(bindVariable);
+
+			$("#" + bindVariable.id + " input[name='bvName']").attr('value',variableName);
+			}
+
+			function addBindVariableWithValues(variableName , description , required , defaultValue) {
+
+			var bindVariable = document.createElement("div");
+			bindVariable.id = randomString(8);
+			bindVariable.className = "panel callout radius";
+			bindVariable.innerHTML = "<label >Name</label><input type=\"text\" placeholder=\"name\" name=\"bvName\" value='" + variableName +  "' />";
+			bindVariable.innerHTML = bindVariable.innerHTML + "<label >Description</label><input type=\"text\" placeholder=\"description\" name=\"bvDescription\" value='" + description +  "' />";
+			bindVariable.innerHTML = bindVariable.innerHTML + "<label for=\"customDropdown\">Required</label>";
+
+			if(required == true)
+			{
+			bindVariable.innerHTML = bindVariable.innerHTML + "<select  name=\"bvRequired\"><option value=\"true\" selected='true' >Yes</option><option value=\"false\"  >No</option></select>";
+			}
+			else
+			{
+			bindVariable.innerHTML = bindVariable.innerHTML + "<select  name=\"bvRequired\"><option value=\"true\" >Yes</option><option value=\"false\" selected='true' >No</option></select>";
+			}
+
+			bindVariable.innerHTML = bindVariable.innerHTML + "<br>";
+			bindVariable.innerHTML = bindVariable.innerHTML + "<label>Default Value</label><input type=\"text\" placeholder=\"default value\" name=\"defaultValue\"  value='" + defaultValue +  "' />";
+
+			var removeLink = document.createElement("a");
+			removeLink.href = "#";
+			removeLink.text = "remove";
+			bindVariable.appendChild(removeLink);
+			removeLink.onclick = function(event)
+			{
+			var parent = bindVariable.parentNode;
+			parent.removeChild(bindVariable);
+			};
+
+			$("#bindVarContainer").append(bindVariable);
+
+			}
+		</script>
+		<div id="bindVarTemplate" class="hide">
+			<label >Name</label>
+			<input type="text" placeholder="name" name="bvName" />
+			<label >Description</label>
+			<input type="text" placeholder="description" name="bvDescription" />
+			<label >Required</label>
+			<select   name="bvRequired">
+				<option value="true">Yes</option>
+				<option value="false">No</option>
+			</select>
+			<br>
+			</br>
+			<label>Default Value</label>
+			<input type="text" placeholder="default value" name="defaultValue" />
+		</div>
+
+		<div class="row">
+			<div class="six columns">
+				<h2>Bindaas</h2>
+				<p>
+					<strong>Be worry free!</strong>
+				</p>
+				<p>
+					$versionHeader
+				</p>
+				<hr />
+			</div>
+			<div class="six columns">
+				<ul class="inline-list">
+					<li>
+						<h6>Welcome $bindaasUser</h6>
+					</li>
+					<li>
+						<h6><a href="/dashboard/logout">logout</a></h6>
+					</li>
+				</ul>
+
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="eight columns">
+
+				<div class="row">
+					<ul class="breadcrumbs">
+						<li>
+							<a href="/dashboard/"><strong>Dashboard</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/administration"><strong>Administration</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/audit"><strong>Audit</strong></a>
+						</li>
+					</ul>
+				</div>
+				<div class="row">
+					<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a>/Data Provider:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
+				</div>
+				<div class="row">
+					<fieldset>
+						<legend>
+							<h3>Delete API : $deleteEndpoint.getName()</h3>
+						</legend>
+						<a data-reveal-id="tryQuery" class="radius small button" href="#">Try Me !!</a>
+						<h6 class="subheader">Last Modified : $deleteEndpoint.getTimeCreated()</h6>
+						<h6 class="subheader">Modified By : $deleteEndpoint.getCreatedBy()</h6>
+						<form class="custom" action="createDeleteTemplate.action" method="get">
+							<input type="hidden" value="$profile" name="profileName" />
+							<input type="hidden" value="$workspace" name="workspaceName" />
+							<label>Delete API Name</label>
+							<input type="text" placeholder="name" id="deleteEndpointName"/>
+							<label>Description</label>
+							<input type="text" placeholder="description" id="deDescription"/>
+
+							<br>
+							</br>
+
+							<div class="panel">
+							<label>Query Template [ <a id="autoDetectToggle" toggle='on' >Turn Auto Detect OFF</a> ]</label>
+								<script>
+									$("#autoDetectToggle").click (
+										function()
+										{
+											if( $(this).attr('toggle') == 'on' )
+											{
+												$(this).attr('toggle' , 'off');
+												$(this).html('Turn Auto Detect ON');
+												$("#qeTemplate").off("keyup");
+											}
+											else if($(this).attr('toggle') == 'off' )
+											{
+												$(this).attr('toggle' , 'on');
+												$(this).html('Turn Auto Detect OFF');
+												$("#qeTemplate").on("keyup" , function () {
+													
+															validateQueryTempalate();
+													
+												});
+											}
+										}
+									);
+								</script>
+								
+								<textarea name="qeTemplate" id="qeTemplate"></textarea>
+								<fieldset>
+									<legend>
+										<strong>Bind Variables</strong>
+									</legend>
+									<div id="bindVarContainer">
+										<script>
+											#foreach ($bindVar in $deleteEndpoint.getBindVariables().values())
+											addBindVariableWithValues( "$bindVar.getName()" , "$esc.java($bindVar.getDescription())" , $bindVar.isRequired() ,  "$esc.java($bindVar.getDefaultValue())" );
+											#end
+										</script>
+										<!-- Container for Bind Variables -->
+									</div>
+									<a  href="javascript:addBindVariable()" class="round small button"><i>add more</i></a>
+									<script>
+										$("#qeTemplate").keyup(function() {
+											validateQueryTempalate();
+										});
+									</script>
+								</fieldset>
+							</div>
+							<script>
+								$("form").ajaxError(function(e, jqxhr, settings, exception) {
+									if(! (settings.hasOwnProperty('context') && settings.context.hasOwnProperty('supressGlobalError'))  )
+									{
+										alert(exception);
+									}
+									
+								});
+
+								function submitForm() {
+									try {
+										var bindVariables = {};
+										$("#bindVarContainer").find(".panel").each(function(index) {
+											var bindVariable = {};
+											bindVariable.name = $(this).find("input[name='bvName']").attr("value");
+											bindVariable.description = $(this).find("input[name='bvDescription']").attr("value");
+											bindVariable.defaultValue = $(this).find("input[name='defaultValue']").attr("value");
+											bindVariable.required = $(this).find("select option:selected").attr("value");
+											bindVariables[bindVariable.name] = bindVariable;
+										});
+
+										var jsonRequest = {};
+
+										jsonRequest.queryTemplate = $("#qeTemplate").attr("value");
+										jsonRequest.description = $("#deDescription").attr("value");
+										jsonRequest.bindVariables = bindVariables;
+
+										var req = {};
+										req.deleteEndpointName = $("#deleteEndpointName").attr("value");
+										req.jsonRequest = JSON.stringify(jsonRequest, null);
+
+										$.post("/dashboard/$workspace/$profile/delete/" + req.deleteEndpointName, req, function(data) {
+
+											window.location = "/dashboard/workspace/$workspace";
+										});
+
+									} catch(e) {
+										alert(e);
+									}
+
+								}
+
+								function edit() {
+									$("#editButton").hide();
+									$("#saveButton").show();
+									$("#cancelButton").show();
+
+									enableForm();
+								}
+
+								function save() {
+									$("#editButton").show();
+									$("#saveButton").hide();
+
+									submitForm();
+
+								}
+
+								function cancel() {
+									$("#editButton").show();
+									$("#saveButton").hide();
+
+									// referesh
+									location.reload(true);
+								}
+
+								function enableForm() {
+
+									$("#deDescription").removeAttr("disabled");
+
+									$("#qeTemplate").removeAttr("readonly");
+
+									$("#bindVarContainer").find(".panel").each(function(index) {
+
+										$(this).find("input").removeAttr("disabled");
+										$(this).find("select").removeAttr("disabled");
+										$(this).find("a").removeClass("hide");
+									});
+
+									$("#addMoreBindVar").removeClass("hide");
+									$("#autoFillBindVar").removeClass("hide");
+								}
+
+								function disableForm() {
+									$("#deleteEndpointName").attr("disabled", "disabled");
+									$("#deDescription").attr("disabled", "disabled");
+									$("#qeTemplate").attr("readonly", "readonly");
+
+									$("#bindVarContainer").find(".panel").each(function(index) {
+
+										$(this).find("input").attr("disabled", "disabled");
+										$(this).find("select").attr("disabled", "disabled");
+										$(this).find("a").addClass("hide");
+									});
+
+									$("#addMoreBindVar").addClass("hide");
+									$("#autoFillBindVar").addClass("hide");
+								}
+
+								function deleteEndpoint() {
+									var r = confirm("Are you sure you want to delete this ?");
+									if (r == true) {
+										$.ajax({
+											url : "/dashboard/$workspace/$profile/delete/$deleteEndpoint.getName()",
+											type : "DELETE",
+											success : function(data) {
+												console.log(JSON.stringify(data));
+												window.location = "/dashboard/";
+											}
+										});
+
+									}
+								}
+
+							</script>
+							<input type="button" class="button" value="Edit"  id="editButton" onclick="edit()" />
+							<input type="button" class="button" value="Save"  id="saveButton" onclick="save()" />
+
+							<input type="button" class="button" value="Delete"  onclick="deleteEndpoint()" />
+							<input type="button" class="button" value="Clone"  id="cloneButton" onclick="cloneEndpoint()"/>
+							<input type="button" class="button" value="Cancel"  id="cancelButton" onclick="cancel()"/>
+							<script>
+								function cloneEndpoint() {
+									$("#cloneButton").hide();
+									edit();
+									$("#deleteEndpointName").removeAttr("disabled");
+									$("#deleteEndpointName").attr("value", $("#deleteEndpointName").attr('value') + "Clone");
+									$("#deleteEndpointName").focus();
+									
+								}
+
+							</script>
+							<script>
+								$("#saveButton").hide();
+
+								$("#deleteEndpointName").attr("value", "$deleteEndpoint.getName()");
+
+								#if ($queryEndpoint.getDescription())
+								$("#deDescription").attr("value" , "$esc.java($deleteEndpoint.getDescription()) ");
+								#end
+
+								$("#qeTemplate").attr("value" , "$esc.java($deleteEndpoint.getQueryTemplate()) ");
+
+								disableForm();
+
+							</script>
+
+						</form>
+					</fieldset>
+				</div>
+				<div class="row"></div>
+			</div>
+			<div class="four columns">
+				#if ($documentation.get("deleteEndpointHelp"))
+				$documentation.get("deleteEndpointHelp").getAsString()
+				#end
+			</div>
+		</div>
+		<div id="tryQuery" class="reveal-modal xlarge">
+			<div class="row">
+				<div class="two columns">
+					<a class="radius button alert">DELETE</a>
+				</div>
+				<div class="ten columns left-align" >
+					<h4>$deleteEndpoint.getName()</h4><h4 class="subheader">$serviceUrl/services/$workspace/$profile/delete/$deleteEndpoint.getName()</h4>
+				</div>
+			</div>
+
+			<div class="row">
+				$deleteEndpoint.getDescription()
+			</div>
+			<div class="row">
+				<table>
+					<thead>
+						<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
+					</thead>
+					<tbody>
+						#foreach ($bindVar in $deleteEndpoint.getBindVariables().values())
+						<tr>
+							<td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td>
+							<input type="text" id="$bindVar.getName()" />
+							</td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td>
+						</tr>
+						#end
+
+					</tbody>
+				</table>
+				<a class="button secondary" onclick="executeDeleteAPI('$serviceUrl/services/$workspace/$profile/delete/$deleteEndpoint.getName()' , this)" >Submit</a>
+					
+			</div>
+
+			<a class="close-reveal-modal">&#215;</a>
+		</div>
+		<div id="errorModal">
+			<div id="errorModalContent"></div>
+		</div>
+		
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		
+		<script>
+		function syntaxHighlight(json) {
+ 					   	json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    					return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        				var cls = 'number';
+        					if (/^"/.test(match)) {
+            					if (/:$/.test(match)) {
+                					cls = 'key';
+            						} else {
+                				cls = 'string';
+            					}
+        					} else if (/true|false/.test(match)) {
+            			cls = 'boolean';
+        			} else if (/null/.test(match)) {
+            		cls = 'null';
+        			}
+        			return '<span class="' + cls + '">' + match + '</span>';
+    			});
+			}
+						
+			function executeDeleteAPI(url, buttonClicked) {
+				var queryString = "?api_key=$apiKey&";
+				$(buttonClicked).parent().find("input").each(function() {
+
+					if ($(this).attr("value") && $(this).attr("value") != "") {
+						queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';
+					}
+
+				});
+
+				var encodedUrl = encodeURI(url + queryString);
+				
+				$.ajax({
+   						 url: encodedUrl,
+    					 type: 'DELETE',
+    					 crossDomain : true,
+    					 context : { 'supressGlobalError' : true },
+    					 dataType : 'text',
+         					success: function(result) {
+        					alert('Server Response\n' + result);
+        					
+    					},
+    					error : function(errorObj , textStatusLine , errorThrown)
+    					{
+    						//alert(errorObj.responseText);
+    						var obj = JSON.parse(errorObj.responseText);
+							var str = JSON.stringify(obj, undefined, 4);
+							
+    						$("#errorModalContent").html(syntaxHighlight(str));
+    						$( "#errorModal" ).dialog({
+      														modal: true,
+      														title: 'Execution Error',
+      														width: 500,
+      														buttons: {
+        																Ok: function() {
+          																		$( this ).dialog( "close" );
+        																	}
+      																	}
+    													});
+    						
+    						console.log('Server Error Code:' + errorThrown );
+    						
+    					}
+    					
+					});
+			}
+		</script>
+		
+		<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script>
+		<script>
+		$("#autoDetectToggle").trigger("click");
+		</script>
+	</body>
+</html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+<bean id="xqueryXML" class="edu.emory.cci.bindaas.datasource.provider.aime4.outputformat.XqueryXMLHandler"></bean>
+<bean id="xqueryHTML" class="edu.emory.cci.bindaas.datasource.provider.aime4.outputformat.XqueryHTMLHandler"></bean>
+<bean id="xqueryCSV" class="edu.emory.cci.bindaas.datasource.provider.aime4.outputformat.XqueryCSVHandler"></bean>
+
+<bean id="xqueryImageJSON" class="edu.emory.cci.bindaas.datasource.provider.aime4.outputformat.XqueryImageAnnotationJSONHandler"></bean>
+<bean id="xqueryAnnotationJSON" class="edu.emory.cci.bindaas.datasource.provider.aime4.outputformat.XqueryAnnotationOfAnnotationJSONHandler"></bean>
+
+<bean id="sqlXML" class="edu.emory.cci.bindaas.datasource.provider.aime4.outputformat.SqlXMLHandler"></bean>
+<bean id="sqlHTML" class="edu.emory.cci.bindaas.datasource.provider.aime4.outputformat.SqlHTMLHandler">
+<property name="headSectionContent">
+<value>
+&lt;head&gt;
+&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css&quot;&gt;
+&lt;script type=&quot;text/javascript&quot; charset=&quot;utf8&quot; src=&quot;//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; charset=&quot;utf8&quot; src=&quot;//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
+			$(document).ready(function() {
+				$(&#39;#data&#39;).dataTable();
+			} );
+		&lt;/script&gt;
+&lt;/head&gt;
+
+</value>
+</property>
+
+</bean>
+<bean id="sqlCSV" class="edu.emory.cci.bindaas.datasource.provider.aime4.outputformat.SqlCSVHandler"></bean>
+
+
+</beans>
+
+
+

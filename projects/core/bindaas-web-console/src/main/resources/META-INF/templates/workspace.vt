@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+
+		<!-- Set the viewport width to device width for mobile -->
+		<meta name="viewport" content="width=device-width" />
+
+		<title>Project $workspace.getName()</title>
+
+		<!-- Included CSS Files (Uncompressed) -->
+		<!--
+		<link rel="stylesheet" href="stylesheets/foundation.css">
+		-->
+
+		<!-- Included CSS Files (Compressed) -->
+		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+		<script src="/foundation/javascripts/modernizr.foundation.js"></script>
+
+		<!-- IE Fix for HTML5 Tags -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+	</head>
+	<body>
+		<!-- Page Layout HTML here -->
+
+		<!-- Latest version of jQuery -->
+		<script src="/foundation/javascripts/jquery.js"></script>
+
+		<!-- Included JS Files (Unminified) -->
+		<!-- [JS Files] -->
+		<!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+		<!-- Included JS Files (Minified) -->
+		<script src="/foundation/javascripts/foundation.min.js"></script>
+
+		<!-- Initialize JS Plugins -->
+		<script src="/foundation/javascripts/app.js"></script>
+
+		<div class="row">
+			<div class="six columns">
+				<h2>Bindaas</h2>
+				<p>
+					<strong>Be worry free!</strong>
+				</p>
+				<p>
+					$versionHeader
+				</p>
+				<hr />
+			</div>
+			<div class="six columns">
+				<ul class="inline-list">
+					<li>
+						<h6>Welcome $bindaasUser</h6>
+					</li>
+					<li>
+						<h6><a href="/dashboard/logout">logout</a></h6>
+					</li>
+				</ul>
+
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="tweleve columns">
+
+				<div class="row">
+					<ul class="breadcrumbs">
+						<li >
+							<a href="/dashboard/"><strong>Dashboard</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
+						</li>
+						<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
+</ul>
+
+				</div>
+
+				<div class="row">
+					<fieldset>
+						<legend>
+							<h3>Project $workspace.getName()</h3>
+						</legend>
+
+						<div>
+							<p>
+								Time created <kbd>$workspace.getTimeCreated()</kbd>
+							</p>
+							<p>
+								Created by <kbd>$workspace.getCreatedBy()</kbd>
+							</p>
+							<p>
+								Description <kbd>$workspace.getDescription()</kbd>
+							</p>
+
+							<h6>Data Providers</h6>
+							<table>
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Date Created</th>
+										<th>Created By</th>
+										<th>Query APIs</th>
+										<th>Submit APIs</th>
+										<th>Delete APIs</th>
+									</tr>
+								</thead>
+								<tbody>
+									#foreach ($profile in $workspace.getProfiles().values())
+									<tr>
+										<td><a href="/dashboard/$workspace.getName()/profile/$profile.getName()">$profile.getName()</a></td>
+										<td>$profile.getTimeCreated()</td>
+										<td>$profile.getCreatedBy()</td>
+										<td>
+										<ul>
+											#foreach ($queryEndpoint in $profile.getQueryEndpoints().values())
+											<li>
+												<a href="/dashboard/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()" class="small">$queryEndpoint.getName()</a>
+											</li>
+											#end
+											<li>
+												<a href="/dashboard/$workspace.getName()/$profile.getName()/createQueryEndpoint.action" class="medium">Create New >>> </a>
+											</li>
+										</ul></td>
+										<td>
+										<ul>
+											#foreach ($submitEndpoint in $profile.getSubmitEndpoints().values())
+											<li>
+												<a href="/dashboard/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()" class="small">$submitEndpoint.getName()</a>
+											</li>
+											#end
+											<li>
+												<a href="/dashboard/$workspace.getName()/$profile.getName()/createSubmitEndpoint.action" class="medium">Create New >>> </a>
+											</li>
+										</ul></td>
+										<td>
+										<ul>
+											#foreach ($deleteEndpoint in $profile.getDeleteEndpoints().values())
+											<li>
+												<a href="/dashboard/$workspace.getName()/$profile.getName()/delete/$deleteEndpoint.getName()" class="small">$deleteEndpoint.getName()</a>
+											</li>
+											#end
+											<li>
+												<a href="/dashboard/$workspace.getName()/$profile.getName()/createDeleteEndpoint.action" class="medium">Create New >>> </a>
+											</li>
+										</ul></td>
+									</tr>
+									#end
+									<tr>
+										<td><a href="/dashboard/$workspace.getName()/createProfile.action" class="medium">Create New Data Provider >>> </a></td>
+									</tr>
+								</tbody>
+							</table>
+						
+							<a id="delete_workspace_button" class="button medium" onclick="deleteWorkspaceAction()" >Delete Project >> </a>
+							<script>
+								
+								function deleteWorkspaceAction()
+								{
+									var url = "/dashboard/workspace/$workspace.getName()";
+									var r = confirm("Are you sure you want to delete this project ?");
+									if ( r == true )
+									  {
+											$.ajax(
+				  									{
+				  										url : url ,
+				  										type : "DELETE",
+				  										success : function(data){
+				  											console.log(JSON.stringify(data));
+				  											window.location = "/dashboard/";
+				  										}
+				  									}
+				  								);
+
+									  }
+
+								}
+								
+							</script>
+						</div>
+
+					</fieldset>
+				</div>
+			</div>
+		</div>
+	<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
+</html>

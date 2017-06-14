@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+		<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+		<!-- Latest compiled and minified CSS -->
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+		
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+		
+	</head>
+	<title> Security Dashboard </title>
+	<body style="padding-top: 10px;">
+
+		<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+			<div class="navbar-header">
+
+				<a class="navbar-brand" href="#"><h1>Security Dashboard</h1></a>
+			</div>
+
+			<ul class="nav navbar-nav navbar-right">
+
+				<li  class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown"><h5>$admin</h5></a>
+					<ul class="dropdown-menu navbar-inverse">
+						<li>
+							<a class="navbar-link" href="?doAction=logout">Logout</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+
+		<div class="row" body >
+			<div class="col-lg-2" left-margin>
+				<ul class="nav nav-pills nav-stacked">
+					<li >
+						<a href="/dashboard/security/policy-admin/main">Authorization Policies</a>
+					</li>
+					<li>
+						<a href="/dashboard/security/group-admin/main">Group Management</a>
+					</li>
+					<li>
+						<a href="/dashboard/security/apikey-admin/main">API-Key Management</a>
+					</li>
+				</ul>
+			</div>
+			<div class="col-lg-8" center>
+				<div class="row">
+					<h2>Group Management >> Add New Group</h2>
+				</div>
+				<div class="row">
+					
+				</div>
+				<div class="row">
+					<form role="form">
+						<div class="form-group">
+							<label >Name *</label>
+							<input class="form-control"  placeholder="Enter Group Name" name="groupName">
+						</div>
+						<div class="form-group">
+							<label >Description *</label>
+							<input class="form-control"  placeholder="Enter Group Description" name="groupDescription">
+						</div>
+
+						<label >Add User (Only users with API keys can be added to Groups)</label>
+						
+						<div class="input-group ">
+							<span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+							<input id="searchBar" type="text" class="form-control" placeholder="Search by typing username">
+						</div>
+						<div class="row">
+							<br />
+						</div>
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="list-group" name="user-display-list">
+									
+								</div>
+							</div>
+						</div>
+						<div class="row" >
+							<div class="col-lg-4" name="listOfMembers">
+								
+							</div>
+							
+							
+						</div>						
+						
+						
+
+
+						<button class="btn btn-default" id="submitButton" type="button">
+							Submit
+						</button>
+					</form>
+
+				</div>
+
+			</div>
+			<div class="col-lg-2" right-margin>
+
+			</div>
+			
+		</div>
+		<script>
+		var indexedUserList = $indexedUserList ;
+				
+		$("#searchBar").keyup(
+			function()
+			{
+				var searchTerm = $(this).val();
+				if(searchTerm.length > 1 )
+				{
+					
+					var arrayOfEntries = indexedUserList[ searchTerm.substring(0,2) ] ;
+					if(arrayOfEntries)
+					{
+						var htmlContent = "";
+						var alreadyAddedUsers = extractListOfAlreadyAddedUsers();
+						$.each(arrayOfEntries , function(index , value){
+							
+							if($.inArray(value, alreadyAddedUsers ) == -1 && value.substring(0,searchTerm.length) === searchTerm )
+							{
+								htmlContent = htmlContent + "<a href='#' onclick='addUserToList(\"" + value + "\")' class='list-group-item'>" + value + "</a>"
+							}
+						});
+						
+						$("[name='user-display-list']").html(htmlContent);
+					}
+					else{
+						$("[name='user-display-list']").html("");
+					}
+				}
+				else
+				{
+					$("[name='user-display-list']").html("");
+				}
+			}
+		);	
+		
+		
+		function addUserToList(username){
+		
+			// add it to the textbox an
+			var alreadyAddedUsers = extractListOfAlreadyAddedUsers();
+			alreadyAddedUsers.push(username);
+			alreadyAddedUsers = listToSet(alreadyAddedUsers);
+			var htmlContent = "";
+			$.each(alreadyAddedUsers , function(key, val){
+					var row = "<div class='alert alert-info' name='member' bindaas-username='" + val + "'>" + val + "<a class='close' data-dismiss='alert' href='#' aria-hidden='true'>&times;</a></div>";
+					htmlContent = htmlContent + row;
+				});
+				
+			$("[name='listOfMembers']").html(htmlContent);
+			$(".alert").alert();
+			$(".alert").bind('closed.bs.alert', function () {
+				setTimeout(function() {
+    							$("#searchBar").trigger("keyup");
+						}, 200);
+  						
+					});
+			$("#searchBar").trigger("keyup");
+			 
+		}
+		
+		function extractListOfAlreadyAddedUsers(){
+			var list = [];
+			$("div[name='member']").each(
+				
+				function()
+				{
+					var username = $(this).attr("bindaas-username");
+					list.push(username);
+				}
+			);
+			
+			return list;
+		}
+		
+		function listToSet(list)
+		{
+			var set = {};
+			$.each(list , function(index , value){
+				set[value] = value;
+			});
+			
+			list = [];
+			$.each(set , function(key , value){
+				list.push(value);
+			});
+			
+			return list;
+		}
+		
+		$("input[name='groupName']").keyup(
+			
+			function(){
+				validateFields();
+			}
+		);
+		
+		$("input[name='groupDescription']").keyup(
+			
+			function(){
+					validateFields();		
+				}
+		);
+		
+		$("#submitButton").click(
+			function(){
+				var request = {};
+				request.groupName = $("input[name='groupName']").val();
+				request.groupDescription = $("input[name='groupDescription']").val();
+				request.listOfUsers = extractListOfAlreadyAddedUsers(); 
+				
+				var url = "/dashboard/security/group-admin/create-group";
+				$.post( url , JSON.stringify(request)).done(function(){
+						window.location = "/dashboard/security/group-admin/main";
+				}).fail(
+								function(err)
+								{
+										console.log(err);
+										alert("Server Error occured. See console logs for details");
+								}
+						);
+			}
+		);
+		
+		
+		function validateFields()
+		{
+			
+			if( $("input[name='groupName']").val() != null && $("input[name='groupName']").val() != "" && $("input[name='groupDescription']").val() != null && $("input[name='groupDescription']").val() != "" )
+			{
+					$("#submitButton").removeAttr("disabled");
+			}
+			else
+			{
+					$("#submitButton").attr("disabled","disabled");
+			}
+				
+		}
+		
+		validateFields();
+		
+		</script>
+	</body>
+</html>

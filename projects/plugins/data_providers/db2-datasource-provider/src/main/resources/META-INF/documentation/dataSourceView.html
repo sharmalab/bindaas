@@ -1,0 +1,92 @@
+<label>Username</label>
+		<span class="has-tip tip-left" data-width="210" title="username for connecting to IBM DB2 database"> <input type="text" id="db2_username" /></span>
+		<label>Password</label>
+		<span class="has-tip tip-left" data-width="210" title="password for connecting to IBM DB2 database"><input type="password" id="db2_password" /></span>
+		<label>JDBC Url</label>
+		<span class="has-tip tip-left" data-width="210" title="JDBC URL example: jdbc:db2://localhost:50000/XMLDB"><input type="text" id="db2_url" /></span>
+				
+		<script>
+			
+			$("#db2_username").keyup(function ()
+			{
+				updateProviderFieldDb2();
+			});
+			$("#db2_password").keyup(function ()
+			{
+				updateProviderFieldDb2();
+			});
+			
+			$("#db2_url").keyup(function ()
+			{
+				updateProviderFieldDb2();
+			});
+			
+			
+						
+			   
+		   function updateProviderFieldDb2()
+		   {
+		   	 var dataSourceJson = {};
+		   	 dataSourceJson.username = $("#db2_username").attr("value");
+		   	 dataSourceJson.password = $("#db2_password").attr("value");
+		   	 dataSourceJson.url = $("#db2_url").attr("value");
+		   	 $("#dataSource").attr("value" , JSON.stringify(dataSourceJson));
+		   	db2Validate();
+		   }  
+		   
+		   function reverseUpdateDataSourceViewDB2()
+		   {
+			   try{
+				   var dataSourceJson =  $("#dataSource").attr("value");
+				   dataSourceJson = jQuery.parseJSON( dataSourceJson ) ;
+				   $("#db2_username").attr("value", dataSourceJson.username);
+				   $("#db2_password").attr("value", dataSourceJson.password);
+				   $("#db2_url").attr("value", dataSourceJson.url);
+				   
+			   }catch(e){}
+			   
+		   }
+		   
+		   function db2Validate() {
+				
+				if ($("#DB2Provider").is(":visible")) {
+					ValidationObject.addConstraint("db2_username", $("#db2_username").attr("value") && $("#db2_username").attr("value") != "", function() {
+						alert("Username not specified");
+						 $("#db2_username").focus();
+					});
+
+					ValidationObject.addConstraint("db2_password", $("#db2_password").attr("value") && $("#db2_password").attr("value") != "", function() {
+						alert("Password not specified");
+						$("#db2_password").focus();
+					});
+
+					ValidationObject.addConstraint("db2_url", $("#db2_url").attr("value") && $("#db2_url").attr("value") != "", function() {
+						alert("URL not specified");
+						$("#db2_url").focus();
+					});
+
+					
+
+				} else {
+
+					ValidationObject.removeConstraint("db2_username");
+
+					ValidationObject.removeConstraint("db2_password");
+
+					ValidationObject.removeConstraint("db2_url");
+
+				}
+
+			}
+
+		   
+		   reverseUpdateDataSourceViewDB2();
+		   $("#DB2Provider").bind("onaftershow" , function(e){
+			   db2Validate(); 	
+			});
+			$("#DB2Provider").bind("onafterhide" , function(e){
+				db2Validate(); 	
+			});
+
+		</script>
+		

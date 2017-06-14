@@ -1,2 +1,0 @@
-# Security Dashboard for Bindaas
-

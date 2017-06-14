@@ -1,0 +1,10 @@
+{
+     "name":"workspaceParameters",
+     "title" : "workspaceParameters",
+     "description" : "workspaceParameters does not have any specific schema. It accepts any valid JSON object",
+     "type" : "object",
+     "properties":{
+       }
+     }
+     
+   }

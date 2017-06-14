@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Create Delete API</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+  <script src="/foundation/javascripts/modernizr.foundation.js"></script>
+	
+	
+  
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+ <!-- Page Layout HTML here -->
+
+  <!-- Latest version of jQuery -->
+  <script src="/foundation/javascripts/jquery.js"></script>
+
+  <!-- Included JS Files (Unminified) -->
+  <!-- [JS Files] -->
+  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+  <!-- Included JS Files (Minified) -->
+  <script src="/foundation/javascripts/foundation.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="/foundation/javascripts/app.js"></script>
+  <script>
+  function randomString(length) {
+    var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
+
+    if (! length) {
+        length = Math.floor(Math.random() * chars.length);
+    }
+
+    var str = '';
+    for (var i = 0; i < length; i++) {
+        str += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return str;
+}
+  
+  function validateQueryTempalate()
+			{
+			#[[ var regex = /\$[a-zA-Z0-9_]+\$/g; ]]#
+			var text = $("#qeTemplate").attr('value');
+			var matches = text.match(regex);
+
+			// first reset the container
+
+			$("#bindVarContainer").html("");
+			for(var count in matches) {
+
+			addBindVariable(matches[count].replace(/\$/g,""));
+			}
+	}
+
+  	function addBindVariable(variableName) {
+		var bindVariable = document.createElement("div");
+		bindVariable.id = randomString(8);
+		bindVariable.className = "panel callout radius";
+		bindVariable.innerHTML = $("#bindVarTemplate").html();
+		var removeLink = document.createElement("a");
+		removeLink.href = "#";
+		removeLink.text = "remove";
+		bindVariable.appendChild(removeLink);
+		removeLink.onclick = function(event)
+		{
+			var parent = bindVariable.parentNode;
+			parent.removeChild(bindVariable);
+		};
+		
+		$("#bindVarContainer").append(bindVariable);
+		
+		$("#" + bindVariable.id + " input[name='bvName']").attr('value',variableName);
+	  }
+  	
+  </script>
+ <div id="bindVarTemplate" class="hide">
+  	<label >Name</label>
+  	<input type="text" placeholder="name" name="bvName" />
+  	<label >Description</label>
+    <input type="text" placeholder="description" name="bvDescription" />
+    								<label >Required</label>
+  										<select   name="bvRequired">
+    										<option value="true">Yes</option>
+    										<option value="false">No</option>
+  										</select>
+  										<br></br>
+    								<label>Default Value</label>
+    								<input type="text" placeholder="default value" name="defaultValue" />
+  </div>
+  <div class="row">
+    <div class="six columns">
+      <h2>Bindaas</h2>
+      <p><strong>Be worry free!</strong></p>
+      <p>$versionHeader</p>
+      <hr />
+    </div>
+    <div class="six columns">
+    	<ul class="inline-list">
+    		<li><h6>Welcome $bindaasUser</h6></li>
+    		<li><h6><a href="/dashboard/logout">logout</a></h6></li>
+    	</ul>
+      
+    </div>
+    
+    
+  </div>
+
+  <div class="row">
+   
+    <div class="eight columns">
+    	
+    	<div class="row">
+    		<ul class="breadcrumbs">
+  				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
+  				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
+  				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+				<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
+  			</ul>
+    </div>
+    	<div class="row">
+    		<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a>/Data Provider:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
+    	</div>
+    	<div class="row">
+   	 		<fieldset>
+    			<legend><h3>Create Delete API</h3></legend>
+    				<form class="custom" action="createDeleteTemplate.action" method="get">
+    					<input type="hidden" value="$profile" name="profileName" />
+    					<input type="hidden" value="$workspace" name="workspaceName" />
+    					<label>Delete API Name</label>
+    					<input type="text" placeholder="name" id="deleteEndpointName"/>
+    					<label>Description</label>
+    					<input type="text" placeholder="description" id="deDescription"/>
+    					
+    					<br> </br>
+    					
+    					<div class="panel">
+    							<label>Query Template [ <a id="autoDetectToggle" toggle='on' >Turn Auto Detect OFF</a> ]</label>
+								<script>
+									$("#autoDetectToggle").click (
+										function()
+										{
+											if( $(this).attr('toggle') == 'on' )
+											{
+												$(this).attr('toggle' , 'off');
+												$(this).html('Turn Auto Detect ON');
+												$("#qeTemplate").off("keyup");
+											}
+											else if($(this).attr('toggle') == 'off' )
+											{
+												$(this).attr('toggle' , 'on');
+												$(this).html('Turn Auto Detect OFF');
+												$("#qeTemplate").on("keyup" , function () {
+													
+															validateQueryTempalate();
+													
+												});
+											}
+										}
+									);
+								</script>
+    						
+    						<textarea name="qeTemplate" id="qeTemplate"></textarea>
+    						<fieldset>
+    							<legend><strong>Bind Variables</strong></legend>
+    							<div id="bindVarContainer">
+    						    	<!-- Container for Bind Variables -->
+    						    </div>
+    							<a  href="javascript:addBindVariable()" class="round small button"><i>add more</i></a>
+    							<script>
+										$("#qeTemplate").keyup(function() {
+											validateQueryTempalate();
+										});
+								</script>
+    						</fieldset>	
+    					</div>
+  						<script>
+  							$("form").ajaxError(function(e, jqxhr, settings, exception){
+  										alert(exception);
+						});
+						
+						
+    				
+  							function submitForm()
+  							{
+  								try{
+  									var bindVariables = {};
+  									$("#bindVarContainer").find(".panel").each(
+  									
+		  									function (index)
+		  									{
+		  										var bindVariable = {};
+		  										bindVariable.name = $(this).find("input[name='bvName']").attr("value");
+		  										bindVariable.description = $(this).find("input[name='bvDescription']").attr("value");
+		  										bindVariable.defaultValue = $(this).find("input[name='defaultValue']").attr("value");
+		  										bindVariable.required = $(this).find("select option:selected").attr("value");
+		  										bindVariables[bindVariable.name] = bindVariable;
+		  									}
+  									);
+  								
+  								
+  								var jsonRequest = {};
+  								
+  								jsonRequest.queryTemplate = $("#qeTemplate").attr("value");
+  								jsonRequest.description = $("#deDescription").attr("value");
+  								jsonRequest.bindVariables = bindVariables;
+  								
+  								
+  								
+  								var req = {};
+  								req.deleteEndpointName = $("#deleteEndpointName").attr("value");
+  								req.jsonRequest = JSON.stringify(jsonRequest,null);
+  								
+  								$.post("/dashboard/$workspace/$profile/createDeleteEndpoint.action" , req , function (data){
+									window.location = "/dashboard/workspace/$workspace";
+								});
+								
+								
+  								
+  								}
+  								catch(e)
+  								{
+  									alert(e);
+  								}
+  								
+  							}
+  						  </script>
+  						<input onclick="submitForm()" class="button" value="Save" />
+    				</form>		
+    			</fieldset>
+    	</div>
+   	 	<div class="row">
+   	 	</div>
+    </div>
+	<div class="four columns">
+		#if ($documentation.get("deleteEndpointHelp"))
+			$documentation.get("deleteEndpointHelp").getAsString()
+		#end
+	</div>
+  </div>
+
+  
+<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
+</html>

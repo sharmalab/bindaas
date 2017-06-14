@@ -1,0 +1,517 @@
+26 Apr 2013 16:38:41,895 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:38:44,895 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:38:47,895 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:38:50,896 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:38:53,895 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:38:56,894 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:38:59,894 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:02,894 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:05,893 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:08,893 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:11,893 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:14,893 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:17,893 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:20,893 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:23,893 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:26,893 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:29,893 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:32,893 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:35,892 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:38,892 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:41,892 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:44,891 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:47,890 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:50,890 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:53,889 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:56,889 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:39:59,889 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:02,889 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:05,888 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:08,850 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+26 Apr 2013 16:40:08,888 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:11,887 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:14,887 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:17,887 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:20,887 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:23,886 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:26,886 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:29,886 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:32,886 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:35,885 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:38,885 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:41,885 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:44,885 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:47,884 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:50,884 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:53,884 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:56,883 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:40:59,883 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:02,883 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:05,883 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:08,883 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:11,882 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:12,254 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+26 Apr 2013 16:41:14,881 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:17,881 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:20,881 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:23,880 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:26,880 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:29,880 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:32,880 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:35,879 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:38,879 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:41:39,861 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+26 Apr 2013 16:41:39,889 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+26 Apr 2013 16:41:39,934 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+26 Apr 2013 16:41:40,806 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+26 Apr 2013 16:41:40,821 INFO  webconsole.MainController - Main Controller Initialized
+26 Apr 2013 16:41:40,822 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+26 Apr 2013 16:41:40,823 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+26 Apr 2013 16:41:40,910 INFO  webconsole.WebConsoleStarter - WebConsole Started
+26 Apr 2013 16:41:41,893 INFO  system.StartupEventPublisher - Bindaas Server started in [254.647] seconds 
+26 Apr 2013 16:42:06,221 ERROR openid.OpenIDHelper - Error redirecting to OpenID provider
+org.openid4java.discovery.yadis.YadisException: 0x704: I/O transport error: peer not authenticated
+	at org.openid4java.discovery.yadis.YadisResolver.retrieveXrdsLocation(YadisResolver.java:478)
+	at org.openid4java.discovery.yadis.YadisResolver.discover(YadisResolver.java:248)
+	at org.openid4java.discovery.yadis.YadisResolver.discover(YadisResolver.java:232)
+	at org.openid4java.discovery.yadis.YadisResolver.discover(YadisResolver.java:166)
+	at org.openid4java.discovery.Discovery.discover(Discovery.java:147)
+	at org.openid4java.discovery.Discovery.discover(Discovery.java:129)
+	at org.openid4java.consumer.ConsumerManager.discover(ConsumerManager.java:538)
+	at edu.emory.cci.bindaas.openid.OpenIDHelper.authRequest(OpenIDHelper.java:84)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:317)
+	at org.eclipse.gemini.blueprint.service.importer.support.internal.aop.ServiceInvoker.doInvoke(ServiceInvoker.java:56)
+	at org.eclipse.gemini.blueprint.service.importer.support.internal.aop.ServiceInvoker.invoke(ServiceInvoker.java:60)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)
+	at org.springframework.aop.support.DelegatingIntroductionInterceptor.doProceed(DelegatingIntroductionInterceptor.java:132)
+	at org.springframework.aop.support.DelegatingIntroductionInterceptor.invoke(DelegatingIntroductionInterceptor.java:120)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)
+	at org.eclipse.gemini.blueprint.service.util.internal.aop.ServiceTCCLInterceptor.invokeUnprivileged(ServiceTCCLInterceptor.java:70)
+	at org.eclipse.gemini.blueprint.service.util.internal.aop.ServiceTCCLInterceptor.invoke(ServiceTCCLInterceptor.java:53)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)
+	at org.eclipse.gemini.blueprint.service.importer.support.LocalBundleContextAdvice.invoke(LocalBundleContextAdvice.java:57)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)
+	at org.springframework.aop.support.DelegatingIntroductionInterceptor.doProceed(DelegatingIntroductionInterceptor.java:132)
+	at org.springframework.aop.support.DelegatingIntroductionInterceptor.invoke(DelegatingIntroductionInterceptor.java:120)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)
+	at org.springframework.aop.framework.CglibAopProxy$FixedChainStaticTargetInterceptor.intercept(CglibAopProxy.java:582)
+	at edu.emory.cci.bindaas.openid.OpenIDHelper$$EnhancerByCGLIB$$7161eb39.authRequest(<generated>)
+	at edu.emory.cci.bindaas.webconsole.OpenIDAuth.doPost(OpenIDAuth.java:67)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:595)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+	at org.apache.felix.http.base.internal.handler.ServletHandler.doHandle(ServletHandler.java:96)
+	at org.apache.felix.http.base.internal.handler.ServletHandler.handle(ServletHandler.java:79)
+	at org.apache.felix.http.base.internal.dispatch.ServletPipeline.handle(ServletPipeline.java:42)
+	at org.apache.felix.http.base.internal.dispatch.InvocationFilterChain.doFilter(InvocationFilterChain.java:49)
+	at org.apache.felix.http.base.internal.dispatch.HttpFilterChain.doFilter(HttpFilterChain.java:33)
+	at org.apache.felix.http.base.internal.handler.FilterHandler.handle(FilterHandler.java:78)
+	at org.apache.felix.http.base.internal.dispatch.InvocationFilterChain.doFilter(InvocationFilterChain.java:47)
+	at org.apache.felix.http.base.internal.dispatch.HttpFilterChain.doFilter(HttpFilterChain.java:33)
+	at org.apache.felix.http.base.internal.dispatch.FilterPipeline.dispatch(FilterPipeline.java:48)
+	at org.apache.felix.http.base.internal.dispatch.Dispatcher.dispatch(Dispatcher.java:39)
+	at org.apache.felix.http.base.internal.DispatcherServlet.service(DispatcherServlet.java:67)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:511)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:390)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:182)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:765)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:326)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:542)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.headerComplete(HttpConnection.java:926)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:549)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:212)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:404)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:410)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:582)
+Caused by: javax.net.ssl.SSLPeerUnverifiedException: peer not authenticated
+	at com.sun.net.ssl.internal.ssl.SSLSessionImpl.getPeerCertificates(SSLSessionImpl.java:352)
+	at org.apache.http.conn.ssl.AbstractVerifier.verify(AbstractVerifier.java:128)
+	at org.apache.http.conn.ssl.SSLSocketFactory.connectSocket(SSLSocketFactory.java:572)
+	at org.apache.http.impl.conn.DefaultClientConnectionOperator.openConnection(DefaultClientConnectionOperator.java:180)
+	at org.apache.http.impl.conn.AbstractPoolEntry.open(AbstractPoolEntry.java:151)
+	at org.apache.http.impl.conn.AbstractPooledConnAdapter.open(AbstractPooledConnAdapter.java:125)
+	at org.apache.http.impl.client.DefaultRequestDirector.tryConnect(DefaultRequestDirector.java:640)
+	at org.apache.http.impl.client.DefaultRequestDirector.execute(DefaultRequestDirector.java:479)
+	at org.apache.http.impl.client.AbstractHttpClient.execute(AbstractHttpClient.java:906)
+	at org.apache.http.impl.client.AbstractHttpClient.execute(AbstractHttpClient.java:805)
+	at org.apache.http.impl.client.AbstractHttpClient.execute(AbstractHttpClient.java:784)
+	at org.openid4java.util.HttpCache.head(HttpCache.java:335)
+	at org.openid4java.discovery.yadis.YadisResolver.retrieveXrdsLocation(YadisResolver.java:400)
+	... 56 more
+26 Apr 2013 16:43:59,445 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+26 Apr 2013 16:44:00,051 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+26 Apr 2013 16:44:00,053 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+26 Apr 2013 16:44:00,053 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+26 Apr 2013 16:44:01,636 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+26 Apr 2013 16:44:01,993 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+26 Apr 2013 16:44:02,177 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+26 Apr 2013 16:44:02,200 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+26 Apr 2013 16:44:02,218 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+26 Apr 2013 16:44:02,521 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+26 Apr 2013 16:44:02,540 INFO  webconsole.MainController - Main Controller Initialized
+26 Apr 2013 16:44:02,541 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+26 Apr 2013 16:44:02,542 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+26 Apr 2013 16:44:02,556 INFO  webconsole.WebConsoleStarter - WebConsole Started
+26 Apr 2013 16:44:03,285 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+26 Apr 2013 16:44:03,331 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+26 Apr 2013 16:44:03,349 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+26 Apr 2013 16:44:03,364 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+26 Apr 2013 16:44:03,364 INFO  bundle.BindaasInitializer - Middleware Started
+26 Apr 2013 16:44:03,382 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+26 Apr 2013 16:44:03,434 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+26 Apr 2013 16:44:06,389 INFO  system.StartupEventPublisher - Bindaas Server started in [9.625] seconds 
+26 Apr 2013 16:44:10,080 ERROR openid.OpenIDHelper - org.openid4java.message.MessageException: 0x100: Required parameter missing: openid.mode
+26 Apr 2013 16:44:10,081 ERROR webconsole.OpenIDAuth - Authentication failed
+26 Apr 2013 16:44:17,544 ERROR openid.OpenIDHelper - Error redirecting to OpenID provider
+org.openid4java.discovery.yadis.YadisException: 0x704: I/O transport error: peer not authenticated
+	at org.openid4java.discovery.yadis.YadisResolver.retrieveXrdsLocation(YadisResolver.java:478)
+	at org.openid4java.discovery.yadis.YadisResolver.discover(YadisResolver.java:248)
+	at org.openid4java.discovery.yadis.YadisResolver.discover(YadisResolver.java:232)
+	at org.openid4java.discovery.yadis.YadisResolver.discover(YadisResolver.java:166)
+	at org.openid4java.discovery.Discovery.discover(Discovery.java:147)
+	at org.openid4java.discovery.Discovery.discover(Discovery.java:129)
+	at org.openid4java.consumer.ConsumerManager.discover(ConsumerManager.java:538)
+	at edu.emory.cci.bindaas.openid.OpenIDHelper.authRequest(OpenIDHelper.java:84)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:317)
+	at org.eclipse.gemini.blueprint.service.importer.support.internal.aop.ServiceInvoker.doInvoke(ServiceInvoker.java:56)
+	at org.eclipse.gemini.blueprint.service.importer.support.internal.aop.ServiceInvoker.invoke(ServiceInvoker.java:60)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)
+	at org.springframework.aop.support.DelegatingIntroductionInterceptor.doProceed(DelegatingIntroductionInterceptor.java:132)
+	at org.springframework.aop.support.DelegatingIntroductionInterceptor.invoke(DelegatingIntroductionInterceptor.java:120)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)
+	at org.eclipse.gemini.blueprint.service.util.internal.aop.ServiceTCCLInterceptor.invokeUnprivileged(ServiceTCCLInterceptor.java:70)
+	at org.eclipse.gemini.blueprint.service.util.internal.aop.ServiceTCCLInterceptor.invoke(ServiceTCCLInterceptor.java:53)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)
+	at org.eclipse.gemini.blueprint.service.importer.support.LocalBundleContextAdvice.invoke(LocalBundleContextAdvice.java:57)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)
+	at org.springframework.aop.support.DelegatingIntroductionInterceptor.doProceed(DelegatingIntroductionInterceptor.java:132)
+	at org.springframework.aop.support.DelegatingIntroductionInterceptor.invoke(DelegatingIntroductionInterceptor.java:120)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172)
+	at org.springframework.aop.framework.CglibAopProxy$FixedChainStaticTargetInterceptor.intercept(CglibAopProxy.java:582)
+	at edu.emory.cci.bindaas.openid.OpenIDHelper$$EnhancerByCGLIB$$3253c51d.authRequest(<generated>)
+	at edu.emory.cci.bindaas.webconsole.OpenIDAuth.doPost(OpenIDAuth.java:67)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:595)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+	at org.apache.felix.http.base.internal.handler.ServletHandler.doHandle(ServletHandler.java:96)
+	at org.apache.felix.http.base.internal.handler.ServletHandler.handle(ServletHandler.java:79)
+	at org.apache.felix.http.base.internal.dispatch.ServletPipeline.handle(ServletPipeline.java:42)
+	at org.apache.felix.http.base.internal.dispatch.InvocationFilterChain.doFilter(InvocationFilterChain.java:49)
+	at org.apache.felix.http.base.internal.dispatch.HttpFilterChain.doFilter(HttpFilterChain.java:33)
+	at org.apache.felix.http.base.internal.handler.FilterHandler.handle(FilterHandler.java:78)
+	at org.apache.felix.http.base.internal.dispatch.InvocationFilterChain.doFilter(InvocationFilterChain.java:47)
+	at org.apache.felix.http.base.internal.dispatch.HttpFilterChain.doFilter(HttpFilterChain.java:33)
+	at org.apache.felix.http.base.internal.dispatch.FilterPipeline.dispatch(FilterPipeline.java:48)
+	at org.apache.felix.http.base.internal.dispatch.Dispatcher.dispatch(Dispatcher.java:39)
+	at org.apache.felix.http.base.internal.DispatcherServlet.service(DispatcherServlet.java:67)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:668)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:511)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:390)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:182)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:765)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:326)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:542)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.headerComplete(HttpConnection.java:926)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:549)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:212)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:404)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:410)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:582)
+Caused by: javax.net.ssl.SSLPeerUnverifiedException: peer not authenticated
+	at com.sun.net.ssl.internal.ssl.SSLSessionImpl.getPeerCertificates(SSLSessionImpl.java:352)
+	at org.apache.http.conn.ssl.AbstractVerifier.verify(AbstractVerifier.java:128)
+	at org.apache.http.conn.ssl.SSLSocketFactory.connectSocket(SSLSocketFactory.java:572)
+	at org.apache.http.impl.conn.DefaultClientConnectionOperator.openConnection(DefaultClientConnectionOperator.java:180)
+	at org.apache.http.impl.conn.AbstractPoolEntry.open(AbstractPoolEntry.java:151)
+	at org.apache.http.impl.conn.AbstractPooledConnAdapter.open(AbstractPooledConnAdapter.java:125)
+	at org.apache.http.impl.client.DefaultRequestDirector.tryConnect(DefaultRequestDirector.java:640)
+	at org.apache.http.impl.client.DefaultRequestDirector.execute(DefaultRequestDirector.java:479)
+	at org.apache.http.impl.client.AbstractHttpClient.execute(AbstractHttpClient.java:906)
+	at org.apache.http.impl.client.AbstractHttpClient.execute(AbstractHttpClient.java:805)
+	at org.apache.http.impl.client.AbstractHttpClient.execute(AbstractHttpClient.java:784)
+	at org.openid4java.util.HttpCache.head(HttpCache.java:335)
+	at org.openid4java.discovery.yadis.YadisResolver.retrieveXrdsLocation(YadisResolver.java:400)
+	... 56 more
+30 Apr 2013 20:25:08,829 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+30 Apr 2013 20:25:11,089 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+30 Apr 2013 20:25:11,505 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+30 Apr 2013 20:25:11,505 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+30 Apr 2013 20:25:14,581 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:25:15,239 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:25:15,746 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+30 Apr 2013 20:25:15,851 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+30 Apr 2013 20:25:15,870 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+30 Apr 2013 20:25:16,539 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+30 Apr 2013 20:25:16,583 INFO  webconsole.MainController - Main Controller Initialized
+30 Apr 2013 20:25:16,583 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+30 Apr 2013 20:25:16,584 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+30 Apr 2013 20:25:16,661 INFO  webconsole.WebConsoleStarter - WebConsole Started
+30 Apr 2013 20:25:18,645 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+30 Apr 2013 20:25:18,709 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+30 Apr 2013 20:25:18,726 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+30 Apr 2013 20:25:18,741 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+30 Apr 2013 20:25:18,742 INFO  bundle.BindaasInitializer - Middleware Started
+30 Apr 2013 20:25:18,758 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+30 Apr 2013 20:25:18,852 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+30 Apr 2013 20:25:21,796 INFO  system.StartupEventPublisher - Bindaas Server started in [15.584] seconds 
+30 Apr 2013 20:28:45,559 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+30 Apr 2013 20:28:46,969 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+30 Apr 2013 20:28:46,970 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+30 Apr 2013 20:28:46,975 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+30 Apr 2013 20:28:48,891 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:28:49,271 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:28:49,466 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+30 Apr 2013 20:28:49,486 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+30 Apr 2013 20:28:49,505 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+30 Apr 2013 20:28:49,774 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+30 Apr 2013 20:28:49,787 INFO  webconsole.MainController - Main Controller Initialized
+30 Apr 2013 20:28:49,787 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+30 Apr 2013 20:28:49,803 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+30 Apr 2013 20:28:49,816 INFO  webconsole.WebConsoleStarter - WebConsole Started
+30 Apr 2013 20:28:50,729 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+30 Apr 2013 20:28:50,766 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+30 Apr 2013 20:28:50,779 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+30 Apr 2013 20:28:50,793 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+30 Apr 2013 20:28:50,794 INFO  bundle.BindaasInitializer - Middleware Started
+30 Apr 2013 20:28:50,809 DEBUG system.StartupEventPublisher - Sleeping off for 3 seconds
+30 Apr 2013 20:28:50,888 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+30 Apr 2013 20:28:53,817 INFO  system.StartupEventPublisher - Bindaas Server started in [9.643] seconds 
+30 Apr 2013 20:31:29,741 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+30 Apr 2013 20:31:30,743 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+30 Apr 2013 20:31:30,743 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+30 Apr 2013 20:31:30,744 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+30 Apr 2013 20:31:33,169 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:31:33,565 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:31:33,785 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+30 Apr 2013 20:31:33,868 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+30 Apr 2013 20:31:33,884 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+30 Apr 2013 20:31:34,150 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+30 Apr 2013 20:31:34,161 INFO  webconsole.MainController - Main Controller Initialized
+30 Apr 2013 20:31:34,162 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+30 Apr 2013 20:31:34,162 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+30 Apr 2013 20:31:34,173 INFO  webconsole.WebConsoleStarter - WebConsole Started
+30 Apr 2013 20:31:35,043 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+30 Apr 2013 20:31:35,084 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+30 Apr 2013 20:31:35,097 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+30 Apr 2013 20:31:35,112 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+30 Apr 2013 20:31:35,113 INFO  bundle.BindaasInitializer - Middleware Started
+30 Apr 2013 20:31:35,146 INFO  system.StartupEventPublisher - Bindaas Server started in [6.884] seconds 
+30 Apr 2013 20:31:35,207 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+30 Apr 2013 20:39:52,781 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+30 Apr 2013 20:39:54,384 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+30 Apr 2013 20:39:54,385 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+30 Apr 2013 20:39:54,389 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+30 Apr 2013 20:39:56,560 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:39:56,892 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:39:57,053 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+30 Apr 2013 20:39:57,073 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+30 Apr 2013 20:39:57,088 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+30 Apr 2013 20:39:57,367 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+30 Apr 2013 20:39:57,379 INFO  webconsole.MainController - Main Controller Initialized
+30 Apr 2013 20:39:57,379 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+30 Apr 2013 20:39:57,381 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+30 Apr 2013 20:39:57,393 INFO  webconsole.WebConsoleStarter - WebConsole Started
+30 Apr 2013 20:39:58,078 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+30 Apr 2013 20:39:58,114 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+30 Apr 2013 20:39:58,128 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+30 Apr 2013 20:39:58,144 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+30 Apr 2013 20:39:58,144 INFO  bundle.BindaasInitializer - Middleware Started
+30 Apr 2013 20:39:58,225 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+30 Apr 2013 20:39:58,272 INFO  system.StartupEventPublisher - Bindaas Server started in [6.89] seconds 
+30 Apr 2013 20:40:19,380 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+30 Apr 2013 20:40:20,951 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+30 Apr 2013 20:40:20,952 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+30 Apr 2013 20:40:20,952 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+30 Apr 2013 20:40:22,559 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:40:22,944 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:40:23,162 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+30 Apr 2013 20:40:23,187 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+30 Apr 2013 20:40:23,217 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+30 Apr 2013 20:40:23,582 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+30 Apr 2013 20:40:23,594 INFO  webconsole.MainController - Main Controller Initialized
+30 Apr 2013 20:40:23,594 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+30 Apr 2013 20:40:23,595 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+30 Apr 2013 20:40:23,608 INFO  webconsole.WebConsoleStarter - WebConsole Started
+30 Apr 2013 20:40:24,627 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+30 Apr 2013 20:40:24,664 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+30 Apr 2013 20:40:24,681 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+30 Apr 2013 20:40:24,696 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+30 Apr 2013 20:40:24,697 INFO  bundle.BindaasInitializer - Middleware Started
+30 Apr 2013 20:40:24,711 ERROR system.StartupEventPublisher - Server failed to start
+30 Apr 2013 20:40:24,711 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IExecutionTasks Service]
+30 Apr 2013 20:40:24,711 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IManagementTasks Service]
+30 Apr 2013 20:40:24,712 ERROR system.StartupEventPublisher - Server failed to start
+30 Apr 2013 20:40:24,713 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IExecutionTasks Service]
+30 Apr 2013 20:40:24,713 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IManagementTasks Service]
+30 Apr 2013 20:40:24,714 ERROR system.StartupEventPublisher - Server failed to start
+30 Apr 2013 20:40:24,714 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IManagementTasks Service]
+30 Apr 2013 20:40:24,715 ERROR system.StartupEventPublisher - Server failed to start
+30 Apr 2013 20:40:24,715 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IManagementTasks Service]
+30 Apr 2013 20:40:24,716 ERROR system.StartupEventPublisher - Server failed to start
+30 Apr 2013 20:40:24,716 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IManagementTasks Service]
+30 Apr 2013 20:40:24,717 ERROR system.StartupEventPublisher - Server failed to start
+30 Apr 2013 20:40:24,717 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IManagementTasks Service]
+30 Apr 2013 20:40:24,718 ERROR system.StartupEventPublisher - Server failed to start
+30 Apr 2013 20:40:24,718 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IManagementTasks Service]
+30 Apr 2013 20:40:24,738 INFO  system.StartupEventPublisher - Bindaas Server started in [6.783] seconds 
+30 Apr 2013 20:40:24,811 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+30 Apr 2013 20:41:05,996 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+30 Apr 2013 20:41:07,691 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+30 Apr 2013 20:41:07,692 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+30 Apr 2013 20:41:07,692 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+30 Apr 2013 20:41:09,379 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:41:09,921 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:41:10,113 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+30 Apr 2013 20:41:10,137 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+30 Apr 2013 20:41:10,155 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+30 Apr 2013 20:41:10,498 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+30 Apr 2013 20:41:10,515 INFO  webconsole.MainController - Main Controller Initialized
+30 Apr 2013 20:41:10,515 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+30 Apr 2013 20:41:10,519 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+30 Apr 2013 20:41:10,546 INFO  webconsole.WebConsoleStarter - WebConsole Started
+30 Apr 2013 20:41:11,623 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+30 Apr 2013 20:41:11,661 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+30 Apr 2013 20:41:11,677 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+30 Apr 2013 20:41:11,694 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+30 Apr 2013 20:41:11,694 INFO  bundle.BindaasInitializer - Middleware Started
+30 Apr 2013 20:41:11,709 ERROR system.StartupEventPublisher - Server failed to start
+30 Apr 2013 20:41:11,709 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IExecutionTasks Service]
+30 Apr 2013 20:41:11,709 ERROR system.StartupEventPublisher - Critical Service Not started :[Bindaas IManagementTasks Service]
+30 Apr 2013 20:41:11,825 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+30 Apr 2013 20:42:01,364 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+30 Apr 2013 20:42:02,795 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+30 Apr 2013 20:42:02,900 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+30 Apr 2013 20:42:03,003 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+30 Apr 2013 20:42:04,795 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:42:05,178 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:42:05,392 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+30 Apr 2013 20:42:05,413 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+30 Apr 2013 20:42:05,430 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+30 Apr 2013 20:42:05,688 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+30 Apr 2013 20:42:05,703 INFO  webconsole.MainController - Main Controller Initialized
+30 Apr 2013 20:42:05,703 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+30 Apr 2013 20:42:05,705 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+30 Apr 2013 20:42:05,717 INFO  webconsole.WebConsoleStarter - WebConsole Started
+30 Apr 2013 20:42:06,515 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+30 Apr 2013 20:42:06,558 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+30 Apr 2013 20:42:06,576 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+30 Apr 2013 20:42:06,592 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+30 Apr 2013 20:42:06,592 INFO  bundle.BindaasInitializer - Middleware Started
+30 Apr 2013 20:42:06,609 FATAL system.StartupEventPublisher - Bindaas Server failed to start
+30 Apr 2013 20:42:06,610 FATAL system.StartupEventPublisher - Critical Service Not started :[Bindaas IExecutionTasks Service]
+30 Apr 2013 20:42:06,610 FATAL system.StartupEventPublisher - Critical Service Not started :[Bindaas IManagementTasks Service]
+30 Apr 2013 20:42:06,748 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+30 Apr 2013 20:43:02,082 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+30 Apr 2013 20:43:03,509 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+30 Apr 2013 20:43:03,510 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+30 Apr 2013 20:43:03,611 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+30 Apr 2013 20:43:05,617 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:43:06,006 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:43:06,192 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+30 Apr 2013 20:43:06,216 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+30 Apr 2013 20:43:06,233 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+30 Apr 2013 20:43:06,523 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+30 Apr 2013 20:43:06,538 INFO  webconsole.MainController - Main Controller Initialized
+30 Apr 2013 20:43:06,539 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+30 Apr 2013 20:43:06,542 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+30 Apr 2013 20:43:06,554 INFO  webconsole.WebConsoleStarter - WebConsole Started
+30 Apr 2013 20:43:07,388 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+30 Apr 2013 20:43:07,443 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+30 Apr 2013 20:43:07,462 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+30 Apr 2013 20:43:07,476 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+30 Apr 2013 20:43:07,477 INFO  bundle.BindaasInitializer - Middleware Started
+30 Apr 2013 20:43:07,583 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+30 Apr 2013 20:43:07,602 INFO  system.StartupEventPublisher - Bindaas Server started in [6.82] seconds 
+30 Apr 2013 20:55:09,344 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+30 Apr 2013 20:55:10,651 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+30 Apr 2013 20:55:10,675 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+30 Apr 2013 20:55:10,676 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+30 Apr 2013 20:55:13,069 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:55:13,377 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 20:55:13,537 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+30 Apr 2013 20:55:13,561 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+30 Apr 2013 20:55:13,575 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+30 Apr 2013 20:55:13,843 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+30 Apr 2013 20:55:13,855 INFO  webconsole.MainController - Main Controller Initialized
+30 Apr 2013 20:55:13,856 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+30 Apr 2013 20:55:13,857 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+30 Apr 2013 20:55:13,872 INFO  webconsole.WebConsoleStarter - WebConsole Started
+30 Apr 2013 20:55:14,659 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+30 Apr 2013 20:55:14,694 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+30 Apr 2013 20:55:14,707 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+30 Apr 2013 20:55:14,722 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+30 Apr 2013 20:55:14,723 INFO  bundle.BindaasInitializer - Middleware Started
+30 Apr 2013 20:55:14,834 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+30 Apr 2013 20:55:14,848 INFO  system.StartupEventPublisher - Bindaas Server started in [6.898] seconds 
+30 Apr 2013 23:09:51,771 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+30 Apr 2013 23:09:52,935 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+30 Apr 2013 23:09:52,959 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+30 Apr 2013 23:09:53,069 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+30 Apr 2013 23:09:55,584 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 23:09:56,928 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+30 Apr 2013 23:09:56,972 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+30 Apr 2013 23:09:56,989 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+30 Apr 2013 23:09:57,002 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+30 Apr 2013 23:09:57,003 INFO  bundle.BindaasInitializer - Middleware Started
+30 Apr 2013 23:09:57,183 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+30 Apr 2013 23:09:57,225 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+30 Apr 2013 23:09:57,394 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+30 Apr 2013 23:09:57,417 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+30 Apr 2013 23:09:57,430 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+30 Apr 2013 23:09:57,653 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+30 Apr 2013 23:09:57,685 INFO  webconsole.MainController - Main Controller Initialized
+30 Apr 2013 23:09:57,685 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+30 Apr 2013 23:09:57,686 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+30 Apr 2013 23:09:57,696 INFO  webconsole.WebConsoleStarter - WebConsole Started
+30 Apr 2013 23:09:57,767 INFO  system.StartupEventPublisher - Bindaas Server started in [7.507] seconds 
+01 May 2013 16:46:30,248 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+01 May 2013 16:46:30,295 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+01 May 2013 16:46:30,300 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+01 May 2013 16:46:30,621 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+01 May 2013 16:46:33,625 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+01 May 2013 16:46:39,128 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+01 May 2013 16:46:39,181 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+01 May 2013 16:46:39,206 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+01 May 2013 16:46:39,223 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+01 May 2013 16:46:39,223 INFO  bundle.BindaasInitializer - Middleware Started
+01 May 2013 16:46:39,444 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+01 May 2013 16:46:39,482 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+01 May 2013 16:46:39,710 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+01 May 2013 16:46:39,761 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+01 May 2013 16:46:39,776 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+01 May 2013 16:46:40,113 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+01 May 2013 16:46:40,133 INFO  webconsole.MainController - Main Controller Initialized
+01 May 2013 16:46:40,134 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+01 May 2013 16:46:40,134 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+01 May 2013 16:46:40,145 INFO  webconsole.WebConsoleStarter - WebConsole Started
+01 May 2013 16:46:40,215 INFO  system.StartupEventPublisher - Bindaas Server started in [13.098] seconds 
+01 May 2013 16:54:30,326 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.HistoryLog] in bundle [bindaas-core-impl]
+01 May 2013 16:54:30,535 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.UserRequest] in bundle [bindaas-core-impl]
+01 May 2013 16:54:30,537 DEBUG hibernateh2.HibernateEntityScanner - Discovered Hibernate-Entity class [edu.emory.cci.bindaas.core.model.hibernate.VerifyEmail] in bundle [bindaas-core-impl]
+01 May 2013 16:54:31,182 DEBUG bundle.Activator - Starting Bundle [bindaas-core-api]
+01 May 2013 16:54:31,568 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+01 May 2013 16:54:34,016 INFO  cxf.ResourceScanner - Started service [Security Token Service] at [http://localhost:9099/securityTokenService]
+01 May 2013 16:54:34,074 INFO  cxf.ResourceScanner - Started service [Bindaas Administration Service] at [http://localhost:9099/administration]
+01 May 2013 16:54:34,095 INFO  cxf.ResourceScanner - Started service [Bindaas Information Service] at [http://localhost:9099/info]
+01 May 2013 16:54:34,111 INFO  cxf.ResourceScanner - Started service [Bindaas Execution Service] at [http://localhost:9099/services]
+01 May 2013 16:54:34,112 INFO  bundle.BindaasInitializer - Middleware Started
+01 May 2013 16:54:34,317 WARN  command.VersionCommand - Properties for version info could not be read. Using default properties
+01 May 2013 16:54:34,358 WARN  server.RealmVerifier - RP discovery / realm validation disabled; 
+01 May 2013 16:54:34,527 DEBUG util.VelocityEngineWrapper - VelocityEngine initialized
+01 May 2013 16:54:34,562 DEBUG views.DashboardView - edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView Initialized
+01 May 2013 16:54:34,576 DEBUG views.AuditView - edu.emory.cci.bindaas.webconsole.servlet.views.AuditView Initialized
+01 May 2013 16:54:34,822 DEBUG webconsole.WebConsoleStarter - Initializing bean WebConsoleStarter
+01 May 2013 16:54:34,833 INFO  webconsole.MainController - Main Controller Initialized
+01 May 2013 16:54:34,833 DEBUG webconsole.LoginAction - LoginAction Servlet  Initialized
+01 May 2013 16:54:34,834 DEBUG webconsole.LoginAction - LoginAction Filter  Initialized
+01 May 2013 16:54:34,844 INFO  webconsole.WebConsoleStarter - WebConsole Started
+01 May 2013 16:54:34,850 INFO  system.StartupEventPublisher - Bindaas Server started in [7.82] seconds 

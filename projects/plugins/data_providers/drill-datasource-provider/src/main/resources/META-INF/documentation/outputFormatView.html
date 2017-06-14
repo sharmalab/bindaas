@@ -1,0 +1,62 @@
+		
+		<label>Output Format</label>
+		<span class="has-tip tip-left" data-width="210" title="Choose how you want to format the results">
+			
+			<select id="qe_of_outputFormat">
+				<option value="" selected >---Select---</option>
+				<option value="HTML">HTML</option>
+				<option value="CSV">CSV</option>
+				<option value="XML">XML</option>
+				<option value="JSON">JSON</option>
+				<option value="ANY">ANY</option>
+			</select>
+		</span>
+		
+		
+		
+		<script>
+			
+			$("#qe_of_outputFormat").change(function ()
+			{
+					updateOutputFormatField();
+			});
+			
+			
+			
+			
+			
+			   
+		   function updateOutputFormatField()
+		   {
+		   	 var outputFormatJson = {};
+		   	 outputFormatJson.outputFormat = $("#qe_of_outputFormat option:selected").attr("value");
+		   	 $("#qeOutputFormat").attr("value" , JSON.stringify(outputFormatJson));
+		     ValidationObject.addConstraint("Output Format", $("#qe_of_outputFormat option:selected").attr("value") && $("#qe_of_outputFormat option:selected").attr("value") != "" , function(){
+					alert("Output Format not specified");
+					});
+		   }    
+		   
+		   function reverseUpdateOutputFormatField()
+		   {
+			   try{
+				   var outputFormatJson = $("#qeOutputFormat").attr("value") ;
+				  
+				   outputFormatJson = jQuery.parseJSON( outputFormatJson ) ;
+				   $("#qe_of_outputFormat option:selected").removeAttr("selected");
+				 
+				   
+				   $("#qe_of_outputFormat option").
+				   filter( function () { return $(this).attr('value') == outputFormatJson.outputFormat; })
+				   .attr("selected" , "true");
+				       
+			   }
+			   catch(e){
+				   console.log(e);
+			   }
+		   }
+		   
+		   reverseUpdateOutputFormatField();
+		   ValidationObject.addConstraint("Output Format", $("#qe_of_outputFormat option:selected").attr("value") && $("#qe_of_outputFormat option:selected").attr("value") != "" , function(){
+				alert("Output Format not specified");
+				});
+		</script>

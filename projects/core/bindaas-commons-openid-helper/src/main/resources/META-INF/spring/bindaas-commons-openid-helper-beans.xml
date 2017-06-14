@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"                               
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:osgi="http://www.springframework.org/schema/osgi"                               
+   xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd                      
+       http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+
+
+
+<bean id="googleOpenID" class="edu.emory.cci.bindaas.openid.OpenIDProvider" >
+	<property name="uri" value="https://www.google.com/accounts/o8/id"></property>
+	<property name="name" value="Google"></property>
+	<property name="attributes">
+		<props>
+			<prop key="email">http://axschema.org/contact/email</prop>
+			<prop key="firstName">http://axschema.org/namePerson/first</prop>
+			<prop key="lastName">http://axschema.org/namePerson/last</prop>
+			
+		</props>
+	</property>
+</bean>
+
+
+<bean id="yahooOpenID" class="edu.emory.cci.bindaas.openid.OpenIDProvider" >
+	<property name="uri" value="https://me.yahoo.com"></property>
+	<property name="name" value="Yahoo"></property>
+	<property name="attributes">
+		<props>
+			<prop key="email">http://axschema.org/contact/email</prop>
+			<prop key="nickname">http://axschema.org/namePerson/friendly</prop>
+			<prop key="fullname">http://axschema.org/namePerson</prop>
+			
+		</props>
+	</property>
+</bean>
+
+
+
+<bean id="openIDHelper" class="edu.emory.cci.bindaas.openid.OpenIDHelper" init-method="init">
+
+	<property name="listOfOpenIdProviders" >
+		<map>
+			<entry key="https://www.google.com/accounts/o8/id" value-ref="googleOpenID"></entry>
+			<entry key="https://me.yahoo.com" value-ref="yahooOpenID"></entry>
+		</map>
+	
+	</property>
+</bean>
+
+<osgi:service interface="edu.emory.cci.bindaas.openid.OpenIDHelper" ref="openIDHelper"></osgi:service>
+
+</beans>
+
+
+
