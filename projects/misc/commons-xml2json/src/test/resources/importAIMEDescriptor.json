@@ -1,0 +1,20 @@
+{
+	"namespaceAware" : "true" ,
+	"rootDocumentSelector" : "/results/ns1:ImageAnnotation" ,
+	"url" : "https://aime.cancerimagingarchive.net/workspace/aime/query/execute/fetchXML" ,
+	"urlProperties" : {
+		"httpHeaders" : { "Authorization" : "Basic bmFkaXJzYWdoYTp0YXBvcmkzNDMxNQ==" },
+		"queryParameters" : {}
+	},
+	"prefixMapping" : {
+		"ns1" : "gme://caCORE.caCORE/3.2/edu.northwestern.radiology.AIM" 
+	 } ,
+	
+	"mappings" : [
+	{
+		"name" : "uniqueIdentifier" ,
+		"type"  : "SIMPLE" ,
+		"xpath" : "/ns1:ImageAnnotation/@uniqueIdentifier"
+	}
+  ]
+}

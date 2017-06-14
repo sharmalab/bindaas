@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+
+		<!-- Set the viewport width to device width for mobile -->
+		<meta name="viewport" content="width=device-width" />
+
+		<title>Query API : $queryEndpoint.getName()</title>
+
+		<!-- Included CSS Files (Uncompressed) -->
+		<!--
+		<link rel="stylesheet" href="stylesheets/foundation.css">
+		-->
+
+		<!-- Included CSS Files (Compressed) -->
+		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+		<script src="/foundation/javascripts/modernizr.foundation.js"></script>
+
+		<script>
+			var ValidationObject = {};
+			ValidationObject.constraints = {};
+			ValidationObject.addConstraint = function(name, value, errorCallback) {
+				var obj = {};
+				obj.value = value;
+				obj.errorCallback = errorCallback;
+				ValidationObject.constraints[name] = obj;
+			};
+			ValidationObject.validate = function() {
+				for (var key in ValidationObject.constraints) {
+					var obj = ValidationObject.constraints[key];
+					if (obj && obj.value) {
+						continue;
+					} else {
+						obj.errorCallback();
+						return false;
+					}
+				}
+				return true;
+			};
+
+		</script>
+
+		<!-- IE Fix for HTML5 Tags -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+	</head>
+	<body>
+		<!-- Page Layout HTML here -->
+
+		<!-- Latest version of jQuery -->
+		<script src="/foundation/javascripts/jquery.js"></script>
+
+		<!-- Included JS Files (Unminified) -->
+		<!-- [JS Files] -->
+		<!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+		<!-- Included JS Files (Minified) -->
+		<script src="/foundation/javascripts/foundation.min.js"></script>
+
+		<!-- Initialize JS Plugins -->
+		<script src="/foundation/javascripts/app.js"></script>
+		<script>
+						function randomString(length) {
+			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
+
+			if (! length) {
+			length = Math.floor(Math.random() * chars.length);
+			}
+
+			var str = '';
+			for (var i = 0; i < length; i++) {
+			str += chars[Math.floor(Math.random() * chars.length)];
+			}
+			return str;
+			}
+
+			function validateQueryTempalate()
+			{
+			#[[ var regex = /\$[a-zA-Z0-9_]+\$/g; ]]#
+			var text = $("#qeTemplate").attr('value');
+			var matches = text.match(regex);
+
+			// first reset the container
+
+			$("#bindVarContainer").html("");
+			for(var count in matches) {
+
+			addBindVariable(matches[count].replace(/\$/g,""));
+			}
+			}
+			function addBindVariable(variableName) {
+			var bindVariable = document.createElement("div");
+			bindVariable.id = randomString(8);
+			bindVariable.className = "panel callout radius";
+			bindVariable.innerHTML = $("#bindVarTemplate").html();
+			var removeLink = document.createElement("a");
+			removeLink.href = "#";
+			removeLink.text = "remove";
+			bindVariable.appendChild(removeLink);
+			removeLink.onclick = function(event)
+			{
+			var parent = bindVariable.parentNode;
+			parent.removeChild(bindVariable);
+			};
+
+			$("#bindVarContainer").append(bindVariable);
+
+			$("#" + bindVariable.id + " input[name='bvName']").attr('value',variableName);
+			}
+
+			function addBindVariableWithValues(variableName , description , required , defaultValue) {
+
+			var bindVariable = document.createElement("div");
+			bindVariable.id = randomString(8);
+			bindVariable.className = "panel callout radius";
+			bindVariable.innerHTML = "<label >Name</label><input type=\"text\" placeholder=\"name\" name=\"bvName\" value='" + variableName +  "' />";
+			bindVariable.innerHTML = bindVariable.innerHTML + "<label >Description</label><input type=\"text\" placeholder=\"description\" name=\"bvDescription\" value='" + description +  "' />";
+			bindVariable.innerHTML = bindVariable.innerHTML + "<label for=\"customDropdown\">Required</label>";
+
+			if(required == true)
+			{
+			bindVariable.innerHTML = bindVariable.innerHTML + "<select  name=\"bvRequired\"><option value=\"true\" selected='true' >Yes</option><option value=\"false\"  >No</option></select>";
+			}
+			else
+			{
+			bindVariable.innerHTML = bindVariable.innerHTML + "<select  name=\"bvRequired\"><option value=\"true\" >Yes</option><option value=\"false\" selected='true' >No</option></select>";
+			}
+
+			bindVariable.innerHTML = bindVariable.innerHTML + "<br>";
+			bindVariable.innerHTML = bindVariable.innerHTML + "<label>Default Value</label><input type=\"text\" placeholder=\"default value\" name=\"defaultValue\"  value='" + defaultValue +  "' />";
+
+			var removeLink = document.createElement("a");
+			removeLink.href = "#";
+			removeLink.text = "remove";
+			bindVariable.appendChild(removeLink);
+			removeLink.onclick = function(event)
+			{
+			var parent = bindVariable.parentNode;
+			parent.removeChild(bindVariable);
+			};
+
+			$("#bindVarContainer").append(bindVariable);
+
+			}
+
+		</script>
+		<div id="bindVarTemplate" class="hide">
+			<label >Name</label>
+			<input type="text" placeholder="name" name="bvName" />
+			<label >Description</label>
+			<input type="text" placeholder="description" name="bvDescription" />
+			<label >Required</label>
+			<select   name="bvRequired">
+				<option value="true">Yes</option>
+				<option value="false">No</option>
+			</select>
+			<br>
+			</br>
+			<label>Default Value</label>
+			<input type="text" placeholder="default value" name="defaultValue" />
+		</div>
+
+		<div class="row">
+			<div class="six columns">
+				<h2>Bindaas</h2>
+				<p>
+					<strong>Be worry free!</strong>
+				</p>
+				<p>
+					$versionHeader
+				</p>
+				<hr />
+			</div>
+			<div class="six columns">
+				<ul class="inline-list">
+					<li>
+						<h6>Welcome $bindaasUser</h6>
+					</li>
+					<li>
+						<h6><a href="/dashboard/logout">logout</a></h6>
+					</li>
+				</ul>
+
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="eight columns">
+
+				<div class="row">
+					<ul class="breadcrumbs">
+						<li>
+							<a href="/dashboard/"><strong>Dashboard</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/administration"><strong>Administration</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/audit"><strong>Audit</strong></a>
+						</li>
+					</ul>
+
+				</div>
+				<div class="row">
+					<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a>/Data Provider:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
+				</div>
+				<div class="row">
+					<fieldset>
+						<legend>
+							<h3>Query API : $queryEndpoint.getName()</h3>
+						</legend>
+						<a data-reveal-id="tryQuery" class="radius small button" href="#">Try Me !!</a>
+						<h6 class="subheader">Last Modified : $queryEndpoint.getTimeCreated()</h6>
+						<h6 class="subheader">Modified By : $queryEndpoint.getCreatedBy()</h6>
+						<form class="custom"  >
+							<input type="hidden" value="$profile" name="profileName" />
+							<input type="hidden" value="$workspace" name="workspaceName" />
+							<input type="hidden" name="jsonRequest" id="jsonRequest"/>
+							<label>Query API Name</label>
+							<input type="text" placeholder="name" name="qeName" id="qeName"/>
+							<label>Description</label>
+							<input type="text" placeholder="description" id="qeDescription"/>
+							<label>Query Metadata(optional)</label>
+							<textarea id="qeMetada" placeholder="{}"></textarea>
+							<br>
+							</br>
+							<div class="panel">
+								<label>Properties</label>
+								<textarea id="qeOutputFormat" placeholder="{}"   >$queryEndpoint.getOutputFormat().toString()</textarea>
+								<br>
+								#if ($documentation && $documentation.get('outputFormatView'))
+								$documentation.get('outputFormatView').getAsString()
+								<script>
+									$("#qeOutputFormat").hide();
+								</script>
+								#end
+							</div>
+							<div class="panel">
+								<label>Query Template [ <a id="autoDetectToggle" toggle='on' >Turn Auto Detect OFF</a> ]</label>
+								<script>
+									$("#autoDetectToggle").click (
+										function()
+										{
+											if( $(this).attr('toggle') == 'on' )
+											{
+												$(this).attr('toggle' , 'off');
+												$(this).html('Turn Auto Detect ON');
+												$("#qeTemplate").off("keyup");
+											}
+											else if($(this).attr('toggle') == 'off' )
+											{
+												$(this).attr('toggle' , 'on');
+												$(this).html('Turn Auto Detect OFF');
+												$("#qeTemplate").on("keyup" , function () {
+													
+															validateQueryTempalate();
+													
+												});
+											}
+										}
+									);
+									
+								</script>
+								<textarea name="qeTemplate" id="qeTemplate"></textarea>
+								<fieldset>
+									<legend>
+										<strong>Bind Variables</strong>
+									</legend>
+									<div id="bindVarContainer">
+										<script>
+											#foreach ($bindVar in $queryEndpoint.getBindVariables().values())
+											addBindVariableWithValues( "$bindVar.getName()" , "$esc.java($bindVar.getDescription())" , $bindVar.isRequired() ,  "$esc.java($bindVar.getDefaultValue())" );
+											#end
+										</script>
+
+										<!--
+										Bind variable container
+										-->
+									</div>
+									<a  href="javascript:addBindVariable()" class="round small button" id="addMoreBindVar" ><i>add more</i></a>
+									<!--     							<a  href="javascript:validateQueryTempalate()" class="round small button"><i>auto detect</i></a> -->
+									<script>
+										$("#qeTemplate").keyup(function() {
+											validateQueryTempalate();
+										});
+									</script>
+
+								</fieldset>
+							</div>
+
+							<div class="panel" id="queryModifierPanel">
+								<label for="queryModifier">Query Modifier</label>
+								<select  name="queryModifier" id="queryModifier" disabled="true">
+									#if (!$queryEndpoint.getQueryModifiers())
+									<option selected="true" value="null">--select--</option>
+									#else
+									<option selected="true" value="$queryEndpoint.getQueryModifiers().getName()">$queryEndpoint.getQueryModifiers().getName()</option>
+									#end
+
+									#foreach ($qm in $queryModifiers)
+									<option value="$qm.getClass().getName()">$qm.getClass().getName()</option>
+									#end
+
+								</select>
+								<label for="queryModifierProperties">Query Modifier Properties</label>
+								#if (!$queryEndpoint.getQueryModifiers())
+								<textarea id="queryModifierProperties" placeholder="{}" disabled="true" value=""></textarea>																								
+  							#else
+ 								<textarea id="queryModifierProperties" placeholder="{}" disabled="true" value="$queryEndpoint.getQueryModifiers().getProperties().toString()"></textarea>
+  							#end
+
+
+
+							</div>
+
+							<div class="panel" id="queryResultModifierPanel">
+								<label for="queryResultModifier">Query Result Modifier</label>
+								<select  name="queryResultModifier" id="queryResultModifier" disabled="true">
+
+									#if (!$queryEndpoint.getQueryResultModifiers())
+									<option selected="true" value="null">--select--</option>
+									#foreach ($qrm in $queryResultModifiers)
+									<option value="$qrm.getClass().getName()">$qrm.getDescriptiveName()</option>
+									#end
+
+									#else
+									<option  value="null">--select--</option>
+									#foreach ($qrm in $queryResultModifiers)
+									#if ( $qrm.getClass().getName() == $queryEndpoint.getQueryResultModifiers().getName()  )
+									<option value="$qrm.getClass().getName()" selected="true" >$qrm.getDescriptiveName()</option>
+									#else
+									<option value="$qrm.getClass().getName()">$qrm.getDescriptiveName()</option>
+									#end
+
+									#end
+
+									#end
+
+								</select>
+
+								<label for="queryResultModifierProperties">Query Result Modifier Properties</label>
+								#if (!$queryEndpoint.getQueryResultModifiers())
+								<textarea id="queryResultModifierProperties" placeholder="{}" disabled="true" ></textarea>																								
+  							#else
+ 								<textarea id="queryResultModifierProperties" placeholder="{}" disabled="true"  >$queryEndpoint.getQueryResultModifiers().getProperties().toString()</textarea>
+  							#end
+ <!-- New Code -->
+								<div id="queryResultModifierPropertiesPanel"></div>
+								<script>
+									$("#queryResultModifier").change(function() {
+										var className = $("#queryResultModifier option:selected").attr("value");
+										if (className && className != "null") {
+											var url = "/fetchDocumentation?type=IQueryResultModifier&class=" + className;
+											try {
+												$.get(url, function(documentation) {
+													$("#queryResultModifierPropertiesPanel").html(documentation.view);
+												});
+											} catch(e) {
+												console.log(e);
+											}
+										} else {
+											$("#queryResultModifierPropertiesPanel").html("");
+										}
+
+									});
+
+									$("#queryResultModifierProperties,label[for='queryResultModifierProperties']").hide();
+									$("#queryResultModifier").trigger("change");
+								</script>
+								<!-- New Code ends -->
+
+							</div>
+
+							<script>
+								$("form").ajaxError(function(e, jqxhr, settings, exception) {
+									alert(exception);
+								});
+
+								function performValidation() {
+									ValidationObject.addConstraint("Name", $("#qeName").attr("value") && $("#qeName").attr("value") != "", function() {
+										alert("Name field is empty");
+										$("#qeName").focus();
+									});
+
+									ValidationObject.addConstraint("Query Template", $("#qeTemplate").attr("value") && $("#qeTemplate").attr("value") != "", function() {
+										alert("Query Template field is empty");
+										$("#qeTemplate").focus();
+									});
+
+									return ValidationObject.validate();
+
+								}
+
+								function submitForm() {
+									var result = performValidation();
+									if (result) {
+										try {
+											var bindVariables = {};
+											$("#bindVarContainer").find(".panel").each(function(index) {
+												var bindVariable = {};
+												bindVariable.name = $(this).find("input[name='bvName']").attr("value");
+												bindVariable.description = $(this).find("input[name='bvDescription']").attr("value");
+												bindVariable.defaultValue = $(this).find("input[name='defaultValue']").attr("value");
+												bindVariable.required = $(this).find("select option:selected").attr("value");
+												bindVariables[bindVariable.name] = bindVariable;
+											});
+
+											// alert(JSON.stringify(bindVariables));
+											var jsonRequest = {};
+
+											jsonRequest.queryTemplate = $("#qeTemplate").attr("value");
+											jsonRequest.description = $("#qeDescription").attr("value");
+											var metadataStr = $("#qeMetada").attr("value");
+											if (metadataStr != null) {
+												try {
+													jsonRequest.metaData = jQuery.parseJSON(metadataStr);
+												} catch(e) {
+													alert(e);
+												}
+											}
+
+											jsonRequest.bindVariables = bindVariables;
+											jsonRequest.outputFormat = jQuery.parseJSON($("#qeOutputFormat").attr("value"));
+
+											// add query modifier
+											var queryModId = $("#queryModifierPanel").find("select option:selected").attr("value");
+											if (queryModId != "null") {
+												var queryModProp = jQuery.parseJSON($("#queryModifierProperties").attr("value"));
+												jsonRequest.queryModifiers = {};
+												jsonRequest.queryModifiers.name = queryModId;
+												jsonRequest.queryModifiers.properties = queryModProp;
+											}
+
+											// add query result modifier
+											var queryResultModId = $("#queryResultModifierPanel").find("select option:selected").attr("value");
+											if (queryResultModId != "null") {
+												var queryResultModProp = jQuery.parseJSON($("#queryResultModifierProperties").attr("value"));
+												jsonRequest.queryResultModifiers = {};
+												jsonRequest.queryResultModifiers.name = queryResultModId;
+												jsonRequest.queryResultModifiers.properties = queryResultModProp;
+											}
+
+											var req = {};
+											req.queryEndpointName = $("#qeName").attr("value");
+											req.jsonRequest = JSON.stringify(jsonRequest, null);
+
+											$.post("/dashboard/$workspace/$profile/query/" + req.queryEndpointName, req, function(data) {
+												window.location = "/dashboard/workspace/$workspace";
+											});
+
+										} catch(e) {
+											alert(e);
+										}
+
+									}
+									//alert($('form').serialize());
+									//alert(JSON.stringify(jsonRequest,null));
+
+								}
+
+								function edit() {
+									$("#editButton").hide();
+									$("#saveButton").show();
+									$("#cancelButton").show();
+
+									enableForm();
+								}
+
+								function save() {
+									$("#editButton").show();
+									$("#saveButton").hide();
+
+									//disableForm();
+									submitForm();
+
+								}
+
+								function cancel() {
+									$("#editButton").show();
+									$("#saveButton").hide();
+
+									//disableForm();
+									// referesh
+									window.location = "/dashboard/workspace/$workspace";
+								}
+
+								function enableForm() {
+
+									$("#qeDescription").removeAttr("disabled");
+									$("#qeMetada").removeAttr("disabled");
+									$("#qeTemplate").removeAttr("readonly");
+									$("#queryModifier").removeAttr("disabled");
+									$("#queryModifierProperties").removeAttr("disabled");
+									$("#queryResultModifier").removeAttr("disabled");
+									$("#queryResultModifierProperties").removeAttr("disabled");
+									$("#qeOutputFormat").removeAttr("disabled");
+
+									$("#bindVarContainer").find(".panel").each(function(index) {
+
+										$(this).find("input").removeAttr("disabled");
+										$(this).find("select").removeAttr("disabled");
+										$(this).find("a").removeClass("hide");
+									});
+
+									$("#addMoreBindVar").removeClass("hide");
+									$("#autoFillBindVar").removeClass("hide");
+								}
+
+								function disableForm() {
+									$("#qeName").attr("disabled", "disabled");
+									$("#qeDescription").attr("disabled", "disabled");
+									$("#qeMetada").attr("disabled", "disabled");
+									$("#qeTemplate").attr("readonly", "readonly");
+									$("#queryModifier").attr("disabled", "disabled");
+									$("#queryModifierProperties").attr("disabled", "disabled");
+									$("#queryResultModifier").attr("disabled", "disabled");
+									$("#queryResultModifierProperties").attr("disabled", "disabled");
+									$("#qeOutputFormat").attr("disabled", "disabled");
+
+									$("#bindVarContainer").find(".panel").each(function(index) {
+
+										$(this).find("input").attr("disabled", "disabled");
+										$(this).find("select").attr("disabled", "disabled");
+										$(this).find("a").addClass("hide");
+									});
+
+									$("#addMoreBindVar").addClass("hide");
+									$("#autoFillBindVar").addClass("hide");
+								}
+
+								function deleteEndpoint() {
+									var r = confirm("Are you sure you want to do this ?");
+									if (r == true) {
+										$.ajax({
+											url : "/dashboard/$workspace/$profile/query/$queryEndpoint.getName()",
+											type : "DELETE",
+											success : function(data) {
+												console.log(JSON.stringify(data));
+												window.location = "/dashboard/workspace/$workspace";
+											}
+										});
+
+									}
+								}
+
+							</script>
+							<input type="button" class="button" value="Edit"  id="editButton" onclick="edit()" />
+							<input type="button" class="button" value="Save"  id="saveButton" onclick="save()" />
+							<input type="button" class="button" value="Delete"  onclick="deleteEndpoint()"/>
+							<input type="button" class="button" value="Clone"  id="cloneButton" onclick="cloneEndpoint()"/>
+							<input type="button" class="button" value="Cancel"  id="cancelButton" onclick="cancel()"/>
+							<script>
+								function cloneEndpoint() {
+									$("#cloneButton").hide();
+									edit();
+									$("#qeName").removeAttr("disabled");
+									$("#qeName").attr("value", $("#qeName").attr('value') + "Clone");
+									$("#qeName").focus();
+								}
+
+							</script>
+
+							<script>
+								$("#saveButton").hide();
+
+								$("#qeName").attr("value", "$queryEndpoint.getName()");
+
+								#if ($queryEndpoint.getDescription())
+								$("#qeDescription").attr("value" , "$esc.java($queryEndpoint.getDescription()) ");
+								#end
+
+								#if ($queryEndpoint.getMetaData())
+								$("#qeMetada").attr("value" , "$esc.java($queryEndpoint.getMetaData().toString()) ");
+								#end
+
+								$("#qeTemplate").attr("value" , "$esc.java($queryEndpoint.getQueryTemplate()) ");
+
+								disableForm();
+
+							</script>
+						</form>
+					</fieldset>
+				</div>
+				<div class="row"></div>
+			</div>
+			<div class="four columns">
+				#if ($documentation.get("queryEndpointHelp"))
+				$documentation.get("queryEndpointHelp").getAsString()
+				#end
+			</div>
+		</div>
+
+		<div id="tryQuery" class="reveal-modal xlarge">
+			<div class="row">
+				<div class="two columns">
+					<a class="radius button">GET</a>
+				</div>
+				<div class="ten columns left-align" >
+					<h4>$queryEndpoint.getName()</h4><h4 class="subheader">$serviceUrl/services/$workspace/$profile/query/$queryEndpoint.getName()</h4>
+				</div>
+			</div>
+
+			<div class="row">
+				$queryEndpoint.getDescription()
+			</div>
+			<div class="row">
+				<table>
+					<thead>
+						<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
+					</thead>
+					<tbody>
+						#foreach ($bindVar in $queryEndpoint.getBindVariables().values())
+						<tr>
+							<td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td>
+							<input type="text" id="$bindVar.getName()" />
+							</td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td>
+						</tr>
+						#end
+
+					</tbody>
+				</table>
+				<a class="button secondary" onclick="executeAPI('$serviceUrl/services/$workspace/$profile/query/$queryEndpoint.getName()' , this )" >Submit</a>
+				<script>
+					function executeAPI(url, buttonClicked) {
+						var queryString = "?api_key=$apiKey&";
+						$(buttonClicked).parent().find("input").each(function() {
+
+							if ($(this).attr("value") && $(this).attr("value") != "") {
+								queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';
+							}
+
+						});
+						url = url + queryString;
+						window.open(encodeURI(url));
+						$("#tryQuery").trigger('reveal:close');
+					}
+
+				</script>
+			</div>
+
+			<a class="close-reveal-modal">&#215;</a>
+		</div>
+		<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script>
+		<script>
+		$("#autoDetectToggle").trigger("click");
+		</script>
+	</body>
+</html>

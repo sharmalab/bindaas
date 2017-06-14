@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"                               
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:osgi="http://www.springframework.org/schema/osgi"                               
+   xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd                      
+       http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+<!-- Request Handlers -->
+
+<bean id="dashboard" class="edu.emory.cci.bindaas.webconsole.servlet.views.DashboardView" init-method="init">
+	<property name="uriTemplate" value="/"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTasks" ref="managementTasks"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+<bean id="auditView" class="edu.emory.cci.bindaas.webconsole.servlet.views.AuditView" init-method="init">
+	<property name="uriTemplate" value="/audit"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="versionManager" ref="versionManager"></property>
+	<property name="auditProvider" ref="auditProvider"></property>
+</bean>
+
+<bean id="createWorkspace" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateWorkspace" >
+	<property name="uriTemplate" value="/createWorkspace/{workspace}"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+</bean>
+
+<bean id="workspaceView" class="edu.emory.cci.bindaas.webconsole.servlet.views.WorkspaceView" init-method="init">
+	<property name="uriTemplate" value="/workspace/{workspace}"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTasks" ref="managementTasks"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+
+<bean id="createProfile" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateProfile" init-method="init">
+	<property name="uriTemplate" value="/{workspace}/createProfile.action"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+<bean id="createQueryEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateQueryEndpoint" init-method="init">
+	<property name="uriTemplate" value="/{workspace}/{profile}/createQueryEndpoint.action"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="versionManager" ref="versionManager"></property>
+	<property name="modifierRegistry" ref="modifierRegistry"></property>
+</bean>
+
+<bean id="createSubmitEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateSubmitEndpoint" init-method="init">
+	<property name="uriTemplate" value="/{workspace}/{profile}/createSubmitEndpoint.action"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="versionManager" ref="versionManager"></property>
+	<property name="modifierRegistry" ref="modifierRegistry"></property>
+</bean>
+
+<bean id="createDeleteEndpoint" class="edu.emory.cci.bindaas.webconsole.servlet.action.CreateDeleteEndpoint" init-method="init" >
+	<property name="uriTemplate" value="/{workspace}/{profile}/createDeleteEndpoint.action"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+<bean id="queryEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryEndpointView" init-method="init">
+	<property name="uriTemplate" value="/{workspace}/{profile}/query/{queryEndpoint}"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTasks" ref="managementTasks"></property>
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="versionManager" ref="versionManager"></property>
+	<property name="modifierRegistry" ref="modifierRegistry"></property>
+</bean>
+
+<bean id="deleteEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.DeleteEndpointView" init-method="init">
+	<property name="uriTemplate" value="/{workspace}/{profile}/delete/{deleteEndpoint}"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTasks" ref="managementTasks"></property>
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+<bean id="submitEndpointView" class="edu.emory.cci.bindaas.webconsole.servlet.views.SubmitEndpointView" init-method="init">
+	<property name="uriTemplate" value="/{workspace}/{profile}/submit/{submitEndpoint}"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTasks" ref="managementTasks"></property>
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="versionManager" ref="versionManager"></property>
+	<property name="modifierRegistry" ref="modifierRegistry"></property>
+</bean>
+
+<bean id="profileView" class="edu.emory.cci.bindaas.webconsole.servlet.views.ProfileView" init-method="init">
+	<property name="uriTemplate" value="/{workspace}/profile/{profile}"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTasks" ref="managementTasks"></property>
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+<bean id="queryBrowserView" class="edu.emory.cci.bindaas.webconsole.servlet.views.QueryBrowserView" init-method="init">
+	<property name="uriTemplate" value="/queryBrowser"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTasks" ref="managementTasks"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+<!-- 
+<bean id="manageUserRegistration" class="edu.emory.cci.bindaas.webconsole.servlet.action.ManageUserRegistration" init-method="init">
+	<property name="uriTemplate" value="/administration/manageUserRegistration"></property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="mailService" ref="mailService"></property>
+	<property name="sessionFactory" ref="sessionFactory"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+ -->
+<bean id="serverAdministrationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.ServerAdministrationPanelAction"></bean>
+<bean id="securityConfigurationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.SecurityConfigurationPanelAction"></bean>
+<bean id="userManagementNotificationPanelAction" class="edu.emory.cci.bindaas.webconsole.admin.UserManagementNotificationPanelAction"></bean>
+
+
+
+<bean id="administration" class="edu.emory.cci.bindaas.webconsole.admin.AdminServlet" init-method="init">
+	<property name="uriTemplate" value="/administration"></property>
+	<property name="adminActionMap">
+		<map>
+			<entry key="ServerAdministrationPanelAction" value-ref="serverAdministrationPanelAction"></entry>
+			<entry key="userManagement" value-ref="userMgmtAction"></entry>
+			<entry key="SecurityConfigurationPanelAction" value-ref="securityConfigurationPanelAction"></entry>
+			<entry key="emailConfig" value-ref="emailAction"></entry>
+			<entry key="checkLDAPConnection" value-ref="checkLDAPConnectionAction"></entry>
+			<entry key="UserManagementNotificationPanelAction" value-ref="userManagementNotificationPanelAction"></entry>
+		</map>
+	</property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="versionManager" ref="versionManager"></property>
+	<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+
+
+<bean id="emailAction" class="edu.emory.cci.bindaas.webconsole.admin.EmailConfigurationPanelAction">
+</bean>
+
+<bean id="userMgmtAction" class="edu.emory.cci.bindaas.webconsole.admin.UserManagementPanelAction">
+	<property name="mailService" ref="mailService"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+</bean>
+<bean id="checkLDAPConnectionAction" class="edu.emory.cci.bindaas.webconsole.admin.CheckLDAPConnectionAction"></bean>
+
+<bean id="logoutAction" class="edu.emory.cci.bindaas.webconsole.servlet.action.LogoutAction">
+	<property name="uriTemplate" value="/logout"></property>
+	<property name="homepage" value="/dashboard/"></property>
+</bean>
+
+<bean id="mainController" class="edu.emory.cci.bindaas.webconsole.MainController">
+
+	<property name="requestHandlers">
+		<list>
+			<ref bean="dashboard"/>
+			<ref bean="workspaceView"/>
+			<ref bean="auditView"/>
+			<ref bean="createWorkspace"/>
+			<ref bean="createProfile"/>
+			<ref bean="createQueryEndpoint"/>
+			<ref bean="createSubmitEndpoint"/>
+			<ref bean="createDeleteEndpoint"/>
+			<ref bean="queryEndpointView"/>
+			<ref bean="deleteEndpointView"/>
+			<ref bean="submitEndpointView"/>
+			<ref bean="profileView"/>
+			<ref bean="queryBrowserView"/>
+			<!-- <ref bean="manageUserRegistration"/> -->
+			<ref bean="administration"/>
+			<ref bean="logoutAction"/>
+		</list>
+	</property>
+</bean>
+
+<bean id="loginAction" class="edu.emory.cci.bindaas.webconsole.LoginAction">
+	<property name="loginView" ref="loginView"></property>
+</bean>
+
+
+
+<bean id="postLoginAction" class="edu.emory.cci.bindaas.webconsole.PostLoginAction">
+	<property name="defaultLoginTarget" value="/dashboard/"></property>
+	<property name="loginView" ref="loginView"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+</bean>
+
+
+
+<bean id="webConsoleStarter" class="edu.emory.cci.bindaas.webconsole.WebConsoleStarter" init-method="init">
+	<property name="loginAction" ref="loginAction"></property>
+	<property name="mainController" ref="mainController"></property>
+	<property name="defaultBindaasAdminConsoleConfiguration" ref="defaultBindaasAdminConsoleConfiguration"></property>
+	<property name="postLoginAction" ref="postLoginAction"></property>
+	<property name="openIdAuth" ref="openIdAuth"></property>
+	<property name="documentationFetcher" ref="documentationFetcherServlet"></property>
+	
+	<property name="logoutServlet" ref="logoutServlet"></property>
+	<property name="userLoginServlet" ref="userLoginServlet"></property>
+	<property name="userOpenIDAuthServlet" ref="userOpenIDAuthServlet"></property>
+	<property name="userQueryBrowserServlet" ref="userQueryBrowserServlet"></property>
+	<property name="postUserLoginServlet" ref="postUserLoginServlet"></property>
+	
+</bean>
+
+
+<bean id="openIdAuth" class="edu.emory.cci.bindaas.webconsole.OpenIDAuth">
+	<property name="loginView" ref="loginView"></property>
+	<property name="openIdHelper" ref="openIdHelper"></property>
+</bean>
+
+
+
+<bean id="documentationFetcherServlet" class="edu.emory.cci.bindaas.webconsole.servlet.util.DocumentationFetcherServlet">
+	<property name="providerReg" ref="providerRegistry"></property>
+</bean>
+
+<bean id="userQueryBrowserServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserQueryBrowserServlet">
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+<bean id="userOpenIDAuthServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserOpenIDAuthServlet">
+</bean>
+
+<bean id="postUserLoginServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.PostUserLoginServlet">
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="mailService" ref="mailService"></property>
+	<property name="sessionFactory" ref="sessionFactory"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+<bean id="userLoginServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.UserLoginServlet">
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+<bean id="logoutServlet" class="edu.emory.cci.bindaas.webconsole.servlet.usermgmt.LogoutServlet">
+</bean>
+
+
+
+<bean id="defaultBindaasAdminConsoleConfiguration" class="edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration">
+	<property name="adminAccounts">
+		<set>
+			<value>admin</value>
+			<value>nadirsaghar@gmail.com</value>
+		</set>
+	</property>
+	<property name="enableProxy" value="false"></property>
+	<property name="host" value="localhost"></property>
+	<property name="port" value="8080"></property>
+	<property name="proxyUrl" value="http://localhost:8080"></property>
+	<property name="adminConfiguration" ref="adminConfiguration"></property>
+	<property name="userConfiguration" ref="userConfiguration"></property>
+	<property name="userAccountManagement" ref="userManagementNotification" ></property>
+	
+</bean>
+
+<bean id="adminConfiguration" class="edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.AdminConfiguration">
+	<property name="authenticationMethod" value="defaultMethod"></property>
+	<property name="ldapDNPattern" value="cn=%s,cn=Users,dc=ccibmi,dc=cci,dc=emory,dc=edu"></property>
+	<property name="ldapUrl" value="ldap://ad1.ccibmi.cci.emory.edu:389"></property>
+	<property name="openIdProviders">
+		<map>
+			<entry key="google" value="true"></entry>
+			<entry key="yahoo" value="true"></entry>
+		</map>
+	</property>
+</bean>
+
+<bean id="userConfiguration" class="edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.UserConfiguration">
+	<property name="authenticationMethod" value="openid"></property>
+	<property name="ldapDNPattern" value="cn=%s,cn=Users,dc=ccibmi,dc=cci,dc=emory,dc=edu"></property>
+	<property name="ldapUrl" value="ldap://ad1.ccibmi.cci.emory.edu:389"></property>
+	<property name="openIdProviders">
+		<map>
+			<entry key="google" value="true"></entry>
+			<entry key="yahoo" value="true"></entry>
+		</map>
+	</property>
+</bean>
+
+<bean id="userManagementNotification" class="edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration.UserAccountManagement">
+	<property name="enableUserSignupNotification" value="false"></property>
+	<property name="notificationRecepients">
+		<list>
+			<value>admin@example.com</value>
+		</list>
+	</property>
+</bean>
+
+<!-- Velocity Beans -->
+<bean id="velocityWrapper" class="edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper" init-method="init">
+	<property name="props">
+		<props>
+			<prop key="resource.loader">class</prop>
+			<prop key="class.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</prop>
+			<prop key="runtime.log.logsystem.class">edu.emory.cci.bindaas.webconsole.util.VelocityLogger</prop>
+		</props>
+	</property>
+</bean>
+
+<bean id="loginView" class="edu.emory.cci.bindaas.webconsole.LoginView">
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+
+
+<!-- OSGi Refereces -->
+<osgi:reference interface="edu.emory.cci.bindaas.openid.OpenIDHelper" id="openIdHelper"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.version_manager.api.IVersionManager" id="versionManager"></osgi:reference>
+<osgi:reference interface="org.hibernate.SessionFactory" id="sessionFactory"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.commons.mail.api.IMailService" id="mailService"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.core.api.IManagementTasks" id="managementTasks"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.core.api.IProviderRegistry" id="providerRegistry"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.core.api.IModifierRegistry" id="modifierRegistry"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.security.api.IAuditProvider" id="auditProvider"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager" id="apiKeyManager"></osgi:reference>
+
+</beans>
+
+

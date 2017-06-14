@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Native App Runner Submit Payload Modifier
+Bundle-SymbolicName: native-app-runner-SPM
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.emory.cci.bindaas.native_app_runner.bundle.Activator
+Bundle-Vendor: CCI Emory University
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: com.google.common.io;version="14.0.1",
+ com.google.gson;version="2.1.0",
+ com.google.gson.annotations;version="2.1.0",
+ com.google.gson.internal;version="2.1.0",
+ com.google.gson.internal.bind;version="2.1.0",
+ com.google.gson.reflect;version="2.1.0",
+ com.google.gson.stream;version="2.1.0",
+ edu.emory.cci.bindaas.framework.api,
+ edu.emory.cci.bindaas.framework.event,
+ edu.emory.cci.bindaas.framework.event.listeners,
+ edu.emory.cci.bindaas.framework.model,
+ edu.emory.cci.bindaas.framework.provider.exception,
+ edu.emory.cci.bindaas.framework.util,
+ org.apache.commons.logging;version="1.1.1",
+ org.osgi.framework;version="1.3.0"
+Bundle-ActivationPolicy: lazy

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+
+		<!-- Set the viewport width to device width for mobile -->
+		<meta name="viewport" content="width=device-width" />
+
+		<title>Bindaas Query API Browser</title>
+
+		<!-- Included CSS Files (Uncompressed) -->
+		<!--
+		<link rel="stylesheet" href="stylesheets/foundation.css">
+		-->
+
+		<!-- Included CSS Files (Compressed) -->
+		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
+		
+		<script src="/foundation/javascripts/modernizr.foundation.js"></script>
+		
+		<!-- Latest version of jQuery -->
+		<script src="/foundation/javascripts/jquery.js"></script>
+
+		<!-- Included JS Files (Unminified) -->
+		<!-- [JS Files] -->
+		<!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+		<!-- Included JS Files (Minified) -->
+
+		<!-- <script src="/foundation/javascripts/foundation.min.js"></script> -->
+		<script  src="/foundation/javascripts/jquery.foundation.accordion.js"></script>
+		<script>
+			$(document).foundationAccordion();
+
+		</script>
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		
+		<script>
+		function syntaxHighlight(json) {
+ 					   	json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    					return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        				var cls = 'number';
+        					if (/^"/.test(match)) {
+            					if (/:$/.test(match)) {
+                					cls = 'key';
+            						} else {
+                				cls = 'string';
+            					}
+        					} else if (/true|false/.test(match)) {
+            			cls = 'boolean';
+        			} else if (/null/.test(match)) {
+            		cls = 'null';
+        			}
+        			return '<span class="' + cls + '">' + match + '</span>';
+    			});
+			}
+			
+			function executeAPI(url, buttonClicked) {
+				var queryString = "?api_key=$apiKey&";
+				$(buttonClicked).parent().find("input").each(function() {
+
+					if ($(this).attr("value") && $(this).attr("value") != "") {
+						queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';
+					}
+
+				});
+				url = url + queryString;
+				window.open(encodeURI(url));
+			}
+			
+			function executeDeleteAPI(url, buttonClicked) {
+				var queryString = "?api_key=$apiKey&";
+				$(buttonClicked).parent().find("input").each(function() {
+
+					if ($(this).attr("value") && $(this).attr("value") != "") {
+						queryString = queryString + $(this).attr("id") + "=" + $(this).attr("value") + '&';
+					}
+
+				});
+
+				var encodedUrl = encodeURI(url + queryString);
+
+				$.ajax({
+   						 url: encodedUrl,
+    					 type: 'DELETE',
+    					 crossDomain : true,
+    					 dataType : 'text',
+         					success: function(result) {
+        					alert('Server Response\n' + result);
+    					},
+    					error : function(errorObj , textStatusLine , errorThrown)
+    					{
+    						//alert(errorObj.responseText);
+    						var obj = JSON.parse(errorObj.responseText);
+							var str = JSON.stringify(obj, undefined, 4);
+							
+    						$("#errorModalContent").html(syntaxHighlight(str));
+    						$( "#errorModal" ).dialog({
+      														modal: true,
+      														title: 'Execution Error',
+      														width: 500,
+      														buttons: {
+        																Ok: function() {
+          																		$( this ).dialog( "close" );
+        																	}
+      																	}
+    													});
+    						
+    						console.log('Server Error Code:' + errorThrown );
+    					}
+    					
+					});
+			}
+
+			
+			
+		</script>
+		<script>
+			function uploadFile(button) {
+				$(button).parent().submit();
+			}
+		</script>
+		<script>
+			function executeSubmitAPI(button , url) {
+				var text = $(button).parent().find("textarea[name='inputText']").first().attr("value");
+				$.post(url, text, function(data, status, response) {
+					alert(response.responseText);
+		
+				}).fail(function(data) {	
+					var obj = JSON.parse(data.responseText);
+					var str = JSON.stringify(obj, undefined, 4);
+    				$("#errorModalContent").html(syntaxHighlight(str));
+    					
+    				$( "#errorModal" ).dialog({
+      														modal: true,
+      														title: 'Execution Error',
+      														width: 500,
+      														buttons: {
+        																Ok: function() {
+          																		$( this ).dialog( "close" );
+        																	}
+      																	}
+    													});
+  				});
+
+			}
+
+		</script>
+
+	</head>
+	<body>
+
+		<div class="row">
+			<div class="six columns">
+				<h2>Bindaas</h2>
+				<p>
+					<strong>Be worry free!</strong>
+				</p>
+				<p>
+					$versionHeader
+				</p>
+				<hr />
+			</div>
+			<div class="six columns">
+				<ul class="inline-list">
+					<li>
+						<h6>Welcome $bindaasUser</h6>
+					</li>
+					<li>
+						<h6><a href="/dashboard/logout">logout</a></h6>
+					</li>
+				</ul>
+
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="twelve columns">
+				<div class="row">
+					<ul class="breadcrumbs">
+						<li>
+							<a href="/dashboard/"><strong>Dashboard</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/administration"><strong>Administration</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/audit"><strong>Audit</strong></a>
+						</li>
+					</ul>
+
+				</div>
+				<div class="row">
+					<h2>Query API Browser</h2>
+				</div>
+
+			</div>
+
+		</div>
+
+		#foreach ($workspace in $workspaces)
+		<div class="row">
+			<fieldset>
+				<legend>
+					<h3>Project: <a href="/dashboard/workspace/$workspace.getName()" >$workspace.getName()</a></h3>
+				</legend>
+				<h5 class="subheader">Description:$workspace.getDescription()</h5>
+				#foreach ($profile in $workspace.getProfiles().values())
+				<div class="panel">
+					<h5>Data Provider: <a href="/dashboard/$workspace.getName()/profile/$profile.getName()">$profile.getName()</a></h5>
+					<h6 class="subheader">Description : $profile.getDescription()</h6>
+					<ul class="accordion">
+						#foreach ($queryEndpoint in $profile.getQueryEndpoints().values())
+						<li>
+							<div class="title">
+								<div class="row">
+									<div class="two columns">
+										<a class="radius button">GET</a>
+									</div>
+									<div class="ten columns left-align" >
+										<h4>$queryEndpoint.getName()</h4>
+									</div>
+								</div>
+
+							</div>
+							<div class="content">
+								<div class="row">
+									<div class="twelve columns">
+										<h5 class="subheader">Description : $queryEndpoint.getDescription()</h5>
+										<h5 class="subheader">URL : $serviceUrl/services/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()</h5>
+									</div>
+
+								</div>
+								<div class="row" >
+									<div class="twelve columns">
+										<table>
+											<thead>
+												<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
+											</thead>
+											<tbody>
+												#foreach ($bindVar in $queryEndpoint.getBindVariables().values())
+												<tr>
+													<td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td>
+													<input type="text" id="$bindVar.getName()" />
+													</td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td>
+												</tr>
+												#end
+
+											</tbody>
+										</table>
+										<a class="button secondary" onclick="executeAPI('$serviceUrl/services/$workspace.getName()/$profile.getName()/query/$queryEndpoint.getName()' , this)" >Submit</a>
+									</div>
+
+									
+								</div>
+
+							</div>
+						</li>
+						#end
+						#foreach ($submitEndpoint in $profile.getSubmitEndpoints().values())
+						<li>
+							<div class="title">
+								<div class="row">
+									<div class="two columns">
+										<a class="radius button success">POST</a>
+									</div>
+									<div class="ten columns left-align" >
+										<h4>$submitEndpoint.getName()</h4>
+									</div>
+								</div>
+
+							</div>
+							<div class="content">
+								<div class="row">
+									<div class="twelve columns">
+										<h5 class="subheader">Description : $submitEndpoint.getDescription()</h5>
+										<h5 class="subheader">URL : $serviceUrl/services/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()</h5>
+									</div>
+
+								</div>
+								<div class="row" >
+									<div class="twelve columns">
+										<div class="row">
+
+											#if ($submitEndpoint.getType().toString().equals('MULTIPART'))
+
+											<form class="custom" action="$serviceUrl/services/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()?api_key=$apiKey" method="post" enctype="multipart/form-data" target="_blank">
+												<label>File:</label>
+												<input name="myfile" type="file"  />
+												<a class='small button radius' onclick="uploadFile(this)">Upload</a>
+											</form>
+
+											#else
+											<textarea name="inputText"></textarea>
+											<a class="button secondary" onclick="executeSubmitAPI(this , '$serviceUrl/services/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()?api_key=$apiKey&')" >Submit</a>
+											#end
+
+										</div>
+
+									</div>
+
+								</div>
+							</div>
+						</li>
+						#end
+						#foreach ($deleteEndpoint in $profile.getDeleteEndpoints().values())
+						<li>
+							<div class="title">
+								<div class="row">
+									<div class="two columns">
+										<a class="radius button alert">DELETE</a>
+									</div>
+									<div class="ten columns left-align" >
+										<h4>$deleteEndpoint.getName()</h4>
+									</div>
+								</div>
+
+							</div>
+							<div class="content">
+								<div class="row">
+									<div class="twelve columns">
+										<h5 class="subheader">Description : $deleteEndpoint.getDescription()</h5>
+										<h5 class="subheader">URL : $serviceUrl/services/$workspace.getName()/$profile.getName()/delete/$deleteEndpoint.getName()</h5>
+									</div>
+
+								</div>
+								<div class="row" >
+									<div class="twelve columns">
+										<table>
+											<thead>
+												<th>Name</th><th>Description</th><th>Value</th><th>Required</th><th>Default Value</th>
+											</thead>
+											<tbody>
+												#foreach ($bindVar in $deleteEndpoint.getBindVariables().values())
+												<tr>
+													<td>$bindVar.getName()</td><td>$bindVar.getDescription()</td><td>
+													<input type="text" id="$bindVar.getName()" />
+													</td><td>$bindVar.isRequired()</td><td>$bindVar.getDefaultValue()</td>
+												</tr>
+												#end
+
+											</tbody>
+										</table>
+										<a class="button secondary" onclick="executeDeleteAPI('$serviceUrl/services/$workspace.getName()/$profile.getName()/delete/$deleteEndpoint.getName()' , this)" >Submit</a>
+										<div> <br> </div>
+										
+										<div class="alert-box alert">
+  													Please be careful while executing Delete API.If testing make sure you work against test database and/or backup your data.		
+										</div>
+										
+									</div>
+
+									
+								</div>
+
+							</div>
+						</li>
+						#end
+						
+					</ul>
+
+				</div>
+
+				#end
+			</fieldset>
+		</div>
+
+		#end
+
+	<div id="errorModal">
+		<div id="errorModalContent"></div>
+	</div>
+	<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
+</html>

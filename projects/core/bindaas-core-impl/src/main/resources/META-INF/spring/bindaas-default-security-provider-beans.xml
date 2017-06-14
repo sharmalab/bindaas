@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd  http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<bean id="authenticationProvider"
+		class="edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider"
+		init-method="init">
+		<property name="defaultProperties">
+			<props>
+				<prop key="admin">password</prop>
+			</props>
+		</property>
+
+	</bean>
+	<bean id="authorizationProvider"
+		class="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider"
+		init-method="init">
+		<property name="defaultPolicies" ref="defaultPolicies"></property>
+	</bean>
+
+	<!-- Default Authorization Policies -->
+	<bean id="defaultPolicies"
+		class="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider.Policies">
+		<property name="resourceRules">
+			<list>
+				<ref bean="resourceRule1" />
+			</list>
+		</property>
+
+		<property name="roleRules">
+			<list>
+				<ref bean="roleRule1" />
+			</list>
+
+		</property>
+	</bean>
+
+	<bean id="resourceRule1"
+		class="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider.ResourceRule">
+		<property name="resource" value="/"></property>
+		<property name="logic" value="CONTAINS"></property>
+		<property name="allowedRolesOrUsers">
+			<set>
+				<value>admin</value>
+			</set>
+		</property>
+	</bean>
+
+	<bean id="roleRule1"
+		class="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider.RoleRule">
+		<property name="users">
+			<set>
+				<value>nadirsaghar</value>
+				<value>nadirsagha</value>
+				<value>nsaghar</value>
+				<value>nadirsaghar@gmail.com</value>
+			</set>
+		</property>
+
+		<property name="roles">
+			<set>
+				<value>admin</value>
+			</set>
+		</property>
+	</bean>
+
+
+	<bean id="auditProvider" class="edu.emory.cci.bindaas.security.impl.DBAuditProvider">
+	</bean>
+
+	<bean id="dbAuthenticationProvider"
+		class="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"
+		init-method="init">
+		<property name="apiKeyManager" ref="apiKeyManager"></property>
+	</bean>
+
+	<bean id="auditCommand" class="edu.emory.cci.bindaas.core.system.command.AuditCommand"
+		init-method="init">
+		<property name="auditProvider" ref="auditProvider"></property>
+	</bean>
+
+
+	<!-- Blueprint Exports -->
+	<osgi:service ref="dbAuthenticationProvider"
+		interface="edu.emory.cci.bindaas.security.api.IAuthenticationProvider">
+		<osgi:service-properties>
+			<entry key="class"
+				value="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider" />
+			<entry key="protocol" value="API_KEY" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service
+		interface="edu.emory.cci.bindaas.security.api.IAuthorizationProvider"
+		ref="authorizationProvider">
+		<osgi:service-properties>
+			<entry key="class"
+				value="edu.emory.cci.bindaas.security.impl.FileSystemAuthorizationProvider" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service
+		interface="edu.emory.cci.bindaas.security.api.IAuthenticationProvider"
+		ref="authenticationProvider">
+		<osgi:service-properties>
+			<entry key="class"
+				value="edu.emory.cci.bindaas.security.impl.FileSystemAuthenticationProvider" />
+			<entry key="protocol" value="HTTP_BASIC" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service interface="edu.emory.cci.bindaas.security.api.IAuditProvider"
+		ref="auditProvider">
+		<osgi:service-properties>
+			<entry key="class"
+				value="edu.emory.cci.bindaas.security.impl.DBAuditProvider" />
+		</osgi:service-properties>
+	</osgi:service>
+
+
+</beans>
+
+
+

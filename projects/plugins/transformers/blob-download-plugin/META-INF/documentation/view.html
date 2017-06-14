@@ -1,0 +1,47 @@
+<label>Name of the attribute that links to the file</label>
+<input type="text" id="fileLinkAttribute" >
+
+<label>Download as zip file</label>
+<input type="checkbox" id="zipDownload" >
+<script>
+	function initView()
+	{
+		$("#queryResultModifierProperties,label[for='queryResultModifierProperties']").hide();
+		$("#fileLinkAttribute").keyup(function() {
+			updateModel();
+		});
+		
+		$('#zipDownload').change(function() {
+			updateModel();
+		});
+		
+		updateView();
+		
+	}
+	
+	// update the model i.e modifier props
+	function updateModel()
+	{
+		var parent = {};
+		parent.fileLinkAttribute = $("#fileLinkAttribute").attr("value");
+		parent.zipDownload = $("#zipDownload").is(':checked');
+		
+		$("#queryResultModifierProperties").attr("value", JSON.stringify(parent));
+		
+		
+	}
+	
+	
+	// update the view i.e textbox
+	function updateView()
+	{
+		var props = $("#queryResultModifierProperties").attr("value");
+		var propsJson = $.parseJSON(props);
+		$("#fileLinkAttribute").attr("value" , propsJson.fileLinkAttribute);
+		$("#zipDownload").prop("checked" , propsJson.zipDownload);
+		
+		
+	}
+	initView();
+	
+</script>

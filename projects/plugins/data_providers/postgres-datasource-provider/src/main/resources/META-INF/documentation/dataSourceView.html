@@ -1,0 +1,90 @@
+<label>Username</label>
+		<span class="has-tip tip-left" data-width="210" title="username for connecting to Postgres database"> <input type="text" id="postgres_username" /></span>
+		<label>Password</label>
+		<span class="has-tip tip-left" data-width="210" title="password for connecting to Postgres database"><input type="password" id="postgres_password" /></span>
+		<label>JDBC Url</label>
+		<span class="has-tip tip-left" data-width="210" title="JDBC URL example: jdbc:postgresql://localhost:5432/mydb"><input type="text" id="postgres_url" /></span>
+				
+		<script>
+			
+			$("#postgres_username").keyup(function ()
+			{
+				updateProviderFieldPostgres();
+			});
+			$("#postgres_password").keyup(function ()
+			{
+				updateProviderFieldPostgres();
+			});
+			
+			$("#postgres_url").keyup(function ()
+			{
+				updateProviderFieldPostgres();
+			});
+			
+			
+						
+			   
+		   function updateProviderFieldPostgres()
+		   {
+		   	 var dataSourceJson = {};
+		   	 dataSourceJson.username = $("#postgres_username").attr("value");
+		   	 dataSourceJson.password = $("#postgres_password").attr("value");
+		   	 dataSourceJson.url = $("#postgres_url").attr("value");
+		   	 $("#dataSource").attr("value" , JSON.stringify(dataSourceJson));
+		   	postgresValidate();
+		   }    
+		   
+		   function reverseUpdateDataSourceViewPostgres()
+		   {
+			   try{
+				   var dataSourceJson =  $("#dataSource").attr("value");
+				   dataSourceJson = jQuery.parseJSON( dataSourceJson ) ;
+				   $("#postgres_username").attr("value", dataSourceJson.username);
+				   $("#postgres_password").attr("value", dataSourceJson.password);
+				   $("#postgres_url").attr("value", dataSourceJson.url);
+				   
+			   }catch(e){}
+			   
+		   }
+		   
+		   function postgresValidate() {
+				
+				if ($("#PostgresProvider").is(":visible")) {
+					ValidationObject.addConstraint("postgres_username", $("#postgres_username").attr("value") && $("#postgres_username").attr("value") != "", function() {
+						alert("Username not specified");
+						 $("#postgres_username").focus();
+					});
+
+					ValidationObject.addConstraint("postgres_password", $("#postgres_password").attr("value") && $("#postgres_password").attr("value") != "", function() {
+						alert("Password not specified");
+						$("#postgres_password").focus();
+					});
+
+					ValidationObject.addConstraint("postgres_url", $("#postgres_url").attr("value") && $("#postgres_url").attr("value") != "", function() {
+						alert("URL not specified");
+						$("#postgres_url").focus();
+					});
+
+					
+
+				} else {
+
+					ValidationObject.removeConstraint("postgres_username");
+
+					ValidationObject.removeConstraint("postgres_password");
+
+					ValidationObject.removeConstraint("postgres_url");
+
+				}
+
+			}
+		   
+		   reverseUpdateDataSourceViewPostgres();
+		   
+		   $("#PostgresProvider").bind("onaftershow" , function(e){
+			   postgresValidate(); 	
+			});
+			$("#PostgresProvider").bind("onafterhide" , function(e){
+				postgresValidate(); 	
+			});
+		</script>

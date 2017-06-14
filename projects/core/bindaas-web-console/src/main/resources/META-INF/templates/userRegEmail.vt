@@ -1,0 +1,4 @@
+$firstName $lastName
+
+Please validate your email address by copy/pasting or clicking this link
+$verificationUrl

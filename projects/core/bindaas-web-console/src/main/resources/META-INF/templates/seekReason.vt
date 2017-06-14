@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Sign Up for an API-Key</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+  <script type="text/javascript" src="/foundation/media/js/jquery.dataTables.js"></script>
+  
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+	<!-- Latest version of jQuery -->
+  <script src="/foundation/javascripts/jquery.js"></script>
+
+  <!-- Included JS Files (Unminified) -->
+  <!-- [JS Files] -->
+  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+  <!-- Included JS Files (Minified) -->
+  <script src="/foundation/javascripts/foundation.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="/foundation/javascripts/app.js"></script>
+
+  <div class="row">
+    <div class="twelve columns">
+      <h2>Bindaas</h2>
+      <p><strong>Be worry free!</strong></p>
+      <p>$versionHeader</p>
+      <hr />
+    </div> 
+    
+  </div>
+
+
+  <div class="row">
+    <div class="twelve columns">
+      <form action="/user/postAuthenticate" method="post">
+	 	 <h4 class="subheader">Login Success !</h4>
+	 	 <fieldset>
+			
+		    <legend><h4>Please provide following information</h4></legend>
+		
+		    <div class="row">
+			    <div class="four mobile-one columns">
+			      <label class="right inline">Email Address:</label>
+			    </div>
+			    <div class="eight mobile-three columns">
+			      <input type="text" value="$emailAddress" disabled="true"></input>
+			      <input type="hidden" name="emailAddress" value="$emailAddress" ></input>
+			    </div>
+			  </div>
+			  <div class="row">
+			    <div class="four mobile-one columns">
+			      <label class="right inline">First Name :</label>
+			    </div>
+			    <div class="eight mobile-three columns">
+			      <input type="text" name="firstName" value="$firstName"></input>
+			    </div>
+			  </div>
+			  <div class="row">
+			    <div class="four mobile-one columns">
+			      <label class="right inline">Last Name :</label>
+			    </div>
+			    <div class="eight mobile-three columns">
+			      <input type="text" name="lastName" value="$lastName"></input>
+			    </div>
+			  </div>
+			  <div class="row">
+			    <div class="four mobile-one columns">
+			      <label class="right inline">Reason for requesting Access :</label>
+			    </div>
+			    <div class="eight mobile-three columns">
+			      <textarea name="reason" placeholder="I want to evaluate Bindaas"></textarea>
+			    </div>
+			  </div>
+			    
+			  <div class="row">
+			  	<div class="four mobile-one columns">
+			    	<input type="submit" class="small round right button" value="Submit" />
+			    </div>
+			    <div class="eight mobile-one columns">
+			    	
+			    </div>
+			  	
+			  </div>
+		
+	  </fieldset>
+	</form>
+		
+    </div>
+
+   </div>
+
+<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
+</html>

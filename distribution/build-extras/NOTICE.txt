@@ -1,0 +1,26 @@
+==========================================================
+== NOTICE file for use with Bindaas   ==
+==========================================================
+
+Bindaas 
+Copyright 2012 - 2013, Emory University, Atlanta, GA
+
+This product was developed in the Department of Biomedical
+Informatics, Emory University, Atlanta, GA
+
+
+The following individuals were involved in the development
+Nadir Saghar  - nadirsaghar@emory.edu
+Ashish Sharma - ashish.sharma@emory.edu
+
+
+This software is produced using following technologies :
+Eclipse Equinox(OSGi)
+Apache CXF
+Apache Felix
+Spring Framework
+Gemini Blueprint
+Hibernate
+Apache Velocity
+Google GSON library
+openid4java

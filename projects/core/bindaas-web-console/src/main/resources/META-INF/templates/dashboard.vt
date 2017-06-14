@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+
+		<!-- Set the viewport width to device width for mobile -->
+		<meta name="viewport" content="width=device-width" />
+
+		<title>Bindaas Dashboard</title>
+
+		<!-- Included CSS Files (Uncompressed) -->
+		<!--
+		<link rel="stylesheet" href="stylesheets/foundation.css">
+		-->
+
+		<!-- Included CSS Files (Compressed) -->
+		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+		<script src="/foundation/javascripts/modernizr.foundation.js"></script>
+
+		<!-- IE Fix for HTML5 Tags -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+	</head>
+	<body>
+		<!-- Page Layout HTML here -->
+
+		<!-- Latest version of jQuery -->
+		<script src="/foundation/javascripts/jquery.js"></script>
+
+		<!-- Included JS Files (Unminified) -->
+		<!-- [JS Files] -->
+		<!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+		<!-- Included JS Files (Minified) -->
+		<script src="/foundation/javascripts/foundation.min.js"></script>
+
+		<!-- Initialize JS Plugins -->
+		<script src="/foundation/javascripts/app.js"></script>
+
+		<div class="row">
+			<div class="six columns">
+				<h2>Bindaas</h2>
+				<p>
+					<strong>Be worry free!</strong>
+				</p>
+				<p>
+					$versionHeader
+				</p>
+				<hr />
+			</div>
+			<div class="six columns">
+				<ul class="inline-list">
+					<li>
+						<h6>Welcome $bindaasUser</h6>
+					</li>
+					<li>
+						<h6><a href="/dashboard/logout">logout</a></h6>
+					</li>
+				</ul>
+
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="tweleve columns">
+
+				<div class="row">
+					<ul class="breadcrumbs">
+						<li >
+							<a href="/dashboard/"><strong>Dashboard</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
+						</li>
+						<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
+</ul>
+
+				</div>
+
+				<div class="row">
+					<fieldset>
+						<legend>
+							<h3>Projects</h3>
+						</legend>
+
+						<table>
+							<thead>
+								<tr>
+									<th>Date Created</th>
+									<th>Name</th>
+									<th>Description</th>
+									<th>Created By</th>
+									
+
+								</tr>
+							</thead>
+							<tbody>
+								#foreach ($workspace in $workspaces)
+								<tr>
+									<td><kbd>$workspace.getTimeCreated()</kbd></td>
+									<td><a href="/dashboard/workspace/$workspace.getName()">$workspace.getName()</a></td>
+									<td>$workspace.getDescription()</td>
+									<td><kbd>$workspace.getCreatedBy()</kbd></td>
+								</tr>
+								#end
+							</tbody>
+						</table>
+
+					</fieldset>
+				</div>
+
+				<div class="row" id="cw_container">
+					<a class="button medium" onclick="$('div.reveal-modal').reveal()" >Create Project >> </a>
+					<div class="reveal-modal large">
+						<label>Project Name</label>
+						<input type="text" id="cw_workspaceName" />
+						<label>Description</label>
+						<textarea id="cw_description"></textarea>
+						<input type="button" class="button" disabled="true" onclick="createWorkspaceAction()" id="cw_button" value="Save">
+						<a class="close-reveal-modal" onclick="$('#cw_workspaceName').attr('value', '');$('#cw_description').attr('value', '');">&#215;</a>
+						<div>
+
+							<script>
+								$("#cw_workspaceName").keyup(function() {
+									validateCWInput();
+								});
+
+								$("#cw_description").keyup(function() {
+									validateCWInput();
+								});
+
+								function validateCWInput() {
+									if ($("#cw_description").attr("value") != "" && $("#cw_workspaceName").attr("value") != "") {
+
+										$("#cw_button").removeAttr("disabled");
+									} else {
+										$("#cw_button").attr("disabled", "true");
+									}
+								}
+
+								function createWorkspaceAction() {
+									var jsonRequest = {};
+									jsonRequest.description = $("#cw_description").attr("value");
+									var req = {};
+									req.jsonRequest = JSON.stringify(jsonRequest);
+									var workspace = $("#cw_workspaceName").attr("value");
+									$("#cw_workspaceName").attr("value", "");
+									$("#cw_description").attr("value", "");
+
+									$.post("/dashboard/createWorkspace/" + workspace, req, function(data) {
+
+										window.location.reload(true);
+									});
+								}
+
+
+								$("#cw_container").ajaxError(function(e, jqxhr, settings, exception) {
+									alert(exception);
+								});
+							</script>
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
+</html>

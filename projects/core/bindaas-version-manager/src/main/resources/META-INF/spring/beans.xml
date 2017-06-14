@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"                               
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:osgi="http://www.springframework.org/schema/osgi"                               
+   xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd                      
+       http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+<bean id="versionCommand" class="edu.emory.cci.bindaas.version_manager.command.VersionCommand" init-method="init">
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+<bean id="versionManager" class="edu.emory.cci.bindaas.version_manager.impl.VersionManagerImpl" init-method="init">
+	<property name="filename" value="bindaas-framework-info.properties"></property>
+	<property name="defaultProperties" >
+		<props>
+			<prop key="bindaas.framework.version.major">1</prop>
+			<prop key="bindaas.framework.version.minor">0</prop>
+			<prop key="bindaas.framework.version.revision">0</prop>
+			<prop key="bindaas.build.date">TODAY</prop>
+		</props>
+	</property>
+ </bean>
+
+<osgi:service interface="edu.emory.cci.bindaas.version_manager.api.IVersionManager" ref="versionManager" ></osgi:service>
+</beans>
+
+
+

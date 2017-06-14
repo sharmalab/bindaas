@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<bean id="httpProvider" class="edu.emory.cci.bindaas.datasource.provider.http.HTTPProvider" init-method="init">
+	<property name="deleteHandler" ref="httpDeleteHandler"></property>
+	<property name="queryHandler" ref="httpQueryHandler"></property>
+	<property name="submitHandler" ref="httpSubmitHandler"></property>
+</bean>
+<bean id="httpQueryHandler" class="edu.emory.cci.bindaas.datasource.provider.http.HTTPQueryHandler"></bean>
+<bean id="httpDeleteHandler" class="edu.emory.cci.bindaas.datasource.provider.http.HTTPDeleteHandler"></bean>
+<bean id="httpSubmitHandler" class="edu.emory.cci.bindaas.datasource.provider.http.HTTPSubmitHandler"></bean>
+
+</beans>
+
+
+

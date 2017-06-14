@@ -1,0 +1,64 @@
+<label>URL to fetch AIM objects</label>
+<input type="text" id="aimURL" >
+<label>API Key</label>
+<input type="text" id="apiKey" >
+<label>Use WADO Service</label>
+<div>
+<label><input type="radio" name="useWado" value="true">true</label>
+<label><input type="radio" name="useWado" value="false">false</label>
+</div>
+<label>WADO Server</label>
+<input type="text" id="wadoServer">
+
+
+<script>
+	function initView()
+	{
+		$("#queryResultModifierProperties,label[for='queryResultModifierProperties']").hide();
+		$("#aimURL").keyup(function() {
+			updateModel();
+		});
+		$("#apiKey").keyup(function() {
+			updateModel();
+		});
+		
+		
+		$("input[name='useWado']").click(function() {
+			updateModel();
+		});
+
+		$("#wadoServer").keyup(function() {
+			updateModel();
+		});
+
+		updateView();
+		
+	}
+	
+	// update the model i.e modifier props
+	function updateModel()
+	{
+		var parent = {};
+		parent.aimURL = $("#aimURL").attr("value");
+		parent.apiKey = $("#apiKey").attr("value");
+		parent.useWado = $("input[name='useWado']:checked").attr("value");
+		parent.wadoServer = $("#wadoServer").attr("value");
+		$("#queryResultModifierProperties").attr("value", JSON.stringify(parent));
+		
+		
+	}
+	// update the view i.e textbox
+	function updateView()
+	{
+		var props = $("#queryResultModifierProperties").attr("value");
+		console.log(props);
+		var propsJson = $.parseJSON(props);
+		$("#aimURL").attr("value" , propsJson.aimURL);
+		$("#apiKey").attr("value" , propsJson.apiKey);
+		$("#wadoServer").attr("value" , propsJson.wadoServer);
+		$("input[value='" + propsJson.useWado + "'][name='useWado']").attr("checked","true");
+		
+	}
+	initView();
+	
+</script>

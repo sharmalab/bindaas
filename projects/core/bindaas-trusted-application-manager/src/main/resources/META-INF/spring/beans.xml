@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd  http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+<bean id="psuedoSts" class="edu.emory.cci.bindaas.trusted_app.impl.TrustedApplicationManagerImpl" init-method="init">
+	<property name="defaultTrustedApplications" ref="trustedApplicationReg"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+</bean>
+
+<bean id="trustedApplicationReg" class="edu.emory.cci.bindaas.trusted_app.TrustedApplicationRegistry">
+	<property name="trustedApplications">
+		<list>
+			<ref bean="demoApplication"/>
+		</list>
+	</property>
+</bean>
+
+<bean id="demoApplication" class="edu.emory.cci.bindaas.trusted_app.TrustedApplicationRegistry.TrustedApplicationEntry">
+	<property name="name" value="Demo Application"></property>
+	<property name="applicationId" value="demo-id"></property>
+	<property name="applicationKey" value="demo-secret-key"></property>
+</bean>
+
+<bean id="consoleCommand" class="edu.emory.cci.bindaas.trusted_app.command.ConsoleCommands" init-method="init">
+	<property name="trustedAppManager" ref="psuedoSts"></property>
+</bean>
+<!-- Blueprint References -->
+
+	<osgi:reference interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager" id="apiKeyManager"></osgi:reference>
+
+
+</beans>
+
+
+

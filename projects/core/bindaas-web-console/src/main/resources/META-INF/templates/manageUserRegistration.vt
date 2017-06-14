@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Bindaas User Management Console</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/general_enclosed_foundicons.css">
+
+  <script type="text/javascript" src="/foundation/media/js/jquery.dataTables.js"></script>
+  
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+	<!-- Latest version of jQuery -->
+  <script src="/foundation/javascripts/jquery.js"></script>
+
+  <!-- Included JS Files (Unminified) -->
+  <!-- [JS Files] -->
+  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+  <!-- Included JS Files (Minified) -->
+  <script src="/foundation/javascripts/foundation.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="/foundation/javascripts/app.js"></script>
+
+  <div class="row">
+    <div class="six columns">
+      <h2>Bindaas</h2>
+      <p><strong>Be worry free!</strong></p>
+      <p>$versionHeader</p>
+      <hr />
+    </div>
+    <div class="six columns">
+    	<ul class="inline-list">
+    		<li><h6>Welcome $bindaasUser</h6></li>
+    		<li><h6><a href="/dashboard/logout">logout</a></h6></li>
+    	</ul>
+      
+    </div>
+    
+    
+  </div>
+  <div class="row">
+    		<ul class="breadcrumbs">
+  				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
+  				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
+  				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
+  			</ul>
+    </div>
+    
+<div class="row">
+	<div class="twelve columns">
+		<h2>User Management Console</h2>
+	</div>
+	
+</div>
+<div class="row">
+	<script>
+	function setEntityValues(action , id)
+	{
+					$("#entityId").attr("value" , id);
+					$("#entityAction").attr("value" , action);
+	}
+				function showGetExpirationDialog(action , id)
+				{
+					setEntityValues(action , id);
+					$("#getExpirationDialog").reveal();
+				}
+				function showCommentsExpirationDialog(action , id)
+				{
+					setEntityValues(action , id);
+					$("#getCommentsDialog").reveal();
+				}
+				
+			
+	</script>
+	<input type="hidden" id="entityId" />
+  	<input type="hidden" id="entityAction" />
+  	<input type="hidden" id="entityComments" />
+	
+	<fieldset>
+		<legend> <h5>Pending Requests</h5></legend>
+		<form>
+		<table>
+			<thead>
+				<th>Request Date</th><th>First Name</th><th>Last Name</th><th>Email Address</th><th>Reason</th><th>Actions</th>
+			</thead>
+			<tbody>
+				#foreach ($pendingRequest in $pendingRequests)
+				<tr><td>$pendingRequest.getRequestDate().toString()</td><td>$pendingRequest.getFirstName()</td><td>$pendingRequest.getLastName()</td><td>$pendingRequest.getEmailAddress()</td><td>$pendingRequest.getReason()</td><td><div><a onclick="showGetExpirationDialog('approve','$pendingRequest.getId()')" class="foundicon-checkmark"> Approve </a></div><div><a href="#" class="foundicon-remove" onclick="showCommentsExpirationDialog('deny' , '$pendingRequest.getId()')">  Deny  </a></div></td></tr>
+				#end
+			</tbody>
+			
+		</table>
+	</form>
+	</fieldset>
+	<fieldset>
+		<legend> <h5>Approved Requests</h5></legend>
+		<form>
+		<table>
+			<thead>
+				<th>Request Date</th><th>Expires On</th><th>First Name</th><th>Last Name</th><th>Email Address</th><th>API Key</th><th>Actions</th>
+			</thead>
+			<tbody>
+				#foreach ($acceptedRequest in $acceptedRequests)
+				<tr><td>$acceptedRequest.getRequestDate().toString()</td><td>$acceptedRequest.getDateExpires()</td><td>$acceptedRequest.getFirstName()</td><td>$acceptedRequest.getLastName()</td><td>$acceptedRequest.getEmailAddress()</td><td>$acceptedRequest.getApiKey()</td><td><div><a href="#" class="foundicon-minus" onclick="showCommentsExpirationDialog('revoke' , '$acceptedRequest.getId()')"> Revoke Access </a></div><div><a href="#" class="foundicon-refresh" onclick="showGetExpirationDialog('refresh','$acceptedRequest.getId()')"> Refresh Key </a></div></td></tr>
+				#end
+			</tbody>
+		</table>
+	</form>
+	</fieldset>
+	<fieldset>
+		<legend> <h5>History Log</h5></legend>
+		<form>
+		<table>
+			<thead>
+				<th>Activity Date</th><th>Activity Type</th><th>First Name</th><th>Last Name</th><th>Email Address</th><th>Comments</th><th>Initiated By</th>
+			</thead>
+			<tbody>
+				#foreach ($entry in $historyLog)
+				<tr><td>$entry.getActivityDate().toString()</td><td>$entry.getActivityType()</td><td>$entry.getUserRequest().getFirstName()</td><td>$entry.getUserRequest().getLastName()</td><td>$entry.getUserRequest().getEmailAddress()</td><td>$entry.getComments()</td><td>$entry.getInitiatedBy()</td></tr>
+				#end
+			</tbody>
+		</table>
+	</form>
+	</fieldset>
+		
+
+</div>
+	  
+  <div id="getExpirationDialog" class="reveal-modal large">
+  		<label>Key Expires :</label>
+  		<select id="entityExpiration">
+  			<option selected="true" value="-1">Never</option>
+  			<option value="1d">1 Day</option>
+  			<option value="30d">30 Day</option>
+  			<option value="1y">1 Year</option>
+  		</select>
+  		<label>Comments</label>
+  		<div><textarea id="comments1"></textarea></div>
+  		<p><a id="bcomments1" class="small round button" >Submit</a></p>
+  		<script>
+  			$("#bcomments1").click (
+  				function(){
+  					$("#entityComments").attr("value" , $("#comments1").attr("value") );
+  					$("#bcomments1").attr("disabled","true");
+  					$("#bcomments1").html("please wait ...");
+  					doAction();
+  				}
+  			);
+  		</script>
+  		<a class="close-reveal-modal">&#215;</a>
+  </div>
+  
+  <div id="getCommentsDialog" class="reveal-modal large">
+  		<label>Comments</label>
+  		<div><textarea id="comments2"></textarea></div>
+  		<p><a id="bcomments2" class="small round button" >Submit</a></p>
+  		<script>
+  			$("#bcomments2").click (
+  				function(){
+  					$("#entityComments").attr("value" , $("#comments2").attr("value") );
+  					$("#bcomments2").attr("disabled","true");
+  					$("#bcomments2").html("please wait ...");
+  					
+  					doAction();
+  				}
+  			);
+  		</script>
+  		<a class="close-reveal-modal">&#215;</a>
+  </div>
+  
+  <script>
+  $("form").ajaxError(function(e, jqxhr, settings, exception){
+  										alert(exception);
+  										window.location.reload(true);
+						});
+						
+  	function doAction()
+  	{
+  		var postParam = {} ;
+  		postParam.entityId = $("#entityId").attr("value");
+  		postParam.entityAction = $("#entityAction").attr("value");
+  		postParam.entityExpiration = $("#entityExpiration option:selected").attr("value");
+  		postParam.entityComments = $("#entityComments").attr("value");
+  		//alert(JSON.stringify(postParam));
+  		
+  		var req = {};
+  		req.jsonRequest = JSON.stringify(postParam);
+  		
+  		$.post("/dashboard/administration" , req , function (data){
+								window.location = "/dashboard/administration";
+		});
+  	}
+  	
+  </script>
+  <script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
+</html>

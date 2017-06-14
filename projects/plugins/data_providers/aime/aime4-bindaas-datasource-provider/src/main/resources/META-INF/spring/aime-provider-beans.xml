@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<bean id="aimeSubmitHandler" class="edu.emory.cci.bindaas.datasource.provider.aime4.AIMESubmitHandler" init-method="init">
+	<property name="insertQuery"><value>insert into AIMEDS.%s (UNIQUE_ID,REVIEWER,DATE_CREATED,PATIENT_ID,XMLCOLUMN,DATA_SOURCE , TYPE , ANNOTATION_COUNT ) values (?,?,?,?,?,?,?,?)</value></property>
+</bean>
+
+<bean id="aimeQueryHandler" class="edu.emory.cci.bindaas.datasource.provider.aime4.AIMEQueryHandler">
+	<property name="outputFormatRegistry" ref="outputFormatRegistry"></property>
+</bean>
+
+<bean id="aimeDeleteHandler" class="edu.emory.cci.bindaas.datasource.provider.aime4.AIMEDeleteHandler">
+</bean>
+
+<bean id="outputFormatRegistry" class="edu.emory.cci.bindaas.datasource.provider.aime4.outputformat.OutputFormatRegistry" init-method="init" ></bean>
+
+<bean id="aimeProvider" class="edu.emory.cci.bindaas.datasource.provider.aime4.AIMEProvider" init-method="init">
+<property name="aimeQueryHandler" ref="aimeQueryHandler"></property>
+<property name="aimeDeleteHandler" ref="aimeDeleteHandler"></property>
+<property name="aimeSubmitHandler" ref="aimeSubmitHandler"></property>
+<property name="createAIMETableQuery"><value>create table AIMEDS.%s (UNIQUE_ID varchar(64) NOT NULL , REVIEWER varchar(64)  ,  XMLCOLUMN xml, DATA_SOURCE varchar(120) , DATE_CREATED timestamp, PATIENT_ID varchar(64)  ,  TYPE varchar(64) NOT NULL , ANNOTATION_COUNT integer ,  primary key (UNIQUE_ID) )</value></property>
+<property name="dropAIMETableQuery"><value>drop table AIMEDS.%s </value></property>
+<property name="initializationTemplate">
+<value>
+{
+      &quot;dataSource&quot;: {
+      },
+      &quot;queryEndpoints&quot;: {
+        &quot;find&quot;: {
+          &quot;queryTemplate&quot;: &quot;XQUERY \ndeclare namespace ns1\u003d\&quot;gme://caCORE.caCORE/4.4/edu.northwestern.radiology.AIM\&quot;; \ndeclare namespace iso\u003d\&quot;uri:iso.org:21090\&quot;;\n\nfor $y in db2-fn:xmlcolumn(\&quot;AIMEDS.%s.XMLCOLUMN\&quot;)/ns1:ImageAnnotationCollection \nwhere ( (exists($y/ns1:user/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$username$\u0027 ) or $y/ns1:user/ns1:name[starts-with(@value,\u0027$username$\u0027)]) \nand ( (exists($y//ns1:ImagingPhysicalEntity/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$anatomicalEntity$\u0027) or $y//ns1:ImagingPhysicalEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicalEntity$\u0027)])\nand ( (exists($y//ns1:ImagingPhysicalEntityCharacteristic/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$anatomicEntityCharacteristic$\u0027) or $y//ns1:ImagingPhysicalEntityCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicEntityCharacteristic$\u0027)])\nand ( (exists($y//ns1:ImagingObservationEntity/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$imagingObservationEntity$\u0027) or $y//ns1:ImagingObservationEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntity$\u0027)])\nand ( (exists($y//ns1:ImagingObservationCharacteristic/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$imagingObservationEntityCharacteristic$\u0027 ) or $y//ns1:ImagingObservationCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntityCharacteristic$\u0027)])\nand ( (exists($y//ns1:ImageAnnotation/ns1:imageReferenceEntityCollection/ns1:ImageReferenceEntity/ns1:imageStudy/ns1:instanceUid/@root) \u003d fn:false() and \u0027\u0027 \u003d \u0027$studyInstanceUID$\u0027 ) or $y//ns1:ImageAnnotation/ns1:imageReferenceEntityCollection/ns1:ImageReferenceEntity/ns1:imageStudy/ns1:instanceUid[starts-with(@root,\u0027$studyInstanceUID$\u0027)])\nand ( (exists($y/ns1:person/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$patientName$\u0027 ) or $y/ns1:person/ns1:name[starts-with(@value,\u0027$patientName$\u0027)])\nand ( (exists($y/ns1:person/ns1:id/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$patientID$\u0027 ) or $y/ns1:person/ns1:id[starts-with(@value,\u0027$patientID$\u0027)])\nand ( (exists($y//ns1:ImageAnnotation/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$annotationName$\u0027 )  or $y//ns1:ImageAnnotation/ns1:name[starts-with(@value,\u0027$annotationName$\u0027)])\nand (boolean(($annotationContainerUID$)) \u003d fn:false() or $y/ns1:uniqueIdentifier/@root \u003d ($annotationContainerUID$) )\nreturn $y   &quot;,
+          &quot;metaData&quot;: {},
+          &quot;tags&quot;: [],
+          &quot;bindVariables&quot;: {
+            &quot;username&quot;: {
+              &quot;name&quot;: &quot;username&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;username&quot;
+            },
+            &quot;anatomicalEntity&quot;: {
+              &quot;name&quot;: &quot;anatomicalEntity&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;anatomicalEntity&quot;
+            },
+            &quot;anatomicEntityCharacteristic&quot;: {
+              &quot;name&quot;: &quot;anatomicEntityCharacteristic&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;anatomicEntityCharacteristic&quot;
+            },
+            &quot;imagingObservationEntity&quot;: {
+              &quot;name&quot;: &quot;imagingObservationEntity&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;imagingObservationEntity&quot;
+            },
+            &quot;imagingObservationEntityCharacteristic&quot;: {
+              &quot;name&quot;: &quot;imagingObservationEntityCharacteristic&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;imagingObservationEntityCharacteristic&quot;
+            },
+            &quot;studyInstanceUID&quot;: {
+              &quot;name&quot;: &quot;studyInstanceUID&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;studyInstanceUID&quot;
+            },
+            &quot;patientName&quot;: {
+              &quot;name&quot;: &quot;patientName&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;patientName&quot;
+            },
+            &quot;patientID&quot;: {
+              &quot;name&quot;: &quot;patientID&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;patientID&quot;
+            },
+            &quot;annotationName&quot;: {
+              &quot;name&quot;: &quot;annotationName&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;annotationName&quot;
+            },
+            &quot;annotationContainerUID&quot;: {
+              &quot;name&quot;: &quot;annotationContainerUID&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;Comma-separated list of annotationContainerUID . MUST be enclosed within single-quotes as in : &quot;
+            }
+          },
+          &quot;stage&quot;: &quot;UNVERIFIED&quot;,
+          &quot;outputFormat&quot;: {
+            &quot;queryType&quot;: &quot;XQUERY&quot;,
+            &quot;outputFormat&quot;: &quot;SIMPLE_JSON_IMAGE_ANNOTATION&quot;,
+            &quot;csvHeader&quot;: [
+              &quot;[]&quot;
+            ]
+          },
+          &quot;name&quot;: &quot;find&quot;,
+          &quot;timeCreated&quot;: &quot;Fri Sep 06 12:30:10 EDT 2013&quot;,
+          &quot;createdBy&quot;: &quot;admin&quot;,
+          &quot;description&quot;: &quot;Find annotation metadata matching attributes specified         &quot;
+        },
+        &quot;retrieve&quot;: {
+          &quot;queryTemplate&quot;: &quot;XQUERY \ndeclare namespace ns1\u003d\&quot;gme://caCORE.caCORE/4.4/edu.northwestern.radiology.AIM\&quot;; \ndeclare namespace iso\u003d\&quot;uri:iso.org:21090\&quot;;\n\nfor $y in db2-fn:xmlcolumn(\&quot;AIMEDS.%s.XMLCOLUMN\&quot;)/ns1:ImageAnnotationCollection \nwhere ( (exists($y/ns1:user/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$username$\u0027 ) or $y/ns1:user/ns1:name[starts-with(@value,\u0027$username$\u0027)]) \nand ( (exists($y//ns1:ImagingPhysicalEntity/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$anatomicalEntity$\u0027) or $y//ns1:ImagingPhysicalEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicalEntity$\u0027)])\nand ( (exists($y//ns1:ImagingPhysicalEntityCharacteristic/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$anatomicEntityCharacteristic$\u0027) or $y//ns1:ImagingPhysicalEntityCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$anatomicEntityCharacteristic$\u0027)])\nand ( (exists($y//ns1:ImagingObservationEntity/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$imagingObservationEntity$\u0027) or $y//ns1:ImagingObservationEntity/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntity$\u0027)])\nand ( (exists($y//ns1:ImagingObservationCharacteristic/ns1:typeCode/iso:displayName/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$imagingObservationEntityCharacteristic$\u0027 ) or $y//ns1:ImagingObservationCharacteristic/ns1:typeCode/iso:displayName[starts-with(@value,\u0027$imagingObservationEntityCharacteristic$\u0027)])\nand ( (exists($y//ns1:ImageAnnotation/ns1:imageReferenceEntityCollection/ns1:ImageReferenceEntity/ns1:imageStudy/ns1:instanceUid/@root) \u003d fn:false() and \u0027\u0027 \u003d \u0027$studyInstanceUID$\u0027 ) or $y//ns1:ImageAnnotation/ns1:imageReferenceEntityCollection/ns1:ImageReferenceEntity/ns1:imageStudy/ns1:instanceUid[starts-with(@root,\u0027$studyInstanceUID$\u0027)])\nand ( (exists($y/ns1:person/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$patientName$\u0027 ) or $y/ns1:person/ns1:name[starts-with(@value,\u0027$patientName$\u0027)])\nand ( (exists($y/ns1:person/ns1:id/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$patientID$\u0027 ) or $y/ns1:person/ns1:id[starts-with(@value,\u0027$patientID$\u0027)])\nand ( (exists($y//ns1:ImageAnnotation/ns1:name/@value) \u003d fn:false() and \u0027\u0027 \u003d \u0027$annotationName$\u0027 )  or $y//ns1:ImageAnnotation/ns1:name[starts-with(@value,\u0027$annotationName$\u0027)])\nand (boolean(($annotationContainerUID$)) \u003d fn:false() or $y/ns1:uniqueIdentifier/@root \u003d ($annotationContainerUID$) )\nreturn $y   &quot;,
+          &quot;metaData&quot;: {},
+          &quot;tags&quot;: [],
+          &quot;bindVariables&quot;: {
+            &quot;username&quot;: {
+              &quot;name&quot;: &quot;username&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;username&quot;
+            },
+            &quot;anatomicalEntity&quot;: {
+              &quot;name&quot;: &quot;anatomicalEntity&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;anatomicalEntity&quot;
+            },
+            &quot;anatomicEntityCharacteristic&quot;: {
+              &quot;name&quot;: &quot;anatomicEntityCharacteristic&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;anatomicEntityCharacteristic&quot;
+            },
+            &quot;imagingObservationEntity&quot;: {
+              &quot;name&quot;: &quot;imagingObservationEntity&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;imagingObservationEntity&quot;
+            },
+            &quot;imagingObservationEntityCharacteristic&quot;: {
+              &quot;name&quot;: &quot;imagingObservationEntityCharacteristic&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;imagingObservationEntityCharacteristic&quot;
+            },
+            &quot;studyInstanceUID&quot;: {
+              &quot;name&quot;: &quot;studyInstanceUID&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;studyInstanceUID&quot;
+            },
+            &quot;patientName&quot;: {
+              &quot;name&quot;: &quot;patientName&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;patientName&quot;
+            },
+            &quot;patientID&quot;: {
+              &quot;name&quot;: &quot;patientID&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;patientID&quot;
+            },
+            &quot;annotationName&quot;: {
+              &quot;name&quot;: &quot;annotationName&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;annotationName&quot;
+            },
+            &quot;annotationContainerUID&quot;: {
+              &quot;name&quot;: &quot;annotationContainerUID&quot;,
+              &quot;required&quot;: false,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;Comma-separated list of annotationContainerUID . MUST be enclosed within single-quotes as in : &quot;
+            }
+          },
+          &quot;stage&quot;: &quot;UNVERIFIED&quot;,
+          &quot;outputFormat&quot;: {
+            &quot;queryType&quot;: &quot;XQUERY&quot;,
+            &quot;outputFormat&quot;: &quot;XML&quot;,
+            &quot;csvHeader&quot;: [
+              &quot;[\&quot;[]\&quot;]&quot;
+            ]
+          },
+          &quot;name&quot;: &quot;retrieve&quot;,
+          &quot;timeCreated&quot;: &quot;Fri Sep 06 12:32:54 EDT 2013&quot;,
+          &quot;createdBy&quot;: &quot;admin&quot;,
+          &quot;description&quot;: &quot;Retrieve annotations matching attributes specified      &quot;
+        }
+      },
+      &quot;deleteEndpoints&quot;: {
+        &quot;byUID&quot;: {
+          &quot;queryTemplate&quot;: &quot;delete from AIMEDS.%s where UNIQUE_ID in ($annotationContainerUID$)&quot;,
+          &quot;tags&quot;: [],
+          &quot;bindVariables&quot;: {
+            &quot;annotationContainerUID&quot;: {
+              &quot;name&quot;: &quot;annotationContainerUID&quot;,
+              &quot;required&quot;: true,
+              &quot;defaultValue&quot;: &quot;&quot;,
+              &quot;description&quot;: &quot;Comma-separated list of annotationContainerUID to delete . MUST be enclosed within single-quotes as in : \u0027id1\u0027,\u0027id2\u0027 ....&quot;
+            }
+          },
+          &quot;stage&quot;: &quot;UNVERIFIED&quot;,
+          &quot;name&quot;: &quot;byUID&quot;,
+          &quot;timeCreated&quot;: &quot;Fri May 10 16:45:54 EDT 2013&quot;,
+          &quot;createdBy&quot;: &quot;admin&quot;,
+          &quot;description&quot;: &quot;Delete by annotationContainerUID&quot;
+        }
+      },
+      &quot;submitEndpoints&quot;: {
+        &quot;xml&quot;: {
+          &quot;type&quot;: &quot;FORM_DATA&quot;,
+          &quot;properties&quot;: {
+            &quot;tableName&quot;: &quot;%s&quot;,
+            &quot;inputType&quot;: &quot;XML&quot;
+          },
+          &quot;name&quot;: &quot;xml&quot;,
+          &quot;timeCreated&quot;: &quot;Fri May 10 16:45:54 EDT 2013&quot;,
+          &quot;createdBy&quot;: &quot;admin&quot;,
+          &quot;description&quot;: &quot;&quot;
+        }
+      },
+      &quot;providerId&quot;: &quot;edu.emory.cci.bindaas.datasource.provider.aime4.AIMEProvider&quot;,
+      &quot;providerVersion&quot;: 1,
+      &quot;name&quot;: &quot;AIME4&quot;,
+      &quot;timeCreated&quot;: &quot;Mon Oct 21 11:02:49 EDT 2013&quot;,
+      &quot;createdBy&quot;: &quot;admin&quot;,
+      &quot;description&quot;: &quot;AIME based on AIM 4.0 Data Model&quot;
+    }
+</value>
+</property>
+</bean>
+
+</beans>
+
+
+

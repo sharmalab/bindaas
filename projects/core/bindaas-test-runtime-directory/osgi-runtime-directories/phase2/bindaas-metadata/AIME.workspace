@@ -1,0 +1,42 @@
+{
+  "profiles": {
+    "GBM": {
+      "dataSource": {
+        "username": "db2inst1",
+        "password": "aim03@cci",
+        "url": "jdbc:db2://ivi02.cci.emory.edu:50000/XMLDB",
+        "tableName": "",
+        "autoInitialize": false
+      },
+      "queryEndpoints": {
+        "helloWorld": {
+          "queryTemplate": "select * from XMLDS.PRODXMLTABLE ",
+          "bindVariables": {},
+          "stage": "UNVERIFIED",
+          "outputFormat": {
+            "queryType": "SQL",
+            "outputFormat": "XML",
+            "csvHeader": [
+              "[]"
+            ]
+          },
+          "description": "my first query ",
+          "name": "helloWorld",
+          "timeCreated": "Thu Jan 10 13:26:24 EST 2013",
+          "createdBy": "admin"
+        }
+      },
+      "deleteEndpoints": {},
+      "submitEndpoints": {},
+      "providerId": "edu.emory.cci.bindaas.datasource.provider.aime.AIMEProvider",
+      "providerVersion": 1,
+      "name": "GBM",
+      "timeCreated": "Thu Jan 10 13:23:17 EST 2013",
+      "createdBy": "admin"
+    }
+  },
+  "params": {},
+  "name": "AIME",
+  "timeCreated": "Thu Jan 10 13:07:19 EST 2013",
+  "createdBy": "admin"
+}

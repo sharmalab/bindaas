@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd  http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+<!-- Management Task Bean -->
+
+<bean id="managementTask" class="edu.emory.cci.bindaas.core.impl.ManagementTasksImpl" init-method="init">
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="persistenceDriver" ref="fileSystemPersistenceDriver"></property>
+	<property name="validator" ref="validator"></property>
+</bean>
+
+<!-- Execution Task Bean -->
+
+<bean id="executionTask" class="edu.emory.cci.bindaas.core.impl.ExecutionTaskImpl">
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="validator" ref="validator"></property>
+	<property name="modifierRegistry" ref="modifierRegistry"></property>
+</bean>
+
+
+
+<!-- Provider Registry Bean -->
+<bean id="providerRegistry" class="edu.emory.cci.bindaas.core.impl.ProviderRegistryImpl" init-method="init" />
+	
+<!-- Validator Bean -->
+<bean id="validator" class="edu.emory.cci.bindaas.core.impl.ValidatorImpl" >
+	<property name="modifierRegistry" ref="modifierRegistry"></property>
+</bean>
+
+<!-- FileSystem Persistence Driver -->
+<bean id="fileSystemPersistenceDriver" class="edu.emory.cci.bindaas.core.impl.FileSystemPersistenceDriverImpl" init-method="init">
+	<property name="metadataStore" value="projects"></property>
+	<property name="fileExtension" value=".project"></property>
+</bean>
+
+<!-- Modifier Registry Bean -->
+<bean id="modifierRegistry" class="edu.emory.cci.bindaas.core.impl.ModifierRegistryImpl" init-method="init" />
+
+<!-- Service Beans -->
+
+<bean id="managementService" class="edu.emory.cci.bindaas.core.rest.service.impl.ManagementServiceImpl" init-method="init" >
+	<property name="managementTask" ref="managementTask"></property>
+	<property name="restUtils" ref="restUtils"></property>
+</bean>
+
+<bean id="executionService" class="edu.emory.cci.bindaas.core.rest.service.impl.ExecutionServiceImpl" init-method="init" >
+	<property name="managementTask" ref="managementTask"></property>
+	<property name="executionTask" ref="executionTask"></property>
+	<property name="restUtils" ref="restUtils"></property>
+</bean>
+
+<bean id="informationService" class="edu.emory.cci.bindaas.core.rest.service.impl.InformationServiceImpl"  >
+	<property name="modifierRegistry" ref="modifierRegistry"></property>
+	<property name="providerRegistry" ref="providerRegistry"></property>
+	<property name="restUtils" ref="restUtils"></property>
+</bean>
+
+
+<!-- Security Handlers -->
+
+<bean id="securityHandler" class="edu.emory.cci.bindaas.core.rest.security.SecurityHandler" init-method="init" >
+
+</bean>
+
+<bean id="auditLogger" class="edu.emory.cci.bindaas.core.rest.security.AuditInLogger" init-method="init" >
+</bean>
+
+<!-- Bindaas Initializer -->
+
+<bean id="defaultBindaasConfiguration" class="edu.emory.cci.bindaas.core.config.BindaasConfiguration">
+	<property name="host" value="localhost"></property>
+	<property name="port" value="9099"></property>
+	<property name="protocol" value="http"></property>
+	<property name="enableAuthentication" value="true"></property>
+	<property name="authenticationProviderClass" value="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"></property>
+	<property name="enableAuthorization" value="false"></property>
+	<property name="authorizationProviderClass" value="edu.emory.cci.bindaas.security_dashboard.service.AuthorizationProviderImpl"></property>
+	<property name="enableAudit" value="true"></property>
+	<property name="auditProviderClass" value="edu.emory.cci.bindaas.security.impl.DBAuditProvider"></property>
+	
+</bean>
+<bean id="bindaasInitializer" class="edu.emory.cci.bindaas.core.bundle.BindaasInitializer" init-method="init" >
+	<property name="auditModule" ref="auditLogger"></property>
+	
+	<property name="defaultBindaasConfiguration" ref="defaultBindaasConfiguration">
+		
+	</property>	
+	<property name="executionService" ref="executionService"></property>
+	<property name="managementService" ref="managementService"></property>
+	<property name="informationService" ref="informationService"></property>
+	
+	<property name="securityModule" ref="securityHandler"></property>
+	
+</bean>
+
+<bean id="apiKeyManager" class="edu.emory.cci.bindaas.core.apikey.impl.DefaultAPIKeyManager" init-method="init">
+	<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+
+<!-- System Package -->
+<util:map id="criticalServices" map-class="java.util.HashMap" key-type="java.lang.String" value-type="java.lang.String">
+	<entry key="OSGi Http Service" value="(objectclass=org.osgi.service.http.HttpService)"></entry>
+	<entry key="OSGi Event Admin Service" value="(objectclass=org.osgi.service.event.EventAdmin)"></entry>
+	<entry key="OSGi Configuration Admin Service" value="(objectclass=org.osgi.service.cm.ConfigurationAdmin)"></entry>
+	<entry key="Bindaas IExecutionTasks Service" value="(objectclass=edu.emory.cci.bindaas.core.api.IExecutionTasks)"></entry>
+	<entry key="Bindaas IManagementTasks Service" value="(objectclass=edu.emory.cci.bindaas.core.api.IManagementTasks)"></entry>
+	<entry key="Bindaas IExecutionService Service" value="(objectclass=edu.emory.cci.bindaas.core.rest.service.api.IExecutionService)"></entry>
+	<entry key="Bindaas IInformationService Service" value="(objectclass=edu.emory.cci.bindaas.core.rest.service.api.IInformationService)"></entry>
+	<entry key="Bindaas IManagementService Service" value="(objectclass=edu.emory.cci.bindaas.core.rest.service.api.IManagementService)"></entry>
+	<entry key="Bindaas IMailService Service" value="(objectclass=edu.emory.cci.bindaas.commons.mail.api.IMailService)"></entry>
+	<entry key="Bindaas Dynamic Configuration [mailService] Service" value="(&#x26;(name=mailService)(objectclass=edu.emory.cci.bindaas.core.util.DynamicProperties))"></entry>
+	<entry key="Bindaas Dynamic Configuration [bindaas] Service" value="(&#x26;(name=bindaas)(objectclass=edu.emory.cci.bindaas.core.util.DynamicObject))"></entry>
+	<entry key="Bindaas Dynamic Configuration [bindaas.adminconsole] Service" value="(&#x26;(name=bindaas.adminconsole)(objectclass=edu.emory.cci.bindaas.core.util.DynamicObject))"></entry>
+	<entry key="Hibernate SessionFactory Service" value="(objectclass=org.hibernate.SessionFactory)"></entry>
+	
+</util:map>
+
+<bean id="startupEventPublisher" class="edu.emory.cci.bindaas.core.system.StartupEventPublisher" init-method="init">
+	<property name="criticalServices" ref="criticalServices"></property>
+</bean>
+
+<bean id="statusCommand" class="edu.emory.cci.bindaas.core.system.command.StatusCommand" init-method="init">
+	<property name="criticalServices" ref="criticalServices"></property>
+</bean>
+
+
+<bean id="restUtils" class="edu.emory.cci.bindaas.core.util.RestUtils">
+	<property name="versionManager" ref="versionManager"></property>
+</bean>
+
+
+<bean id="systemHealthCheckService" class="edu.emory.cci.bindaas.core.system.SystemHealthCheckService" init-method="init">
+	<property name="pollInterval" value="3600000"></property> <!-- every hour -->
+	<property name="diskspaceThreshold" value="95"></property> <!-- 95% -->
+	<property name="memoryThreshold" value="95"></property> <!-- 95% -->
+</bean>
+
+<bean id="eventLoggerService" class="edu.emory.cci.bindaas.core.system.event.handler.EventLoggerService" init-method="init">
+	<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+
+<bean id="eventInfoCommand" class="edu.emory.cci.bindaas.core.system.command.EventInfoCommand" init-method="init">
+	<property name="eventLoggerService" ref="eventLoggerService"></property>
+</bean>
+<!-- Blueprint Exports -->
+	<osgi:service ref="executionTask" interface="edu.emory.cci.bindaas.core.api.IExecutionTasks"></osgi:service>
+	<osgi:service ref="managementTask" interface="edu.emory.cci.bindaas.core.api.IManagementTasks"></osgi:service>
+	<osgi:service ref="modifierRegistry" interface="edu.emory.cci.bindaas.core.api.IModifierRegistry"></osgi:service>
+	<osgi:service ref="providerRegistry" interface="edu.emory.cci.bindaas.core.api.IProviderRegistry"></osgi:service>
+	<osgi:service ref="securityHandler" interface="edu.emory.cci.bindaas.core.api.ISecurityHandler"></osgi:service>
+	<osgi:service ref="apiKeyManager" interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager"></osgi:service>
+	
+<!-- Blueprint References -->
+	<osgi:reference interface="org.hibernate.SessionFactory" id="sessionFactory"></osgi:reference>
+	<osgi:reference interface="edu.emory.cci.bindaas.version_manager.api.IVersionManager" id="versionManager"></osgi:reference>
+</beans>
+
+
+

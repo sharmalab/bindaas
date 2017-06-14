@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Create Submit API</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="/foundation/stylesheets/app.css">
+
+  <script src="/foundation/javascripts/modernizr.foundation.js"></script>
+  <script src="/foundation/javascripts/jquery.hook.js"></script>
+		<script>
+			$.hook("show hide");
+			
+		</script>
+		<script>
+			var ValidationObject = {};
+			ValidationObject.constraints = {};
+			ValidationObject.addConstraint = function(name, value, errorCallback) {
+				var obj = {};
+				obj.value = value;
+				obj.errorCallback = errorCallback;
+				ValidationObject.constraints[name] = obj;
+			};
+			ValidationObject.removeConstraint = function(name) {
+				
+				delete ValidationObject.constraints[name];
+			}; 
+			ValidationObject.validate = function() {
+				for (var key in ValidationObject.constraints) {
+					var obj = ValidationObject.constraints[key];
+					if (obj && obj.value) {
+						continue;
+					} else {
+						obj.errorCallback();
+						return false;
+					}
+				}
+				return true;
+			};
+
+		</script>
+	
+	
+  
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+ <!-- Page Layout HTML here -->
+
+  <!-- Latest version of jQuery -->
+  <script src="/foundation/javascripts/jquery.js"></script>
+
+  <!-- Included JS Files (Unminified) -->
+  <!-- [JS Files] -->
+  <!-- We include all the unminified JS as well. Uncomment to use them instead -->
+
+  <!-- Included JS Files (Minified) -->
+  <script src="/foundation/javascripts/foundation.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="/foundation/javascripts/app.js"></script>
+  
+  <div class="row">
+    <div class="six columns">
+      <h2>Bindaas</h2>
+      <p><strong>Be worry free!</strong></p>
+      <p>$versionHeader</p>
+      <hr />
+    </div>
+    <div class="six columns">
+    	<ul class="inline-list">
+    		<li><h6>Welcome $bindaasUser</h6></li>
+    		<li><h6><a href="/dashboard/logout">logout</a></h6></li>
+    	</ul>
+      
+    </div>
+    
+    
+  </div>
+
+  <div class="row">
+  	<div class="eight columns">
+    	
+    	<div class="row">
+    		<ul class="breadcrumbs">
+  				<li><a href="/dashboard/"><strong>Dashboard</strong></a></li>
+  				<li><a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a></li>
+  				<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
+  			</ul>
+    </div>
+    	<div class="row">
+    		<h3 class="subheader">/Project:<a href="/dashboard/workspace/$workspace" >$workspace</a>/Data Provider:<a href="/dashboard/$workspace/profile/$profile/">$profile</a></h3>
+    	</div>
+   	 	<div class="row">
+   	 		<fieldset>
+    			<legend><h3>Create Submit API</h3></legend>
+    				<form class="custom">
+    					<label>Submit API Name</label>
+    					<input type="text" placeholder="name" id="submitEndpointName"/>
+    					
+    					<label for="seProps">Endpoint Properties</label>
+    					<textarea id="seProps" placeholder="{}"></textarea>
+    					<br> </br>
+    					<div class="panel">
+    						#if ($documentation && $documentation.get('submitEndpointPropertiesView'))
+								$documentation.get('submitEndpointPropertiesView').getAsString()
+								<script>
+									$("#seProps,label[for='seProps']").hide();
+								</script>
+								#end
+    					</div>
+    					<div class="panel" id="submitPayloadModifierPanel">
+	    					<label for="submitPayloadModifier">Submit Payload Modifier</label>
+	    					<select  name="submitPayloadModifier" id="submitPayloadModifier">
+	  						  <option selected="true" value="null">--select--</option>
+						      #foreach ($spm in $submitPayloadModifiers)
+						      <option value="$spm.getClass().getName()">$spm.getClass().getName()</option>
+						      #end
+	  						</select>
+	  						<label for="submitPayloadModifierProperties">Submit Payload Modifier Properties</label>
+  							<textarea id="submitPayloadModifierProperties" placeholder="{}"></textarea>	
+    					</div>
+	    				<script>
+    								$("form").ajaxError(function(e, jqxhr, settings, exception){
+  												alert(exception);
+									});
+						
+						function performValidation() {
+							ValidationObject.addConstraint("Name", $("#submitEndpointName").attr("value") && $("#submitEndpointName").attr("value") != "", function() {
+								alert("Name field is empty");
+								$("#submitEndpointName"
+									).focus();
+									});
+
+									return ValidationObject.validate();
+
+									}
+									function submitForm() {
+										if (performValidation()) {
+											var jsonRequest = {};
+											try {
+												jsonRequest.properties = jQuery.parseJSON($("#seProps").attr("value"));
+												//
+												var spmId = $("#submitPayloadModifierPanel").find("select option:selected").attr("value");
+												if (spmId != "null") {
+													var submitPayloadModifierProp = jQuery.parseJSON($("#submitPayloadModifierProperties").attr("value"));
+													jsonRequest.submitPayloadModifiers = {};
+													jsonRequest.submitPayloadModifiers.name = spmId;
+													jsonRequest.submitPayloadModifiers.properties = submitPayloadModifierProp;
+
+												}
+
+												var req = {};
+												req.submitEndpointName = $("#submitEndpointName").attr("value");
+												req.jsonRequest = JSON.stringify(jsonRequest, null);
+												$.post("/dashboard/$workspace/$profile/createSubmitEndpoint.action", req, function(data) {
+
+													//alert("Server Returned :\n" + JSON.stringify(data));
+													window.location = "/dashboard/workspace/$workspace";
+
+												});
+											} catch(e) {
+												alert(e);
+											}
+
+										}
+
+									}
+
+    			</script>
+
+  						<input onclick="submitForm()" class="button" value="Save" />
+    				</form>		
+    			</fieldset>
+    			    	</div>
+   	 	<div class="row">
+   	 	</div>
+    </div>
+	<div class="four columns">
+		#if ($documentation.get("submitEndpointHelp"))
+			$documentation.get("submitEndpointHelp").getAsString()
+		#end
+	</div>
+  </div>
+
+  
+<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
+</html>

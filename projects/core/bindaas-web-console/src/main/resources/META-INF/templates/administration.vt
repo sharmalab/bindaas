@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+	<!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+
+		<!-- Set the viewport width to device width for mobile -->
+		<meta name="viewport" content="width=device-width" />
+
+		<title>Bindaas Administration</title>
+
+		<!-- Included CSS Files (Uncompressed) -->
+		<!--
+		<link rel="stylesheet" href="stylesheets/foundation.css">
+		-->
+
+		<!-- Included CSS Files (Compressed) -->
+		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
+		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
+		<link rel="stylesheet" href="/foundation/stylesheets/general_enclosed_foundicons.css">
+
+		<!-- Latest version of jQuery -->
+		<script src="/foundation/javascripts/jquery.js"></script>
+		
+
+		<script  src="/foundation/javascripts/jquery.foundation.accordion.js"></script>	
+		<script src="/foundation/javascripts/jquery.foundation.reveal.js"></script>
+		<script>
+			$(document).foundationAccordion();
+		</script>
+		
+		<script>
+			function makeServerRequest(request) {
+				console.log(JSON.stringify(request));
+				$.post("/dashboard/administration", request, function(data) {
+					window.location = "/dashboard/administration";
+				});
+			}
+
+			function setRadioButton(name, value) {
+				$("input[name='" + name + "']").each(function(index) {
+					if ($(this).attr('value') == value) {
+						$(this).attr('checked', 'checked');
+					} else {
+						$(this).removeAttr('checked');
+					}
+				});
+			}
+		</script>
+
+	</head>
+	<body>
+		
+
+		<div class="row">
+			<div class="six columns">
+				<h2>Bindaas</h2>
+				<p>
+					<strong>Be worry free!</strong>
+				</p>
+				<p>
+					$versionHeader
+				</p>
+				<hr />
+			</div>
+			<div class="six columns">
+				<ul class="inline-list">
+					<li>
+						<h6>Welcome $bindaasUser</h6>
+					</li>
+					<li>
+						<h6><a href="/dashboard/logout">logout</a></h6>
+					</li>
+				</ul>
+
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="tweleve columns">
+
+				<div class="row">
+					<ul class="breadcrumbs">
+						<li>
+							<a href="/dashboard/"><strong>Dashboard</strong></a>
+						</li>
+						<li>
+							<a href="/dashboard/queryBrowser"><strong>Query Browser</strong></a>
+						</li>
+						<li><a href="/dashboard/administration"><strong>Administration</strong></a></li>
+<li><a href="/dashboard/audit"><strong>Audit</strong></a></li>
+</ul>
+
+				</div>
+
+				<div class="row">
+					<fieldset>
+						<legend>
+							<h3>Administration</h3>
+						</legend>
+
+						<ul class="accordion" style="width:800px">
+
+							<li>
+								<div class="title">
+									<h5>User Account Management</h5>
+								</div>
+								<div class="content" style="width:800px">
+									<div class="row">
+										<script>
+											function setEntityValues(action, id) {
+												$("#entityId").attr("value", id);
+												$("#entityAction").attr("value", action);
+											}
+
+											function showGetExpirationDialog(action, id) {
+												setEntityValues(action, id);
+												$("#getExpirationDialog").reveal();
+											}
+
+											function showCommentsExpirationDialog(action, id) {
+												setEntityValues(action, id);
+												$("#getCommentsDialog").reveal();
+											}
+
+										</script>
+										<input type="hidden" id="entityId" />
+										<input type="hidden" id="entityAction" />
+										<input type="hidden" id="entityComments" />
+
+										<fieldset>
+											<legend>
+												<h5>Pending Requests</h5>
+											</legend>
+											<form>
+												<table>
+													<thead>
+														<th>Request Date</th><th>First Name</th><th>Last Name</th><th>Email Address</th><th>Reason</th><th>Actions</th>
+													</thead>
+													<tbody>
+														#foreach ($pendingRequest in $pendingRequests)
+														<tr>
+															<td>$pendingRequest.getRequestDate().toString()</td><td>$pendingRequest.getFirstName()</td><td>$pendingRequest.getLastName()</td><td>$pendingRequest.getEmailAddress()</td><td>$pendingRequest.getReason()</td><td>
+															<div>
+																<a href="#" onclick="showGetExpirationDialog('approve','$pendingRequest.getId()')" class="foundicon-checkmark"> Approve </a>
+															</div>
+															<div>
+																<a href="#" class="foundicon-remove" onclick="showCommentsExpirationDialog('deny' , '$pendingRequest.getId()')"> Deny </a>
+															</div></td>
+														</tr>
+														#end
+													</tbody>
+
+												</table>
+											</form>
+										</fieldset>
+										<fieldset>
+											<legend>
+												<h5>Approved Requests</h5>
+											</legend>
+											<form>
+												<table>
+													<thead>
+														<th>Request Date</th><th>Expires On</th><th>First Name</th><th>Last Name</th><th>Email Address</th><th>API Key</th><th>Actions</th>
+													</thead>
+													<tbody>
+														#foreach ($acceptedRequest in $acceptedRequests)
+														<tr>
+															<td>$acceptedRequest.getRequestDate().toString()</td><td>$acceptedRequest.getDateExpires()</td><td>$acceptedRequest.getFirstName()</td><td>$acceptedRequest.getLastName()</td><td>$acceptedRequest.getEmailAddress()</td><td>$acceptedRequest.getApiKey()</td><td>
+															<div>
+																<a href="#" class="foundicon-minus" onclick="showCommentsExpirationDialog('revoke' , '$acceptedRequest.getId()')"> Revoke Access </a>
+															</div>
+															<div>
+																<a href="#" class="foundicon-refresh" onclick="showGetExpirationDialog('refresh','$acceptedRequest.getId()')"> Refresh Key </a>
+															</div></td>
+														</tr>
+														#end
+													</tbody>
+												</table>
+											</form>
+										</fieldset>
+										<fieldset>
+											<legend>
+												<h5>History Log</h5>
+											</legend>
+											<form>
+												<table>
+													<thead>
+														<th>Activity Date</th><th>Activity Type</th><th>First Name</th><th>Last Name</th><th>Email Address</th><th>Comments</th><th>Initiated By</th>
+													</thead>
+													<tbody>
+														#foreach ($entry in $historyLog)
+														<tr>
+															<td>$entry.getActivityDate().toString()</td><td>$entry.getActivityType()</td><td>$entry.getUserRequest().getFirstName()</td><td>$entry.getUserRequest().getLastName()</td><td>$entry.getUserRequest().getEmailAddress()</td><td>$entry.getComments()</td><td>$entry.getInitiatedBy()</td>
+														</tr>
+														#end
+													</tbody>
+												</table>
+											</form>
+										</fieldset>
+										<fieldset>
+											<legend>
+												<h6>User Signup Notification</h6>
+											</legend>
+
+											<label for="middlewareNotificationEnable">
+												<input name="signupNotification" type="radio" id="security_webconsole_newuser_notification_enable"  value="true" >
+												Enable</label>
+											<label for="middlewareNotificationDisable">
+												<input name="signupNotification" type="radio" id="security_webconsole_newuser_notification_disable" value="false" >
+												Disable</label>
+											<label>Send Notification To</label>
+											<input type="text" placeholder="admin1@myorg.com,other@myorg.com" id="security_webconsole_newuser_notification_recepient" />
+											<i class="button" onclick="saveUserManagementNotification()">Save</i>
+										</fieldset>
+
+									</div>
+
+									<script>
+										$("form").ajaxError(function(e, jqxhr, settings, exception) {
+													alert(exception);
+													window.location.reload(true);
+										});
+
+										function initUserManagementNotificationPanelAction()
+										{
+										#if ($adminconsoleConfiguration.getUserAccountManagement().getEnableUserSignupNotification())
+										$("#security_webconsole_newuser_notification_enable").attr("checked" , true);
+										$("#security_webconsole_newuser_notification_disable").removeAttr("checked");
+										#else
+										$("#security_webconsole_newuser_notification_disable").attr("checked" , true);
+										$("#security_webconsole_newuser_notification_enable").removeAttr("checked" );
+										#end
+										var recepients = [];
+										#foreach ($recepient in $adminconsoleConfiguration.getUserAccountManagement().getNotificationRecepients())
+											recepients.push("$recepient");
+										#end
+										
+										$("#security_webconsole_newuser_notification_recepient").attr("value",recepients.join(","));
+										
+										}
+										initUserManagementNotificationPanelAction();
+										function saveUserManagementNotification()
+										{
+										var req = {};
+										req.enableNotification = $("input[name='signupNotification']:checked").attr('value');
+										req.notificationRecepients = $("#security_webconsole_newuser_notification_recepient").attr("value").split(",");
+
+										var wrapperRequest = {};
+										wrapperRequest.action = "UserManagementNotificationPanelAction";
+										wrapperRequest.request = req;
+
+										var serverRequest = {};
+										serverRequest.jsonRequest = JSON.stringify(wrapperRequest);
+
+										makeServerRequest(serverRequest);
+										}
+
+										function doAction() {
+										var postParam = {};
+										postParam.entityId = $("#entityId").attr("value");
+										postParam.entityAction = $("#entityAction").attr("value");
+										postParam.entityExpiration = $("#entityExpiration option:selected").attr("value");
+										postParam.entityComments = $("#entityComments").attr("value");
+										//alert(JSON.stringify(postParam));
+
+										var adminRequest = {};
+										adminRequest.action = "userManagement";
+										adminRequest.request = postParam;
+
+										var req = {};
+										req.jsonRequest = JSON.stringify(adminRequest);
+
+										makeServerRequest(req);
+										}
+
+									</script>
+
+								</div>
+							</li>
+							<li>
+								<div class="title">
+									<h5>Server Administration</h5>
+								</div>
+								<div class="content" style="width:800px">
+									<label>Host</label>
+									<input type="text" id="sa_middleware_host" disabled="true"/>
+									<label>Middleware Port</label>
+									<input type="text" id="sa_middleware_port" disabled="true"/>
+									<label>Admin Console Port</label>
+									<input type="text" id="sa_adminconsole_port" disabled="true"/>
+									<fieldset>
+										<legend>
+											<h5>Configure Proxy</h5>
+										</legend>
+										<div>
+											<label><input type="radio" name="enable_proxy" value="true" /> Enable</label>
+											<label><input type="radio" name="enable_proxy" value="false" /> Disable</label>
+										</div>
+										
+										<div id="proxyContainer">
+										<label>Proxy URL for Middleware</label>
+										<div class="row">
+											<div class="four columns ">
+												<input type="text" class="inline right" id="sa_middleware_proxy_url" />
+											</div>
+											<div class="three columns">
+												<i>maps to</i>
+											</div>
+
+											<div class="five columns">
+												<label id="mapsToMiddlewareURL"></label>
+											</div>
+
+										</div>
+										<label>Proxy URL for Admin Console</label>
+										<div class="row">
+											<div class="four columns">
+												<input type="text" class="inline right" id="sa_adminconsole_proxy_url" />
+											</div>
+											<div class="three columns">
+												<i>maps to</i>
+											</div>
+											<div class="five columns">
+												<label id="mapsToWebconsoleURL"></label>
+											</div>
+
+										</div>
+	
+										</div>
+										<script>
+											var enable = $adminconsoleConfiguration.getEnableProxy();
+											$("input[name='enable_proxy'][value='" + enable + "']").attr("checked","true");
+											
+											if(enable)
+											{
+												$("#proxyContainer").show();
+											}
+											else
+											{
+												$("#proxyContainer").hide();
+											}
+											$("input[name='enable_proxy']").click(
+												function (){
+													if($(this).attr("value") == "true")
+													{
+														$("#proxyContainer").show();
+													}
+													else
+													{
+														$("#proxyContainer").hide();
+													}		
+												}
+											);
+											
+										</script>
+									</fieldset>
+									<div><kbd>The host and port can be changed in the config.ini file.Refer documentation for more details</kbd></div>
+									
+									<i class="button" onclick="saveServerConfig()">Save</i>
+									
+									<script>
+										function saveServerConfig() {
+										var req = {};
+										req.host = $("#sa_middleware_host").attr("value");
+										req.middlewarePort = $("#sa_middleware_port").attr("value");
+										req.webconsolePort = $("#sa_adminconsole_port").attr("value");
+										req.enableProxy = $("input[name='enable_proxy']:checked").attr("value");
+										req.webconsoleProxy = $("#sa_adminconsole_proxy_url").attr("value");
+										req.middlewareProxy = $("#sa_middleware_proxy_url").attr("value");
+										
+										
+										var wrapperRequest = {};
+										wrapperRequest.action = "ServerAdministrationPanelAction";
+										wrapperRequest.request = req;
+
+										var serverRequest = {};
+										serverRequest.jsonRequest = JSON.stringify(wrapperRequest);
+
+										makeServerRequest(serverRequest);
+
+										}
+
+										function initServerConfig() {
+											$("#sa_adminconsole_proxy_url").attr('value', "$adminconsoleConfiguration.getProxyUrl()");
+											$("#sa_middleware_proxy_url").attr('value', "$middlewareConfiguration.getProxyUrl()");
+											$("#sa_middleware_host").attr('value', "$middlewareConfiguration.getHost()");
+											$("#sa_middleware_port").attr('value', "$middlewareConfiguration.getPort()");
+											$("#sa_adminconsole_port").attr('value', "$adminconsoleConfiguration.getPort()");
+											
+											$("#mapsToMiddlewareURL").text("http://" + $("#sa_middleware_host").attr('value') + ":" + $("#sa_middleware_port").attr("value"));
+											$("#mapsToWebconsoleURL").text("http://" + $("#sa_middleware_host").attr('value') + ":" + $("#sa_adminconsole_port").attr("value"));
+
+											$("#sa_middleware_host,#sa_middleware_port").keyup(function() {
+												$("#mapsToMiddlewareURL").text("http://" + $("#sa_middleware_host").attr('value') + ":" + $("#sa_middleware_port").attr("value"));
+												$("#sa_middleware_proxy_url").attr("value" , $("#mapsToMiddlewareURL").text());
+											});
+
+											$("#sa_middleware_host,#sa_adminconsole_port").keyup(function() {
+												$("#mapsToWebconsoleURL").text("http://" + $("#sa_middleware_host").attr('value') + ":" + $("#sa_adminconsole_port").attr("value"));
+												$("#sa_adminconsole_proxy_url").attr("value" , $("#mapsToWebconsoleURL").text());
+											});
+										}
+
+										initServerConfig();
+									</script>
+								</div>
+							</li>
+							<li>
+								<div class="title">
+									<h5>Email Configuration</h5>
+								</div>
+								<div class="content" style="width:800px">
+									<label>SMTP Server</label>
+									<input type="text" id="email_smptp_server" />
+									<label>SMTP Port</label>
+									<input type="text" id="email_smptp_port" />
+									<label>Username</label>
+									<input type="text" id="email_smptp_username" />
+									<label>Password</label>
+									<input type="password" id="email_smptp_password" />
+									<i class="button" onclick="saveEmailConfig()">Save</i>
+									
+									<script>
+										function saveEmailConfig() {
+											var req = {};
+											req.smtpServer = $("#email_smptp_server").attr('value');
+											req.smtpPort = $("#email_smptp_port").attr('value');
+											req.username = $("#email_smptp_username").attr('value');
+											req.password = $("#email_smptp_password").attr('value');
+
+											var httpRequest = {};
+											httpRequest.action = "emailConfig";
+											httpRequest.request = req;
+
+											var jsonReq = {};
+											jsonReq.jsonRequest = JSON.stringify(httpRequest);
+
+											makeServerRequest(jsonReq);
+
+										}
+
+										function initEmailConfig() {
+
+											$("#email_smptp_server").attr('value', "$mailServiceConfig.getSmtpServer()");
+											$("#email_smptp_port").attr('value', "$mailServiceConfig.getSmtpPort()");
+											$("#email_smptp_username").attr('value', "$mailServiceConfig.getUsername()");
+											$("#email_smptp_password").attr('value', "$mailServiceConfig.getPassword()");
+										}
+
+										initEmailConfig();
+									</script>
+								</div>
+							</li>
+
+							<li>
+								<div class="title">
+									<h5>Security Configuration</h5>
+								</div>
+								<div class="content" style="width:800px">
+									<fieldset>
+										<legend>
+											<h5>Authentication</h5>
+										</legend>
+										<fieldset>
+											<legend>
+												<h6>Users</h6>
+											</legend>
+
+											<div class='twelve columns'>
+												<div class='row'>
+													<label>
+														<input type="radio" name='sc_users_authentication_method' value="none"  />
+														Disable(Anonymous access)</label>
+												</div>
+												<div class="row">
+													<label>
+														<input type="radio" name='sc_users_authentication_method' value="ldap"  />
+														Enable via LDAP</label>
+												</div>
+												<div id="sc_users_authentication_ldapGroup" class="row">
+
+													<label>LDAP Server Url</label>
+													<input type="text" id="sc_users_authentication_ldapGroup_ldap_server"/>
+													<label>DN Pattern</label>
+													<input type="text" id="sc_users_authentication_ldapGroupldap_pattern"/>
+													<i class="small button radius" onclick="usersTestConnectionAction()">Test Connection</i>
+													<script>
+														function usersTestConnectionAction() {
+															$("#checkLDAPConnectionDialog_1").reveal();
+														}
+													</script>
+
+												</div>
+												<div class='row'>
+													<label>
+														<input type="radio" name='sc_users_authentication_method' value="openid"  />
+														Enable via OpenID</label>
+												</div>
+												<div class='row' id="sc_users_authentication_method_openid_group">
+
+													<label>
+														<input type="checkbox" name='sc_users_authentication_openid'  value="google"/>
+														Google</label>
+
+													<label>
+														<input type="checkbox" name='sc_users_authentication_openid'  value="yahoo"/>
+														Yahoo</label>
+
+												</div>
+
+											</div>
+
+										</fieldset>
+										<fieldset>
+											<legend>
+												<h6>Administrators</h6>
+											</legend>
+
+											<div class='twelve columns'>
+												<div class='row'>
+													<label>
+														<input type="radio" name='sc_admins_authentication_method' value="defaultMethod"  />
+														Default( use default username/password )</label>
+												</div>
+												<div class="row">
+													<label>
+														<input type="radio" name='sc_admins_authentication_method' value="ldap"  />
+														LDAP</label>
+												</div>
+												<div id="sc_admins_authentication_method_ldapGroup" class="row">
+
+													<label>LDAP Server Url</label>
+													<input type="text" id="sc_admins_authentication_method_ldapGroup_ldap_server"/>
+													<label>DN Pattern</label>
+													<input type="text" id="sc_admins_authentication_method_ldapGroup_ldap_pattern"/>
+													<i class="small button radius" onclick="adminsTestConnectionAction()">Test Connection</i>
+													<script>
+														function adminsTestConnectionAction() {
+															$("#checkLDAPConnectionDialog_2").reveal();
+														}
+													</script>
+
+												</div>
+												<div class='row'>
+													<label>
+														<input type="radio" name='sc_admins_authentication_method' value="openid"  />
+														OpenID</label>
+												</div>
+												<div class='row' id="sc_admins_authentication_method_openid_group">
+
+													<label>
+														<input type="checkbox" name='sc_admins_authentication_openid' value="google" />
+														Google</label>
+
+													<label>
+														<input type="checkbox" name='sc_admins_authentication_openid' value="yahoo" />
+														Yahoo</label>
+
+												</div>
+
+											</div>
+
+										</fieldset>
+
+									</fieldset>
+									<fieldset>
+										<legend>
+											<h5>Admin Accounts</h5>
+										</legend>
+										<label>These accounts can administer this instance</label>
+										<input type="text" id="sc_authorization_admin_accounts" />
+
+									</fieldset>
+
+									<fieldset>
+										<legend>
+											<h5>Audit</h5>
+										</legend>
+										<div class='row'>
+											<div class='six columns'>
+												<label>
+													<input type="radio" name='sc_audit' value="true" />
+													Enable</label>
+											</div>
+											<div class='six columns'>
+												<label>
+													<input type="radio" name='sc_audit' value="false" />
+													Disable</label>
+											</div>
+										</div>
+									</fieldset>
+									<fieldset>
+										<legend>
+											<h5>Authorization</h5>
+										</legend>
+										<div class='row'>
+											<i>This is a tech preview. Click <a href="#">here</a> for more details</i>
+										</div>
+										<div class='row'>
+											<div class='six columns'>
+												<label>
+													<input type="radio" name='sc_authorization' value="true" />
+													Enable</label>
+											</div>
+											<div class='six columns'>
+												<label>
+													<input type="radio" name='sc_authorization' value="false" />
+													Disable</label>
+											</div>
+										</div>
+										<div class='row' name="security-dashboard-view">
+											<a href="/dashboard/security/policy-admin/main">Launch Security Dashboard</a>
+										</div>
+									</fieldset>
+									<i class="button" onclick="saveSecurityConfigurationPanel()">Save</i>
+									<script>
+									
+										function initSecurityConfigurationPanelAction()
+										{
+											$("#sc_users_authentication_ldapGroup").hide();
+											$("#sc_users_authentication_method_openid_group").hide();
+											
+											$("#sc_admins_authentication_method_ldapGroup").hide();
+											$("#sc_admins_authentication_method_openid_group").hide();
+											
+											$("input[name='sc_admins_authentication_method']").click(
+												function (){
+														if($(this).attr('value') == "ldap")
+														{
+															$("#sc_admins_authentication_method_ldapGroup").show();
+															$("#sc_admins_authentication_method_openid_group").hide();
+														}
+														else if($(this).attr('value') == "openid")
+														{
+															$("#sc_admins_authentication_method_openid_group").show();
+															$("#sc_admins_authentication_method_ldapGroup").hide();
+														}
+														else
+														{
+															$("#sc_admins_authentication_method_openid_group").hide();
+															$("#sc_admins_authentication_method_ldapGroup").hide();
+														}
+												}
+											);
+											
+											$("input[name='sc_users_authentication_method']").click(
+												function (){
+														if($(this).attr('value') == "ldap")
+														{
+															$("#sc_users_authentication_ldapGroup").show();
+															$("#sc_users_authentication_method_openid_group").hide();
+														}
+														else if($(this).attr('value') == "openid")
+														{
+															$("#sc_users_authentication_ldapGroup").hide();
+															$("#sc_users_authentication_method_openid_group").show();
+														}
+														else{
+															$("#sc_users_authentication_method_openid_group").hide();
+															$("#sc_users_authentication_ldapGroup").hide();
+														}
+												}
+											);
+											
+											$("input[name='sc_admins_authentication_method']").each(
+												function(){
+													if($(this).attr('value') == "$adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString()")
+													{
+														$(this).attr("checked" , true);
+														
+														if($(this).attr('value') == "ldap")
+														{
+															$("#sc_admins_authentication_method_ldapGroup").show();
+														}
+														if($(this).attr('value') == "openid")
+														{
+															$("#sc_admins_authentication_method_openid_group").show();
+														}
+														
+													}
+													else
+													{
+														$(this).removeAttr("checked");
+														
+													}
+												}
+											);
+											
+											$("input[name='sc_users_authentication_method']").each(
+												function(){
+													if($(this).attr('value') == "$adminconsoleConfiguration.getUserConfiguration().getAuthenticationMethod().toString()")
+													{
+														$(this).attr("checked" , true);
+														
+														if($(this).attr('value') == "ldap")
+														{
+															$("#sc_users_authentication_ldapGroup").show();
+														}
+														if($(this).attr('value') == "openid")
+														{
+															$("#sc_users_authentication_method_openid_group").show();
+														}
+													}
+													else
+													{
+														$(this).removeAttr("checked");
+													}
+												}
+											);
+											
+											
+											$("#sc_users_authentication_ldapGroup_ldap_server").attr("value","$adminconsoleConfiguration.getUserConfiguration().getLdapUrl()");
+											$("#sc_users_authentication_ldapGroupldap_pattern").attr("value","$adminconsoleConfiguration.getUserConfiguration().getLdapDNPattern()");
+											$("input[name='sc_users_authentication_openid']").each(
+												function()
+												{
+													if($(this).attr("value") == "google")
+													{
+														if($adminconsoleConfiguration.getUserConfiguration().getOpenIdProviders().get("google") == true)
+														{
+															$(this).attr("checked" , true);
+														}
+														else
+														{
+															$(this).removeAttr("checked" );
+														}
+													}
+													else if($(this).attr("value") == "yahoo")
+													{
+														if($adminconsoleConfiguration.getUserConfiguration().getOpenIdProviders().get("yahoo") == true )
+														{
+															$(this).attr("checked" , true);
+														}
+														else
+														{
+															$(this).removeAttr("checked" );
+														}
+													}
+												}
+											);
+											
+											
+											$("#sc_admins_authentication_method_ldapGroup_ldap_server").attr("value","$adminconsoleConfiguration.getAdminConfiguration().getLdapUrl()");
+											$("#sc_admins_authentication_method_ldapGroup_ldap_pattern").attr("value","$adminconsoleConfiguration.getAdminConfiguration().getLdapDNPattern()");
+											$("input[name='sc_admins_authentication_openid']").each(
+												function()
+												{
+													if($(this).attr("value") == "google")
+													{
+														if($adminconsoleConfiguration.getAdminConfiguration().getOpenIdProviders().get("google") == true)
+														{
+															$(this).attr("checked" , true);
+														}
+														else
+														{
+															$(this).removeAttr("checked" );
+														}
+													}
+													else if($(this).attr("value") == "yahoo")
+													{
+														if($adminconsoleConfiguration.getAdminConfiguration().getOpenIdProviders().get("yahoo") == true )
+														{
+															$(this).attr("checked" , true);
+														}
+														else
+														{
+															$(this).removeAttr("checked" );
+														}
+													}
+												}
+											);
+											
+											// authorization
+											
+											var authorizedUsers = [];
+											#foreach ($authUser in $adminconsoleConfiguration.getAdminAccounts())
+												authorizedUsers.push("$authUser");
+											#end
+											
+											$("#sc_authorization_admin_accounts").attr("value",authorizedUsers.join(","));
+											
+											// audit
+											
+											#if($middlewareConfiguration.getEnableAudit())
+												$("input[name='sc_audit'][value='true']").attr("checked","true");
+											#else
+												$("input[name='sc_audit'][value='false']").attr("checked","true");
+											#end
+											
+											#if($middlewareConfiguration.getEnableAuthorization())
+												$("input[name='sc_authorization'][value='true']").attr("checked","true");
+												$("div[name='security-dashboard-view']").show();
+											#else
+												$("input[name='sc_authorization'][value='false']").attr("checked","true");
+												$("div[name='security-dashboard-view']").hide();
+											#end
+											
+											$("input[name='sc_authorization']").click(
+													function(){
+															
+															if( $(this).attr('value') == 'true' )
+															{
+																$("div[name='security-dashboard-view']").show();
+															}
+															else
+															{
+																$("div[name='security-dashboard-view']").hide();
+															}
+													}
+											);
+											
+										}
+										
+										initSecurityConfigurationPanelAction();
+										
+										
+																				
+									</script>
+									
+									<script>
+										function saveSecurityConfigurationPanel()
+										{
+										
+										var req = {};
+										req.authentication = {};
+										req.authorization = {};
+										req.audit = {};
+										
+										req.authentication.admin = {};
+										req.authentication.user = {};
+										
+										req.authentication.admin.method = $("input[name='sc_admins_authentication_method']:checked").attr("value");
+										req.authentication.admin.ldapUrl = $("#sc_admins_authentication_method_ldapGroup_ldap_server").attr("value");
+										req.authentication.admin.ldapDNPattern = $("#sc_admins_authentication_method_ldapGroup_ldap_pattern").attr("value");
+										req.authentication.admin.openIdProviders = {};
+										$("input[name='sc_admins_authentication_openid']").each(
+											function(){
+												if($(this).attr("checked"))
+													req.authentication.admin.openIdProviders[$(this).attr("value")] = true;
+												else
+													req.authentication.admin.openIdProviders[$(this).attr("value")] = false;
+
+											
+											}
+										);
+										
+										req.authentication.user.method = $("input[name='sc_users_authentication_method']:checked").attr("value");
+										req.authentication.user.ldapUrl = $("#sc_users_authentication_ldapGroup_ldap_server").attr("value");
+										req.authentication.user.ldapDNPattern = $("#sc_users_authentication_ldapGroupldap_pattern").attr("value");
+										req.authentication.user.openIdProviders = {};
+										$("input[name='sc_users_authentication_openid']").each(
+											function(){
+												
+												if($(this).attr("checked"))
+													req.authentication.user.openIdProviders[$(this).attr("value")] = true;
+												else
+													req.authentication.user.openIdProviders[$(this).attr("value")] = false;
+												
+											}
+										);
+										
+
+										req.authorization.adminAccounts = $("#sc_authorization_admin_accounts").attr("value").split(",");
+										req.authorization.enableMethodAuthorization = $("input[name='sc_authorization']:checked").attr("value");
+										
+										req.audit.enable = $("input[name='sc_audit']:checked").attr("value");
+										
+										
+										var wrapperRequest = {};
+										wrapperRequest.action = "SecurityConfigurationPanelAction";
+										wrapperRequest.request = req;
+
+										var serverRequest = {};
+										serverRequest.jsonRequest = JSON.stringify(wrapperRequest);
+
+										makeServerRequest(serverRequest);
+
+										}
+
+									</script>
+								</div>
+							</li>
+
+						</ul>
+					</fieldset>
+				</div>
+
+			</div>
+
+		</div>
+		<div id="checkLDAPConnectionDialog_1" class="reveal-modal xlarge">
+			<h6>Please enter a valid username/password to check LDAP connection settings</h6>
+			<label>Username</label>
+			<input type="text" name='username'/>
+			<label>Password</label>
+			<input type="password" name='password'/>
+			<a class="button" onclick="testLDAPConnection1()" >Submit</a>
+			<div id="checkLDAPResultContainer1"></div>
+			<a class="close-reveal-modal" onclick="resetCheckLDAPConnectionDialog1()">&#215;</a>
+			<script>
+				function testLDAPConnection1() {
+					var req = {};
+
+					req.webConsoleLDAPServer = $("#sc_users_authentication_ldapGroup_ldap_server").attr('value');
+					req.webConsoleDNPattern = $("#sc_users_authentication_ldapGroupldap_pattern").attr('value');
+					req.username = $("#checkLDAPConnectionDialog_1 input[name='username']").attr('value');
+					req.password = $("#checkLDAPConnectionDialog_1 input[name='password']").attr('value');
+
+					var httpRequest = {};
+					httpRequest.action = "checkLDAPConnection";
+					httpRequest.request = req;
+
+					var jsonReq = {};
+					jsonReq.jsonRequest = JSON.stringify(httpRequest);
+
+					$("#checkLDAPConnectionDialog_1 input").each(function() {
+						$(this).attr('value', '');
+					});
+
+					$.post("/dashboard/administration", jsonReq, function(data, status, response) {
+
+						$("#checkLDAPResultContainer1").html(response.responseText);
+
+					});
+
+				}
+
+				function resetCheckLDAPConnectionDialog1() {
+					$("#checkLDAPResultContainer1").html('');
+					$("#checkLDAPConnectionDialog_1 input").each(function() {
+						$(this).attr('value', '');
+					});
+				}
+			</script>
+		</div>
+		<div id="checkLDAPConnectionDialog_2" class="reveal-modal xlarge">
+			<h6>Please enter a valid username/password to check LDAP connection settings</h6>
+			<label>Username</label>
+			<input type="text" name='username'/>
+			<label>Password</label>
+			<input type="password" name='password'/>
+			<a class="button" onclick="testLDAPConnection_2()" >Submit</a>
+			<div id="checkLDAPResultContainer2"></div>
+			<a class="close-reveal-modal" onclick="resetCheckLDAPConnectionDialog2()">&#215;</a>
+			<script>
+				function testLDAPConnection_2() {
+					var req = {};
+
+					req.webConsoleLDAPServer = $("#sc_admins_authentication_method_ldapGroup_ldap_server").attr('value');
+					req.webConsoleDNPattern = $("#sc_admins_authentication_method_ldapGroup_ldap_pattern").attr('value');
+					req.username = $("#checkLDAPConnectionDialog_2 input[name='username']").attr('value');
+					req.password = $("#checkLDAPConnectionDialog_2 input[name='password']").attr('value');
+
+					var httpRequest = {};
+					httpRequest.action = "checkLDAPConnection";
+					httpRequest.request = req;
+
+					var jsonReq = {};
+					jsonReq.jsonRequest = JSON.stringify(httpRequest);
+
+					$("#checkLDAPConnectionDialog_2 input").each(function() {
+						$(this).attr('value', '');
+					});
+
+					$.post("/dashboard/administration", jsonReq, function(data, status, response) {
+
+						$("#checkLDAPResultContainer2").html(response.responseText);
+
+					});
+
+				}
+
+				function resetCheckLDAPConnectionDialog2() {
+					$("#checkLDAPResultContainer2").html('');
+					$("#checkLDAPConnectionDialog_2 input").each(function() {
+						$(this).attr('value', '');
+					});
+				}
+			</script>
+		</div>
+
+		<div id="getCommentsDialog" class="reveal-modal large">
+			<label>Comments</label>
+			<div>
+				<textarea id="comments2"></textarea>
+			</div>
+			<p>
+				<a id="bcomments2" class="small round button" >Submit</a>
+			</p>
+			<script>
+				$("#bcomments2").click(function() {
+					$("#entityComments").attr("value", $("#comments2").attr("value"));
+					$("#bcomments2").attr("disabled", "true");
+					$("#bcomments2").html("please wait ...");
+
+					doAction();
+				});
+			</script>
+			<a class="close-reveal-modal">&#215;</a>
+		</div>
+		<div id="getExpirationDialog" class="reveal-modal large">
+			<label>Key Expires :</label>
+			<select id="entityExpiration">
+				<option selected="true" value="-1">Never</option>
+				<option value="1d">1 Day</option>
+				<option value="30d">30 Day</option>
+				<option value="1y">1 Year</option>
+			</select>
+			<label>Comments</label>
+			<div>
+				<textarea id="comments1"></textarea>
+			</div>
+			<p>
+				<a id="bcomments1" class="small round button" >Submit</a>
+			</p>
+			<script>
+				$("#bcomments1").click(function() {
+					$("#entityComments").attr("value", $("#comments1").attr("value"));
+					$("#bcomments1").attr("disabled", "true");
+					$("#bcomments1").html("please wait ...");
+					doAction();
+				});
+			</script>
+			<a class="close-reveal-modal">&#215;</a>
+		</div>
+
+	<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
+</html>

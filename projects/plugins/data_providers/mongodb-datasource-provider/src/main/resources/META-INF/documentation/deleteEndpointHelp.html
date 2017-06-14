@@ -1,0 +1,46 @@
+<p> 
+All queries must follow following syntax
+<textarea disabled="disabled" >
+{
+	"_operation" : operation,
+	"_operation_args" : operation_args
+}
+</textarea>
+<br>
+<div>
+<h5> Following Operations are supported : </h5>
+<ul class="disc">
+  <li><a href="http://docs.mongodb.org/manual/core/delete/">delete</a></li>
+  <li><a href="http://docs.mongodb.org/manual/core/update/">update</a></li>
+</ul>
+</div>
+
+<div>
+	<h5>delete</h5>
+	<textarea readonly="readonly" >
+{
+	"_operation" : "delete" ,
+	"_operation_args" : {
+							"query" : { 'patientId' : 'x' }
+						}
+}
+</textarea>
+</div>
+
+<div>
+	<h5>update</h5>
+	<textarea readonly="readonly">
+{
+	"_operation" : "update" ,
+	"_operation_args" : {
+							"query" : { 'patientId' : 'x' } ,
+							"update": { 'age' : 'newage' },
+							"upsert": 'true',
+							"multi" : 'false'
+						}
+}
+</textarea>
+</div>
+
+</p>
+

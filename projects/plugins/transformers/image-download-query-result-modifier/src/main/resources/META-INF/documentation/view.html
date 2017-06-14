@@ -1,0 +1,34 @@
+<label>Name of the attribute that links to the Image file</label>
+<input type="text" id="imageLinkAttribute" >
+
+<script>
+	function initView()
+	{
+		$("#queryResultModifierProperties,label[for='queryResultModifierProperties']").hide();
+		$("#imageLinkAttribute").keyup(function() {
+			updateModel();
+		});
+		updateView();
+		
+	}
+	
+	// update the model i.e modifier props
+	function updateModel()
+	{
+		var parent = {};
+		parent.imageLinkAttribute = $("#imageLinkAttribute").attr("value");
+		$("#queryResultModifierProperties").attr("value", JSON.stringify(parent));
+		
+		
+	}
+	// update the view i.e textbox
+	function updateView()
+	{
+		var props = $("#queryResultModifierProperties").attr("value");
+		var propsJson = $.parseJSON(props);
+		$("#imageLinkAttribute").attr("value" , propsJson.imageLinkAttribute);
+		
+	}
+	initView();
+	
+</script>

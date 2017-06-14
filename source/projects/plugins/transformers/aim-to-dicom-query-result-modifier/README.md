@@ -1,2 +1,0 @@
-# AIM TO DICOM Query Result Modifier
-A specialized QRM that federates AIM and Imaging data-sets. It works on an AIM query, performs a lookup based on sopInstanceUID present in the AIM object and retrieves associated image from the imaging database

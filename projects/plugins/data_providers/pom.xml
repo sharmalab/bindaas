@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>bindaas</groupId>
+        <artifactId>plugins</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>data-providers</artifactId>
+    <packaging>pom</packaging>
+    <name>data-providers</name>
+
+    <modules>
+        <module>mongodb-datasource-provider</module>
+        <module>mysql-datasource-provider</module>
+        <module>drill-datasource-provider</module>
+        <module>aime/aime-bindaas-datasource-provider-1</module>
+        <module>aime/aime4-bindaas-datasource-provider</module>
+        <module>postgres-datasource-provider</module>
+        <module>db2-datasource-provider</module>
+        <module>generic-sql-datasource-provider</module>
+        <module>http-datasource-provider</module>
+        <module>aime/aime-bindaas-datasource-provider-2</module>
+    </modules>
+</project>

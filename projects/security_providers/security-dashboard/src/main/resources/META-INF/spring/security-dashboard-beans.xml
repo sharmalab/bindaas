@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"                               
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:osgi="http://www.springframework.org/schema/osgi"                               
+   xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd                      
+       http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+
+<!-- Velocity Wrapper -->
+<bean id="velocityWrapper" class="edu.emory.cci.bindaas.security_dashboard.util.VelocityEngineWrapper" init-method="init">
+	<property name="props">
+		<props>
+			<prop key="resource.loader">class</prop>
+			<prop key="class.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</prop>
+		</props>
+	</property>
+
+</bean>
+
+
+<!-- Application Starter Bean -->
+<bean id="applicationStarter" class="edu.emory.cci.bindaas.security_dashboard.ApplicationStarter" init-method="init">
+	
+	<property name="registrableServlets">
+		<list>
+			<ref bean="apiKeyAdminMainServlet"/>
+			<ref bean="groupAdminCreateGroupServlet"/>
+			<ref bean="groupAdminMainServlet"/>
+			<ref bean="groupAdminViewEditServlet"/>
+			<ref bean="policyAdminAddGroupServlet"/>
+			<ref bean="policyAdminMainServlet"/>
+			<ref bean="policyAdminRemoveGroupServlet"/>
+		</list>
+	</property>
+	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
+	<property name="defaultSecurityDashboardConfiguration" ref="defaultSecurityDashboardConfiguration"></property>
+	<property name="securityDashboardConfigFileName" value="security-dashboard"></property>
+</bean>
+
+<!-- Policy Manager -->
+
+<bean id="policyManager" class="edu.emory.cci.bindaas.security_dashboard.core.DefaultPolicyManagerImpl" init-method="init">
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+	<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+
+<!-- Registerable Servlets -->
+
+<bean id="policyAdminRemoveGroupServlet" class="edu.emory.cci.bindaas.security_dashboard.servlets.PolicyAdminRemoveGroupServlet" >
+	<property name="servletPath" value="/dashboard/security/policy-admin/remove-group"></property>
+	<property name="policyManager" ref="policyManager"></property>
+	<property name="templateName" value="policy-admin-remove-group.html"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+</bean>
+
+<bean id="policyAdminMainServlet" class="edu.emory.cci.bindaas.security_dashboard.servlets.PolicyAdminMainServlet" >
+	<property name="servletPath" value="/dashboard/security/policy-admin/main"></property>
+	<property name="policyManager" ref="policyManager"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="templateName" value="policy-admin-main.html"></property>
+	
+	
+</bean>
+
+<bean id="policyAdminAddGroupServlet" class="edu.emory.cci.bindaas.security_dashboard.servlets.PolicyAdminAddGroupServlet" >
+	<property name="servletPath" value="/dashboard/security/policy-admin/add-group"></property>
+	<property name="policyManager" ref="policyManager"></property>
+	<property name="templateName" value="policy-admin-add-group.html"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+</bean>
+
+<bean id="groupAdminViewEditServlet" class="edu.emory.cci.bindaas.security_dashboard.servlets.GroupAdminViewEditGroupServlet" >
+	<property name="servletPath" value="/dashboard/security/group-admin/view-edit-group"></property>
+	<property name="policyManager" ref="policyManager"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+	<property name="templateName" value="group-admin-view-edit-group.html"></property>
+</bean>
+
+<bean id="groupAdminMainServlet" class="edu.emory.cci.bindaas.security_dashboard.servlets.GroupAdminMainServlet" >
+	<property name="servletPath" value="/dashboard/security/group-admin/main"></property>
+	<property name="policyManager" ref="policyManager"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="templateName" value="group-admin-main.html"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+</bean>
+
+
+<bean id="groupAdminCreateGroupServlet" class="edu.emory.cci.bindaas.security_dashboard.servlets.GroupAdminCreateGroupServlet" >
+	<property name="servletPath" value="/dashboard/security/group-admin/create-group"></property>
+	<property name="policyManager" ref="policyManager"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="templateName" value="group-admin-create-group.html"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+</bean>
+
+<bean id="apiKeyAdminMainServlet" class="edu.emory.cci.bindaas.security_dashboard.servlets.APIKeyAdminMainServlet" >
+	<property name="servletPath" value="/dashboard/security/apikey-admin/main"></property>
+	<property name="policyManager" ref="policyManager"></property>
+	<property name="managementTask" ref="managementTasks"></property>
+	<property name="templateName" value="apikey-admin-main.html"></property>
+	<property name="apiKeyManager" ref="apiKeyManager"></property>
+</bean>
+
+
+<!-- Security Dashboard Configuration -->
+
+<bean id="defaultSecurityDashboardConfiguration" class="edu.emory.cci.bindaas.security_dashboard.config.SecurityDashboardConfiguration">
+	
+	<property name="rakshakBaseUrl" value="http://0.0.0.0:1111/securityTokenService/pure-ldap-service" ></property>
+	
+</bean>
+
+<!-- AuthorizationProviderImpl -->
+
+<bean id="authorizationProvider" class="edu.emory.cci.bindaas.security_dashboard.service.AuthorizationProviderImpl" init-method="init">
+	
+	<property name="policyManager" ref="policyManager" ></property>
+	
+</bean>
+
+<!-- OSGi Refereces -->
+
+<osgi:reference interface="org.hibernate.SessionFactory" id="sessionFactory"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.core.api.IManagementTasks" id="managementTasks"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager" id="apiKeyManager"></osgi:reference>
+
+
+<!-- OSGi Exports -->
+
+<osgi:service interface="edu.emory.cci.bindaas.security.api.IAuthorizationProvider" ref="authorizationProvider">
+	<osgi:service-properties>
+		<entry key="class" value="edu.emory.cci.bindaas.security_dashboard.service.AuthorizationProviderImpl" />
+	</osgi:service-properties>
+</osgi:service>
+
+</beans>
+
+

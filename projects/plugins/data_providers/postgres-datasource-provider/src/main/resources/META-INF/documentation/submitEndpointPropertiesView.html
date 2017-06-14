@@ -1,0 +1,68 @@
+<label>Input Type</label>
+
+<select id="inputType">
+	<option selected value="">---Select---</option>
+	<option value="JSON">JSON</option>
+	<option value="CSV">CSV</option>
+</select>
+
+<label>Table Name </label>
+<input type="text" id="tableName" >
+
+<script>
+	function setInitialView()
+	{
+		 var sePropsJson = $("#seProps").attr("value") ;
+		  
+		 sePropsJson = jQuery.parseJSON( sePropsJson ) ;
+		   
+		   $("#inputType option").
+		   filter( function () { return $(this).attr('value') == sePropsJson.inputType; })
+		   .attr("selected" , "true");
+		   $("#tableName").attr("value", sePropsJson.tableName);
+	}
+	
+	function updateModel()
+	{
+		var sePropsJson = {};
+		sePropsJson.inputType = $("#inputType option:selected").attr('value');
+		sePropsJson.tableName = $("#tableName").attr("value");
+		$("#seProps").attr("value" , JSON.stringify(sePropsJson));
+	
+	ValidationObject.addConstraint("tableName", $("#tableName").attr("value") && $("#tableName").attr("value") != "" , function(){
+			alert("Table Name not specified");
+			$("#tableName").focus();
+			});
+	 ValidationObject.addConstraint("inputType", $("#inputType option:selected").attr("value") && $("#inputType option:selected").attr("value") != "" , function(){
+			alert("Input Type not selected");
+			$("#inputType").focus();
+			});
+	}
+	
+	$("#tableName").keyup(
+			
+		function()
+		{
+			updateModel();
+		}
+	);
+	
+	$("#inputType").change(
+			
+			function()
+			{
+				updateModel();
+			}
+		);
+	
+	
+	ValidationObject.addConstraint("tableName", $("#tableName").attr("value") && $("#tableName").attr("value") != "" , function(){
+			alert("Table Name not specified");
+			$("#tableName").focus();
+			});
+	 ValidationObject.addConstraint("inputType", $("#inputType option:selected").attr("value") && $("#inputType option:selected").attr("value") != "" , function(){
+			alert("Input Type not selected");
+			$("#inputType").focus();
+			});
+	 setInitialView();
+</script>

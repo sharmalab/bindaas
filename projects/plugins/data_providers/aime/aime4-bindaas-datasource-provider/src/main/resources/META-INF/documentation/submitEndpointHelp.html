@@ -1,0 +1,23 @@
+Schema for Table storing AIM objects is as follows :
+<p>
+<table>
+	<thead>
+		<th>Column Name</th><th>Description</th><th>Data Type</th>
+	</thead>
+	<tbody>
+		<tr><td>UNIQUE_ID</td><td>UniqueIdentifier for AnnotationCollection </td><td>varchar(64)</td></tr>
+		<tr><td>REVIEWER</td><td> Reviewer</td><td>varchar(64)</td></tr>
+		<tr><td>DATE_CREATED</td><td> Date Created </td><td>timestamp</td></tr>
+		<tr><td>PATIENT_ID</td><td> PatientID or Subject </td><td>varchar(64)</td></tr>
+		<tr><td>XMLCOLUMN</td><td>Entire AIM object in XML format </td><td>xml</td></tr>
+		<tr><td>DATA_SOURCE</td><td> Contains source of AIM object. For example : bindaas, etc. </td><td>varchar(120)</td></tr>
+	</tbody>
+</table>
+<p>
+Data submissions are accepted in following two formats :
+<ul>
+	<li>XML</li>
+	<li>ZIP - Containing one or more AIM objects in XML format</li>
+</ul>
+
+
