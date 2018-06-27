@@ -2,7 +2,7 @@
 
 ## Building Bindaas
 
-Data Cafe can be built using Apache Maven 3.x and Java 1.7.x or higher.
+Bindaas can be built using Apache Maven 3.x and Java 1.7.x or higher.
 
  $ mvn clean install
 
