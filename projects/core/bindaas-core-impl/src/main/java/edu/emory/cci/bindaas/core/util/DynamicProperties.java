@@ -54,10 +54,11 @@ public class DynamicProperties {
 		properties = new Properties();
 		try {
 			properties.load(new FileInputStream(filename));
+			log.debug("Successfully loaded the properties: " + filename);
 		} catch (Exception e) {
 			loadedFromDefault = true;
 			properties = (Properties) defaultProperties.clone();
-			log.debug("Loaded default properties");
+			log.debug("Loaded default properties. " + e.getMessage());
 			save();
 		}
 	}

@@ -20,11 +20,11 @@
 			<artifactId>generic-sql-datasource-provider</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>db2</groupId>
-			<artifactId>db2jcc4</artifactId>
-			<version>9.7</version>
-		</dependency>
+        <dependency>
+            <groupId>db2</groupId>
+            <artifactId>db2jcc4</artifactId>
+            <version>9.7</version>
+        </dependency>
 
 	</dependencies>
 </project>

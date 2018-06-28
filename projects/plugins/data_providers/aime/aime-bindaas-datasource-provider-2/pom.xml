@@ -10,11 +10,11 @@
 	<artifactId>aime-bindaas-datasource-provider-2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
-		<dependency>
-			<groupId>db2</groupId>
-			<artifactId>db2jcc4</artifactId>
-			<version>9.7</version>
-		</dependency>
+        <dependency>
+            <groupId>db2</groupId>
+            <artifactId>db2jcc4</artifactId>
+            <version>9.7</version>
+        </dependency>
 
 		<dependency>
 			<groupId>bindaas</groupId>

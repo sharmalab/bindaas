@@ -21,10 +21,10 @@
 			<artifactId>generic-sql-datasource-provider</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>bindaas</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.2-1002.jdbc3</version>
-		</dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.4.1211</version>
+        </dependency>
 	</dependencies>
 </project>

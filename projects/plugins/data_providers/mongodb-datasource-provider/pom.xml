@@ -22,10 +22,10 @@
 			<version>0.0.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>bindaas-osgi</groupId>
-			<artifactId>org.eclipse.orbit.mongodb</artifactId>
-			<version>2.7.3.v20120213</version>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.birt.runtime</groupId>
+            <artifactId>org.eclipse.orbit.mongodb</artifactId>
+            <version>2.10.1.v20130422-1135</version>
+        </dependency>
 	</dependencies>
 </project>
