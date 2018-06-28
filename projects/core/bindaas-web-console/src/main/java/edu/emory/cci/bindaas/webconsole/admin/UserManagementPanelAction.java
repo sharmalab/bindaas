@@ -91,7 +91,7 @@ public class UserManagementPanelAction implements IAdminAction {
 				mailService.sendMail(emailAddress , "Your Bindaas API Key status" , emailMessage);
 			}catch(Exception e)
 			{
-				log.error(String.format("Unable send mail notification. Message [%s] not sent to [%s]" , emailMessage , emailAddress ));
+				log.error(String.format("Unable to send mail notification. Message [%s] not sent to [%s]" , emailMessage , emailAddress ));
 			}
 		}
 		else
