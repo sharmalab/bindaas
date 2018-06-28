@@ -34,6 +34,12 @@ If you would like to have an interactive OSGi console with logs displayed inline
 $ java -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.8.2.v20130124-134944.jar -console
 
 
+You may encounter the error "java.net.SocketException: Can't assign requested address" followed by a few
+CXF errors when you are on a Mac with a wireless connection. Use the flag "-Djava.net.preferIPv4Stack=true" to fix this,
+as shown below:
+
+$ java -Djava.net.preferIPv4Stack=true -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.8.2.v20130124-134944.jar -console
+
 ## Verify Setup
 
 To verify everything is setup correctly visit the following url in your web-browser :
