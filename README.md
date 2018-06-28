@@ -29,6 +29,10 @@ Similarly, you may shut down Bindaas by executing the shutdown script:
 
 $ sh shutdown.sh
 
+If you would like to have an interactive OSGi console with logs displayed inline:
+
+$ java -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.8.2.v20130124-134944.jar -console
+
 
 ## Verify Setup
 
