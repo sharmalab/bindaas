@@ -40,6 +40,7 @@ as shown below:
 
 $ java -Djava.net.preferIPv4Stack=true -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.8.2.v20130124-134944.jar -console
 
+
 ## Verify Setup
 
 To verify everything is setup correctly visit the following url in your web-browser :

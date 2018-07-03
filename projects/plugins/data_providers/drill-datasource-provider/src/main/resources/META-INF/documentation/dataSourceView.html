@@ -1,90 +1,70 @@
 <label>Username (Optional)</label>
-		<span class="has-tip tip-left" data-width="210" title="username for connecting to Apache Drill"> <input type="text" id="mysql_username" /></span>
+		<span class="has-tip tip-left" data-width="210" title="username for connecting to Apache Drill"> <input type="text" id="drill_username" /></span>
 		<label>Password (Optional)</label>
-		<span class="has-tip tip-left" data-width="210" title="password for connecting to Apache Drill"><input type="password" id="mysql_password" /></span>
+		<span class="has-tip tip-left" data-width="210" title="password for connecting to Apache Drill"><input type="password" id="drill_password" /></span>
 		<label>Drill JDBC Url</label>
-		<span class="has-tip tip-left" data-width="210" title="Apache Drill JDBC URL example: jdbc:drill:drillbit=localhost:31010"><input type="text" id="mysql_url" /></span>
+		<span class="has-tip tip-left" data-width="210" title="Apache Drill JDBC URL example: jdbc:drill:drillbit=localhost:31010"><input type="text" id="drill_url" /></span>
 
 		<script>
 			
-			$("#mysql_username").keyup(function ()
+			$("#drill_username").keyup(function ()
 			{
-				updateProviderFieldMySql();
+				updateProviderFieldDrill();
 			});
-			$("#mysql_password").keyup(function ()
+			$("#drill_password").keyup(function ()
 			{
-				updateProviderFieldMySql();
+				updateProviderFieldDrill();
 			});
 			
-			$("#mysql_url").keyup(function ()
+			$("#drill_url").keyup(function ()
 			{
-				updateProviderFieldMySql();
+				updateProviderFieldDrill();
 			});
 			
 			
 						
 			   
-		   function updateProviderFieldMySql()
+		   function updateProviderFieldDrill()
 		   {
 		   	 var dataSourceJson = {};
-		   	 dataSourceJson.username = $("#mysql_username").attr("value");
-		   	 dataSourceJson.password = $("#mysql_password").attr("value");
-		   	 dataSourceJson.url = $("#mysql_url").attr("value");
+		   	 dataSourceJson.username = $("#drill_username").attr("value");
+		   	 dataSourceJson.password = $("#drill_password").attr("value");
+		   	 dataSourceJson.url = $("#drill_url").attr("value");
 		   	 $("#dataSource").attr("value" , JSON.stringify(dataSourceJson));
-		   	mysqlValidate();
+		   	drillValidate();
 		   }    
 		   
-		   function reverseUpdateDataSourceViewMySQL()
+		   function reverseUpdateDataSourceViewDrill()
 		   {
 			   try{
 				   var dataSourceJson =  $("#dataSource").attr("value");
 				   dataSourceJson = jQuery.parseJSON( dataSourceJson ) ;
-				   $("#mysql_username").attr("value", dataSourceJson.username);
-				   $("#mysql_password").attr("value", dataSourceJson.password);
-				   $("#mysql_url").attr("value", dataSourceJson.url);
+				   $("#drill_username").attr("value", dataSourceJson.username);
+				   $("#drill_password").attr("value", dataSourceJson.password);
+				   $("#drill_url").attr("value", dataSourceJson.url);
 				   
 			   }catch(e){}
 			   
 		   }
 		   
-		   function mysqlValidate() {
+		   function drillValidate() {
 				
-				if ($("#MySQLProvider").is(":visible")) {
-					ValidationObject.addConstraint("mysql_username", $("#mysql_username").attr("value") && $("#mysql_username").attr("value") != "", function() {
-						alert("Username not specified");
-						 $("#mysql_username").focus();
-					});
-
-					ValidationObject.addConstraint("mysql_password", $("#mysql_password").attr("value") && $("#mysql_password").attr("value") != "", function() {
-						alert("Password not specified");
-						$("#mysql_password").focus();
-					});
-
-					ValidationObject.addConstraint("mysql_url", $("#mysql_url").attr("value") && $("#mysql_url").attr("value") != "", function() {
+				if ($("#DrillProvider").is(":visible")) {
+					ValidationObject.addConstraint("drill_url", $("#drill_url").attr("value") && $("#drill_url").attr("value") != "", function() {
 						alert("URL not specified");
-						$("#mysql_url").focus();
+						$("#drill_url").focus();
 					});
-
-					
-
 				} else {
-
-					ValidationObject.removeConstraint("mysql_username");
-
-					ValidationObject.removeConstraint("mysql_password");
-
-					ValidationObject.removeConstraint("mysql_url");
-
+					ValidationObject.removeConstraint("drill_url");
 				}
-
 			}
 		   
-		   reverseUpdateDataSourceViewMySQL();
+		   reverseUpdateDataSourceViewDrill();
 		   
-		   $("#MySQLProvider").bind("onaftershow" , function(e){
-			   mysqlValidate(); 	
+		   $("#DrillProvider").bind("onaftershow" , function(e){
+			   drillValidate(); 	
 			});
-			$("#MySQLProvider").bind("onafterhide" , function(e){
-				mysqlValidate(); 	
+			$("#DrillProvider").bind("onafterhide" , function(e){
+				drillValidate(); 	
 			});
 		</script>
