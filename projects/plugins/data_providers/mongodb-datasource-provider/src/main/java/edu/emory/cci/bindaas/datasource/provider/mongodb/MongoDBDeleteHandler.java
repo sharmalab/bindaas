@@ -45,7 +45,7 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 			catch(Exception e)
 			{
 				log.trace(e.getMessage());
-				// default to find query
+				// default to 'delete' query
 				operationDescriptor = new MongoDBModifyOperationDescriptor();
 				operationDescriptor.set_operation(MongoDBModifyOperationType.delete);
 				DeleteOperationDescriptor delArguments = new DeleteOperationDescriptor();
