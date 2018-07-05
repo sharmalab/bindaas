@@ -13,7 +13,7 @@
 		<!-- Set the viewport width to device width for mobile -->
 		<meta name="viewport" content="width=device-width" />
 
-		<title>Delete API : $deleteEndpoint.getName()</title>
+		<title>Update/Delete API : $deleteEndpoint.getName()</title>
 
 		<!-- Included CSS Files (Uncompressed) -->
 		<!--
@@ -199,7 +199,7 @@
 				<div class="row">
 					<fieldset>
 						<legend>
-							<h3>Delete API : $deleteEndpoint.getName()</h3>
+							<h3>Update/Delete API : $deleteEndpoint.getName()</h3>
 						</legend>
 						<a data-reveal-id="tryQuery" class="radius small button" href="#">Try Me !!</a>
 						<h6 class="subheader">Last Modified : $deleteEndpoint.getTimeCreated()</h6>
@@ -207,7 +207,7 @@
 						<form class="custom" action="createDeleteTemplate.action" method="get">
 							<input type="hidden" value="$profile" name="profileName" />
 							<input type="hidden" value="$workspace" name="workspaceName" />
-							<label>Delete API Name</label>
+							<label>API Name</label>
 							<input type="text" placeholder="name" id="deleteEndpointName"/>
 							<label>Description</label>
 							<input type="text" placeholder="description" id="deDescription"/>

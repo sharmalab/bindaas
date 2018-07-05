@@ -116,7 +116,7 @@
 										<th>Created By</th>
 										<th>Query APIs</th>
 										<th>Submit APIs</th>
-										<th>Delete APIs</th>
+										<th>Update/Delete APIs</th>
 									</tr>
 								</thead>
 								<tbody>
