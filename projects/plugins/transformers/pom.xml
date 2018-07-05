@@ -19,5 +19,9 @@
         <module>aim-to-svg-query-result-modifier</module>
         <module>dicomaim-to-pngsvg-QRM</module>
         <module>native-app-runner-SPM</module>
+        <module>blob-download-plugin</module>
+        <module>collection-query-modifier-plugin</module>
+        <module>result-zipstream-plugin</module>
+        <module>generic-output-chainer-query-result-modifier</module>
     </modules>
 </project>

@@ -33,7 +33,9 @@ public class UpdateOperationHandler implements IOperationHandler{
 		
 		WriteResult writeResult = collection.update( DBObject.class.cast(JSON.parse(operationDescriptor.query.toString())), DBObject.class.cast(JSON.parse(operationDescriptor.update.toString())),operationDescriptor.upsert,operationDescriptor.multi);
 		QueryResult queryResult = new QueryResult();
-		queryResult.setData(new ByteArrayInputStream( String.format("{ 'rowsAffected' : %s ,  'operation' : 'update' , 'query' : %s }", writeResult.getN() + "" , operationDescriptor.query.toString() ).getBytes()));
+		queryResult.setData(new ByteArrayInputStream( String.format("{ 'rowsAffected' : %s ,  'operation' : 'update' , " +
+				"'query' : %s , 'upsert': %b , 'multi': %b }", writeResult.getN() + "" ,
+				operationDescriptor.query.toString(), operationDescriptor.upsert, operationDescriptor.multi).getBytes()));
 		queryResult.setMimeType(StandardMimeType.JSON.toString());
 		return queryResult;
 	}
@@ -78,8 +80,22 @@ public class UpdateOperationHandler implements IOperationHandler{
 		public void setUpdate(JsonObject update) {
 			this.update = update;
 		}
-		
-		
+
+		public void setUpsert(boolean upsert) {
+			this.upsert = upsert;
+		}
+
+		public boolean isUpsert() {
+			return upsert;
+		}
+
+		public boolean isMulti() {
+			return multi;
+		}
+
+		public void setMulti(boolean multi) {
+			this.multi = multi;
+		}
 	}
 
 }
