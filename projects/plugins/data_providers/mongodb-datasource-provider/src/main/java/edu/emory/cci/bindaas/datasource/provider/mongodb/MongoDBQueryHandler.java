@@ -94,7 +94,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
                     catch(Exception e)
                     {
                         log.trace(e.getMessage());
-                        // default to find query
+                        // default to 'find' query
                         operationDescriptor = new MongoDBQueryOperationDescriptor();
                         operationDescriptor.set_operation(MongoDBQueryOperationType.find);
                         FindOperationDescriptor findArguments = new FindOperationDescriptor();
