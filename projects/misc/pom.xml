@@ -14,5 +14,6 @@
 
     <modules>
         <module>commons-xml2json</module>
+        <module>json2csv</module>
     </modules>
 </project>
