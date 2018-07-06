@@ -38,7 +38,10 @@ public class FindOperationHandler implements IOperationHandler {
 			try{
 				DBObject query = (DBObject) JSON.parse(operationDescriptor.query.toString());
 				DBObject fields = operationDescriptor.fields == null ? null : (DBObject) JSON.parse(operationDescriptor.fields.toString());
+				DBObject sort = operationDescriptor.sort == null ? null : (DBObject) JSON.parse(operationDescriptor.sort.toString());
+
 				DBCursor cursor = null;
+
 				if(fields!=null)
 				{
 					cursor = collection.find(query , fields);
@@ -47,7 +50,12 @@ public class FindOperationHandler implements IOperationHandler {
 				{
 					cursor = collection.find(query);
 				}
-				
+
+				if(operationDescriptor.sort !=null)
+				{
+					cursor = cursor.sort(sort);
+				}
+
 				if(operationDescriptor.skip !=null)
 				{
 					cursor = cursor.skip(operationDescriptor.skip);
@@ -57,7 +65,8 @@ public class FindOperationHandler implements IOperationHandler {
 				{
 					cursor = cursor.limit(operationDescriptor.limit);
 				}
-				
+
+
 				OnFinishHandler finishHandler = new OnFinishHandler() {
 					private boolean finished = false;
 					@Override
@@ -113,6 +122,7 @@ public class FindOperationHandler implements IOperationHandler {
 		@Expose public JsonObject fields;
 		@Expose public Integer skip;
 		@Expose public Integer limit;
+		@Expose public JsonObject sort;
 		
 		
 		public Integer getSkip() {
@@ -139,8 +149,14 @@ public class FindOperationHandler implements IOperationHandler {
 		public void setFields(JsonObject fields) {
 			this.fields = fields;
 		}
-		
-		
+
+		public JsonObject getSort() {
+			return sort;
+		}
+
+		public void setSort(JsonObject sort) {
+			this.sort = sort;
+		}
 	}
 
 
