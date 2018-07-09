@@ -45,6 +45,21 @@ All queries must follow following syntax
 </textarea>
 </div>
 
+
+<div>
+	<h5>distinct</h5>
+	<textarea readonly="readonly">
+{
+	"_operation" : "distinct" ,
+	"_operation_args" : {
+							"field" : "location",
+							"query" : {'age': {$gt: 50}}
+						}
+}
+</textarea>
+</div>
+
+
 <div>
 	<h5>group</h5>
 	<textarea readonly="readonly">
