@@ -19,7 +19,7 @@ public class MainController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Log log = LogFactory.getLog(getClass());
 	private List<IRequestHandler> requestHandlers;
-	
+
 	public List<IRequestHandler> getRequestHandlers() {
 		return requestHandlers;
 	}
@@ -28,48 +28,52 @@ public class MainController extends HttpServlet {
 		this.requestHandlers = requestHandlers;
 	}
 
-	
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		handleRequest(req , resp);
+		handleRequest(req, resp);
 	}
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		handleRequest(req , resp);
+		handleRequest(req, resp);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		handleRequest(req , resp);
+		handleRequest(req, resp);
 	}
 
 	public void handleRequest(HttpServletRequest request,
-			HttpServletResponse response) {
+							  HttpServletResponse response) {
 		try {
 			IRequestHandler handler = null;
-			Map<String,String> parameters = null;
-			String[] pathElements = request.getPathInfo().split("/");
-	
-			for(IRequestHandler requestHandler : requestHandlers)
-			{
-				UriTemplate template = new UriTemplate(requestHandler.getUriTemplateSegments()	, pathElements);
-				if(template.isMatch())
-				{
-					parameters = template.getParameters();
-					handler = requestHandler;
-					break;
+			Map<String, String> parameters = null;
+
+			try {
+				String[] pathElements = request.getPathInfo().split("/");
+
+				for (IRequestHandler requestHandler : requestHandlers) {
+					UriTemplate template = new UriTemplate(requestHandler.getUriTemplateSegments(), pathElements);
+					if (template.isMatch()) {
+						parameters = template.getParameters();
+						handler = requestHandler;
+						break;
+					}
 				}
+			} catch (NullPointerException e) {
+				log.error("Check the URL for the format. " +
+						"The dashboard is accessible at <deployment_host:deployment_port>/dashboard/\n" +
+						"Pay attention to the '/' at the end.");
 			}
-			
+
 			if (handler != null) {
-				
+
 				handler.handleRequest(request, response, parameters);
-				
+
 			} else {
 				throw new Exception("No handler found for request path ["
 						+ request.getPathInfo() + "]");
@@ -79,9 +83,8 @@ public class MainController extends HttpServlet {
 			ErrorView.handleError(response, e);
 		}
 	}
-	
-	public void init()
-	{
+
+	public void init() {
 		log.trace("Main Controller Initialized");
 	}
 
