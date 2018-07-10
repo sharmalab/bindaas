@@ -24,6 +24,7 @@ Import-Package: com.opencsv,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: org.eclipse.orbit.mongodb
 Bundle-ClassPath: mongodb-driver-3.8.0.jar,
+ json-schema-validator-2.2.10.jar,
  .
 
 
