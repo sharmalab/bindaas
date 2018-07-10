@@ -79,7 +79,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				
 				QueryResult queryResult = new QueryResult();
 				
-				queryResult.setData(new ByteArrayInputStream("{ 'count':'1'}".getBytes()));
+				queryResult.setData(new ByteArrayInputStream("{ \"count\" : 1}".getBytes()));
 				queryResult.setMimeType(StandardMimeType.JSON.toString());
 				return queryResult;
 			}
@@ -92,7 +92,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				collection.insert(object);
 				QueryResult queryResult = new QueryResult();
 				StringBuffer buffer = new StringBuffer();
-				buffer.append("{ 'count':'" + object.length + "'}");
+				buffer.append("{ \"count\" : " + object.length + "}");
 				queryResult.setData(new ByteArrayInputStream(buffer.toString().getBytes()));
 				queryResult.setMimeType(StandardMimeType.JSON.toString());
 				return queryResult;
