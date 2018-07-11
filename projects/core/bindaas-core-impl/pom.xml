@@ -11,9 +11,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>net.sf.opencsv</groupId>
+			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
-			<version>2.3</version>
+			<version>4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>bindaas</groupId>

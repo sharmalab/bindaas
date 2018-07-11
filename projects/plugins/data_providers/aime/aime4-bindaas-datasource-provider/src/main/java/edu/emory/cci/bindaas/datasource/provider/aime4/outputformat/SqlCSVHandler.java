@@ -9,8 +9,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import au.com.bytecode.opencsv.CSVWriter;
-import au.com.bytecode.opencsv.ResultSetHelperService;
+import com.opencsv.CSVWriter;
+import com.opencsv.ResultSetHelperService;
 
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;

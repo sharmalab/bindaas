@@ -27,5 +27,10 @@
             <artifactId>org.eclipse.orbit.mongodb</artifactId>
             <version>2.10.1.v20130422-1135</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.java-json-tools</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>2.2.10</version>
+        </dependency>
 	</dependencies>
 </project>
