@@ -14,6 +14,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
@@ -35,6 +37,7 @@ import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
+
 import edu.emory.cci.bindaas.trusted_app.TrustedApplicationRegistry;
 import edu.emory.cci.bindaas.trusted_app.TrustedApplicationRegistry.TrustedApplicationEntry;
 import edu.emory.cci.bindaas.trusted_app.api.ITrustedApplicationManager;
@@ -42,15 +45,17 @@ import edu.emory.cci.bindaas.trusted_app.bundle.Activator;
 import edu.emory.cci.bindaas.trusted_app.exception.APIKeyDoesNotExistException;
 import edu.emory.cci.bindaas.trusted_app.exception.DuplicateAPIKeyException;
 import edu.emory.cci.bindaas.trusted_app.exception.NotAuthorizedException;
+import edu.emory.cci.bindaas.trusted_app.constants.TrustedAppConstants;
 
 public class TrustedApplicationManagerImpl implements
 		ITrustedApplicationManager {
 
-	private final static Integer DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS = 3600;
 	private TrustedApplicationRegistry defaultTrustedApplications;
 	private DynamicObject<TrustedApplicationRegistry> trustedApplicationRegistry;
 	private final static long ROUNDOFF_FACTOR = 100000;
 	private IAPIKeyManager apiKeyManager;
+	private Log log = LogFactory.getLog(getClass());
+
 
 	public IAPIKeyManager getApiKeyManager() {
 		return apiKeyManager;
@@ -174,13 +179,35 @@ public class TrustedApplicationManagerImpl implements
 					applicationID, salt, digest, username);
 
 			BindaasUser bindaasUser = new BindaasUser(username);
-			int lifespan = lifetime != null ? lifetime
-					: DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS;
+			JsonObject retVal = new JsonObject();
+
+			int lifespan;
+			String logMsg;
+
+			if ((lifetime == null) || lifetime <=0){
+				lifespan = TrustedAppConstants.DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS;
+				logMsg = "The user did not request a positive lifetime for the key. Therefore, the time limit " +
+						"is set to " + lifespan + " seconds.";
+				log.info(logMsg);
+				retVal.add("comments", new JsonPrimitive(logMsg));
+
+			} else if (lifetime > TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_API_KEYS) {
+				lifespan = TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_API_KEYS;
+				logMsg = "The user requested lifetime [" + lifetime + "] exceeds the time limit " +
+						"set by the system for a short-lived API Key: " +
+						TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_API_KEYS + " seconds. Therefore, " +
+						"the time limit is set to " + lifespan + " seconds.";
+				log.info(logMsg);
+				retVal.add("comments", new JsonPrimitive(logMsg));
+
+			} else {
+				lifespan = lifetime;
+			}
+
 			String applicationName = trustedAppEntry.getName();
 
 			APIKey sessionKey = generateApiKey(bindaasUser, lifespan,
 					applicationName);
-			JsonObject retVal = new JsonObject();
 			retVal.add("api_key", new JsonPrimitive(sessionKey.getValue()));
 			retVal.add("username", new JsonPrimitive(username));
 			retVal.add("applicationID", new JsonPrimitive(applicationID));
