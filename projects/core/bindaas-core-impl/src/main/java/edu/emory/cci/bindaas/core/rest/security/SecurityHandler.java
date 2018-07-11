@@ -47,7 +47,7 @@ import edu.emory.cci.bindaas.security.api.IAuthorizationProvider;
 public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private Log log = LogFactory.getLog(getClass());
 	private static final Long DECISION_CACHE_MAX = 1000l;
-	private static final Long DECISION_CACHE_TIMEOUT_MINUTES = 60l;
+	private static final Long DECISION_CACHE_TIMEOUT_MINUTES = 1l;
 	private Cache<String,AuthenticationResponseEntry> authenticationDecisionCache;
 	private Cache<AuthorizationRequestEntry ,Boolean> authorizationDecisionCache;
 	
