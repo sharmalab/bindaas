@@ -187,7 +187,7 @@ public class TrustedApplicationManagerImpl implements
 			if ((lifetime == null) || lifetime <=0){
 				lifespan = TrustedAppConstants.DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS;
 				logMsg = "The user did not request a positive lifetime for the key. Therefore, the time limit " +
-						"is set to " + lifespan + " seconds.";
+						"will be set to " + lifespan + " seconds.";
 				log.info(logMsg);
 				retVal.add("comments", new JsonPrimitive(logMsg));
 
