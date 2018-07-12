@@ -47,10 +47,31 @@ import edu.emory.cci.bindaas.security.api.IAuthorizationProvider;
 public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private Log log = LogFactory.getLog(getClass());
 	private static final Long DECISION_CACHE_MAX = 1000l;
-	private static final Long DECISION_CACHE_TIMEOUT_MINUTES = 1l;
-	private Cache<String,AuthenticationResponseEntry> authenticationDecisionCache;
-	private Cache<AuthorizationRequestEntry ,Boolean> authorizationDecisionCache;
-	
+	private static final Long DECISION_CACHE_TIMEOUT_MINUTES = 6l;
+	private static Cache<String,AuthenticationResponseEntry> authenticationDecisionCache;
+	private static Cache<AuthorizationRequestEntry ,Boolean> authorizationDecisionCache;
+
+	public static Cache<String, AuthenticationResponseEntry> getAuthenticationDecisionCache() {
+		if (authenticationDecisionCache == null) {
+			initCache();
+		}
+		return authenticationDecisionCache;
+	}
+
+	public static Cache<AuthorizationRequestEntry, Boolean> getAuthorizationDecisionCache() {
+		if (authorizationDecisionCache == null) {
+			initCache();
+		}
+		return authorizationDecisionCache;
+	}
+
+
+	public static void invalidateAPIKey(String apikey) {
+		SecurityHandler.getAuthenticationDecisionCache().invalidate(apikey);
+		SecurityHandler.getAuthorizationDecisionCache().invalidate(apikey);
+	}
+
+
 	private String authenticationProviderClass;
 	private String authorizationProviderClass;
 	
@@ -99,12 +120,16 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 			}
 		});
 		bindaasConfigServiceTracker.open();
-		
+
+		initCache();
+	}
+
+	private static void initCache() {
 		// initialize caches
 		authenticationDecisionCache = CacheBuilder.newBuilder().expireAfterAccess(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
 		authorizationDecisionCache = CacheBuilder.newBuilder().expireAfterAccess(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
 	}
-	
+
 	private Principal handleHTTP_BASIC(Message message , IAuthenticationProvider authenticationProvider) throws Exception
 	{
 		String[] usernamePassword = extractUsernamePassword(message);

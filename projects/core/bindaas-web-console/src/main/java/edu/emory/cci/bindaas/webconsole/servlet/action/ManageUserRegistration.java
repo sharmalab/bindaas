@@ -31,6 +31,8 @@ import edu.emory.cci.bindaas.webconsole.AbstractRequestHandler;
 import edu.emory.cci.bindaas.webconsole.ErrorView;
 import edu.emory.cci.bindaas.webconsole.util.VelocityEngineWrapper;
 
+import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidateAPIKey;
+
 
 public class ManageUserRegistration extends AbstractRequestHandler {
 
@@ -193,8 +195,7 @@ public class ManageUserRegistration extends AbstractRequestHandler {
 						{
 							userRequest.setStage("revoked");
 							emailMessage = "Your access has been revoked by the administrator";
-							
-							
+							invalidateAPIKey(userRequest.getApiKey());
 						}
 						else if(requestObject.entityAction!=null && requestObject.entityAction.equals("deny") )
 						{

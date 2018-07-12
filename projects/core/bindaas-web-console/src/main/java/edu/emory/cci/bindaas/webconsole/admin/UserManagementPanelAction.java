@@ -20,6 +20,8 @@ import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
+import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidateAPIKey;
+
 public class UserManagementPanelAction implements IAdminAction {
 	
 	private String actionName;
@@ -70,6 +72,7 @@ public class UserManagementPanelAction implements IAdminAction {
 		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.REVOKE.toString()) )
 		{
 			APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
+			invalidateAPIKey(apiKey.getValue());
 			emailMessage = "Your access has been revoked by the administrator";
 			emailAddress = apiKey.getEmailAddress();
 			
