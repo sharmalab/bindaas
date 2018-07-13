@@ -23,6 +23,8 @@ import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
+import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidateAPIKey;
+
 public class DefaultAPIKeyManager implements IAPIKeyManager {
 
 	private Log log = LogFactory.getLog(getClass());
@@ -248,6 +250,10 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					usrRequest.setStage(Stage.revoked);
 				}
 				session.getTransaction().commit();
+				for (UserRequest request: listOfValidKeys) {
+					String apiKey = request.getApiKey();
+					invalidateAPIKey(apiKey);
+				}
 				return listOfValidKeys.size();
 			}
 			else
@@ -282,6 +288,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					usrRequest.setStage(Stage.revoked);
 				}
 				session.getTransaction().commit();
+				invalidateAPIKey(apiKey);
 				return listOfValidKeys.size();
 			}
 			else
@@ -398,6 +405,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 				for(HistoryLog histLog : historyLogs)
 					session.delete(histLog);
 				session.delete(usr);
+				invalidateAPIKey(usr.getApiKey()); //delete any API keys still present in the cache.
 			}
 			session.getTransaction().commit();
 			int rowsDeleted = list.size(); 
