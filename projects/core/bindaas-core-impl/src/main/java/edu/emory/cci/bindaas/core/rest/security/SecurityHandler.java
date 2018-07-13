@@ -126,8 +126,8 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 
 	private static void initCache() {
 		// initialize caches
-		authenticationDecisionCache = CacheBuilder.newBuilder().expireAfterAccess(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
-		authorizationDecisionCache = CacheBuilder.newBuilder().expireAfterAccess(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
+		authenticationDecisionCache = CacheBuilder.newBuilder().expireAfterWrite(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
+		authorizationDecisionCache = CacheBuilder.newBuilder().expireAfterWrite(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
 	}
 
 	private Principal handleHTTP_BASIC(Message message , IAuthenticationProvider authenticationProvider) throws Exception
