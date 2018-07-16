@@ -19,6 +19,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.util.JSON;
+import com.mongodb.WriteResult;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.SubmitEndpointProperties;
@@ -75,11 +76,19 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				
 				DBObject object = (DBObject) JSON.parse(data);
-				collection.insert(object);
-				
+
+				WriteResult writeResult = collection.insert(object);
+
+				String out;
+				if (writeResult.getError() != null) {
+					out = writeResult.getError();
+				} else {
+					out = "{ \"count\" : 1}";
+				}
+
 				QueryResult queryResult = new QueryResult();
-				
-				queryResult.setData(new ByteArrayInputStream("{ \"count\" : 1}".getBytes()));
+
+				queryResult.setData(new ByteArrayInputStream(out.getBytes()));
 				queryResult.setMimeType(StandardMimeType.JSON.toString());
 				return queryResult;
 			}
@@ -89,11 +98,19 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				DBObject[] object = toJSON(data , submitEndpointProperties.getCsvHeader());
-				collection.insert(object);
+
+				WriteResult writeResult = collection.insert(object);
+
+				String out;
+				if (writeResult.getError() != null) {
+					out = writeResult.getError();
+				} else {
+					out = "{ \"count\" : " + object.length + "}";
+				}
+
 				QueryResult queryResult = new QueryResult();
-				StringBuffer buffer = new StringBuffer();
-				buffer.append("{ \"count\" : " + object.length + "}");
-				queryResult.setData(new ByteArrayInputStream(buffer.toString().getBytes()));
+
+				queryResult.setData(new ByteArrayInputStream(out.getBytes()));
 				queryResult.setMimeType(StandardMimeType.JSON.toString());
 				return queryResult;
 			}
