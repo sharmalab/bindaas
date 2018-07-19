@@ -31,7 +31,7 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 
     private Log log = LogFactory.getLog(getClass());
 
-    private static String[] keyWords = { ";", "/*", "*/", "--", //removing  "`" since it messes up with the Drill provider.
+    private static String[] keyWords = { ";", "`", "/*", "*/", "--",
             "exec", "alter", "drop", "create", "shutdown" };
 
     public OutputFormatRegistry getOutputFormatRegistry() {
