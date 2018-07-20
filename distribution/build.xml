@@ -120,7 +120,7 @@
 		<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}-${bindaas.build.date}">
 		</property>
 		<tar tarfile="${dist.location}/${filename}.tar" >
-			<tarfileset dir="${dist.placeholder.dir}" filemode="0555">
+			<tarfileset dir="${dist.placeholder.dir}" filemode="0755">
 				<include name="**/*"/>
 			</tarfileset>
 		</tar>
@@ -138,7 +138,7 @@
 			<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}-${bindaas.build.date}">
 			</property>
 			<tar tarfile="${dist.location}/${filename}.tar" >
-				<tarfileset dir="${dist.placeholder.dir}" filemode="0555">
+				<tarfileset dir="${dist.placeholder.dir}" filemode="0755">
 					<include name="**/*"/>
 					<exclude name="bundles/optional/*"/>
 				</tarfileset>

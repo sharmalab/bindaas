@@ -31,7 +31,7 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 
     private Log log = LogFactory.getLog(getClass());
 
-    private static String[] keyWords = { ";", "/*", "*/", "--", //removing  "`" since it messes up with the Drill provider.
+    private static String[] keyWords = { ";", "`", "/*", "*/", "--",
             "exec", "alter", "drop", "create", "shutdown" };
 
     public OutputFormatRegistry getOutputFormatRegistry() {
@@ -90,9 +90,11 @@ public class GenericSQLQueryHandler implements IQueryHandler {
 
                     // Prevent SQL Hacking
                     if (isUnsafe(queryToExecute)) {
-                        log.info("Unsafe SQL Query: " + queryToExecute);
-                        queryToExecute = getSafeValue(queryToExecute);
-                        log.info("Sanitized SQL Query: " + queryToExecute);
+                        String errorMsg = "Execution Declined for the Unsafe SQL Query: " + queryToExecute;
+                        log.error(errorMsg);
+	                    throw new QueryExecutionFailedException(
+			                    AbstractSQLProvider.class.getName(),
+			                    AbstractSQLProvider.VERSION, "Query Not Executed", new Exception(errorMsg));
                     }
                     
                     ResultSet resultSet = statement
@@ -183,6 +185,12 @@ public class GenericSQLQueryHandler implements IQueryHandler {
         return false;
     }
 
+    /**
+     * This code attempts to strip off the "unsafe" characters. The method is buggy. Use with caution.
+     * @param oldValue the original query
+     * @return the "sanitized query"
+     */
+    @Deprecated
     static String getSafeValue(String oldValue) {
         StringBuffer sb = new StringBuffer(oldValue);
         String lowerCase = oldValue.toLowerCase();
