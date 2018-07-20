@@ -91,8 +91,10 @@ public class GenericSQLQueryHandler implements IQueryHandler {
                     // Prevent SQL Hacking
                     if (isUnsafe(queryToExecute)) {
                         String errorMsg = "Execution Declined for the Unsafe SQL Query: " + queryToExecute;
-                        log.info(errorMsg);
-                        throw new Error(errorMsg);
+                        log.error(errorMsg);
+	                    throw new QueryExecutionFailedException(
+			                    AbstractSQLProvider.class.getName(),
+			                    AbstractSQLProvider.VERSION, "Query Not Executed", new Exception(errorMsg));
                     }
                     
                     ResultSet resultSet = statement
@@ -181,6 +183,30 @@ public class GenericSQLQueryHandler implements IQueryHandler {
             }
         }
         return false;
+    }
+
+    /**
+     * This code attempts to strip off the "unsafe" characters. The method is buggy. Use with caution.
+     * @param oldValue the original query
+     * @return the "sanitized query"
+     */
+    @Deprecated
+    static String getSafeValue(String oldValue) {
+        StringBuffer sb = new StringBuffer(oldValue);
+        String lowerCase = oldValue.toLowerCase();
+        for (int i = 0; i < keyWords.length; i++) {
+            int x = -1;
+            while ((x = lowerCase.indexOf(keyWords[i])) >= 0) {
+                if (keyWords[i].length() == 1) {
+                    sb.replace(x, x + 1, " ");
+                    lowerCase = sb.toString().toLowerCase();
+                    continue;
+                }
+                sb.deleteCharAt(x + 1);
+                lowerCase = sb.toString().toLowerCase();
+            }
+        }
+        return sb.toString();
     }
 }
 
