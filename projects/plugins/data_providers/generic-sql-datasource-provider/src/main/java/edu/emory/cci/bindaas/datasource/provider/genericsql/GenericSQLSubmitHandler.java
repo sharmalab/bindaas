@@ -87,7 +87,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				connection.setAutoCommit(false);
 				int total = insertRecords(records, connection,seProps.getTableName());
 				connection.commit();
-				queryResult.setData(new ByteArrayInputStream(String.format("{ 'result' : 'success' , 'rowsInserted' : '%s'  }", total).getBytes()));
+				queryResult.setData(new ByteArrayInputStream(String.format("{ \"result\" : \"success\" , \"rowsInserted\" : %s  }", total).getBytes()));
 			} catch (Exception e) {
 				log.error(e);
 				throw new SubmitExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
@@ -157,7 +157,7 @@ public class GenericSQLSubmitHandler implements ISubmitHandler {
 				connection.setAutoCommit(false);
 				int total = insertRecords(records, connection,seProps.getTableName());
 				connection.commit();
-				queryResult.setData(new ByteArrayInputStream(String.format("{ 'result' : 'success' , 'rowsInserted' : '%s'  }", total).getBytes()));
+				queryResult.setData(new ByteArrayInputStream(String.format("{ \"result\" : \"success\" , \"rowsInserted\" : %s  }", total).getBytes()));
 			} catch (Exception e) {
 				log.error(e);
 				throw new SubmitExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , e);
