@@ -423,7 +423,7 @@
 		<div id="tryQuery" class="reveal-modal xlarge">
 			<div class="row">
 				<div class="two columns">
-					<a class="radius button alert">DELETE</a>
+					<a class="radius button alert">PUT/DELETE</a>
 				</div>
 				<div class="ten columns left-align" >
 					<h4>$deleteEndpoint.getName()</h4><h4 class="subheader">$serviceUrl/services/$workspace/$profile/delete/$deleteEndpoint.getName()</h4>
