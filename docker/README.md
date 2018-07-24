@@ -28,7 +28,17 @@ $ docker image ls
 
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 
-bindaas             3.0.0               4637fbd9557f        6 minutes ago       345MB
+bindaas             3.0.0               a9a81d677bb2        5 minutes ago       630MB
 
 
 Before committing, make sure Bindaas runs fine in the container using the command above listed under the "For the Bindaas User" section.
+
+
+### Tag the image with the user name:
+ 
+ $ docker tag bindaas:3.0.0 pradeeban/bindaas:3.0.0
+
+
+ ### Log in and push the image to the Docker repository:
+
+ $ docker push pradeeban/bindaas:3.0.0
