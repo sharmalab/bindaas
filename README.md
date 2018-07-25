@@ -59,3 +59,39 @@ The logs can be found at <BINDAAS-BINARY-HOME>/log/bindaas.log.
 Log in using the default,
 user name: admin
 password: password
+
+
+
+## Configuring with Kong API Gateway
+
+### Configure Kong with Postgres and Apache DS
+
+First get the Sharmalab's kong-ldap repository:
+
+$ git clone https://github.com/sharmalab/kong-ldap.git
+
+Now run the buildRun script:
+
+$ cd kong-ldap
+
+$ sh buildRun.sh
+
+
+### Configure Bindaas with Kong
+To configure the services:
+
+$ curl -i -X POST   --url http://127.0.0.1:8001/apis/   --data ‘name=bindaxy’   --data ‘hosts=bindaxy.com’  --data ’upstream_url=http://docker.for.mac.host.internal:9099'
+
+$ curl -i -X GET   --url http://127.0.0.1:8000/services/test/mongo/query/find?api_key=d9076d81-147d-44c3-9af6-d3dc5d9f204b   --header ‘Host: bindaxy.com’
+
+
+To configure the dashboard:
+
+$ curl -i -X POST   --url http://127.0.0.1:8001/apis/   --data ‘name=bindax’   --data ‘hosts=bindax.com’  --data ‘upstream_url=http://docker.for.mac.host.internal:8080’
+
+$ curl -i -X GET   --url http://127.0.0.1:8000/dashboard/   --header ‘Host: bindax.com’
+
+
+The above commands are for Docker for Mac.
+
+Replace "docker.for.mac.host.internal" in the above commands with "host.docker.internal" for Docker environments other than "Docker for Mac"
