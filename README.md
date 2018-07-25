@@ -62,7 +62,7 @@ password: password
 
 
 
-## Configuring with Kong API Gateway
+## Configuring with Kong API Gateway using the Docker containers
 
 ### Configure Kong with Postgres and Apache DS
 
@@ -95,3 +95,6 @@ $ curl -i -X GET   --url http://127.0.0.1:8000/dashboard/   --header 'Host: bind
 The above commands are for Docker for Mac.
 
 Replace "docker.for.mac.host.internal" in the above commands with "host.docker.internal" for Docker environments other than "Docker for Mac"
+
+
+If you prefer to run Bindaas using its Docker container, please refer to docker/README.md for more details.
