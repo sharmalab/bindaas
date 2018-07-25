@@ -44,7 +44,7 @@ public class GenericSQLDeleteHandler implements IDeleteHandler {
 				QueryResult queryResult = new QueryResult();
 				
 				queryResult.setData( new ByteArrayInputStream(String.format(
-						"{ 'result' : 'success' , 'rowsDeleted' : '%s' }",
+						"{ 'result' : 'success' , 'rowsChanged' : '%s' }",
 						status + "").getBytes()));
 				return queryResult;
 			} catch (Exception er) {
@@ -57,7 +57,7 @@ public class GenericSQLDeleteHandler implements IDeleteHandler {
 
 		} catch (Exception e) {
 			log.error(e);
-			throw new DeleteExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , "Delete operation failed", e);
+			throw new DeleteExecutionFailedException(AbstractSQLProvider.class.getName() , AbstractSQLProvider.VERSION , "Delete/Update operation failed", e);
 		}
 		
 	}
