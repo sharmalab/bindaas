@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-MAINTAINER Pradeeban Kathiravelu "kk.pradeeban@gmail.com"
+LABEL maintainer="ashish@dbmi.emory.edu"
 
 
 # build with
