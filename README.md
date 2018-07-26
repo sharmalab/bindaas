@@ -98,3 +98,20 @@ Replace "docker.for.mac.host.internal" in the above commands with "host.docker.i
 
 
 If you prefer to run Bindaas using its Docker container, please refer to docker/README.md for more details.
+
+
+### How to change the admin dashboard port from 8080 to something else?
+
+You have two options.
+
+i) Pass the new port as an argument:
+
+java -Dorg.osgi.service.http.port=8082 -Djava.net.preferIPv4Stack=true -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.8.2.v20130124-134944.jar -console
+
+ii) Change the below line in bin/config.ini from 8080 to something else:
+
+org.osgi.service.http.port=8081
+
+If both (i) and (ii) are configured, the input in the console argument takes precedence. 
+i.e., the dashboard uses the port 8082 above.
+
