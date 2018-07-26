@@ -62,55 +62,6 @@ password: password
 
 
 
-## Configuring with Kong API Gateway using the Docker containers
-
-### Configure Kong with Postgres and Apache DS
-
-First get the Sharmalab's kong-ldap repository:
-
-$ git clone https://github.com/sharmalab/kong-ldap.git
-
-Now run the buildRun script:
-
-$ cd kong-ldap
-
-$ sh buildRun.sh
-
-
-### Configure Bindaas with Kong
-To configure the services:
-
-$ curl -i -X POST   --url http://127.0.0.1:8001/apis/   --data 'name=bindaxy'   --data 'hosts=bindaxy.com'  --data 'upstream_url=http://docker.for.mac.host.internal:9099'
-
-$ curl -i -X GET   --url http://127.0.0.1:8000/services/test/mongo/query/find?api_key=d9076d81-147d-44c3-9af6-d3dc5d9f204b   --header 'Host: bindaxy.com'
-
-
-To configure the dashboard:
-
-$ curl -i -X POST   --url http://127.0.0.1:8001/apis/   --data 'name=bindax'   --data 'hosts=bindax.com'  --data 'upstream_url=http://docker.for.mac.host.internal:8080'
-
-$ curl -i -X GET   --url http://127.0.0.1:8000/dashboard/   --header 'Host: bindax.com'
-
-
-The above commands are for Docker for Mac.
-
-Replace "docker.for.mac.host.internal" in the above commands with "host.docker.internal" for Docker environments other than "Docker for Mac"
-
+More details on configuring Bindaas can be found from the [admin guide](https://github.com/sharmalab/bindaas/wiki/Bindaas-Admin-Guide).
 
 If you prefer to run Bindaas using its Docker container, please refer to [docker/README.md](docker/README.md) for more details.
-
-### How to change the admin dashboard port from 8080 to something else?
-
-You have two options.
-
-i) Pass the new port as an argument:
-
-java -Dorg.osgi.service.http.port=8082 -Djava.net.preferIPv4Stack=true -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.8.2.v20130124-134944.jar -console
-
-ii) Change the below line in bin/config.ini from 8080 to something else:
-
-org.osgi.service.http.port=8081
-
-If both (i) and (ii) are configured, the input in the console argument takes precedence. 
-i.e., the dashboard uses the port 8082 above.
-
