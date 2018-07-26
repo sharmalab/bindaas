@@ -97,8 +97,7 @@ The above commands are for Docker for Mac.
 Replace "docker.for.mac.host.internal" in the above commands with "host.docker.internal" for Docker environments other than "Docker for Mac"
 
 
-If you prefer to run Bindaas using its Docker container, please refer to docker/README.md for more details.
-
+If you prefer to run Bindaas using its Docker container, please refer to [docker/README.md](docker/README.md) for more details.
 
 ### How to change the admin dashboard port from 8080 to something else?
 
