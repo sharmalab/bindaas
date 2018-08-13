@@ -3,7 +3,7 @@
 
 ## For the Bindaas User: Running the Docker Container
 
-$ docker run --name bindaas-3 -p 8080:8080 -p 9099:9099 bindaas:3.0.1 
+$ docker run --name bindaas-3 -p 8080:8080 -p 9099:9099 pradeeban/bindaas:3.0.1 
 
 
 ### To stop
