@@ -66,4 +66,6 @@ Before committing, make sure Bindaas runs fine in the container using the comman
 
  ### Log in and push the image to the Docker repository:
 
+ $ docker login
+
  $ docker push pradeeban/bindaas:3.0.1
