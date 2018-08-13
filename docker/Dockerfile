@@ -39,11 +39,7 @@ WORKDIR /root/bindaas
 
 RUN tar -xvf bindaas.tar.gz && rm bindaas.tar.gz
 
-RUN chown -R bindaas:bindaas /root/bindaas/bin
-RUN chown -R bindaas:bindaas /root/bindaas/log
-
-RUN touch /root/bindaas/bin/bindaas.h2.db
-RUN chown bindaas:bindaas /root/bindaas/bin/bindaas.h2.db
+RUN chown -R bindaas:bindaas /root/bindaas
 
 USER bindaas
 
