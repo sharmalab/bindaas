@@ -13,6 +13,18 @@ Now you can stop the container using its assigned name:
 $ docker stop bindaas-3
 
 
+### To start the Bindaas instance again
+
+Now you can stop the container using its assigned name:
+
+$ docker start bindaas-3
+
+
+If you do not remember the name of the Bindaas instance that was running, you may first find it to start it again.
+
+$ docker ps -a
+
+
 ### Configure Data Source Providers.
 
 If you are configuring data source providers to access the data sources from the host, your configurations will differ.
