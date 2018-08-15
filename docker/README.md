@@ -6,6 +6,12 @@
 $ docker run --name bindaas-3 -p 8080:8080 -p 9099:9099 pradeeban/bindaas:3.0.1 
 
 
+You may instead want to run Bindaas with the configuration files from the host.
+
+
+$ docker run --name bindaas-public -v /home/ex-pradeebankathira/publ/projects:/root/bindaas/bin/projects -v /home/ex-pradeebankathira/publ/bindaas.config.json:/root/bindaas/bin/bindaas.config.json -p 8080:8080 -p 9099:9099 pradeeban/bindaas:3.0.1
+
+
 ### To stop
 
 Now you can stop the container using its assigned name:
