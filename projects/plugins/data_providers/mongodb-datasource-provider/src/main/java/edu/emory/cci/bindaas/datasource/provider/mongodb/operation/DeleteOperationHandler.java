@@ -32,7 +32,7 @@ public class DeleteOperationHandler implements IOperationHandler{
 		validateArguments(operationDescriptor);
 		WriteResult writeResult = collection.remove( DBObject.class.cast(JSON.parse(operationDescriptor.query.toString())));
 		QueryResult queryResult = new QueryResult();
-		queryResult.setData(new ByteArrayInputStream( String.format("{ 'rowsAffected' : %s ,  'operation' : 'delete' , 'query' : %s }", writeResult.getN() + "" , operationDescriptor.query.toString() ).getBytes()));
+		queryResult.setData(new ByteArrayInputStream( String.format("{ \"rowsAffected\" : %s ,  \"operation\" : \"delete\" , \"query\" : %s }", writeResult.getN() + "" , operationDescriptor.query.toString() ).getBytes()));
 		queryResult.setMimeType(StandardMimeType.JSON.toString());
 		return queryResult;
 	}

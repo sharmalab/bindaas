@@ -33,8 +33,8 @@ public class UpdateOperationHandler implements IOperationHandler{
 		
 		WriteResult writeResult = collection.update( DBObject.class.cast(JSON.parse(operationDescriptor.query.toString())), DBObject.class.cast(JSON.parse(operationDescriptor.update.toString())),operationDescriptor.upsert,operationDescriptor.multi);
 		QueryResult queryResult = new QueryResult();
-		queryResult.setData(new ByteArrayInputStream( String.format("{ 'rowsAffected' : %s ,  'operation' : 'update' , " +
-				"'query' : %s , 'upsert': %b , 'multi': %b }", writeResult.getN() + "" ,
+		queryResult.setData(new ByteArrayInputStream( String.format("{ \"rowsAffected\" : %s ,  \"operation\" : \"update\" , " +
+				"\"query\" : %s , \"upsert\": %b , \"multi\": %b }", writeResult.getN() + "" ,
 				operationDescriptor.query.toString(), operationDescriptor.upsert, operationDescriptor.multi).getBytes()));
 		queryResult.setMimeType(StandardMimeType.JSON.toString());
 		return queryResult;
