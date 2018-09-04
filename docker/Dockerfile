@@ -33,7 +33,7 @@ ENV PATH /root/src/jre1.8.0_171/bin:$PATH
 RUN chown -R bindaas:bindaas /root/
 
 
-ADD https://github.com/sharmalab/bindaas/releases/download/v3.0.0/bindaas-dist-3.0.0.tar.gz /root/bindaas/bindaas.tar.gz
+ADD https://github.com/sharmalab/bindaas/releases/download/v3.0.2/bindaas-dist-3.0.2.tar.gz /root/bindaas/bindaas.tar.gz
 WORKDIR /root/bindaas
 
 
