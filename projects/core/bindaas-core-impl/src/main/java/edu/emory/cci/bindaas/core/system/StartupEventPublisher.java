@@ -1,6 +1,9 @@
 package edu.emory.cci.bindaas.core.system;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -92,7 +95,14 @@ private long threshold = 1000;
 		BindaasEvent.addTopic(BindaasEventConstants.BINDAAS_START);
 		new BindaasEvent(BindaasEventConstants.BINDAAS_START, null).emitAsynchronously();
 		double jvmUpTime =  ( (double) ManagementFactory.getRuntimeMXBean().getUptime() / 1000 ) ;
-		
+
+		try {
+			log.info("This Bindaas instance was built at: " + Files.readAllLines(
+					Paths.get("bindaas-framework-info.properties")).get(0));
+		} catch (IOException e) {
+			log.warn("Error in reading the bindaas framework properties");
+		}
+
 		log.info("Bindaas Server started in [" + jvmUpTime + "] seconds ");
 	}
 }
