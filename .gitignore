@@ -8,3 +8,4 @@ source/projects/core/bindaas-test-runtime-directory/
 .project
 **/target/
 **/.idea/
+lib/
