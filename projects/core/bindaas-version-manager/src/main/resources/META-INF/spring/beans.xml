@@ -12,7 +12,7 @@
 </bean>
 
 <bean id="versionManager" class="edu.emory.cci.bindaas.version_manager.impl.VersionManagerImpl" init-method="init">
-	<property name="filename" value="bindaas-framework-info.properties"></property>
+	<property name="filename" value="version.info"></property>
 	<property name="defaultProperties" >
 		<props>
 			<prop key="bindaas.framework.version.major">1</prop>

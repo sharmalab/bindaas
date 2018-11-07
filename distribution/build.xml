@@ -114,9 +114,9 @@
 	<target name="deploy" depends="incVersion">
 
 
-		<loadproperties srcfile="build-configuration/bindaas-framework-info.properties">
+		<loadproperties srcfile="build-configuration/version.info">
 		</loadproperties>
-		<copy todir="${dist.placeholder.dir}/bin" file="build-configuration/bindaas-framework-info.properties" />
+		<copy todir="${dist.placeholder.dir}/bin" file="build-configuration/version.info" />
 		<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}-${bindaas.build.date}">
 		</property>
 		<tar tarfile="${dist.location}/${filename}.tar" >
@@ -132,9 +132,9 @@
 	<target name="deploy-min" depends="incVersion">
 
 
-			<loadproperties srcfile="build-configuration/bindaas-framework-info.properties">
+			<loadproperties srcfile="build-configuration/version.info">
 			</loadproperties>
-			<copy todir="${dist.placeholder.dir}/bin" file="build-configuration/bindaas-framework-info.properties" />
+			<copy todir="${dist.placeholder.dir}/bin" file="build-configuration/version.info" />
 			<property name="filename" value="bindaas-dist-${bindaas.framework.version.major}.${bindaas.framework.version.minor}.${bindaas.framework.version.revision}-${bindaas.build.date}">
 			</property>
 			<tar tarfile="${dist.location}/${filename}.tar" >
@@ -191,24 +191,24 @@
 		<antcall target="incFrameworkRevision">
 		</antcall>
 
-		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+		<propertyfile file="build-configuration/version.info">
 			<entry key="bindaas.build.date" operation="=" type="string" value="${DSTAMP}${TSTAMP}"/>
 		</propertyfile>
 
 
 	</target>
 	<target name="incFrameworkRevision" if="increment-framework-revision" >
-		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+		<propertyfile file="build-configuration/version.info">
 			<entry key="bindaas.framework.version.revision" operation="+" type="int" default="0"/>
 		</propertyfile>
 	</target>
 	<target name="incFrameworkMinor" if="increment-framework-minor">
-		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+		<propertyfile file="build-configuration/version.info">
 			<entry key="bindaas.framework.version.minor" operation="+" type="int" default="0"/>
 		</propertyfile>
 	</target>
 	<target name="incFrameworkMajor" if="increment-framework-major">
-		<propertyfile file="build-configuration/bindaas-framework-info.properties">
+		<propertyfile file="build-configuration/version.info">
 			<entry key="bindaas.framework.version.major" operation="+" type="int" default="1"/>
 		</propertyfile>
 	</target>

@@ -14,7 +14,7 @@ public class VersionManagerImpl implements IVersionManager{
 
 	private Properties properties;
 	private Properties defaultProperties;
-	private String filename ; // bindaas-framework-info.properties
+	private String filename ; // version.info
 	private String systemBuild;
 	
 	private static final String MAJOR = "bindaas.framework.version.major";
