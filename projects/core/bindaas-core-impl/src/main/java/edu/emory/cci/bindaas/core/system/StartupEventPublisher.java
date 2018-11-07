@@ -98,7 +98,7 @@ private long threshold = 1000;
 
 		try {
 			log.info("This Bindaas instance was built at: " + Files.readAllLines(
-					Paths.get("bindaas-framework-info.properties")).get(0));
+					Paths.get("version.info")).get(0));
 		} catch (IOException e) {
 			log.warn("Error in reading the bindaas framework properties");
 		}
