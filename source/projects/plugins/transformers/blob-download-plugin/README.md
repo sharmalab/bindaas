@@ -1,1 +1,0 @@
-This plugin is used to fetch objects as part of the TCIA getImage given seriesInstanceUID.The SQL query returns SOPInstanceUIDs. The plugin then walks through those and fecthes the actual files, and bnundles them up. If the size if 1, thenthe file is returned as is. Else it is zipped.
