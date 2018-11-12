@@ -9,3 +9,4 @@ lib/
 .classpath
 .project
 .settings
+distribution/build-configuration/version.info
