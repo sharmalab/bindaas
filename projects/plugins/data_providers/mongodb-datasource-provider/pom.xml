@@ -58,11 +58,6 @@
 			<artifactId>bindaas-core-api</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-        <dependency>
-            <groupId>org.eclipse.birt.runtime</groupId>
-            <artifactId>org.eclipse.orbit.mongodb</artifactId>
-            <version>2.10.1.v20130422-1135</version>
-        </dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver</artifactId>
