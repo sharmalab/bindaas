@@ -235,14 +235,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>localrepo</id>
-            <name>LocalRepository</name>
-            <url>file:///${project.build.directory}/deployment-artifacts</url>
-        </repository>
-    </distributionManagement>
-
     <modules>
         <module>projects</module>
         <module>tests</module>
