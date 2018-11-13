@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: MongoDB DataSource Provider
 Bundle-SymbolicName: mongodb-datasource-provider
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Activator: edu.emory.cci.bindaas.datasource.provider.mongodb.bundle.Activator
 Bundle-Vendor: CCI Emory University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -20,10 +20,9 @@ Import-Package: com.opencsv,
  edu.emory.cci.bindaas.framework.provider.exception,
  edu.emory.cci.bindaas.framework.util,
  org.apache.commons.logging;version="1.1.1",
- org.bson;version="2.7.3",
  org.osgi.framework;version="1.3.0"
-Require-Bundle: org.eclipse.orbit.mongodb
-Bundle-ClassPath: META-INF/lib/mongodb-driver-3.9.0.jar,
+Spring-Context: *
+Bundle-ClassPath: META-INF/lib/mongo-java-driver-3.9.0.jar,
  META-INF/lib/json-schema-validator-2.2.10.jar,
  .
 
