@@ -73,24 +73,6 @@
                     <version>3.0.0-M1</version>
                     <executions>
                         <execution>
-                            <id>install-external-1</id>
-                            <phase>clean</phase>
-                            <configuration>
-                                <file>
-                                    ${session.executionRootDirectory}/dependencies/bundles/third-party/db2jcc4-9.7-osgi.jar
-                                </file>
-                                <repositoryLayout>default</repositoryLayout>
-                                <groupId>db2</groupId>
-                                <artifactId>db2jcc4</artifactId>
-                                <version>9.7</version>
-                                <packaging>jar</packaging>
-                                <generatePom>true</generatePom>
-                            </configuration>
-                            <goals>
-                                <goal>install-file</goal>
-                            </goals>
-                        </execution>
-                        <execution>
                             <id>install-external-2</id>
                             <phase>clean</phase>
                             <configuration>
