@@ -48,13 +48,13 @@ Import-Package: com.google.gson;version="2.1.0",
  org.osgi.service.http;version="1.2.0",
  org.osgi.util.tracker;version="1.5.1"
 Bundle-ClassPath: .,
-  META-INF/lib/velocity-1.7.jar,
-  META-INF/lib/velocity-tools-2.0.jar,
-  META-INF/lib/velocity-tools-generic-2.0-beta1.jar,
-  META-INF/lib/velocity-tools-view-2.0-beta1.jar,
-  META-INF/lib/antlr-2.7.7.jar,
-  META-INF/lib/commons-collections-3.2.2.jar,
-  META-INF/lib/commons-lang-2.6.jar,
-  META-INF/lib/jdom-2.0.2.jar
+ META-INF/lib/velocity-1.7.jar,
+ META-INF/lib/velocity-tools-2.0.jar,
+ META-INF/lib/velocity-tools-generic-2.0-beta1.jar,
+ META-INF/lib/velocity-tools-view-2.0-beta1.jar,
+ META-INF/lib/antlr-2.7.7.jar,
+ META-INF/lib/commons-collections-3.2.2.jar,
+ META-INF/lib/commons-lang-2.6.jar,
+ META-INF/lib/jdom-2.0.2.jar
 Export-Package: edu.emory.cci.bindaas.webconsole.config,
  edu.emory.cci.bindaas.webconsole.util
