@@ -73,9 +73,14 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
-
-
-
+						<artifactItem>
+							<groupId>bindaas</groupId>
+							<artifactId>commons-xml2json</artifactId>
+							<version>0.0.1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
 					</artifactItems>
 				</configuration>
 			</plugin>
@@ -119,6 +124,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.8.1</version>
+		</dependency>
+		<dependency>
+			<groupId>bindaas</groupId>
+			<artifactId>commons-xml2json</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
 
