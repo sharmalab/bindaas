@@ -184,6 +184,6 @@ Bundle-ClassPath:  .,
  META-INF/lib/commons-cli-1.4.jar,
  META-INF/lib/guava-27.0-jre.jar,
  commons-xml2json-0.0.1-jar-with-dependencies.jar,
- saxon9-unpack.jar,
- saxon9he.jar
+ META-INF/lib/saxon9-9.1.0.8.jar,
+ META-INF/lib/saxon9he-9.4.0.4.jar
 Require-Bundle: org.apache.felix.gogo.runtime

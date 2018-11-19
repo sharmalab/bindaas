@@ -57,6 +57,22 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
+						<artifactItem>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon9he</artifactId>
+							<version>9.4.0.4</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon9</artifactId>
+							<version>9.1.0.8</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
 
 
 
@@ -105,4 +121,18 @@
 			<version>3.8.1</version>
 		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>edinburgh</id>
+			<name>Edinburgh PH Repository</name>
+			<url>https://www2.ph.ed.ac.uk/maven2/</url>
+		</repository>
+		<repository>
+			<id>redhat</id>
+			<name>Redhat GA Repository</name>
+			<url>https://maven.repository.redhat.com/ga/</url>
+		</repository>
+	</repositories>
+
 </project>
