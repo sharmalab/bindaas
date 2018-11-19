@@ -180,9 +180,9 @@ Export-Package: com.opencsv,
  org.apache.http.util;version="0.0.1.bindaas-core"
 Bundle-ClassPath:  .,
  META-INF/lib/commons-lang3-3.8.1.jar,
- opencsv-4.2.jar,
- commons-cli-1.2.jar,
- guava-14.0.1.jar,
+ META-INF/lib/opencsv-4.4.jar,
+ META-INF/lib/commons-cli-1.4.jar,
+ META-INF/lib/guava-27.0-jre.jar,
  commons-xml2json-0.0.1-jar-with-dependencies.jar,
  saxon9-unpack.jar,
  saxon9he.jar
