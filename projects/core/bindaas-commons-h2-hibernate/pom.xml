@@ -49,6 +49,54 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
+						<artifactItem>
+							<groupId>org.hibernate.common</groupId>
+							<artifactId>hibernate-commons-annotations</artifactId>
+							<version>5.1.0.Final</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.hibernate</groupId>
+							<artifactId>hibernate-core</artifactId>
+							<version>4.3.11.Final</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.hibernate.javax.persistence</groupId>
+							<artifactId>hibernate-jpa-2.1-api</artifactId>
+							<version>1.0.2.Final</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.javassist</groupId>
+							<artifactId>javassist</artifactId>
+							<version>3.24.0-GA</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.jboss.logging</groupId>
+							<artifactId>jboss-logging</artifactId>
+							<version>3.3.2.Final</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.jboss.spec.javax.transaction</groupId>
+							<artifactId>jboss-transaction-api_1.1_spec</artifactId>
+							<version>1.0.1.Final</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
 					</artifactItems>
 				</configuration>
 			</plugin>
