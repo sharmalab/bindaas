@@ -79,12 +79,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 
 				WriteResult writeResult = collection.insert(object);
 
-				String out;
-				if (writeResult.getError() != null) {
-					out = writeResult.getError();
-				} else {
-					out = "{ \"count\" : 1}";
-				}
+				String out = "{ \"count\" : " + 1 + "}";
 
 				QueryResult queryResult = new QueryResult();
 
@@ -101,12 +96,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 
 				WriteResult writeResult = collection.insert(object);
 
-				String out;
-				if (writeResult.getError() != null) {
-					out = writeResult.getError();
-				} else {
-					out = "{ \"count\" : " + object.length + "}";
-				}
+				String out = "{ \"count\" : " + object.length + "}";
 
 				QueryResult queryResult = new QueryResult();
 

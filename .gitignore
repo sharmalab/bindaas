@@ -3,8 +3,10 @@
 *.DS_Store
 binaries/
 dist/
-source/projects/core/bindaas-test-runtime-directory/
-.settings/*
-.project
 **/target/
 **/.idea/
+lib/
+.classpath
+.project
+.settings
+distribution/build-configuration/version.info

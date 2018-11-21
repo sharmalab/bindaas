@@ -9,6 +9,44 @@
 	<artifactId>dicom-to-png-query-result-modifier</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>pixelmed</groupId>
+							<artifactId>pixelmed</artifactId>
+							<version>20130426</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>java3d</groupId>
+							<artifactId>vecmath</artifactId>
+							<version>1.2-1.14</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>bindaas</groupId>
@@ -23,8 +61,9 @@
 		<dependency>
 			<groupId>pixelmed</groupId>
 			<artifactId>pixelmed</artifactId>
-            <version>20130426</version>
+			<version>20130426</version>
 		</dependency>
+		<!--This is a local file in META-INF. Cannot be replaced since neither jar in public nor code locally found.-->
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>imageconverter</artifactId>

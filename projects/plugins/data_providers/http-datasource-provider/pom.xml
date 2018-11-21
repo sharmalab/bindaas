@@ -9,6 +9,76 @@
 	<artifactId>http-datasource-provider</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>commons-codec</groupId>
+							<artifactId>commons-codec</artifactId>
+							<version>1.11</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.httpcomponents</groupId>
+							<artifactId>httpcore</artifactId>
+							<version>4.4.10</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.httpcomponents</groupId>
+							<artifactId>httpclient</artifactId>
+							<version>4.5.6</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.httpcomponents</groupId>
+							<artifactId>httpclient-cache</artifactId>
+							<version>4.5.6</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.httpcomponents</groupId>
+							<artifactId>httpmime</artifactId>
+							<version>4.5.6</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.httpcomponents</groupId>
+							<artifactId>fluent-hc</artifactId>
+							<version>4.5.6</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>bindaas</groupId>
@@ -23,7 +93,32 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.2.3</version>
+			<version>4.5.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient-cache</artifactId>
+			<version>4.5.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.5.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>fluent-hc</artifactId>
+			<version>4.5.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.10</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.11</version>
 		</dependency>
 	</dependencies>
 </project>

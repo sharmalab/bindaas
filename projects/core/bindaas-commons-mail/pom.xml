@@ -9,11 +9,41 @@
 	<artifactId>bindaas-commons-mail</artifactId>
 	<version>0.0.1</version>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>javax.mail</groupId>
+							<artifactId>mail</artifactId>
+							<version>1.4.7</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
-			<groupId>com.sun.mail</groupId>
-   			 <artifactId>javax.mail</artifactId>
-			<version>1.4.5</version>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
 		</dependency>
 		<dependency>
 			<groupId>bindaas</groupId>

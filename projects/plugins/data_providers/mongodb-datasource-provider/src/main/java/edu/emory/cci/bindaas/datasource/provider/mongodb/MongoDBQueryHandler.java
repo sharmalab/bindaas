@@ -12,7 +12,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
 import com.mongodb.MongoOptions;
-import com.mongodb.MongoURI;
 import com.mongodb.ServerAddress;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
@@ -111,8 +110,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
                         try {
                             MongoOptions options = new MongoOptions();
                             options.connectionsPerHost = 50;
-                            options.autoConnectRetry = true;
-                            
+
                             mongo = new Mongo(new ServerAddress(configuration.getHost(), configuration.getPort()), options);
                             DB db = mongo.getDB(configuration.getDb());
                             DBCollection mongoDbCollection = db.getCollection(configuration.getCollection());

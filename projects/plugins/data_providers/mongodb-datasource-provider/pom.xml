@@ -7,10 +7,47 @@
     </parent>
   <artifactId>mongodb-datasource-provider</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  
-  
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>org.mongodb</groupId>
+							<artifactId>mongo-java-driver</artifactId>
+							<version>3.9.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>com.github.java-json-tools</groupId>
+							<artifactId>json-schema-validator</artifactId>
+							<version>2.2.10</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
 	<dependencies>
-		
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>bindaas-core-impl</artifactId>
@@ -21,16 +58,15 @@
 			<artifactId>bindaas-core-api</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-
-        <dependency>
-            <groupId>org.eclipse.birt.runtime</groupId>
-            <artifactId>org.eclipse.orbit.mongodb</artifactId>
-            <version>2.10.1.v20130422-1135</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.java-json-tools</groupId>
-            <artifactId>json-schema-validator</artifactId>
-            <version>2.2.10</version>
-        </dependency>
+		<dependency>
+			<groupId>com.github.java-json-tools</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>2.2.10</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.9.0</version>
+		</dependency>
 	</dependencies>
 </project>

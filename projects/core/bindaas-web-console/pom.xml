@@ -9,8 +9,95 @@
 	<artifactId>bindaas-web-console</artifactId>
 	<version>0.0.1</version>
 
-	<dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>antlr</groupId>
+							<artifactId>antlr</artifactId>
+							<version>2.7.7</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<!--Using commons-collections4 results in a run-time error in bindaas OSGi-->
+						<artifactItem>
+							<groupId>commons-collections</groupId>
+							<artifactId>commons-collections</artifactId>
+							<version>3.2.2</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.velocity</groupId>
+							<artifactId>velocity</artifactId>
+							<version>1.7</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.velocity</groupId>
+							<artifactId>velocity-tools</artifactId>
+							<version>2.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>velocity-tools</groupId>
+							<artifactId>velocity-tools-generic</artifactId>
+							<version>2.0-beta1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>velocity-tools</groupId>
+							<artifactId>velocity-tools-view</artifactId>
+							<version>2.0-beta1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<!--Using commons-lang3 results in a run-time error in bindaas OSGi-->
+						<artifactItem>
+							<groupId>commons-lang</groupId>
+							<artifactId>commons-lang</artifactId>
+							<version>2.6</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.jdom</groupId>
+							<artifactId>jdom</artifactId>
+							<version>2.0.2</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
+	<dependencies>
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>bindaas-core-api</artifactId>
@@ -31,25 +118,21 @@
 			<artifactId>velocity-tools</artifactId>
 			<version>2.0</version>
 		</dependency>
-
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.http.bundle</artifactId>
             <version>3.0.0</version>
         </dependency>
-
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>bindaas-commons-h2-hibernate</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>bindaas-commons-mail</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>bindaas-commons-openid-helper</artifactId>
