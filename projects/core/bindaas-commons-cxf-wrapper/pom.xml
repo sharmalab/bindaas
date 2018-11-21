@@ -67,8 +67,6 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
-
-
 						<artifactItem>
 							<groupId>org.apache.cxf</groupId>
 							<artifactId>cxf-bundle-jaxrs</artifactId>
@@ -136,8 +134,6 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
-
-
 						<artifactItem>
 							<groupId>com.sun.xml.fastinfoset</groupId>
 							<artifactId>FastInfoset</artifactId>
@@ -146,7 +142,6 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
-
 						<artifactItem>
 							<groupId>javax.xml.bind</groupId>
 							<artifactId>jaxb-api</artifactId>
@@ -154,7 +149,6 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
-
 						<artifactItem>
 							<groupId>com.sun.xml.bind</groupId>
 							<artifactId>jaxb-impl</artifactId>
@@ -193,42 +187,9 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
-						<artifactItem>
-							<groupId>org.slf4j</groupId>
-							<artifactId>slf4j-api</artifactId>
-							<version>1.7.9</version>
-							<type>jar</type>
-							<overWrite>true</overWrite>
-							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
-						</artifactItem>
-
-						<artifactItem>
-							<groupId>org.springframework</groupId>
-							<artifactId>spring-beans</artifactId>
-							<version>3.2.6.RELEASE</version>
-							<type>jar</type>
-							<overWrite>true</overWrite>
-							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
-						</artifactItem>
-
-						<artifactItem>
-							<groupId>org.springframework</groupId>
-							<artifactId>spring-context</artifactId>
-							<version>3.2.6.RELEASE</version>
-							<type>jar</type>
-							<overWrite>true</overWrite>
-							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
-						</artifactItem>
 
 
-						<artifactItem>
-							<groupId>org.apache.neethi</groupId>
-							<artifactId>neethi</artifactId>
-							<version>3.0.2</version>
-							<type>jar</type>
-							<overWrite>true</overWrite>
-							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
-						</artifactItem>
+
 
 						<!--<artifactItem>-->
 							<!--<groupId>org.apache.cxf</groupId>-->
@@ -289,8 +250,63 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.neethi</groupId>
+							<artifactId>neethi</artifactId>
+							<version>3.0.2</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
 
-
+						<artifactItem>
+							<groupId>net.oauth.core</groupId>
+							<artifactId>oauth</artifactId>
+							<version>20100527</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>net.oauth.core</groupId>
+							<artifactId>oauth-provider</artifactId>
+							<version>20100527</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.opensaml</groupId>
+							<artifactId>opensaml</artifactId>
+							<version>2.5.1-1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.opensaml</groupId>
+							<artifactId>openws</artifactId>
+							<version>1.4.2-1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>relaxngDatatype</groupId>
+							<artifactId>relaxngDatatype</artifactId>
+							<version>20020414</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.slf4j</groupId>
+							<artifactId>slf4j-api</artifactId>
+							<version>1.7.9</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
 						<artifactItem>
 							<groupId>org.springframework</groupId>
 							<artifactId>spring-aop</artifactId>
@@ -303,6 +319,22 @@
 							<groupId>org.springframework</groupId>
 							<artifactId>spring-asm</artifactId>
 							<version>3.0.7.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-beans</artifactId>
+							<version>3.2.6.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-context</artifactId>
+							<version>3.2.6.RELEASE</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
