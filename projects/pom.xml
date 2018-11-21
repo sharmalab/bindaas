@@ -17,6 +17,7 @@
         <module>misc</module>
         <module>plugins</module>
         <module>security_providers</module>
+        <module>demos</module>
     </modules>
 
     <dependencies>

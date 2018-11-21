@@ -263,14 +263,14 @@ Import-Package: com.google.common.annotations;version="14.0.1",
  org.osgi.service.cm;version="1.5.0",
  org.osgi.service.http;version="1.2.0",
  org.osgi.util.tracker;version="1.5.1"
-Bundle-ClassPath: velocity-1.7.jar,
- .,
- antlr-2.7.5.jar,
- commons-collections-3.2.1.jar,
- commons-lang-2.4.jar,
- jdom-1.0.jar,
- velocity-tools-2.0.jar,
- velocity-tools-generic-2.0.jar,
- velocity-tools-view-2.0.jar
+Bundle-ClassPath: .,
+ META-INF/lib/antlr-2.7.7.jar,
+ META-INF/lib/commons-collections-3.2.2.jar,
+ META-INF/lib/commons-lang-2.6.jar,
+ META-INF/lib/jdom-2.0.2.jar,
+ META-INF/lib/velocity-1.7.jar,
+ META-INF/lib/velocity-tools-2.0.jar,
+ META-INF/lib/velocity-tools-generic-2.0-beta1.jar,
+ META-INF/lib/velocity-tools-view-2.0-beta1.jar
 Export-Package: edu.emory.cci.bindaas.security_dashboard.config,
  edu.emory.cci.bindaas.security_dashboard.util

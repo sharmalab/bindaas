@@ -9,19 +9,60 @@
     </parent>
 	<artifactId>aime-bindaas-datasource-provider-2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>com.ibm.db2.jcc</groupId>
+							<artifactId>db2jcc4</artifactId>
+							<version>10.1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<repositories>
+		<repository>
+			<id>alfreco</id>
+			<name>Alfresco Repository</name>
+			<url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
-        <dependency>
-            <groupId>db2</groupId>
-            <artifactId>db2jcc4</artifactId>
-            <version>9.7</version>
-        </dependency>
+		<dependency>
+			<groupId>com.ibm.db2.jcc</groupId>
+			<artifactId>db2jcc4</artifactId>
+			<version>10.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>bindaas-core-impl</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>bindaas-core-api</artifactId>

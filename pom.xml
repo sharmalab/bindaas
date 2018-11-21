@@ -36,6 +36,19 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.1.1</version>
+                    <executions>
+                        <execution>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>copy</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.3.2</version>
                     <configuration>
@@ -53,77 +66,6 @@
                             <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
                         </archive>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.2</version>
-                    <executions>
-                        <execution>
-                            <id>install-external-1</id>
-                            <phase>clean</phase>
-                            <configuration>
-                                <file>${session.executionRootDirectory}/dependencies/bundles/third-party/db2jcc4-9.7-osgi.jar</file>
-                                <repositoryLayout>default</repositoryLayout>
-                                <groupId>db2</groupId>
-                                <artifactId>db2jcc4</artifactId>
-                                <version>9.7</version>
-                                <packaging>jar</packaging>
-                                <generatePom>true</generatePom>
-                            </configuration>
-                            <goals>
-                                <goal>install-file</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>install-external-2</id>
-                            <phase>clean</phase>
-                            <configuration>
-                                <file>${session.executionRootDirectory}/dependencies/bundles/third-party/pixelmed.jar</file>
-                                <repositoryLayout>default</repositoryLayout>
-                                <groupId>pixelmed</groupId>
-                                <artifactId>pixelmed</artifactId>
-                                <version>20130426</version>
-                                <packaging>jar</packaging>
-                                <generatePom>true</generatePom>
-                            </configuration>
-                            <goals>
-                                <goal>install-file</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>install-external-3</id>
-                            <phase>clean</phase>
-                            <configuration>
-                                <file>${session.executionRootDirectory}/dependencies/bundles/third-party/imageconverter.jar</file>
-                                <repositoryLayout>default</repositoryLayout>
-                                <groupId>bindaas</groupId>
-                                <artifactId>imageconverter</artifactId>
-                                <version>0.0.1</version>
-                                <packaging>jar</packaging>
-                                <generatePom>true</generatePom>
-                            </configuration>
-                            <goals>
-                                <goal>install-file</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>install-external-4</id>
-                            <phase>clean</phase>
-                            <configuration>
-                                <file>${session.executionRootDirectory}/dependencies/bundles/third-party/vecmath1.2-1.14.jar</file>
-                                <repositoryLayout>default</repositoryLayout>
-                                <groupId>java3d</groupId>
-                                <artifactId>vecmath</artifactId>
-                                <version>1.2-1.14</version>
-                                <packaging>jar</packaging>
-                                <generatePom>true</generatePom>
-                            </configuration>
-                            <goals>
-                                <goal>install-file</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -213,14 +155,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <distributionManagement>
-        <repository>
-            <id>localrepo</id>
-            <name>LocalRepository</name>
-            <url>file:///${project.build.directory}/deployment-artifacts</url>
-        </repository>
-    </distributionManagement>
 
     <modules>
         <module>projects</module>

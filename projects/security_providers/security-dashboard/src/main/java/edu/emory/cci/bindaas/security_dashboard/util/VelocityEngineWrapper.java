@@ -47,7 +47,7 @@ public class VelocityEngineWrapper {
 	}
 	
 	
-	public  Template getVelocityTemplateByName(String templateName)
+	public Template getVelocityTemplateByName(String templateName)
 	{
 		String templateLoc = TEMPLATE_DIRECTORY_PATH + "/" + templateName;
 		return velocityEngine.getTemplate(templateLoc);
