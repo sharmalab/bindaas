@@ -163,12 +163,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>log4j.config</artifactId>
-            <version>${project.snapshot.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>mongodb-datasource-provider</artifactId>
             <version>${project.snapshot.version}</version>
             <type>jar</type>
