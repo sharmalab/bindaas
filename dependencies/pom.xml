@@ -11,8 +11,7 @@
 	<artifactId>dependencies</artifactId>
 	<packaging>pom</packaging>
 	<name>dependencies</name>
-
-<!--
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -30,9 +29,25 @@
 				<configuration>
 					<artifactItems>
 						<artifactItem>
-							<groupId>org.apache.logging.log4j</groupId>
-							<artifactId>log4j-osgi</artifactId>
-							<version>2.11.1</version>
+							<groupId>org.apache.felix</groupId>
+							<artifactId>org.apache.felix.configadmin</artifactId>
+							<version>1.6.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/startup</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.felix</groupId>
+							<artifactId>org.apache.felix.eventadmin</artifactId>
+							<version>1.3.2</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/startup</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.felix</groupId>
+							<artifactId>org.apache.felix.fileinstall</artifactId>
+							<version>3.2.6</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/startup</outputDirectory>
@@ -43,5 +58,4 @@
 		</plugins>
 	</build>
 
--->
 </project>
