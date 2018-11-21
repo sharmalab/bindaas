@@ -9,13 +9,311 @@
 	<artifactId>bindaas-commons-cxf-wrapper</artifactId>
 	<version>0.0.1</version>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>aopalliance</groupId>
+							<artifactId>aopalliance</artifactId>
+							<version>1.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>asm</groupId>
+							<artifactId>asm</artifactId>
+							<version>3.3.1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>commons-codec</groupId>
+							<artifactId>commons-codec</artifactId>
+							<version>1.11</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<!--Using commons-collections4 results in a run-time error in bindaas OSGi-->
+						<artifactItem>
+							<groupId>commons-collections</groupId>
+							<artifactId>commons-collections</artifactId>
+							<version>3.2.2</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<!--Using commons-lang3 results in a run-time error in bindaas OSGi-->
+						<artifactItem>
+							<groupId>commons-lang</groupId>
+							<artifactId>commons-lang</artifactId>
+							<version>2.6</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+
+						<artifactItem>
+							<groupId>org.apache.cxf</groupId>
+							<artifactId>cxf-bundle-jaxrs</artifactId>
+							<version>2.7.18</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+						<!--<artifactItem>-->
+							<!--<groupId>org.apache.cxf</groupId>-->
+							<!--<artifactId>cxf-core</artifactId>-->
+							<!--<version>3.0.4</version>-->
+							<!--<type>jar</type>-->
+							<!--<overWrite>true</overWrite>-->
+							<!--<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>-->
+						<!--</artifactItem>-->
+
+						<!--<artifactItem>-->
+							<!--<groupId>org.apache.cxf</groupId>-->
+							<!--<artifactId>cxf-distribution-manifest</artifactId>-->
+							<!--<version>3.0.4</version>-->
+							<!--<type>jar</type>-->
+							<!--<overWrite>true</overWrite>-->
+							<!--<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>-->
+						<!--</artifactItem>-->
+
+						<artifactItem>
+							<groupId>org.apache.cxf.services.sts</groupId>
+							<artifactId>cxf-services-sts-core</artifactId>
+							<version>3.0.4</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.cxf.services.ws-discovery</groupId>
+							<artifactId>cxf-services-ws-discovery-api</artifactId>
+							<version>3.0.4</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.cxf.services.ws-discovery</groupId>
+							<artifactId>cxf-services-ws-discovery-service</artifactId>
+							<version>3.0.4</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.cxf.services.wsn</groupId>
+							<artifactId>cxf-services-wsn-api</artifactId>
+							<version>3.0.4</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.cxf.services.wsn</groupId>
+							<artifactId>cxf-services-wsn-core</artifactId>
+							<version>3.0.4</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+
+						<artifactItem>
+							<groupId>com.sun.xml.fastinfoset</groupId>
+							<artifactId>FastInfoset</artifactId>
+							<version>1.2.13</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>javax.xml.bind</groupId>
+							<artifactId>jaxb-api</artifactId>
+							<version>2.2.6</version>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>com.sun.xml.bind</groupId>
+							<artifactId>jaxb-impl</artifactId>
+							<version>2.2.6</version>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>com.sun.xml.bind</groupId>
+							<artifactId>jaxb-xjc</artifactId>
+							<version>2.2.6</version>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<!--<artifactItem>-->
+							<!--<groupId>javax.validation</groupId>-->
+							<!--<artifactId>validation-api</artifactId>-->
+							<!--<version>1.1.0.Final</version>-->
+							<!--<type>jar</type>-->
+							<!--<overWrite>true</overWrite>-->
+							<!--<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>-->
+						<!--</artifactItem>-->
+						<artifactItem>
+							<groupId>org.apache.ws.xmlschema</groupId>
+							<artifactId>xmlschema-core</artifactId>
+							<version>2.2.1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.codehaus.woodstox</groupId>
+							<artifactId>woodstox-core-asl</artifactId>
+							<version>4.4.1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.slf4j</groupId>
+							<artifactId>slf4j-api</artifactId>
+							<version>1.7.9</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-beans</artifactId>
+							<version>3.2.6.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-context</artifactId>
+							<version>3.2.6.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>xml-resolver</groupId>
+							<artifactId>xml-resolver</artifactId>
+							<version>1.2</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>org.apache.neethi</groupId>
+							<artifactId>neethi</artifactId>
+							<version>3.0.2</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+						<!--<artifactItem>-->
+							<!--<groupId>org.apache.cxf</groupId>-->
+							<!--<artifactId>cxf-rt-transports-http</artifactId>-->
+							<!--<version>3.0.0</version>-->
+							<!--<type>jar</type>-->
+							<!--<overWrite>true</overWrite>-->
+							<!--<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>-->
+						<!--</artifactItem>-->
+						<!---->
+						<artifactItem>
+							<groupId>javax.ws.rs</groupId>
+							<artifactId>javax.ws.rs-api</artifactId>
+							<version>2.0.1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+
+						<!--<artifactItem>-->
+							<!--<groupId>javax.servlet</groupId>-->
+							<!--<artifactId>servlet-api</artifactId>-->
+							<!--<version>3.0-alpha-1</version>-->
+							<!--<type>jar</type>-->
+							<!--<overWrite>true</overWrite>-->
+							<!--<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>-->
+						<!--</artifactItem>-->
+
+						<artifactItem>
+							<groupId>org.apache.httpcomponents</groupId>
+							<artifactId>httpasyncclient</artifactId>
+							<version>4.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.httpcomponents</groupId>
+							<artifactId>httpclient</artifactId>
+							<version>4.5.6</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.httpcomponents</groupId>
+							<artifactId>httpcore</artifactId>
+							<version>4.4.10</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.httpcomponents</groupId>
+							<artifactId>httpcore-nio</artifactId>
+							<version>4.4.10</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-core</artifactId>
+			<version>3.0.4</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-bundle-jaxrs</artifactId>
 			<version>2.7.18</version>
 		</dependency>
-
 		<dependency>
 			<groupId>bindaas</groupId>
 			<artifactId>bindaas-core-api</artifactId>
