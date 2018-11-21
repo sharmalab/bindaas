@@ -69,31 +69,28 @@
 						</artifactItem>
 						<artifactItem>
 							<groupId>org.apache.cxf</groupId>
+							<artifactId>cxf-bundle</artifactId>
+							<version>2.7.18</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.cxf</groupId>
 							<artifactId>cxf-bundle-jaxrs</artifactId>
 							<version>2.7.18</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
-
-						<!--<artifactItem>-->
-							<!--<groupId>org.apache.cxf</groupId>-->
-							<!--<artifactId>cxf-core</artifactId>-->
-							<!--<version>3.0.4</version>-->
-							<!--<type>jar</type>-->
-							<!--<overWrite>true</overWrite>-->
-							<!--<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>-->
-						<!--</artifactItem>-->
-
-						<!--<artifactItem>-->
-							<!--<groupId>org.apache.cxf</groupId>-->
-							<!--<artifactId>cxf-distribution-manifest</artifactId>-->
-							<!--<version>3.0.4</version>-->
-							<!--<type>jar</type>-->
-							<!--<overWrite>true</overWrite>-->
-							<!--<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>-->
-						<!--</artifactItem>-->
-
+						<artifactItem>
+							<groupId>org.apache.cxf</groupId>
+							<artifactId>cxf-distribution-manifest</artifactId>
+							<version>3.0.4</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
 						<artifactItem>
 							<groupId>org.apache.cxf.services.sts</groupId>
 							<artifactId>cxf-services-sts-core</artifactId>
