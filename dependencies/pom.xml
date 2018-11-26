@@ -124,6 +124,22 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
 						</artifactItem>
+						<artifactItem>
+							<groupId>edu.emory.mathcs.backport</groupId>
+							<artifactId>com.springsource.edu.emory.mathcs.backport</artifactId>
+							<version>3.1.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.commons</groupId>
+							<artifactId>com.springsource.org.apache.commons.logging</artifactId>
+							<version>1.1.1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
 					</artifactItems>
 				</configuration>
 			</plugin>
