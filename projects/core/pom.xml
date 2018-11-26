@@ -26,6 +26,5 @@
         <module>heartbeat-monitor/heartbeat-monitor-client</module>
         <module>heartbeat-monitor/heartbeat-monitor-server</module>
         <module>bindaas-trusted-application-manager</module>
-        <module>log4j.config</module>
     </modules>
 </project>
