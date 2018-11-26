@@ -28,6 +28,7 @@
 				</executions>
 				<configuration>
 					<artifactItems>
+						<!--startup bundles-->
 						<artifactItem>
 							<groupId>org.apache.felix</groupId>
 							<artifactId>org.apache.felix.configadmin</artifactId>
@@ -52,6 +53,7 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/startup</outputDirectory>
 						</artifactItem>
+						<!--third-party bundles-->
 						<artifactItem>
 							<groupId>org.springframework</groupId>
 							<artifactId>org.springframework.expression</artifactId>
