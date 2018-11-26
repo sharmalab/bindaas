@@ -55,49 +55,49 @@
 						</artifactItem>
 						<!--third-party bundles-->
 						<artifactItem>
-							<groupId>org.springframework</groupId>
-							<artifactId>org.springframework.expression</artifactId>
-							<version>3.2.3.RELEASE</version>
+							<groupId>org.apache.servicemix.bundles</groupId>
+							<artifactId>org.apache.servicemix.bundles.spring-expression</artifactId>
+							<version>4.2.0.RELEASE_2</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
 						</artifactItem>
 						<artifactItem>
-							<groupId>org.springframework</groupId>
-							<artifactId>org.springframework.core</artifactId>
-							<version>3.2.3.RELEASE</version>
+							<groupId>org.apache.servicemix.bundles</groupId>
+							<artifactId>org.apache.servicemix.bundles.spring-core</artifactId>
+							<version>4.2.0.RELEASE_2</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
 						</artifactItem>
 						<artifactItem>
-							<groupId>org.springframework</groupId>
-							<artifactId>org.springframework.context</artifactId>
-							<version>3.2.3.RELEASE</version>
+							<groupId>org.apache.servicemix.bundles</groupId>
+							<artifactId>org.apache.servicemix.bundles.spring-context</artifactId>
+							<version>4.2.0.RELEASE_2</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
 						</artifactItem>
 						<artifactItem>
-							<groupId>org.springframework</groupId>
-							<artifactId>org.springframework.beans</artifactId>
-							<version>3.2.3.RELEASE</version>
+							<groupId>org.apache.servicemix.bundles</groupId>
+							<artifactId>org.apache.servicemix.bundles.spring-beans</artifactId>
+							<version>4.2.0.RELEASE_2</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
 						</artifactItem>
 						<artifactItem>
-							<groupId>org.springframework</groupId>
-							<artifactId>org.springframework.aop</artifactId>
-							<version>3.2.3.RELEASE</version>
+							<groupId>org.apache.servicemix.bundles</groupId>
+							<artifactId>org.apache.servicemix.bundles.spring-aop</artifactId>
+							<version>4.2.0.RELEASE_2</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
 						</artifactItem>
 						<artifactItem>
-							<groupId>org.springframework</groupId>
-							<artifactId>org.springframework.context.support</artifactId>
-							<version>3.2.3.RELEASE</version>
+							<groupId>org.apache.servicemix.bundles</groupId>
+							<artifactId>org.apache.servicemix.bundles.spring-context-support</artifactId>
+							<version>4.2.0.RELEASE_2</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
@@ -138,6 +138,30 @@
 							<groupId>org.apache.commons</groupId>
 							<artifactId>com.springsource.org.apache.commons.logging</artifactId>
 							<version>1.1.1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.eclipse.gemini.blueprint</groupId>
+							<artifactId>gemini-blueprint-core</artifactId>
+							<version>2.0.0.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.eclipse.gemini.blueprint</groupId>
+							<artifactId>gemini-blueprint-extender</artifactId>
+							<version>2.0.0.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.eclipse.gemini.blueprint</groupId>
+							<artifactId>gemini-blueprint-io</artifactId>
+							<version>2.0.0.RELEASE</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
