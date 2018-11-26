@@ -52,10 +52,79 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/startup</outputDirectory>
 						</artifactItem>
+						<artifactItem>
+							<groupId>org.springframework</groupId>
+							<artifactId>org.springframework.expression</artifactId>
+							<version>3.2.3.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.springframework</groupId>
+							<artifactId>org.springframework.core</artifactId>
+							<version>3.2.3.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.springframework</groupId>
+							<artifactId>org.springframework.context</artifactId>
+							<version>3.2.3.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.springframework</groupId>
+							<artifactId>org.springframework.beans</artifactId>
+							<version>3.2.3.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.springframework</groupId>
+							<artifactId>org.springframework.aop</artifactId>
+							<version>3.2.3.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.springframework</groupId>
+							<artifactId>org.springframework.context.support</artifactId>
+							<version>3.2.3.RELEASE</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.aopalliance</groupId>
+							<artifactId>com.springsource.org.aopalliance</artifactId>
+							<version>1.0.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
 					</artifactItems>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>spring</id>
+			<name>Spring Plugins Repository</name>
+			<url>http://repo.spring.io/plugins-release/</url>
+		</repository>
+		<repository>
+			<id>geomajas</id>
+			<name>Geomajas Repository</name>
+			<url>http://maven.geomajas.org/</url>
+		</repository>
+	</repositories>
 
 </project>
