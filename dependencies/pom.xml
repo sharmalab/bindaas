@@ -108,6 +108,22 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
 						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.felix</groupId>
+							<artifactId>org.apache.felix.http.jetty</artifactId>
+							<version>2.2.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
+						<artifactItem>
+							<groupId>org.apache.felix</groupId>
+							<artifactId>org.apache.felix.http.whiteboard</artifactId>
+							<version>2.2.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/third-party</outputDirectory>
+						</artifactItem>
 					</artifactItems>
 				</configuration>
 			</plugin>
