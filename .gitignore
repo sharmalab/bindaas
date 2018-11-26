@@ -9,4 +9,5 @@ lib/
 .classpath
 .project
 .settings
+dependencies/bundles/third-party/
 distribution/build-configuration/version.info
