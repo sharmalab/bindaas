@@ -2,7 +2,6 @@ FROM alpine:3.8
 LABEL maintainer="ashish@dbmi.emory.edu"
 
 ### update and include Shadow to manage users and groups
-RUN echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 RUN apk update
 RUN apk --no-cache add wget
 RUN apk --no-cache add shadow
