@@ -1,26 +1,15 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 LABEL maintainer="ashish@dbmi.emory.edu"
 
 # Add group Bindaas and user Bindaas
 RUN groupadd -g 9999 bindaas && \
     useradd -r -u 9999 -g bindaas bindaas
 
-
-# Bindaas
-RUN mkdir -p /root/bindaas
-
-
-# build with
-#  sudo docker build --rm=true -t="repo/imgname" .
-
 ### update
 RUN apt-get -q update
 RUN apt-get -q -y upgrade
 RUN apt-get -q -y dist-upgrade
-RUN apt-get install -q -y libcurl3
-
-# Java
-RUN mkdir /root/src
+RUN apt-get install -q -y wget
 
 WORKDIR /root/src
 
@@ -29,14 +18,12 @@ RUN apt-get install -y openjdk-8-jre
 # Add java to path
 ENV PATH /root/src/jre1.8.0_171/bin:$PATH
 
-
 RUN chown -R bindaas:bindaas /root/
 
-ADD https://github.com/sharmalab/bindaas/releases/download/v3.2.0/bindaas-dist-3.2.0.tar.gz /root/bindaas/bindaas.tar.gz
 WORKDIR /root/bindaas
+RUN wget https://github.com/sharmalab/bindaas/releases/download/v3.2.0/bindaas-dist-3.2.0.tar.gz
 
-
-RUN tar -xvf bindaas.tar.gz && rm bindaas.tar.gz
+RUN tar -xvf bindaas-dist-3.2.0.tar.gz && rm bindaas-dist-3.2.0.tar.gz
 
 RUN chown -R bindaas:bindaas /root/bindaas
 
