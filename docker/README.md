@@ -9,7 +9,7 @@ $ docker run --name bindaas-3 -p 8080:8080 -p 9099:9099 pradeeban/bindaas:3.2.0
 You may instead want to run Bindaas with the configuration files from the host.
 
 
-$ docker run --name bindaas-public -v /home/ex-pradeebankathira/publ/projects:/root/bindaas/bin/projects -v /home/ex-pradeebankathira/publ/bindaas.config.json:/root/bindaas/bin/bindaas.config.json -p 8080:8080 -p 9099:9099 pradeeban/bindaas:3.0.2
+$ docker run --name bindaas-public -v /home/ex-pradeebankathira/publ/projects:/root/bindaas/bin/projects -v /home/ex-pradeebankathira/publ/bindaas.config.json:/root/bindaas/bin/bindaas.config.json -p 8080:8080 -p 9099:9099 pradeeban/bindaas:3.2.0
 
 $ docker run --name bindaas-public -v /Users/llovizna/projects:/root/bindaas/bin/projects -p 8080:8080 -p 9099:9099 pradeeban/bindaas:3.2.0
 
@@ -60,7 +60,7 @@ $ docker image ls
 
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 
-bindaas             3.2.0              a9a81d677bb2        5 minutes ago       630MB
+bindaas             3.2.0              a9a81d677bb2        5 minutes ago       444MB
 
 
 
