@@ -30,13 +30,20 @@
 					<artifactItems>
 						<!--startup bundles-->
 						<artifactItem>
+							<groupId>org.eclipse.platform</groupId>
+							<artifactId>org.eclipse.equinox.console</artifactId>
+							<version>1.1.200</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/startup</outputDirectory>
+						</artifactItem>
+						<artifactItem>
 							<groupId>org.apache.felix</groupId>
 							<artifactId>org.apache.felix.gogo.runtime</artifactId>
 							<version>0.10.0</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/startup</outputDirectory>
-							<!--<destFileName>org.eclipse.osgi_3.10.100.v20150529-1857.jar</destFileName>-->
 						</artifactItem>
 						<artifactItem>
 							<groupId>org.apache.felix</groupId>
@@ -45,7 +52,6 @@
 							<type>jar</type>
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/bundles/startup</outputDirectory>
-							<!--<destFileName>org.eclipse.osgi_3.10.100.v20150529-1857.jar</destFileName>-->
 						</artifactItem>
 						<artifactItem>
 							<groupId>org.apache.felix</groupId>
