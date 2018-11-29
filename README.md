@@ -8,7 +8,7 @@ Bindaas can be built using Apache Maven 3.x and Java 1.7.x or higher.
 
 Bindaas binaries can be found in the binaries folder.
 
-Built and tested with Apache Maven 3.1.1 to 3.5.4 and Oracle Java 1.7 to 1.8.
+Built and tested with Apache Maven 3.1.1 to 3.5.4 and Oracle Java 1.8.
 
 Bindaas does not build with JDK 10, due to incompatibilities in Maven plugins.
 
@@ -32,7 +32,7 @@ $ sh shutdown.sh
 
 If you would like to have an interactive OSGi console with logs displayed inline:
 
-$ java -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.8.2.v20130124-134944.jar -console
+$ java -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.10.100.v20150529-1857.jar -console
 
 
 ## Troubleshooting
@@ -41,7 +41,7 @@ If you encounter the error "java.net.SocketException: Can't assign requested add
 CXF errors when you are on a Mac with a wireless connection, please use the flag "-Djava.net.preferIPv4Stack=true" to fix this,
 as shown below:
 
-$ java -Djava.net.preferIPv4Stack=true -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.8.2.v20130124-134944.jar -console
+$ java -Djava.net.preferIPv4Stack=true -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.10.100.v20150529-1857.jar -console
 
 
 ## Verify Setup

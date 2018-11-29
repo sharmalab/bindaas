@@ -30,6 +30,15 @@
 					<artifactItems>
 						<!--startup bundles-->
 						<artifactItem>
+							<groupId>org.osgi</groupId>
+							<artifactId>org.eclipse.osgi</artifactId>
+							<version>3.10.100.v20150529-1857</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/bundles/startup</outputDirectory>
+							<destFileName>org.eclipse.osgi_3.10.100.v20150529-1857.jar</destFileName>
+						</artifactItem>
+						<artifactItem>
 							<groupId>org.apache.felix</groupId>
 							<artifactId>org.apache.felix.configadmin</artifactId>
 							<version>1.6.0</version>
