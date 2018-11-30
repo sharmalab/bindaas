@@ -127,6 +127,8 @@
 		<gzip destfile="${dist.location}/${filename}.tar.gz" src="${dist.location}/${filename}.tar" />
 		<delete file="${dist.location}/${filename}.tar">
 		</delete>
+		<delete dir="${dist.placeholder.dir}">
+		</delete>
 	</target>
 
 	<target name="deploy-min" depends="incVersion">
@@ -145,6 +147,8 @@
 			</tar>
 			<gzip destfile="${dist.location}/${filename}-min.tar.gz" src="${dist.location}/${filename}.tar" />
 			<delete file="${dist.location}/${filename}.tar">
+			</delete>
+			<delete dir="${dist.placeholder.dir}">
 			</delete>
 		</target>
 
