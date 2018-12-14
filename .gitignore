@@ -11,4 +11,4 @@ lib/
 .settings
 dependencies/bundles/
 distribution/build-configuration/version.info
-bin/
+
