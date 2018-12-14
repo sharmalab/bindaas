@@ -20,9 +20,9 @@ ENV PATH /root/src/jre1.8.0_171/bin:$PATH
 RUN chown -R bindaas:bindaas /root/
 
 WORKDIR /root/bindaas
-RUN wget https://github.com/sharmalab/bindaas/releases/download/v3.3.0/bindaas-dist-3.3.0.tar.gz
+RUN wget https://github.com/sharmalab/bindaas/releases/download/v3.3.1/bindaas-dist-3.3.1.tar.gz
 
-RUN tar -xvf bindaas-dist-3.3.0.tar.gz && rm bindaas-dist-3.3.0.tar.gz
+RUN tar -xvf bindaas-dist-3.3.1.tar.gz && rm bindaas-dist-3.3.1.tar.gz
 
 RUN chown -R bindaas:bindaas /root/bindaas
 
