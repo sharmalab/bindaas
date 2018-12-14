@@ -3,7 +3,7 @@
 
 ## For the Bindaas User: Running the Docker Container
 
-$ sh run.sh
+$ sh docker-run.sh
 
 
 ### Configure Data Source Providers.
