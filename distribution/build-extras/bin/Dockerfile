@@ -24,7 +24,8 @@ RUN wget https://github.com/sharmalab/bindaas/releases/download/v3.3.2/bindaas-d
 
 RUN tar -xvf bindaas-dist-3.3.2.tar.gz && rm bindaas-dist-3.3.2.tar.gz
 
-RUN chown -R bindaas:bindaas /root/bindaas
+RUN chown -R bindaas:bindaas /root/bindaas/log
+RUN chown -R bindaas:bindaas /root/bindaas/bin
 
 USER bindaas
 
