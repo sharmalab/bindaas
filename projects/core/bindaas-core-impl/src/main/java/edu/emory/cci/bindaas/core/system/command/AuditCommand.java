@@ -3,6 +3,7 @@ package edu.emory.cci.bindaas.core.system.command;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Hashtable;
 
 import com.opencsv.CSVWriter;
@@ -48,9 +49,11 @@ public class AuditCommand {
 			
 			@Override
 			public void write(AuditMessage auditMessage) throws IOException {
-				
-				csvWriter.writeNext(new String[]{auditMessage.getTimestamp().toString() , auditMessage.getRequestUri() , auditMessage.getQueryString() , auditMessage.getSubject() , auditMessage.getSource() , auditMessage.getEvent(),auditMessage.getOutcome() + "" });
-				
+				String decodedQuery = auditMessage.getQueryString() == null ? "" :
+						URLDecoder.decode(auditMessage.getQueryString(), "UTF-8");
+				csvWriter.writeNext(new String[]{auditMessage.getTimestamp().toString() , auditMessage.getRequestUri() ,
+						decodedQuery, auditMessage.getSubject() , auditMessage.getSource() , auditMessage.getEvent(),
+						auditMessage.getOutcome() + "" });
 			}
 
 			@Override
