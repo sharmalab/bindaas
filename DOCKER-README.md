@@ -1,4 +1,4 @@
-# Bindaas 3.3.3 Docker Container
+# Bindaas 3.3.4 Docker Container
 
 
 ## For the Bindaas User: Running the Docker Container
@@ -8,7 +8,8 @@ $ sh docker-run.sh
 The docker-run.sh script can be found inside the bin directory of the Bindaas binary or the 
 distribution/build-extras/bin of the source code repository.
 
-Edit the last line of the docker-run.sh to point to the correct locations of the bin, bundles, and log folders of Bindaas.
+If necessary, edit the last line of the docker-run.sh to point to the correct locations of the bin, bundles, and log 
+folders of Bindaas.
 
 ### Configure Data Source Providers.
 
@@ -27,9 +28,9 @@ More information - https://docs.docker.com/docker-for-mac/release-notes/#docker-
 
 From the <BINDAAS-DIST-ROOT>/bin directory,
 
-$ docker build -t bindaas:3.3.3 .
+$ docker build -t bindaas:3.3.4 .
 
-You will get the output "Successfully tagged bindaas:3.3.3" if everything went fine.
+You will get the output "Successfully tagged bindaas:3.3.4" if everything went fine.
 
 
 Confirm that by running
@@ -38,13 +39,13 @@ $ docker image ls
 
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 
-bindaas             3.3.3              a9a81d677bb2        5 minutes ago        59MB
+bindaas             3.3.4              a9a81d677bb2        5 minutes ago        59MB
 
 
 
 ### Tag the image with the user name:
  
- $ docker tag bindaas:3.3.3 pradeeban/bindaas:3.3.3
+ $ docker tag bindaas:3.3.4 pradeeban/bindaas:3.3.4
 
 
  ### Log in and push the image to the Docker repository:
@@ -53,4 +54,4 @@ Before committing, make sure Bindaas runs fine in the container using the comman
 
  $ docker login
 
- $ **docker push pradeeban/bindaas:3.3.3**
+ $ **docker push pradeeban/bindaas:3.3.4**
