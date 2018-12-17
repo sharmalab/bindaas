@@ -19,19 +19,11 @@ ENV PATH /root/src/jre1.8.0_171/bin:$PATH
 
 RUN chown -R bindaas:bindaas /root/
 
-WORKDIR /root/bindaas
-RUN wget https://github.com/sharmalab/bindaas/releases/download/v3.3.2/bindaas-dist-3.3.2.tar.gz
-
-RUN tar -xvf bindaas-dist-3.3.2.tar.gz && rm bindaas-dist-3.3.2.tar.gz
-
-RUN chown -R bindaas:bindaas /root/bindaas/log
-RUN chown -R bindaas:bindaas /root/bindaas/bin
+WORKDIR /root/bindaas/bin
 
 USER bindaas
 
 EXPOSE 9099
 EXPOSE 8080
-
-WORKDIR /root/bindaas/bin
 
 CMD ["sh", "run.sh"]
