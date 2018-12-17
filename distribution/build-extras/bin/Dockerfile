@@ -28,10 +28,9 @@ RUN chown -R bindaas:bindaas /root/bindaas
 
 USER bindaas
 
-COPY bindaas.config.json /root/bindaas/bin/
-
 EXPOSE 9099
 EXPOSE 8080
+
 WORKDIR /root/bindaas/bin
 
 CMD ["sh", "run.sh"]

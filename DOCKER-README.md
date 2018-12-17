@@ -21,7 +21,7 @@ More information - https://docs.docker.com/docker-for-mac/release-notes/#docker-
 
 ## For the Bindaas Developer: Building the Docker Container
 
-From the <BINDAAS-SOURCE-ROOT>/docker directory,
+From the <BINDAAS-DIST-ROOT>/bin directory,
 
 $ docker build -t bindaas:3.3.2 .
 
