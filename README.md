@@ -64,4 +64,4 @@ password: password
 
 More details on configuring Bindaas can be found from the [admin guide](https://github.com/sharmalab/bindaas/wiki/Bindaas-Admin-Guide).
 
-If you prefer to run Bindaas using its Docker container, please refer to [docker/README.md](docker/README.md) for more details.
+If you prefer to run Bindaas using its Docker container, please refer to [docker/README.md](DOCKER-README.md) for more details.
