@@ -3,6 +3,7 @@ package edu.emory.cci.bindaas.core.system.command;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Hashtable;
 
@@ -49,10 +50,9 @@ public class AuditCommand {
 			
 			@Override
 			public void write(AuditMessage auditMessage) throws IOException {
-				String decodedQuery = auditMessage.getQueryString() == null ? "" :
-						URLDecoder.decode(auditMessage.getQueryString(), "UTF-8");
-				csvWriter.writeNext(new String[]{auditMessage.getTimestamp().toString() , auditMessage.getRequestUri() ,
-						decodedQuery, auditMessage.getSubject() , auditMessage.getSource() , auditMessage.getEvent(),
+				csvWriter.writeNext(new String[]{auditMessage.getTimestamp().toString() ,
+						decode(auditMessage.getRequestUri()) , decode(auditMessage.getQueryString()),
+						auditMessage.getSubject() , auditMessage.getSource() , auditMessage.getEvent(),
 						auditMessage.getOutcome() + "" });
 			}
 
@@ -67,7 +67,12 @@ public class AuditCommand {
 		csvWriter.close();
 		System.out.println("Dump written to [" + file.getAbsolutePath() + "]");
 	}
-	
+
+	private String decode(String encodedStr) throws UnsupportedEncodingException {
+		String decodedStr = encodedStr == null ? "" : URLDecoder.decode(encodedStr, "UTF-8");
+		return decodedStr;
+	}
+
 	public void dump() throws Exception
 	{
 		String defaultFile = "audit.log.csv";
