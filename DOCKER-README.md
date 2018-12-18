@@ -1,4 +1,4 @@
-# Bindaas 3.3.4 Docker Container
+# Bindaas 3.3.5 Docker Container
 
 
 ## For the Bindaas User: Running the Docker Container
@@ -28,9 +28,9 @@ More information - https://docs.docker.com/docker-for-mac/release-notes/#docker-
 
 From the <BINDAAS-DIST-ROOT>/bin directory,
 
-$ docker build -t bindaas:3.3.4 .
+$ docker build -t bindaas:3.3.5 .
 
-You will get the output "Successfully tagged bindaas:3.3.4" if everything went fine.
+You will get the output "Successfully tagged bindaas:3.3.5" if everything went fine.
 
 
 Confirm that by running
@@ -39,13 +39,13 @@ $ docker image ls
 
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 
-bindaas             3.3.4              a9a81d677bb2        5 minutes ago        59MB
+bindaas             3.3.5              a9a81d677bb2        5 minutes ago        59MB
 
 
 
 ### Tag the image with the user name:
  
- $ docker tag bindaas:3.3.4 pradeeban/bindaas:3.3.4
+ $ docker tag bindaas:3.3.5 pradeeban/bindaas:3.3.5
 
 
  ### Log in and push the image to the Docker repository:
@@ -54,4 +54,4 @@ Before committing, make sure Bindaas runs fine in the container using the comman
 
  $ docker login
 
- $ **docker push pradeeban/bindaas:3.3.4**
+ $ **docker push pradeeban/bindaas:3.3.5**
