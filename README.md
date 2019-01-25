@@ -16,13 +16,17 @@ Bindaas does not build with JDK 10, due to incompatibilities in Maven plugins.
 ## Executing Bindaas
 
 Once you have successfully built Bindaas, you will find the binary in a compressed format, as in
-bindaas-dist-2.0.7-201806281144-min.tar.gz
+bindaas-dist-3.3.5-201806281144-min.tar.gz
 
 
-Extract this compressed binary. Now bindaas-dist-2.0.7-201806281144-min will be your <BINDAAS-BINARY-HOME>.
+Extract this compressed binary. 
+
+$ tar xvzf bindaas-dist-3.3.5-201806281144-min.tar.gz
+
+Now bindaas-dist-3.3.5-201806281144-min will be your BINDAAS-BINARY-HOME.
 
 Bindaas can be executed using the startup.sh script in
-<BINDAAS-BINARY-HOME>/bin
+BINDAAS-BINARY-HOME/bin
 
 $ sh startup.sh
 
