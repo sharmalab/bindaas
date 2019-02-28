@@ -102,5 +102,9 @@
 			<artifactId>bindaas-core-api</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+    </dependencies>
 </project>

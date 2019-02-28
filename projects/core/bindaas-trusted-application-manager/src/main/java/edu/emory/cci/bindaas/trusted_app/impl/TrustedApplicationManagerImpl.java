@@ -12,7 +12,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -246,7 +246,7 @@ public class TrustedApplicationManagerImpl implements
 		String prenonce = roundoff + "|" + applicationKey;
 		byte[] nonceBytes = MessageDigest.getInstance("SHA-1").digest(
 				prenonce.getBytes("UTF-8"));
-		String nonce = DatatypeConverter.printBase64Binary(nonceBytes);
+		String nonce = javax.xml.bind.DatatypeConverter.printBase64Binary(nonceBytes);
 
 		String predigest = String.format("%s|%s|%s|%s", username, nonce,
 				applicationID, salt);
