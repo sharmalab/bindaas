@@ -8,7 +8,6 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.xml.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
