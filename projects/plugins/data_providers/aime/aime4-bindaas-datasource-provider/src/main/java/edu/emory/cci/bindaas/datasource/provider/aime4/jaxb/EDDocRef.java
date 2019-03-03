@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 
-
 /**
  * <p>Java class for ED.Doc.Ref complex type.
  * 
