@@ -3,16 +3,14 @@ package edu.emory.cci.bindaas.datasource.provider.mongodb;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
-import com.mongodb.MongoOptions;
-import com.mongodb.ServerAddress;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormat;
@@ -39,7 +37,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
     private OutputFormatRegistry registry;
     private JsonParser parser = new JsonParser();
     
-    private Map<String, DBCollection> dbCollectionMap = new HashMap<String, DBCollection>();
+    private Map<String, MongoCollection> mongoCollectionMap = new HashMap<String, MongoCollection>();
 
     public OutputFormatRegistry getRegistry() {
         return registry;
@@ -105,16 +103,14 @@ public class MongoDBQueryHandler implements IQueryHandler {
                     // get DB collection
                     DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
                     String dbCollectionKey = configuration.getDb() + "-" + configuration.getCollection();
-                    if (! dbCollectionMap.containsKey(dbCollectionKey) ) {
-                        Mongo mongo = null;
+                    if (! mongoCollectionMap.containsKey(dbCollectionKey) ) {
+                        MongoClient mongoClient;
                         try {
-                            MongoOptions options = new MongoOptions();
-                            options.connectionsPerHost = 50;
-
-                            mongo = new Mongo(new ServerAddress(configuration.getHost(), configuration.getPort()), options);
-                            DB db = mongo.getDB(configuration.getDb());
-                            DBCollection mongoDbCollection = db.getCollection(configuration.getCollection());
-                            dbCollectionMap.put(dbCollectionKey, mongoDbCollection);
+                            MongoClientOptions optionsNew = MongoClientOptions.builder().connectionsPerHost(50).build();
+                            mongoClient = new MongoClient(new ServerAddress(configuration.getHost(), configuration.getPort()), optionsNew);
+                            MongoDatabase db = mongoClient.getDatabase(configuration.getDb());
+                            MongoCollection mongoDbCollection = db.getCollection(configuration.getCollection());
+                            mongoCollectionMap.put(dbCollectionKey, mongoDbCollection);
 
                             
                         } catch (Exception e) {
@@ -125,7 +121,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
                     // use operationDescriptor to route to correct handler
                     
                     IOperationHandler operationHandler = operationDescriptor.get_operation().getHandler();
-                    QueryResult result = operationHandler.handleOperation(dbCollectionMap.get(dbCollectionKey), props , operationDescriptor.get_operation_args(), registry);
+                    QueryResult result = operationHandler.handleOperation(mongoCollectionMap.get(dbCollectionKey), props , operationDescriptor.get_operation_args(), registry);
                     return result;
                     
                     
