@@ -17,7 +17,7 @@ import com.google.gson.JsonPrimitive;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 import com.mongodb.WriteResult;
 
@@ -61,7 +61,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, String data, RequestContext requestContext)
 			throws AbstractHttpCodeException {
-		Mongo mongo = null;
+		MongoClient mongo = null;
 		try {
 			DataSourceConfiguration configuration = GSONUtil.getGSONInstance()
 					.fromJson(dataSource, DataSourceConfiguration.class);
@@ -71,7 +71,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 
 			if (submitEndpointProperties.getInputType()!=null && submitEndpointProperties.getInputType().toString().startsWith("JSON")) {
 				
-				mongo = new Mongo(configuration.getHost(),configuration.getPort());
+				mongo = new MongoClient(configuration.getHost(),configuration.getPort());
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				
@@ -89,7 +89,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 			}
 			else if(submitEndpointProperties.getInputType()!=null && submitEndpointProperties.getInputType().toString().startsWith("CSV"))
 			{
-				mongo = new Mongo(configuration.getHost(),configuration.getPort());
+				mongo = new MongoClient(configuration.getHost(),configuration.getPort());
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				DBObject[] object = toJSON(data , submitEndpointProperties.getCsvHeader());
