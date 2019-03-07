@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import com.google.gson.JsonObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.bundle.Activator;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
@@ -167,9 +167,9 @@ public class MongoDBProvider implements IProvider{
 	}
 	private void connect(DataSourceConfiguration configuration) throws Exception
 	{
-		Mongo mongo = null;
+		MongoClient mongo = null;
 		try {
-			mongo = new Mongo(configuration.getHost(),configuration.getPort());
+			mongo = new MongoClient(configuration.getHost(),configuration.getPort());
 			DB db = mongo.getDB(configuration.getDb());
 			DBCollection collection = db.getCollection(configuration.getCollection());
 			collection.count(); // run a simple command to check connectivity
