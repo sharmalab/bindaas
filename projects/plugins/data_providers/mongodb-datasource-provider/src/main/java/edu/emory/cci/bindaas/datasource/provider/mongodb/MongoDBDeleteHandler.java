@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.DeleteOperationHandler.DeleteOperationDescriptor;
@@ -55,9 +55,9 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 			
 			// get DB collection
 			DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
-			Mongo mongo = null;
+			MongoClient mongo = null;
 			try {
-				mongo = new Mongo(configuration.getHost(),configuration.getPort());
+				mongo = new MongoClient(configuration.getHost(),configuration.getPort());
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 
