@@ -20,6 +20,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 import com.mongodb.WriteResult;
+import com.mongodb.WriteConcern;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.SubmitEndpointProperties;
@@ -77,7 +78,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				
 				DBObject object = (DBObject) JSON.parse(data);
 
-				WriteResult writeResult = collection.insert(object);
+				WriteResult writeResult = collection.insert(object, WriteConcern.ACKNOWLEDGED);
 
 				String out = "{ \"count\" : " + 1 + "}";
 
@@ -94,7 +95,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				DBObject[] object = toJSON(data , submitEndpointProperties.getCsvHeader());
 
-				WriteResult writeResult = collection.insert(object);
+				WriteResult writeResult = collection.insert(object, WriteConcern.ACKNOWLEDGED);
 
 				String out = "{ \"count\" : " + object.length + "}";
 
