@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -18,6 +19,8 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.mongodb.util.JSON;
 import com.mongodb.WriteResult;
 
@@ -69,9 +72,14 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 					.getGSONInstance().fromJson(endpointProperties,
 							SubmitEndpointProperties.class);
 
+			MongoCredential credential = MongoCredential.createCredential(
+					configuration.getUsername(),
+					configuration.getAuthenticationDb(),
+					configuration.getPassword().toCharArray()
+			);
+
 			if (submitEndpointProperties.getInputType()!=null && submitEndpointProperties.getInputType().toString().startsWith("JSON")) {
-				
-				mongo = new MongoClient(configuration.getHost(),configuration.getPort());
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()),Arrays.asList(credential));
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				
@@ -89,7 +97,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 			}
 			else if(submitEndpointProperties.getInputType()!=null && submitEndpointProperties.getInputType().toString().startsWith("CSV"))
 			{
-				mongo = new MongoClient(configuration.getHost(),configuration.getPort());
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential));
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				DBObject[] object = toJSON(data , submitEndpointProperties.getCsvHeader());

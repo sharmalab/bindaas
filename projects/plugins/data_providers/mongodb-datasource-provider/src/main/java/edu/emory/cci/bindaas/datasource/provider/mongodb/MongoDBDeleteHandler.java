@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -10,6 +11,8 @@ import com.google.gson.JsonParser;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.DeleteOperationHandler.DeleteOperationDescriptor;
@@ -57,7 +60,13 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 			DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
 			MongoClient mongo = null;
 			try {
-				mongo = new MongoClient(configuration.getHost(),configuration.getPort());
+				MongoCredential credential = MongoCredential.createCredential(
+						configuration.getUsername(),
+						configuration.getAuthenticationDb(),
+						configuration.getPassword().toCharArray()
+				);
+
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential));
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 

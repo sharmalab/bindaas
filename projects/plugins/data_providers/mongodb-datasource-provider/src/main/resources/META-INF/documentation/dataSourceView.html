@@ -7,7 +7,14 @@
 		
 		<label for="aime_table">Collection Name</label>
 		<span class="has-tip tip-left" data-width="210" title="Name of the MongoDB database collection"><input type="text" id="mongo_collection" /></span>
-		
+
+		<label>Authentication Database</label>
+		<span class="has-tip tip-left" data-width="210" title="Name of the authentication database"><input type="text" id="mongo_authenticationDb" /></span>
+		<label>Username</label>
+		<span class="has-tip tip-left" data-width="210" title="Username for connecting to the MongoDB database"><input type="text" id="mongo_username" /></span>
+		<label>Password</label>
+		<span class="has-tip tip-left" data-width="210" title="Password for connecting to the MongoDB database"><input type="password" id="mongo_password" /></span>
+
 		<span class="has-tip tip-left" data-width="210" title="This option will generate submit API to upload data in CSV and JSON formats"><label for="mongo_auto_init"><input type="checkbox" CHECKED id="mongo_auto_init">  Generate Default API</label></span>
 		
 		<script>
@@ -27,6 +34,21 @@
 			});
 			
 			$("#mongo_collection").keyup(function ()
+			{
+				updateProviderFieldMongo();
+			});
+
+			$("#mongo_authenticationDb").keyup(function ()
+			{
+				updateProviderFieldMongo();
+			});
+
+			$("#mongo_username").keyup(function ()
+			{
+				updateProviderFieldMongo();
+			});
+
+			$("#mongo_password").keyup(function ()
 			{
 				updateProviderFieldMongo();
 			});
@@ -50,9 +72,12 @@
 		   	 dataSourceJson.port = $("#mong_port").attr("value");
 		   	 dataSourceJson.db = $("#mongo_db").attr("value");
 		   	 dataSourceJson.collection = $("#mongo_collection").attr("value");
-		   	 
+		   	 dataSourceJson.authenticationDb = $("#mongo_authenticationDb").attr("value");
+		   	 dataSourceJson.username = $("#mongo_username").attr("value");
+		   	 dataSourceJson.password = $("#mongo_password").attr("value");
+
 		   	 if($('#mongo_auto_init').attr('checked')) {
-					  dataSourceJson.initialize = true;
+					  dataSourceJson.initialize = true;git-gui
 					 
 					} else {
 					  dataSourceJson.initialize = false;
@@ -74,7 +99,10 @@
 				   $("#mong_port").attr("value", dataSourceJson.port);
 				   $("#mongo_db").attr("value", dataSourceJson.db);
 				   $("#mongo_collection").attr("value", dataSourceJson.collection);
-				   
+				   $("#mongo_authenticationDb").attr("value", dataSourceJson.collection);
+				   $("#mongo_username").attr("value", dataSourceJson.username);
+				   $("#mongo_password").attr("value", dataSourceJson.password);
+
 				   if(dataSourceJson.initialize == true) {
 						  $('#mongo_auto_init').attr('checked' , "true");
 						  
