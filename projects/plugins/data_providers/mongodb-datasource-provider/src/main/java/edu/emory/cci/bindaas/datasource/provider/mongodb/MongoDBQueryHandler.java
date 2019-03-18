@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
@@ -108,11 +110,23 @@ public class MongoDBQueryHandler implements IQueryHandler {
                     if (! dbCollectionMap.containsKey(dbCollectionKey) ) {
                         MongoClient mongo = null;
                         try {
+
                             MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
                             optionsBuilder.connectionsPerHost(50);
                             MongoClientOptions options = optionsBuilder.build();
 
-                            mongo = new MongoClient(new ServerAddress(configuration.getHost(), configuration.getPort()), options);
+                            if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+                            }
+                            else{
+                                MongoCredential credential = MongoCredential.createCredential(
+                                        configuration.getUsername(),
+                                        configuration.getAuthenticationDb(),
+                                        configuration.getPassword().toCharArray()
+                                );
+                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential),options);
+                            }
+
                             DB db = mongo.getDB(configuration.getDb());
                             DBCollection mongoDbCollection = db.getCollection(configuration.getCollection());
                             dbCollectionMap.put(dbCollectionKey, mongoDbCollection);
