@@ -72,14 +72,19 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 					.getGSONInstance().fromJson(endpointProperties,
 							SubmitEndpointProperties.class);
 
-			MongoCredential credential = MongoCredential.createCredential(
-					configuration.getUsername(),
-					configuration.getAuthenticationDb(),
-					configuration.getPassword().toCharArray()
-			);
+			if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()));
+			}
+			else{
+				MongoCredential credential = MongoCredential.createCredential(
+						configuration.getUsername(),
+						configuration.getAuthenticationDb(),
+						configuration.getPassword().toCharArray()
+				);
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential));
+			}
 
 			if (submitEndpointProperties.getInputType()!=null && submitEndpointProperties.getInputType().toString().startsWith("JSON")) {
-				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()),Arrays.asList(credential));
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				
@@ -97,7 +102,6 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 			}
 			else if(submitEndpointProperties.getInputType()!=null && submitEndpointProperties.getInputType().toString().startsWith("CSV"))
 			{
-				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential));
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				DBObject[] object = toJSON(data , submitEndpointProperties.getCsvHeader());

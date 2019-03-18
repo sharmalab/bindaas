@@ -60,13 +60,17 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 			DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
 			MongoClient mongo = null;
 			try {
-				MongoCredential credential = MongoCredential.createCredential(
-						configuration.getUsername(),
-						configuration.getAuthenticationDb(),
-						configuration.getPassword().toCharArray()
-				);
-
-				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential));
+				if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+					mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()));
+				}
+				else{
+					MongoCredential credential = MongoCredential.createCredential(
+							configuration.getUsername(),
+							configuration.getAuthenticationDb(),
+							configuration.getPassword().toCharArray()
+					);
+					mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential));
+				}
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 

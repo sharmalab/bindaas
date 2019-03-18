@@ -8,11 +8,11 @@
 		<label for="aime_table">Collection Name</label>
 		<span class="has-tip tip-left" data-width="210" title="Name of the MongoDB database collection"><input type="text" id="mongo_collection" /></span>
 
-		<label>Authentication Database</label>
-		<span class="has-tip tip-left" data-width="210" title="Name of the authentication database"><input type="text" id="mongo_authenticationDb" /></span>
-		<label>Username</label>
+		<label>Authentication Database (Optional)</label>
+		<span class="has-tip tip-left" data-width="210" title="Name of the authentication database"><input type="text" id="mongo_authenticationDb" value="admin" /></span>
+		<label>Username (Optional)</label>
 		<span class="has-tip tip-left" data-width="210" title="Username for connecting to the MongoDB database"><input type="text" id="mongo_username" /></span>
-		<label>Password</label>
+		<label>Password (Optional)</label>
 		<span class="has-tip tip-left" data-width="210" title="Password for connecting to the MongoDB database"><input type="password" id="mongo_password" /></span>
 
 		<span class="has-tip tip-left" data-width="210" title="This option will generate submit API to upload data in CSV and JSON formats"><label for="mongo_auto_init"><input type="checkbox" CHECKED id="mongo_auto_init">  Generate Default API</label></span>
@@ -77,7 +77,7 @@
 		   	 dataSourceJson.password = $("#mongo_password").attr("value");
 
 		   	 if($('#mongo_auto_init').attr('checked')) {
-					  dataSourceJson.initialize = true;git-gui
+					  dataSourceJson.initialize = true;
 					 
 					} else {
 					  dataSourceJson.initialize = false;
@@ -99,7 +99,7 @@
 				   $("#mong_port").attr("value", dataSourceJson.port);
 				   $("#mongo_db").attr("value", dataSourceJson.db);
 				   $("#mongo_collection").attr("value", dataSourceJson.collection);
-				   $("#mongo_authenticationDb").attr("value", dataSourceJson.collection);
+				   $("#mongo_authenticationDb").attr("value", dataSourceJson.authenticationDb);
 				   $("#mongo_username").attr("value", dataSourceJson.username);
 				   $("#mongo_password").attr("value", dataSourceJson.password);
 
