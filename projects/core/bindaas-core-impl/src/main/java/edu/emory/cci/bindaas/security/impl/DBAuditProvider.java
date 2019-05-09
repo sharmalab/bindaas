@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.security.impl;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +34,12 @@ public class DBAuditProvider implements IAuditProvider{
 		{
 			Session session = sessionFactory.openSession();
 			Transaction tx = null ;
-			try{
-				
+			BufferedWriter writer = new BufferedWriter(new FileWriter(CSV_AUDIT_FILE, true));
+			try {
+				if (auditMessage.getOutputLine() != null) {
+					writer.newLine();
+					writer.write(auditMessage.getOutputLine());
+				}
 				tx = session.beginTransaction();
 				session.save(auditMessage);
 				tx.commit();
@@ -45,6 +51,7 @@ public class DBAuditProvider implements IAuditProvider{
 			}
 			finally
 			{
+				writer.close();
 				session.close();
 			}
 		}
