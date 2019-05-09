@@ -15,9 +15,9 @@
     <modules>
         <module>image-download-query-result-modifier</module>
         <module>aim-to-dicom-query-result-modifier</module>
-        <module>dicom-to-png-query-result-modifier</module>
+        <!--<module>dicom-to-png-query-result-modifier</module>-->
         <module>aim-to-svg-query-result-modifier</module>
-        <module>dicomaim-to-pngsvg-QRM</module>
+        <!--<module>dicomaim-to-pngsvg-QRM</module>-->
         <module>native-app-runner-SPM</module>
         <module>blob-download-plugin</module>
         <module>collection-query-modifier-plugin</module>

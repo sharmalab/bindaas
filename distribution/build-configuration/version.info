@@ -1,5 +1,5 @@
-#Thu, 13 Dec 2018 19:27:40 -0500
+#Thu, 10 Jan 2019 15:15:21 -0500
 bindaas.framework.version.major=3
-bindaas.framework.version.minor=3
-bindaas.framework.version.revision=1
-bindaas.build.date=201811291555
+bindaas.framework.version.minor=4
+bindaas.framework.version.revision=0
+bindaas.build.date=201901101515

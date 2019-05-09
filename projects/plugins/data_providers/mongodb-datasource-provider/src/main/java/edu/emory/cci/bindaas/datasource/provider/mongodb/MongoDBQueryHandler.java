@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,8 +11,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
-import com.mongodb.MongoOptions;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
@@ -106,12 +108,25 @@ public class MongoDBQueryHandler implements IQueryHandler {
                     DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
                     String dbCollectionKey = configuration.getDb() + "-" + configuration.getCollection();
                     if (! dbCollectionMap.containsKey(dbCollectionKey) ) {
-                        Mongo mongo = null;
+                        MongoClient mongo = null;
                         try {
-                            MongoOptions options = new MongoOptions();
-                            options.connectionsPerHost = 50;
 
-                            mongo = new Mongo(new ServerAddress(configuration.getHost(), configuration.getPort()), options);
+                            MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
+                            optionsBuilder.connectionsPerHost(50);
+                            MongoClientOptions options = optionsBuilder.build();
+
+                            if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+                            }
+                            else{
+                                MongoCredential credential = MongoCredential.createCredential(
+                                        configuration.getUsername(),
+                                        configuration.getAuthenticationDb(),
+                                        configuration.getPassword().toCharArray()
+                                );
+                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential),options);
+                            }
+
                             DB db = mongo.getDB(configuration.getDb());
                             DBCollection mongoDbCollection = db.getCollection(configuration.getCollection());
                             dbCollectionMap.put(dbCollectionKey, mongoDbCollection);

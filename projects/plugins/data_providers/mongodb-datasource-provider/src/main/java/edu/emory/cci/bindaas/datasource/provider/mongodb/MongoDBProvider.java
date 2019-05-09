@@ -1,5 +1,6 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -9,7 +10,9 @@ import org.apache.commons.logging.LogFactory;
 import com.google.gson.JsonObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.bundle.Activator;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
@@ -167,9 +170,20 @@ public class MongoDBProvider implements IProvider{
 	}
 	private void connect(DataSourceConfiguration configuration) throws Exception
 	{
-		Mongo mongo = null;
+		MongoClient mongo = null;
 		try {
-			mongo = new Mongo(configuration.getHost(),configuration.getPort());
+			if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()));
+			}
+			else{
+				MongoCredential credential = MongoCredential.createCredential(
+						configuration.getUsername(),
+						configuration.getAuthenticationDb(),
+						configuration.getPassword().toCharArray()
+				);
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential));
+			}
+
 			DB db = mongo.getDB(configuration.getDb());
 			DBCollection collection = db.getCollection(configuration.getCollection());
 			collection.count(); // run a simple command to check connectivity
