@@ -19,8 +19,9 @@ import edu.emory.cci.bindaas.security.model.hibernate.AuditMessage;
 public class DBAuditProvider implements IAuditProvider{
 
 	private Log log = LogFactory.getLog(getClass());
-	private static Integer MAX_DISPLAY_THRESHOLD = 10000 ;
-	private static Integer EXPORT_BATCH_THRESHOLD = 4000 ;
+	private static Integer MAX_DISPLAY_THRESHOLD = 10000;
+	private static Integer EXPORT_BATCH_THRESHOLD = 4000;
+	private static String CSV_AUDIT_FILE = "audit.log.csv";
 	
 	
 	@Override
