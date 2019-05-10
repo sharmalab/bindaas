@@ -8,13 +8,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.google.gson.annotations.Expose;
@@ -29,7 +30,8 @@ public class HTTPQuery {
 	@Expose private Map<String,String> headers;
 	
 	private Log log = LogFactory.getLog(getClass());
-	
+	private HttpClient httpClient;
+
 	public METHOD getMethod() {
 		return method;
 	}
@@ -72,7 +74,7 @@ public class HTTPQuery {
 	
 	public HttpResponse execute() throws Exception
 	{
-		DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+		HttpClient httpClient = HttpClientBuilder.create().build();
 		
 		HttpRequestBase request = null;
 		
@@ -147,7 +149,7 @@ public class HTTPQuery {
 		}
 		
 		log.debug("Connecting remote site [" + request.getURI().toString() + "]");
-		HttpResponse response = defaultHttpClient.execute(request);
+		HttpResponse response = httpClient.execute(request);
 		return response;
 			
 	}
