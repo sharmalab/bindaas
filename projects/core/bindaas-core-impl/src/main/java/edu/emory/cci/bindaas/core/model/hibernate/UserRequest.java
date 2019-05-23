@@ -50,6 +50,9 @@ public class UserRequest {
 	
 	@Expose
 	private String apiKey;
+
+	@Expose
+	private String jwt;
 	
 	@Expose
 	@Column(nullable = false)
@@ -114,6 +117,12 @@ public class UserRequest {
 	}
 	public void setApiKey(String apiKey) {
 		this.apiKey = apiKey;
+	}
+	public String getJWT() {
+		return jwt;
+	}
+	public void setJWT(String jwt) {
+		this.jwt = jwt;
 	}
 	public String getStage() {
 		return stage;

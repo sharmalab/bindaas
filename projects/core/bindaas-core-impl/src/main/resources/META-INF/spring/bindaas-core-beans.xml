@@ -101,6 +101,9 @@
 <bean id="apiKeyManager" class="edu.emory.cci.bindaas.core.apikey.impl.DefaultAPIKeyManager" init-method="init">
 	<property name="sessionFactory" ref="sessionFactory"></property>
 </bean>
+<bean id="JWTManager" class="edu.emory.cci.bindaas.core.jwt.impl.DefaultJWTManager" init-method="init">
+	<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
 
 <!-- System Package -->
 <util:map id="criticalServices" map-class="java.util.HashMap" key-type="java.lang.String" value-type="java.lang.String">
