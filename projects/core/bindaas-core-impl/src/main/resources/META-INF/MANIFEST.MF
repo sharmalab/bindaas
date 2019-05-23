@@ -183,5 +183,10 @@ Bundle-ClassPath:  .,
  META-INF/lib/guava-27.0-jre.jar,
  META-INF/lib/commons-xml2json-0.0.1.jar,
  META-INF/lib/saxon9-9.1.0.8.jar,
- META-INF/lib/saxon9he-9.4.0.4.jar
+ META-INF/lib/saxon9he-9.4.0.4.jar,
+ META-INF/lib/java-jwt-3.8.1.jar,
+ META-INF/lib/jackson-annotations-2.9.9.jar,
+ META-INF/lib/jackson-core-2.9.9.jar,
+ META-INF/lib/jackson-databind-2.9.9.jar,
+ META-INF/lib/commons-codec-1.12.jar
 Require-Bundle: org.apache.felix.gogo.runtime

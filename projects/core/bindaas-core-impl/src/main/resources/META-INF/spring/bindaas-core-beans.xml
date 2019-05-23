@@ -101,7 +101,8 @@
 <bean id="apiKeyManager" class="edu.emory.cci.bindaas.core.apikey.impl.DefaultAPIKeyManager" init-method="init">
 	<property name="sessionFactory" ref="sessionFactory"></property>
 </bean>
-<bean id="JWTManager" class="edu.emory.cci.bindaas.core.jwt.impl.DefaultJWTManager" init-method="init">
+
+<bean id="JWTManager" class="edu.emory.cci.bindaas.core.jwt.DefaultJWTManager" init-method="init">
 	<property name="sessionFactory" ref="sessionFactory"></property>
 </bean>
 

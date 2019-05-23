@@ -1,4 +1,4 @@
-package edu.emory.cci.bindaas.core.jwt.token;
+package edu.emory.cci.bindaas.core.jwt;
 
 public class JWTManagerException extends Exception{
 	private static final long serialVersionUID = 1L;

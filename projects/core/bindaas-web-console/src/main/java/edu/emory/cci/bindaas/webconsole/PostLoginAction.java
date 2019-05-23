@@ -10,9 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.emory.cci.bindaas.core.jwt.token.IJWTManager;
-import edu.emory.cci.bindaas.core.jwt.token.JWT;
-import edu.emory.cci.bindaas.core.jwt.token.JWTManagerException;
+import edu.emory.cci.bindaas.core.jwt.IJWTManager;
+import edu.emory.cci.bindaas.core.jwt.JWTManagerException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -134,8 +133,8 @@ public class PostLoginAction extends HttpServlet {
 
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(Calendar.YEAR, 40);
-		JWT jwt = JWTManager.generateJWT(principal, calendar.getTime(), "system", "System generated JWT for the user", ActivityType.SYSTEM_APPROVE, false);
-		log.info("Token generated: "+jwt.getValue());
+		String jwt = JWTManager.generateJWT();
+		log.info("Token for user: "+jwt);
 	}
 
 }

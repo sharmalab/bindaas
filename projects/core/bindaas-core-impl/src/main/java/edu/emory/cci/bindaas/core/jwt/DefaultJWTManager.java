@@ -1,27 +1,24 @@
-package edu.emory.cci.bindaas.core.jwt.impl;
+package edu.emory.cci.bindaas.core.jwt;
 
-import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.UUID;
-
-import edu.emory.cci.bindaas.core.jwt.token.IJWTManager;
-import edu.emory.cci.bindaas.core.jwt.token.JWT;
-import edu.emory.cci.bindaas.core.jwt.token.JWTManagerException;
-import edu.emory.cci.bindaas.core.jwt.token.JWTManagerException.Reason;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import java.security.Key;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
+import edu.emory.cci.bindaas.core.jwt.IJWTManager;
+import edu.emory.cci.bindaas.core.jwt.JWTManagerException;
+import edu.emory.cci.bindaas.core.jwt.JWTManagerException.Reason;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
@@ -41,36 +38,28 @@ public class DefaultJWTManager implements IJWTManager {
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-	
-	private JWT userRequestToJWT(UserRequest userRequest)
-	{
-		JWT jwt = new JWT();
-		jwt.setValue(userRequest.getJWT());
-		jwt.setExpires(userRequest.getDateExpires());
-		jwt.setEmailAddress(userRequest.getEmailAddress());
-		jwt.setFirstName(userRequest.getFirstName());
-		jwt.setLastName(userRequest.getLastName());
-		return jwt;
-	}
 
-	
-	
-	
-	
+	private final static String secret = "fj32Jfv02Mq33g0f8ioDkw";
+
+
 	@Override
-	public JWT generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy , String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists)
+	public String generateJWT()
 			throws JWTManagerException {
 		Session session = sessionFactory.openSession();
 
 		try {
 			session.beginTransaction();
-			Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-			String jws = Jwts.builder().setSubject("Joe").signWith(key).compact();
+
+			String jws = JWT.create()
+					.withIssuer("bindaas")
+					.withClaim("email", "example@email.com")
+					.sign(Algorithm.HMAC256(secret));
+
 			log.info("JWTManager generated: "+jws);
 			UserRequest userRequest = new UserRequest();
 			userRequest.setStage(Stage.accepted);
 			userRequest.setJWT(jws);
-			userRequest.setDateExpires(dateExpires);
+//			userRequest.setDateExpires(dateExpires);
 
 			userRequest.setEmailAddress("example@email.com");
 			userRequest.setFirstName("firstName");
@@ -78,15 +67,14 @@ public class DefaultJWTManager implements IJWTManager {
 
 			session.save(userRequest);
 			HistoryLog historyLog = new HistoryLog();
-			historyLog.setActivityType(activityType.toString());
-			historyLog
-					.setComments(comments);
-			historyLog.setInitiatedBy(initiatedBy);
+//			historyLog.setActivityType(activityType.toString());
+//			historyLog.setComments(comments);
+//			historyLog.setInitiatedBy(initiatedBy);
 			historyLog.setUserRequest(userRequest);
 
 			session.save(historyLog);
 			session.getTransaction().commit();
-			return userRequestToJWT(userRequest);
+			return jws;
 		}
 
 		//catch (JWTManagerException e) { throw e ;}
@@ -103,6 +91,14 @@ public class DefaultJWTManager implements IJWTManager {
 	public void init() throws Exception
 	{
 		log.info("DefaultJWTManager started");
+		String jws = generateJWT();
+		Algorithm algorithm = Algorithm.HMAC256(secret);
+		JWTVerifier verifier = JWT.require(algorithm)
+				.withIssuer("bindaas")
+				.build();
+		DecodedJWT decodedJWT = verifier.verify(jws);
+		Claim claim = decodedJWT.getClaim("email");
+		log.info(claim.asString());
 	}
 
 }

@@ -1,4 +1,4 @@
-package edu.emory.cci.bindaas.core.jwt.token;
+package edu.emory.cci.bindaas.core.jwt;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +11,8 @@ import edu.emory.cci.bindaas.security.api.BindaasUser;
 
 public interface IJWTManager {
 
-	public JWT generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy , String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists) throws JWTManagerException;
+//	public JWT generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy , String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists) throws JWTManagerException;
+	public String generateJWT() throws JWTManagerException;
 //	public APIKey createAPIKeyRequest(BindaasUser bindaasUser , Date dateExpires,String initiatedBy , String comments , ActivityType activityType ) throws APIKeyManagerException;
 //	public APIKey modifyAPIKey(Long id , Stage stage , Date dateExpires ,String initiatedBy , String comments , ActivityType activityType ) throws APIKeyManagerException;
 //	public APIKey createShortLivedAPIKey(BindaasUser bindaasUser , int lifetime , String applicationId) throws APIKeyManagerException;
