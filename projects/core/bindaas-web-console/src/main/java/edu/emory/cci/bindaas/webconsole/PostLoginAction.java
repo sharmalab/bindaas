@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import edu.emory.cci.bindaas.core.jwt.IJWTManager;
 import edu.emory.cci.bindaas.core.jwt.JWTManagerException;
+import edu.emory.cci.bindaas.core.jwt.Token;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -78,8 +79,8 @@ public class PostLoginAction extends HttpServlet {
 
 				// generate a api_key for this user if doesnt exist
 
-				principal = generateApiKey(principal);
-				generateJWT(principal);
+//				principal = generateApiKey(principal);
+				principal = generateJWT(principal);
 				response.sendRedirect(loginTarget);
 
 			} else {
@@ -129,12 +130,14 @@ public class PostLoginAction extends HttpServlet {
 		principal.addProperty("apiKey", apiKey.getValue());
 		return principal;
 	}
-	private void generateJWT(BindaasUser principal) throws JWTManagerException {
+	private BindaasUser generateJWT(BindaasUser principal) throws JWTManagerException {
 
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(Calendar.YEAR, 40);
-		String jwt = JWTManager.generateJWT();
-		log.info("Token for user: "+jwt);
+		Token token = JWTManager.generateJWT(principal, calendar.getTime(), "system", "System generated JWT for the user", ActivityType.SYSTEM_APPROVE, false);
+		log.info("Token for user: "+token.getValue());
+		principal.addProperty("apiKey",token.getValue());
+		return principal;
 	}
 
 }

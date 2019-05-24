@@ -191,7 +191,7 @@
 	<property name="defaultLoginTarget" value="/dashboard/"></property>
 	<property name="loginView" ref="loginView"></property>
 	<property name="apiKeyManager" ref="apiKeyManager"></property>
-	<property name="JWTManager" ref="JWTManager"></property>
+	<property name="JWTManager" ref="jwtManager"></property>
 </bean>
 
 
@@ -328,7 +328,7 @@
 <osgi:reference interface="edu.emory.cci.bindaas.core.api.IModifierRegistry" id="modifierRegistry"></osgi:reference>
 <osgi:reference interface="edu.emory.cci.bindaas.security.api.IAuditProvider" id="auditProvider"></osgi:reference>
 <osgi:reference interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager" id="apiKeyManager"></osgi:reference>
-<osgi:reference interface="edu.emory.cci.bindaas.core.jwt.IJWTManager" id="JWTManager"></osgi:reference>
+<osgi:reference interface="edu.emory.cci.bindaas.core.jwt.IJWTManager" id="jwtManager"></osgi:reference>
 
 </beans>
 

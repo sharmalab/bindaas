@@ -25,6 +25,8 @@ import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
+import java.util.Date;
+
 
 public class DefaultJWTManager implements IJWTManager {
 
@@ -41,40 +43,60 @@ public class DefaultJWTManager implements IJWTManager {
 
 	private final static String secret = "fj32Jfv02Mq33g0f8ioDkw";
 
+	private Token userRequestToToken(UserRequest userRequest)
+	{
+		Token token = new Token();
+		token.setValue(userRequest.getJWT());
+		token.setEmailAddress(userRequest.getEmailAddress());
+		token.setFirstName(userRequest.getFirstName());
+		token.setLastName(userRequest.getLastName());
+		return token;
+	}
 
 	@Override
-	public String generateJWT()
+	public Token generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy , String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists)
 			throws JWTManagerException {
 		Session session = sessionFactory.openSession();
 
 		try {
 			session.beginTransaction();
 
+			String emailAddress = bindaasUser
+					.getProperty(BindaasUser.EMAIL_ADDRESS) != null ? bindaasUser
+					.getProperty(BindaasUser.EMAIL_ADDRESS).toString()
+					: bindaasUser.getName() + "@" + bindaasUser.getDomain();
+			String firstName = bindaasUser
+					.getProperty(BindaasUser.FIRST_NAME) != null ? bindaasUser
+					.getProperty(BindaasUser.FIRST_NAME).toString()
+					: bindaasUser.getName();
+			String lastName = bindaasUser.getProperty(BindaasUser.LAST_NAME) != null ? bindaasUser
+					.getProperty(BindaasUser.LAST_NAME).toString()
+					: bindaasUser.getName();
+
 			String jws = JWT.create()
 					.withIssuer("bindaas")
-					.withClaim("email", "example@email.com")
+					.withExpiresAt(dateExpires)
 					.sign(Algorithm.HMAC256(secret));
 
 			log.info("JWTManager generated: "+jws);
 			UserRequest userRequest = new UserRequest();
 			userRequest.setStage(Stage.accepted);
 			userRequest.setJWT(jws);
-//			userRequest.setDateExpires(dateExpires);
 
-			userRequest.setEmailAddress("example@email.com");
-			userRequest.setFirstName("firstName");
-			userRequest.setLastName("lastName");
+			userRequest.setEmailAddress(emailAddress);
+			userRequest.setFirstName(firstName);
+			userRequest.setLastName(lastName);
 
 			session.save(userRequest);
 			HistoryLog historyLog = new HistoryLog();
-//			historyLog.setActivityType(activityType.toString());
-//			historyLog.setComments(comments);
-//			historyLog.setInitiatedBy(initiatedBy);
+			historyLog.setActivityType(activityType.toString());
+			historyLog.setComments(comments);
+			historyLog.setInitiatedBy(initiatedBy);
 			historyLog.setUserRequest(userRequest);
 
 			session.save(historyLog);
 			session.getTransaction().commit();
-			return jws;
+			return userRequestToToken(userRequest);
 		}
 
 		//catch (JWTManagerException e) { throw e ;}
@@ -91,14 +113,14 @@ public class DefaultJWTManager implements IJWTManager {
 	public void init() throws Exception
 	{
 		log.info("DefaultJWTManager started");
-		String jws = generateJWT();
-		Algorithm algorithm = Algorithm.HMAC256(secret);
-		JWTVerifier verifier = JWT.require(algorithm)
-				.withIssuer("bindaas")
-				.build();
-		DecodedJWT decodedJWT = verifier.verify(jws);
-		Claim claim = decodedJWT.getClaim("email");
-		log.info(claim.asString());
+//		String jws = generateJWT();
+//		Algorithm algorithm = Algorithm.HMAC256(secret);
+//		JWTVerifier verifier = JWT.require(algorithm)
+//				.withIssuer("bindaas")
+//				.build();
+//		DecodedJWT decodedJWT = verifier.verify(jws);
+//		Claim claim = decodedJWT.getClaim("email");
+//		log.info(claim.asString());
 	}
 
 }

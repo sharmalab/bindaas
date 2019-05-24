@@ -158,7 +158,8 @@
 	<osgi:service ref="providerRegistry" interface="edu.emory.cci.bindaas.core.api.IProviderRegistry"></osgi:service>
 	<osgi:service ref="securityHandler" interface="edu.emory.cci.bindaas.core.api.ISecurityHandler"></osgi:service>
 	<osgi:service ref="apiKeyManager" interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager"></osgi:service>
-	
+	<osgi:service ref="JWTManager" interface="edu.emory.cci.bindaas.core.jwt.IJWTManager"></osgi:service>
+
 <!-- Blueprint References -->
 	<osgi:reference interface="org.hibernate.SessionFactory" id="sessionFactory"></osgi:reference>
 	<osgi:reference interface="edu.emory.cci.bindaas.version_manager.api.IVersionManager" id="versionManager"></osgi:reference>
