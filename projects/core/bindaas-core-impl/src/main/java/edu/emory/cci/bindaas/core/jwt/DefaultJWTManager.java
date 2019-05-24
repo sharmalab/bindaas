@@ -26,6 +26,7 @@ import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
 import java.util.Date;
+import java.util.List;
 
 
 public class DefaultJWTManager implements IJWTManager {
@@ -82,6 +83,7 @@ public class DefaultJWTManager implements IJWTManager {
 			UserRequest userRequest = new UserRequest();
 			userRequest.setStage(Stage.accepted);
 			userRequest.setJWT(jws);
+			userRequest.setDateExpires(dateExpires);
 
 			userRequest.setEmailAddress(emailAddress);
 			userRequest.setFirstName(firstName);
