@@ -72,8 +72,10 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 			SubmitEndpointProperties submitEndpointProperties = GSONUtil
 					.getGSONInstance().fromJson(endpointProperties,
 							SubmitEndpointProperties.class);
-
-			if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+			if(configuration.getUsername() == null && configuration.getPassword() == null){
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()));
+			}
+			else if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
 				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()));
 			}
 			else{
