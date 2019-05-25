@@ -115,7 +115,10 @@ public class MongoDBQueryHandler implements IQueryHandler {
                             optionsBuilder.connectionsPerHost(50);
                             MongoClientOptions options = optionsBuilder.build();
 
-                            if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+                            if(configuration.getUsername() == null && configuration.getPassword() == null){
+                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+                            }
+                            else if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
                                 mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
                             }
                             else{
