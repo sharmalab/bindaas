@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.security.impl;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +21,9 @@ import edu.emory.cci.bindaas.security.model.hibernate.AuditMessage;
 public class DBAuditProvider implements IAuditProvider{
 
 	private Log log = LogFactory.getLog(getClass());
-	private static Integer MAX_DISPLAY_THRESHOLD = 10000 ;
-	private static Integer EXPORT_BATCH_THRESHOLD = 4000 ;
+	private static Integer MAX_DISPLAY_THRESHOLD = 10000;
+	private static Integer EXPORT_BATCH_THRESHOLD = 4000;
+	private static String CSV_AUDIT_FILE = "audit.log.csv";
 	
 	
 	@Override
@@ -31,8 +34,12 @@ public class DBAuditProvider implements IAuditProvider{
 		{
 			Session session = sessionFactory.openSession();
 			Transaction tx = null ;
-			try{
-				
+			BufferedWriter writer = new BufferedWriter(new FileWriter(CSV_AUDIT_FILE, true));
+			try {
+				if (auditMessage.getOutputLine() != null) {
+					writer.newLine();
+					writer.write(auditMessage.getOutputLine());
+				}
 				tx = session.beginTransaction();
 				session.save(auditMessage);
 				tx.commit();
@@ -44,6 +51,7 @@ public class DBAuditProvider implements IAuditProvider{
 			}
 			finally
 			{
+				writer.close();
 				session.close();
 			}
 		}

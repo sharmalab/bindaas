@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -17,9 +18,12 @@ import com.google.gson.JsonPrimitive;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.mongodb.util.JSON;
 import com.mongodb.WriteResult;
+import com.mongodb.WriteConcern;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.SubmitEndpointProperties;
@@ -61,7 +65,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 	public QueryResult submit(JsonObject dataSource,
 			JsonObject endpointProperties, String data, RequestContext requestContext)
 			throws AbstractHttpCodeException {
-		Mongo mongo = null;
+		MongoClient mongo = null;
 		try {
 			DataSourceConfiguration configuration = GSONUtil.getGSONInstance()
 					.fromJson(dataSource, DataSourceConfiguration.class);
@@ -69,15 +73,25 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 					.getGSONInstance().fromJson(endpointProperties,
 							SubmitEndpointProperties.class);
 
+			if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()));
+			}
+			else{
+				MongoCredential credential = MongoCredential.createCredential(
+						configuration.getUsername(),
+						configuration.getAuthenticationDb(),
+						configuration.getPassword().toCharArray()
+				);
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential));
+			}
+
 			if (submitEndpointProperties.getInputType()!=null && submitEndpointProperties.getInputType().toString().startsWith("JSON")) {
-				
-				mongo = new Mongo(configuration.getHost(),configuration.getPort());
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				
 				DBObject object = (DBObject) JSON.parse(data);
 
-				WriteResult writeResult = collection.insert(object);
+				WriteResult writeResult = collection.insert(object, WriteConcern.ACKNOWLEDGED);
 
 				String out = "{ \"count\" : " + 1 + "}";
 
@@ -89,12 +103,11 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 			}
 			else if(submitEndpointProperties.getInputType()!=null && submitEndpointProperties.getInputType().toString().startsWith("CSV"))
 			{
-				mongo = new Mongo(configuration.getHost(),configuration.getPort());
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
 				DBObject[] object = toJSON(data , submitEndpointProperties.getCsvHeader());
 
-				WriteResult writeResult = collection.insert(object);
+				WriteResult writeResult = collection.insert(object, WriteConcern.ACKNOWLEDGED);
 
 				String out = "{ \"count\" : " + object.length + "}";
 
