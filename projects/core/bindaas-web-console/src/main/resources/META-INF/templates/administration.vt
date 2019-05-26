@@ -24,7 +24,19 @@
 		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
 		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
 		<link rel="stylesheet" href="/foundation/stylesheets/general_enclosed_foundicons.css">
-
+##		FIXME: Move to proper CSS file later
+		<style type = "text/css">
+			.wrapword{
+				white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+				white-space: -webkit-pre-wrap; /*Chrome & Safari */
+				white-space: -pre-wrap;      /* Opera 4-6 */
+				white-space: -o-pre-wrap;    /* Opera 7 */
+				white-space: pre-wrap;       /* css-3 */
+				word-wrap: break-word;       /* Internet Explorer 5.5+ */
+				word-break: break-all;
+				white-space: normal;
+			}
+		</style>
 		<!-- Latest version of jQuery -->
 		<script src="/foundation/javascripts/jquery.js"></script>
 		
@@ -173,7 +185,7 @@
 													<tbody>
 														#foreach ($acceptedRequest in $acceptedRequests)
 														<tr>
-															<td>$acceptedRequest.getRequestDate().toString()</td><td>$acceptedRequest.getDateExpires()</td><td>$acceptedRequest.getFirstName()</td><td>$acceptedRequest.getLastName()</td><td>$acceptedRequest.getEmailAddress()</td><td>$acceptedRequest.getJWT()</td><td>
+															<td>$acceptedRequest.getRequestDate().toString()</td><td>$acceptedRequest.getDateExpires()</td><td>$acceptedRequest.getFirstName()</td><td>$acceptedRequest.getLastName()</td><td>$acceptedRequest.getEmailAddress()</td><td class="wrapword">$acceptedRequest.getJWT()</td><td>
 															<div>
 																<a href="#" class="foundicon-minus" onclick="showCommentsExpirationDialog('revoke' , '$acceptedRequest.getId()')"> Revoke Access </a>
 															</div>

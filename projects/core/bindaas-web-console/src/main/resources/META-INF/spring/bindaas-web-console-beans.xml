@@ -149,6 +149,7 @@
 <bean id="userMgmtAction" class="edu.emory.cci.bindaas.webconsole.admin.UserManagementPanelAction">
 	<property name="mailService" ref="mailService"></property>
 	<property name="apiKeyManager" ref="apiKeyManager"></property>
+	<property name="JWTManager" ref="jwtManager"></property>
 </bean>
 <bean id="checkLDAPConnectionAction" class="edu.emory.cci.bindaas.webconsole.admin.CheckLDAPConnectionAction"></bean>
 

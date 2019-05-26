@@ -1,5 +1,10 @@
 package edu.emory.cci.bindaas.core.jwt;
 
+import java.util.Date;
+import java.util.List;
+import javax.crypto.SecretKey;
+import javax.crypto.KeyGenerator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
@@ -25,9 +30,6 @@ import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
-import java.util.Date;
-import java.util.List;
-
 
 public class DefaultJWTManager implements IJWTManager {
 
@@ -43,6 +45,8 @@ public class DefaultJWTManager implements IJWTManager {
 	}
 
 	private final static String secret = "fj32Jfv02Mq33g0f8ioDkw";
+	// FIXME: discuss secret generation
+	//  SecretKey secretKey = KeyGenerator.getInstance("HMACSHA256").generateKey();
 
 	private Token userRequestToToken(UserRequest userRequest)
 	{
@@ -73,13 +77,34 @@ public class DefaultJWTManager implements IJWTManager {
 			String lastName = bindaasUser.getProperty(BindaasUser.LAST_NAME) != null ? bindaasUser
 					.getProperty(BindaasUser.LAST_NAME).toString()
 					: bindaasUser.getName();
+			
+			@SuppressWarnings("unchecked")
+			List<UserRequest> listOfValidTokens = (List<UserRequest>) session
+					.createCriteria(UserRequest.class)
+					.add(Restrictions.eq("stage", Stage.accepted.name()))
+					.add(Restrictions.eq("emailAddress", emailAddress))
+					.add(Restrictions.gt("dateExpires", new Date()))
+					.list();
 
+			if (listOfValidTokens != null && listOfValidTokens.size() > 0) {
+				UserRequest request = listOfValidTokens.get(0);
+				if(throwErrorIfAlreadyExists)
+				{
+					throw new JWTManagerException("JWT for the user already exists" , Reason.KEY_ALREADY_EXIST);
+				}
+				else
+				{
+					return userRequestToToken(request);
+				}
+			}
+
+
+			// generates JWT for first time user
 			String jws = JWT.create()
 					.withIssuer("bindaas")
 					.withExpiresAt(dateExpires)
 					.sign(Algorithm.HMAC256(secret));
 
-			log.info("JWTManager generated: "+jws);
 			UserRequest userRequest = new UserRequest();
 			userRequest.setStage(Stage.accepted);
 			userRequest.setJWT(jws);
@@ -101,7 +126,7 @@ public class DefaultJWTManager implements IJWTManager {
 			return userRequestToToken(userRequest);
 		}
 
-		//catch (JWTManagerException e) { throw e ;}
+		catch (JWTManagerException e) { throw e ;}
 		catch (Exception e) {
 			log.error(e);
 			session.getTransaction().rollback();
@@ -111,6 +136,65 @@ public class DefaultJWTManager implements IJWTManager {
 		}
 
 	}
+
+
+	@Override
+	public Token modifyJWT(Long id, Stage stage, Date dateExpires,
+							   String initiatedBy, String comments, ActivityType activityType)
+			throws JWTManagerException {
+		Session session = sessionFactory.openSession();
+
+		try {
+			session.beginTransaction();
+			@SuppressWarnings("unchecked")
+			List<UserRequest> list = session.createCriteria(UserRequest.class)
+					.add(Restrictions.eq("id", id)).list();
+			if (list != null && list.size() > 0) {
+				UserRequest userRequest = list.get(0);
+				HistoryLog historyLog = new HistoryLog();
+				historyLog.setComments(comments);
+				historyLog.setInitiatedBy(initiatedBy);
+				historyLog.setUserRequest(userRequest);
+				historyLog.setActivityType(activityType);
+
+				userRequest.setStage(stage);
+
+				switch (activityType) {
+					case APPROVE:
+					case REFRESH:
+						String jws = JWT.create()
+								.withIssuer("bindaas")
+								.withExpiresAt(dateExpires)
+								.sign(Algorithm.HMAC256(secret));
+						userRequest.setJWT(jws);
+						userRequest.setDateExpires(dateExpires);
+
+					case REVOKE:
+					case DENY:
+					default:
+						userRequest.setStage(stage);
+
+				}
+
+				session.save(userRequest);
+				session.save(historyLog);
+				session.getTransaction().commit();
+				return userRequestToToken(userRequest);
+			} else {
+				throw new Exception("No results found matching id = [" + id
+						+ "]");
+			}
+
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			log.error(e);
+			throw new JWTManagerException(e , Reason.PROCESSING_ERROR);
+		} finally {
+			session.close();
+		}
+
+	}
+
 
 	public void init() throws Exception
 	{
