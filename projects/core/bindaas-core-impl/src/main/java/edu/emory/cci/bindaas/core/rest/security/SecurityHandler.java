@@ -75,7 +75,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private String authenticationProviderClass;
 	private String authorizationProviderClass;
 	
-	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.API_KEY; // default
+	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.JWT; // default
 	public final static String TOKEN = "token";
 	public final static String API_KEY = "api_key";
 	private ServiceTracker<DynamicObject<BindaasConfiguration>,DynamicObject<BindaasConfiguration>> bindaasConfigServiceTracker;
@@ -254,6 +254,77 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		
 		
 	}
+
+	private Principal handleJWT(Message message,final IAuthenticationProvider authenticationProvider) throws Exception
+	{
+		String jwt = null;
+
+		// get apiKey from the query parameters
+		MultivaluedMap<String, String> queryMap =  JAXRSUtils.getStructuredParams((String) message.get(Message.QUERY_STRING), "&", true , true);
+
+		if(queryMap!=null && queryMap.getFirst(API_KEY)!=null)
+			jwt = queryMap.getFirst(API_KEY);
+
+		// if not present in query param , then look into http header
+
+//		if(apiKey == null)
+//		{
+//			Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
+//			if(protocolHeaders!=null && protocolHeaders.get(API_KEY)!=null)
+//			{
+//				List<?> values = (List<?>) protocolHeaders.get(API_KEY);
+//				if(values!=null && values.size() > 0)
+//				{
+//					apiKey = values.get(0).toString();
+//				}
+//
+//			}
+//		}
+
+		if(jwt != null)
+		{
+			try {
+				final String jwToken = jwt;
+				AuthenticationResponseEntry responseEntry = authenticationDecisionCache.get(jwToken, new Callable<AuthenticationResponseEntry>() {
+
+					@Override
+					public AuthenticationResponseEntry call() throws Exception {
+						AuthenticationResponseEntry responseEntry = new AuthenticationResponseEntry();
+						try {
+
+							Principal authenticatedUser = authenticationProvider.loginUsingJWT( jwToken );
+							responseEntry.setDecision(true);
+							responseEntry.setPrincipal(authenticatedUser);
+						}catch(AuthenticationException authException)
+						{
+							responseEntry.setDecision(false);
+						}
+
+						return responseEntry;
+					}
+				});
+
+				if(responseEntry.getDecision().equals(true))
+				{
+					return responseEntry.getPrincipal();
+				}
+				else
+					throw new AuthenticationException(jwt);
+
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+				throw e;
+			}
+		}
+		else
+		{
+			throw new AuthenticationException();
+		}
+
+
+	}
 	
 	
 
@@ -278,7 +349,8 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 						default : 
 						case HTTP_BASIC : authenticatedUser = handleHTTP_BASIC(message, authenticationProvider); break;
 						case SECURITY_TOKEN : authenticatedUser = handleSecurityToken(message, authenticationProvider); break;
-						case API_KEY : authenticatedUser = handleAPI_KEY(message, authenticationProvider); break;		
+						case API_KEY : authenticatedUser = handleAPI_KEY(message, authenticationProvider); break;
+						case JWT : authenticatedUser = handleJWT(message, authenticationProvider); break;
 				}
 				
 			} 

@@ -195,6 +195,36 @@ public class DefaultJWTManager implements IJWTManager {
 
 	}
 
+	@Override
+	public BindaasUser lookupUser(String jwt) throws JWTManagerException {
+		Session session = sessionFactory.openSession();
+		try{
+
+			@SuppressWarnings("unchecked")
+			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).
+					add(Restrictions.eq("stage",	Stage.accepted.name())).
+					add(Restrictions.eq("jwt", jwt)).
+					add(Restrictions.gt("dateExpires", new Date())).
+					list();
+
+			if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
+			{
+				UserRequest request = listOfValidKeys.get(0);
+				BindaasUser bindaasUser = new BindaasUser(request.getEmailAddress());
+				bindaasUser.addProperty(BindaasUser.EMAIL_ADDRESS, request.getEmailAddress());
+				bindaasUser.addProperty(BindaasUser.FIRST_NAME, request.getFirstName());
+				bindaasUser.addProperty(BindaasUser.LAST_NAME, request.getLastName());
+				return bindaasUser;
+			}
+		}
+		catch(Exception e)
+		{
+			log.error(e);
+			throw new JWTManagerException(e , Reason.PROCESSING_ERROR);
+		}
+
+		return null;
+	}
 
 	public void init() throws Exception
 	{
