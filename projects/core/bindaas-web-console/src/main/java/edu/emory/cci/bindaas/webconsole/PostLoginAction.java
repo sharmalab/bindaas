@@ -10,15 +10,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.emory.cci.bindaas.core.jwt.IJWTManager;
-import edu.emory.cci.bindaas.core.jwt.JWTManagerException;
-import edu.emory.cci.bindaas.core.jwt.Token;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import edu.emory.cci.bindaas.core.apikey.api.APIKey;
 import edu.emory.cci.bindaas.core.apikey.api.APIKeyManagerException;
 import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
+import edu.emory.cci.bindaas.core.jwt.IJWTManager;
+import edu.emory.cci.bindaas.core.jwt.JWTManagerException;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
@@ -134,9 +133,9 @@ public class PostLoginAction extends HttpServlet {
 
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(Calendar.YEAR, 40);
-		Token token = JWTManager.generateJWT(principal, calendar.getTime(), "system", "System generated JWT for the user", ActivityType.SYSTEM_APPROVE, false);
-		log.info("Token for user: "+token.getValue());
-		principal.addProperty("apiKey",token.getValue());
+		String jws = JWTManager.generateJWT(principal, calendar.getTime(), "system", "System generated JWT for the user", ActivityType.SYSTEM_APPROVE, false);
+		log.info("Token for user: "+jws);
+		principal.addProperty("apiKey",jws);
 		return principal;
 	}
 

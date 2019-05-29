@@ -2,8 +2,6 @@ package edu.emory.cci.bindaas.core.jwt;
 
 import java.util.Date;
 import java.util.List;
-import javax.crypto.SecretKey;
-import javax.crypto.KeyGenerator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,18 +9,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
 
-import edu.emory.cci.bindaas.core.jwt.IJWTManager;
-import edu.emory.cci.bindaas.core.jwt.JWTManagerException;
 import edu.emory.cci.bindaas.core.jwt.JWTManagerException.Reason;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
@@ -48,18 +38,9 @@ public class DefaultJWTManager implements IJWTManager {
 	// FIXME: discuss secret generation
 	//  SecretKey secretKey = KeyGenerator.getInstance("HMACSHA256").generateKey();
 
-	private Token userRequestToToken(UserRequest userRequest)
-	{
-		Token token = new Token();
-		token.setValue(userRequest.getJWT());
-		token.setEmailAddress(userRequest.getEmailAddress());
-		token.setFirstName(userRequest.getFirstName());
-		token.setLastName(userRequest.getLastName());
-		return token;
-	}
 
 	@Override
-	public Token generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy , String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists)
+	public String generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy , String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists)
 			throws JWTManagerException {
 		Session session = sessionFactory.openSession();
 
@@ -94,7 +75,7 @@ public class DefaultJWTManager implements IJWTManager {
 				}
 				else
 				{
-					return userRequestToToken(request);
+					return request.getJWT();
 				}
 			}
 
@@ -123,7 +104,7 @@ public class DefaultJWTManager implements IJWTManager {
 
 			session.save(historyLog);
 			session.getTransaction().commit();
-			return userRequestToToken(userRequest);
+			return jws;
 		}
 
 		catch (JWTManagerException e) { throw e ;}
@@ -139,7 +120,7 @@ public class DefaultJWTManager implements IJWTManager {
 
 
 	@Override
-	public Token modifyJWT(Long id, Stage stage, Date dateExpires,
+	public String modifyJWT(Long id, Stage stage, Date dateExpires,
 							   String initiatedBy, String comments, ActivityType activityType)
 			throws JWTManagerException {
 		Session session = sessionFactory.openSession();
@@ -179,7 +160,7 @@ public class DefaultJWTManager implements IJWTManager {
 				session.save(userRequest);
 				session.save(historyLog);
 				session.getTransaction().commit();
-				return userRequestToToken(userRequest);
+				return userRequest.getJWT();
 			} else {
 				throw new Exception("No results found matching id = [" + id
 						+ "]");
@@ -196,15 +177,23 @@ public class DefaultJWTManager implements IJWTManager {
 	}
 
 	@Override
-	public BindaasUser lookupUser(String jwt) throws JWTManagerException {
+	public BindaasUser lookupUser(String jws) throws JWTManagerException {
 		Session session = sessionFactory.openSession();
-		try{
+		try {
+			// will check for exp claim automatically
+			Algorithm algorithm = Algorithm.HMAC256(secret);
+			JWTVerifier verifier = JWT.require(algorithm)
+					.withIssuer("bindaas")
+					.build();
+
+			verifier.verify(jws);
+
+			// FIXME cache revoked, refreshed tokens and check before proceeding. also give leeway above?
 
 			@SuppressWarnings("unchecked")
 			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).
 					add(Restrictions.eq("stage",	Stage.accepted.name())).
-					add(Restrictions.eq("jwt", jwt)).
-					add(Restrictions.gt("dateExpires", new Date())).
+					add(Restrictions.eq("jwt", jws)).
 					list();
 
 			if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
@@ -216,27 +205,17 @@ public class DefaultJWTManager implements IJWTManager {
 				bindaasUser.addProperty(BindaasUser.LAST_NAME, request.getLastName());
 				return bindaasUser;
 			}
-		}
-		catch(Exception e)
-		{
+
+		} catch (Exception e) {
 			log.error(e);
-			throw new JWTManagerException(e , Reason.PROCESSING_ERROR);
+			throw new JWTManagerException(e, Reason.PROCESSING_ERROR);
 		}
 
 		return null;
 	}
 
-	public void init() throws Exception
-	{
+	public void init() throws Exception {
 		log.info("DefaultJWTManager started");
-//		String jws = generateJWT();
-//		Algorithm algorithm = Algorithm.HMAC256(secret);
-//		JWTVerifier verifier = JWT.require(algorithm)
-//				.withIssuer("bindaas")
-//				.build();
-//		DecodedJWT decodedJWT = verifier.verify(jws);
-//		Claim claim = decodedJWT.getClaim("email");
-//		log.info(claim.asString());
 	}
 
 }

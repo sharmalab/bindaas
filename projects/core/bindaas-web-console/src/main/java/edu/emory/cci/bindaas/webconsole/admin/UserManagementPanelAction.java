@@ -6,7 +6,6 @@ import java.util.GregorianCalendar;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.emory.cci.bindaas.core.jwt.Token;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -76,9 +75,9 @@ public class UserManagementPanelAction implements IAdminAction {
 //			emailMessage = String.format("Congratulations!\nYour application has been accepted." +
 //					"\nYour new API-Key : %s \nExpires On : %s ", apiKey.getValue() , apiKey.getExpires().toString());
 //			emailAddress = apiKey.getEmailAddress();
-			// FIXME : Update mail
-			Token token = this.JWTManager.modifyJWT(requestObject.entityId, Stage.accepted, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.valueOf(requestObject.entityAction.toUpperCase()) );
-			log.info("Token updated as:" + token.getValue());
+			// FIXME : Update mail and other methods
+			String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.accepted, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.valueOf(requestObject.entityAction.toUpperCase()) );
+			log.info("Token updated as:" + jws);
 
 		}
 		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.REVOKE.toString()) )
@@ -87,8 +86,8 @@ public class UserManagementPanelAction implements IAdminAction {
 //			invalidateAPIKey(apiKey.getValue());
 //			emailMessage = "Your access has been revoked by the administrator";
 //			emailAddress = apiKey.getEmailAddress();
-			Token token = this.JWTManager.modifyJWT(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
-			log.info("Token updated as:" + token.getValue());
+			String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
+			log.info("Token updated as:" + jws);
 			// FIXME need to remove from cache as well like api keys
 
 		}

@@ -78,6 +78,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.JWT; // default
 	public final static String TOKEN = "token";
 	public final static String API_KEY = "api_key";
+	public final static String AUTH_HEADER = "Authorization";
 	private ServiceTracker<DynamicObject<BindaasConfiguration>,DynamicObject<BindaasConfiguration>> bindaasConfigServiceTracker;
 	
 	
@@ -267,19 +268,20 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 
 		// if not present in query param , then look into http header
 
-//		if(apiKey == null)
-//		{
-//			Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
-//			if(protocolHeaders!=null && protocolHeaders.get(API_KEY)!=null)
-//			{
-//				List<?> values = (List<?>) protocolHeaders.get(API_KEY);
-//				if(values!=null && values.size() > 0)
-//				{
-//					apiKey = values.get(0).toString();
-//				}
-//
-//			}
-//		}
+		if(jwt == null)
+		{
+			Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
+			log.info("proto headers are "+protocolHeaders.toString());
+			if(protocolHeaders!=null && protocolHeaders.get(AUTH_HEADER)!=null)
+			{
+				List<?> values = (List<?>) protocolHeaders.get(AUTH_HEADER);
+				if(values!=null && values.size() > 0)
+				{
+					jwt = values.get(0).toString().split(" ")[1];
+				}
+
+			}
+		}
 
 		if(jwt != null)
 		{
@@ -331,6 +333,10 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	@Override
  	public Response handleRequest(Message message, ClassResourceInfo arg1) {
 		setRequestId(message);
+//		Map<String,String> headers = new HashMap<String, String>();
+//		headers.put("Authorization", "Bearer tushar");
+//		PhaseInterceptorChain.getCurrentMessage().put(Message.PROTOCOL_HEADERS, headers); //append by getting all and then adding
+//		log.info(PhaseInterceptorChain.getCurrentMessage().get(Message.PROTOCOL_HEADERS));
 		Principal authenticatedUser =  null;
 		if(isEnableAuthentication())
 		{
