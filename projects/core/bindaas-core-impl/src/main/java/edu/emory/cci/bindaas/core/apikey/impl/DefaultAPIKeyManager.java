@@ -78,6 +78,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.eq("emailAddress", emailAddress))
 					.add(Restrictions.gt("dateExpires", new Date()))
+					.add(Restrictions.isNotNull("apiKey")) //FIXME add null check at other places too
 					.list();
 
 			if (listOfValidKeys != null && listOfValidKeys.size() > 0) {

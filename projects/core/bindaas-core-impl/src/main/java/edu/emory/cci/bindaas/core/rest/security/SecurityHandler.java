@@ -75,7 +75,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private String authenticationProviderClass;
 	private String authorizationProviderClass;
 	
-	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.JWT; // default
+	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.API_KEY; // default
 	public final static String TOKEN = "token";
 	public final static String API_KEY = "api_key";
 	public final static String AUTH_HEADER = "Authorization";

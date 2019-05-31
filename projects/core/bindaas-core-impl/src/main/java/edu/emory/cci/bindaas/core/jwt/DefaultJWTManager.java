@@ -65,6 +65,7 @@ public class DefaultJWTManager implements IJWTManager {
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.eq("emailAddress", emailAddress))
 					.add(Restrictions.gt("dateExpires", new Date()))
+					.add(Restrictions.isNotNull("jwt"))
 					.list();
 
 			if (listOfValidTokens != null && listOfValidTokens.size() > 0) {
@@ -191,14 +192,14 @@ public class DefaultJWTManager implements IJWTManager {
 			// FIXME cache revoked, refreshed tokens and check before proceeding. also give leeway above?
 
 			@SuppressWarnings("unchecked")
-			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).
+			List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
 					add(Restrictions.eq("stage",	Stage.accepted.name())).
 					add(Restrictions.eq("jwt", jws)).
 					list();
 
-			if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
+			if(listOfValidTokens!=null && listOfValidTokens.size() > 0)
 			{
-				UserRequest request = listOfValidKeys.get(0);
+				UserRequest request = listOfValidTokens.get(0);
 				BindaasUser bindaasUser = new BindaasUser(request.getEmailAddress());
 				bindaasUser.addProperty(BindaasUser.EMAIL_ADDRESS, request.getEmailAddress());
 				bindaasUser.addProperty(BindaasUser.FIRST_NAME, request.getFirstName());

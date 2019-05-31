@@ -5,8 +5,9 @@
   "enableAuthentication": true,
   "enableAuthorization": false,
   "enableAudit": true,
-  "authenticationProviderClass": "edu.emory.cci.bindaas.security.impl.OAuthProvider",
+  "authenticationProviderClass": "edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider",
   "authorizationProviderClass": "edu.emory.cci.bindaas.security_dashboard.service.AuthorizationProviderImpl",
+  "authenticationProtocol": "API_KEY",
   "auditProviderClass": "edu.emory.cci.bindaas.security.impl.DBAuditProvider",
   "proxyUrl": "http://localhost:9099",
   "instanceName": "bindaas"

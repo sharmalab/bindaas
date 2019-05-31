@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import edu.emory.cci.bindaas.core.apikey.api.APIKey;
 import edu.emory.cci.bindaas.core.apikey.api.APIKeyManagerException;
 import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.jwt.IJWTManager;
 import edu.emory.cci.bindaas.core.jwt.JWTManagerException;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
@@ -74,12 +75,20 @@ public class PostLoginAction extends HttpServlet {
 							"(name=bindaas.adminconsole)");
 			Set<String> setOfAllowedAdmins = dynamicAdminConsoleConfiguration
 					.getObject().getAdminAccounts();
+			@SuppressWarnings("unchecked")
+			DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
+
+
 			if (setOfAllowedAdmins.contains(principal.getName()) || setOfAllowedAdmins.contains(principal.getName() + "@" + principal.getDomain())) {
 
 				// generate a api_key for this user if doesnt exist
 
-//				principal = generateApiKey(principal);
-				principal = generateJWT(principal);
+				if(bindaasConfiguration.getObject().getAuthenticationProtocol()!=null && bindaasConfiguration.getObject().getAuthenticationProtocol().equals("JWT")){
+					principal = generateJWT(principal);
+				}
+				else {
+					principal = generateApiKey(principal);
+				}
 				response.sendRedirect(loginTarget);
 
 			} else {
