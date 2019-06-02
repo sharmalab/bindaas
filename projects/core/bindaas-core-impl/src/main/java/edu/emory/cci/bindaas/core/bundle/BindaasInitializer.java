@@ -143,16 +143,11 @@ public class BindaasInitializer implements IBindaasAdminService{
 		{
 			
 			securityModule.setAuthenticationProviderClass(bindaasConfiguration.getObject().getAuthenticationProviderClass());
-			if(bindaasConfiguration.getObject().getAuthenticationProtocol()!=null && bindaasConfiguration.getObject().getAuthenticationProtocol().equals("JWT")){
-				securityModule.setAuthenticationProtocol(AuthenticationProtocol.JWT);
-			}
-			else if(bindaasConfiguration.getObject().getAuthenticationProtocol()!=null && bindaasConfiguration.getObject().getAuthenticationProtocol().equals("API_KEY")){
-				securityModule.setAuthenticationProtocol(AuthenticationProtocol.API_KEY);
-			}
-			else {
-				log.error("Unable to get authentication protocol. Assigning default value.");
-				securityModule.setAuthenticationProtocol(AuthenticationProtocol.API_KEY);
-			}
+			securityModule.setAuthenticationProtocol(bindaasConfiguration.getObject().
+					getAuthenticationProtocol().equals("JWT")?
+					AuthenticationProtocol.JWT:
+					AuthenticationProtocol.API_KEY);
+
 			// authorization 
 			
 			if(bindaasConfiguration.getObject().getEnableAuthorization())

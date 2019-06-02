@@ -638,7 +638,7 @@
 				<a class="button secondary" onclick="executeAPI('$serviceUrl/services/$workspace/$profile/query/$queryEndpoint.getName()' , this )" >Submit</a>
 				<script>
 					function executeAPI(url, buttonClicked) {
-						var queryString = "?api_key=$apiKey&";
+						var queryString = "?$protocol=$protocolValue&";
 						$(buttonClicked).parent().find("input").each(function() {
 
 							if ($(this).attr("value") && $(this).attr("value") != "") {

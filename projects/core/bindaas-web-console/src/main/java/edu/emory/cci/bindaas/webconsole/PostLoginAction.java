@@ -81,9 +81,9 @@ public class PostLoginAction extends HttpServlet {
 
 			if (setOfAllowedAdmins.contains(principal.getName()) || setOfAllowedAdmins.contains(principal.getName() + "@" + principal.getDomain())) {
 
-				// generate a api_key for this user if doesnt exist
+				// generate a api_key or jwt for this user if doesnt exist
 
-				if(bindaasConfiguration.getObject().getAuthenticationProtocol()!=null && bindaasConfiguration.getObject().getAuthenticationProtocol().equals("JWT")){
+				if(bindaasConfiguration.getObject().getAuthenticationProtocol().equals("JWT")){
 					principal = generateJWT(principal);
 				}
 				else {
@@ -144,7 +144,7 @@ public class PostLoginAction extends HttpServlet {
 		calendar.add(Calendar.YEAR, 40);
 		String jws = JWTManager.generateJWT(principal, calendar.getTime(), "system", "System generated JWT for the user", ActivityType.SYSTEM_APPROVE, false);
 		log.info("Token for user: "+jws);
-		principal.addProperty("apiKey",jws);
+		principal.addProperty("jwt",jws);
 		return principal;
 	}
 

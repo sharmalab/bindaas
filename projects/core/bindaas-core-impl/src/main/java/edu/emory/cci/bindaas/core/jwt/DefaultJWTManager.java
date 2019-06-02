@@ -20,6 +20,7 @@ import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
+import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidateJWT;
 
 public class DefaultJWTManager implements IJWTManager {
 
@@ -144,11 +145,12 @@ public class DefaultJWTManager implements IJWTManager {
 				switch (activityType) {
 					case APPROVE:
 					case REFRESH:
+						invalidateJWT(userRequest.getJWT()); // remove old JWT from cache
 						String jws = JWT.create()
 								.withIssuer("bindaas")
 								.withExpiresAt(dateExpires)
 								.sign(Algorithm.HMAC256(secret));
-						userRequest.setJWT(jws);
+						userRequest.setJWT(jws);             // overwrite old JWT
 						userRequest.setDateExpires(dateExpires);
 
 					case REVOKE:
