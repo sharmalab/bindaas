@@ -52,6 +52,7 @@ public class TrustedApplicationManagerImpl implements
 
 	private TrustedApplicationRegistry defaultTrustedApplications;
 	private DynamicObject<TrustedApplicationRegistry> trustedApplicationRegistry;
+	private String bindaasConfigurationProtocol;
 	private final static long ROUNDOFF_FACTOR = 100000;
 	private IAPIKeyManager apiKeyManager;
 	private Log log = LogFactory.getLog(getClass());
@@ -75,6 +76,10 @@ public class TrustedApplicationManagerImpl implements
 	}
 
 	public void init() throws Exception {
+
+		@SuppressWarnings("unchecked")
+		DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
+		bindaasConfigurationProtocol = bindaasConfiguration.getObject().getAuthenticationProtocol();
 
 		final BundleContext context = Activator.getContext();
 		trustedApplicationRegistry = new DynamicObject<TrustedApplicationRegistry>(
@@ -291,53 +296,64 @@ public class TrustedApplicationManagerImpl implements
 	@Override
 	@GET
 	@Path("/authorizeUser")
-	public Response authorizeNewUser(@HeaderParam("_username") String username,
+	public Response authorizeNewUser(@HeaderParam("_protocol") String protocol,
+			@HeaderParam("_username") String username,
 			@HeaderParam("_applicationID") String applicationID,
 			@HeaderParam("_salt") String salt,
 			@HeaderParam("_digest") String digest,
 			@QueryParam("expires") Long epochTime,
 			@QueryParam("comments") String comments) {
 
-		try {
+		if(bindaasConfigurationProtocol.equals("API_KEY") && protocol.equals("api_key")){
+			try {
 
-			TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
-					applicationID, salt, digest, username);
-			Date dateExpires = new Date(epochTime);
-			comments = comments == null ? comments = "API Key Generated via Trusted Application API"
-					: comments;
-			APIKey apiKey = apiKeyManager.generateAPIKey(new BindaasUser(
-					username), dateExpires, trustedAppEntry.getName(),
-					comments, ActivityType.APPROVE, true);
+				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
+						applicationID, salt, digest, username);
+				Date dateExpires = new Date(epochTime);
+				comments = comments == null ? comments = "API Key Generated via Trusted Application API"
+						: comments;
+				APIKey apiKey = apiKeyManager.generateAPIKey(new BindaasUser(
+								username), dateExpires, trustedAppEntry.getName(),
+						comments, ActivityType.APPROVE, true);
 
-			JsonObject retVal = new JsonObject();
-			retVal.add("api_key", new JsonPrimitive(apiKey.getValue()));
-			retVal.add("username", new JsonPrimitive(username));
-			retVal.add("applicationID", new JsonPrimitive(applicationID));
-			retVal.add("expires", new JsonPrimitive(apiKey.getExpires()
-					.toString()));
-			retVal.add("applicationName",
-					new JsonPrimitive(trustedAppEntry.getName()));
-			return Response.ok().entity(retVal.toString())
-					.type("application/json").build();
+				JsonObject retVal = new JsonObject();
+				retVal.add("api_key", new JsonPrimitive(apiKey.getValue()));
+				retVal.add("username", new JsonPrimitive(username));
+				retVal.add("applicationID", new JsonPrimitive(applicationID));
+				retVal.add("expires", new JsonPrimitive(apiKey.getExpires()
+						.toString()));
+				retVal.add("applicationName",
+						new JsonPrimitive(trustedAppEntry.getName()));
+				return Response.ok().entity(retVal.toString())
+						.type("application/json").build();
 
-		} catch (NotAuthorizedException e) {
-			return exceptionToResponse(e, applicationID, "not-resolved",
-					username);
+			} catch (NotAuthorizedException e) {
+				return exceptionToResponse(e, applicationID, "not-resolved",
+						username);
 
-		} catch (APIKeyManagerException apiKeyManagerException) {
-			switch (apiKeyManagerException.getReason()) {
-			case KEY_ALREADY_EXIST:
-				return exceptionToResponse(new DuplicateAPIKeyException(
-						username), applicationID, "not-resolved", username);
-			case KEY_DOES_NOT_EXIST:
-				return exceptionToResponse(new APIKeyDoesNotExistException(
-						username), applicationID, "not-resolved", username);
-			default:
-				return Response.status(500)
-						.entity(apiKeyManagerException.getMessage()).build();
+			} catch (APIKeyManagerException apiKeyManagerException) {
+				switch (apiKeyManagerException.getReason()) {
+					case KEY_ALREADY_EXIST:
+						return exceptionToResponse(new DuplicateAPIKeyException(
+								username), applicationID, "not-resolved", username);
+					case KEY_DOES_NOT_EXIST:
+						return exceptionToResponse(new APIKeyDoesNotExistException(
+								username), applicationID, "not-resolved", username);
+					default:
+						return Response.status(500)
+								.entity(apiKeyManagerException.getMessage()).build();
+				}
+			} catch (Exception e) {
+				return Response.status(500).entity(e.getMessage()).build();
 			}
-		} catch (Exception e) {
-			return Response.status(500).entity(e.getMessage()).build();
+
+		}
+		else if (bindaasConfigurationProtocol.equals("JWT") && protocol.equals("jwt")) {
+			return Response.status(500).entity("Not implemented for JWT yet.").build();
+		}
+		else {
+			return Response.status(500).entity("Server is configured to use "+
+					bindaasConfigurationProtocol+". Specified "+protocol).build();
 		}
 
 	}

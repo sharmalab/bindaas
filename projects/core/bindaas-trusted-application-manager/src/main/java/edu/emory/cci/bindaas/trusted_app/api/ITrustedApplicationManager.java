@@ -15,7 +15,7 @@ public interface ITrustedApplicationManager {
 	
 	@GET
 	@Path("/authorizeUser")
-	public Response authorizeNewUser(@HeaderParam("_username") String username ,   @HeaderParam("_applicationID") String applicationID ,@HeaderParam("_salt") String salt , @HeaderParam("_digest") String digest  , @QueryParam("expires") Long epochTime  ,  @QueryParam("comments") String comments);
+	public Response authorizeNewUser(@HeaderParam("protocol") String protocol, @HeaderParam("_username") String username ,   @HeaderParam("_applicationID") String applicationID ,@HeaderParam("_salt") String salt , @HeaderParam("_digest") String digest  , @QueryParam("expires") Long epochTime  ,  @QueryParam("comments") String comments);
 	
 	@DELETE
 	@Path("/revokeUser")
