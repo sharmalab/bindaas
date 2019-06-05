@@ -102,6 +102,10 @@
 	<property name="sessionFactory" ref="sessionFactory"></property>
 </bean>
 
+<bean id="JWTManager" class="edu.emory.cci.bindaas.core.jwt.DefaultJWTManager" init-method="init">
+	<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+
 <!-- System Package -->
 <util:map id="criticalServices" map-class="java.util.HashMap" key-type="java.lang.String" value-type="java.lang.String">
 	<entry key="OSGi Http Service" value="(objectclass=org.osgi.service.http.HttpService)"></entry>
@@ -154,7 +158,8 @@
 	<osgi:service ref="providerRegistry" interface="edu.emory.cci.bindaas.core.api.IProviderRegistry"></osgi:service>
 	<osgi:service ref="securityHandler" interface="edu.emory.cci.bindaas.core.api.ISecurityHandler"></osgi:service>
 	<osgi:service ref="apiKeyManager" interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager"></osgi:service>
-	
+	<osgi:service ref="JWTManager" interface="edu.emory.cci.bindaas.core.jwt.IJWTManager"></osgi:service>
+
 <!-- Blueprint References -->
 	<osgi:reference interface="org.hibernate.SessionFactory" id="sessionFactory"></osgi:reference>
 	<osgi:reference interface="edu.emory.cci.bindaas.version_manager.api.IVersionManager" id="versionManager"></osgi:reference>

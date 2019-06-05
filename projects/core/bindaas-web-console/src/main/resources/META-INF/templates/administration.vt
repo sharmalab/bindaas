@@ -168,12 +168,12 @@
 											<form>
 												<table>
 													<thead>
-														<th>Request Date</th><th>Expires On</th><th>First Name</th><th>Last Name</th><th>Email Address</th><th>API Key</th><th>Actions</th>
+														<th>Request Date</th><th>Expires On</th><th>First Name</th><th>Last Name</th><th>Email Address</th><th>Token</th><th>Actions</th>
 													</thead>
 													<tbody>
 														#foreach ($acceptedRequest in $acceptedRequests)
 														<tr>
-															<td>$acceptedRequest.getRequestDate().toString()</td><td>$acceptedRequest.getDateExpires()</td><td>$acceptedRequest.getFirstName()</td><td>$acceptedRequest.getLastName()</td><td>$acceptedRequest.getEmailAddress()</td><td>$acceptedRequest.getApiKey()</td><td>
+															<td>$acceptedRequest.getRequestDate().toString()</td><td>$acceptedRequest.getDateExpires()</td><td>$acceptedRequest.getFirstName()</td><td>$acceptedRequest.getLastName()</td><td>$acceptedRequest.getEmailAddress()</td><td>$acceptedRequest.getJWT()</td><td>
 															<div>
 																<a href="#" class="foundicon-minus" onclick="showCommentsExpirationDialog('revoke' , '$acceptedRequest.getId()')"> Revoke Access </a>
 															</div>

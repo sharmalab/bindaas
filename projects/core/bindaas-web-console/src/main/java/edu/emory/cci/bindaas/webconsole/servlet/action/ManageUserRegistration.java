@@ -187,7 +187,7 @@ public class ManageUserRegistration extends AbstractRequestHandler {
 							userRequest.setApiKey( URLEncoder.encode( UUID.randomUUID().toString()  ));
 							userRequest.setDateExpires(requestObject.getExpiration());
 							
-							emailMessage = String.format("Congratulations!\nYour application has been accepted." +
+							emailMessage = String.format("Congratulations!\nboYour application has been accepted." +
 									"\nYour new API-Key : %s \nExpires On : %s ", userRequest.getApiKey() , userRequest.getDateExpires().toString());
 							
 						}
