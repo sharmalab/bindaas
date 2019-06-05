@@ -3,6 +3,7 @@ package edu.emory.cci.bindaas.core.jwt;
 import java.util.Date;
 import java.util.List;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
@@ -73,7 +74,7 @@ public class DefaultJWTManager implements IJWTManager {
 				UserRequest request = listOfValidTokens.get(0);
 				if(throwErrorIfAlreadyExists)
 				{
-					throw new JWTManagerException("JWT for the user already exists" , Reason.KEY_ALREADY_EXIST);
+					throw new JWTManagerException("JWT for the user already exists" , Reason.TOKEN_ALREADY_EXIST);
 				}
 				else
 				{
@@ -215,6 +216,11 @@ public class DefaultJWTManager implements IJWTManager {
 		}
 
 		return null;
+	}
+
+	public Date getExpires(String token) {
+		DecodedJWT jwt = JWT.decode(token);
+		return jwt.getExpiresAt();
 	}
 
 	public void init() throws Exception {

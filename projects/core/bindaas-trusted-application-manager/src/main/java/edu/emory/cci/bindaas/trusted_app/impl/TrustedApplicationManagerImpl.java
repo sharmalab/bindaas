@@ -31,6 +31,8 @@ import edu.emory.cci.bindaas.core.apikey.api.APIKey;
 import edu.emory.cci.bindaas.core.apikey.api.APIKeyManagerException;
 import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
+import edu.emory.cci.bindaas.core.jwt.IJWTManager;
+import edu.emory.cci.bindaas.core.jwt.JWTManagerException;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
@@ -44,6 +46,8 @@ import edu.emory.cci.bindaas.trusted_app.api.ITrustedApplicationManager;
 import edu.emory.cci.bindaas.trusted_app.bundle.Activator;
 import edu.emory.cci.bindaas.trusted_app.exception.APIKeyDoesNotExistException;
 import edu.emory.cci.bindaas.trusted_app.exception.DuplicateAPIKeyException;
+import edu.emory.cci.bindaas.trusted_app.exception.DuplicateJWTException;
+import edu.emory.cci.bindaas.trusted_app.exception.JWTDoesNotExistException;
 import edu.emory.cci.bindaas.trusted_app.exception.NotAuthorizedException;
 import edu.emory.cci.bindaas.trusted_app.constants.TrustedAppConstants;
 
@@ -55,6 +59,7 @@ public class TrustedApplicationManagerImpl implements
 	private String bindaasConfigurationProtocol;
 	private final static long ROUNDOFF_FACTOR = 100000;
 	private IAPIKeyManager apiKeyManager;
+	private IJWTManager JWTManager;
 	private Log log = LogFactory.getLog(getClass());
 
 
@@ -64,6 +69,14 @@ public class TrustedApplicationManagerImpl implements
 
 	public void setApiKeyManager(IAPIKeyManager apiKeyManager) {
 		this.apiKeyManager = apiKeyManager;
+	}
+
+	public IJWTManager getJWTManager() {
+		return JWTManager;
+	}
+
+	public void setJWTManager(IJWTManager JWTManager) {
+		this.JWTManager = JWTManager;
 	}
 
 	public TrustedApplicationRegistry getDefaultTrustedApplications() {
@@ -340,20 +353,73 @@ public class TrustedApplicationManagerImpl implements
 						return exceptionToResponse(new APIKeyDoesNotExistException(
 								username), applicationID, "not-resolved", username);
 					default:
-						return Response.status(500)
-								.entity(apiKeyManagerException.getMessage()).build();
+						JsonObject retVal = new JsonObject();
+						retVal.add("error",new JsonPrimitive(apiKeyManagerException.getMessage()));
+						return Response.status(500).entity(retVal.toString()).
+								type("application/json").build();
 				}
 			} catch (Exception e) {
-				return Response.status(500).entity(e.getMessage()).build();
+				JsonObject retVal = new JsonObject();
+				retVal.add("error",new JsonPrimitive(e.getMessage()));
+				return Response.status(500).entity(retVal.toString()).
+						type("application/json").build();
 			}
 
 		}
 		else if (bindaasConfigurationProtocol.equals("JWT") && protocol.equals("jwt")) {
-			return Response.status(500).entity("Not implemented for JWT yet.").build();
+			try {
+				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
+						applicationID, salt, digest, username);
+				Date dateExpires = new Date(epochTime);
+				comments = comments == null ? comments = "JWT Generated via Trusted Application API"
+						: comments;
+
+				String jws = JWTManager.generateJWT(new BindaasUser(
+						username), dateExpires, trustedAppEntry.getName(),
+						comments, ActivityType.APPROVE, true);
+
+				JsonObject retVal = new JsonObject();
+				retVal.add("jwt", new JsonPrimitive(jws));
+				retVal.add("username", new JsonPrimitive(username));
+				retVal.add("applicationID", new JsonPrimitive(applicationID));
+				retVal.add("expires", new JsonPrimitive(JWTManager.getExpires(jws)
+						.toString()));
+				retVal.add("applicationName",
+						new JsonPrimitive(trustedAppEntry.getName()));
+
+				return Response.ok().entity(retVal.toString())
+						.type("application/json").build();
+
+			} catch (NotAuthorizedException e) {
+				return exceptionToResponse(e, applicationID, "not-resolved",
+						username);
+
+			} catch (JWTManagerException JWTManagerException) {
+				switch (JWTManagerException.getReason()) {
+					case TOKEN_ALREADY_EXIST:
+						return exceptionToResponse(new DuplicateJWTException(
+								username), applicationID, "not-resolved", username);
+					case TOKEN_DOES_NOT_EXIST:
+						return exceptionToResponse(new JWTDoesNotExistException(
+								username), applicationID, "not-resolved", username);
+					default:
+						JsonObject retVal = new JsonObject();
+						retVal.add("error",new JsonPrimitive(JWTManagerException.getMessage()));
+						return Response.status(500).entity(retVal.toString()).
+								type("application/json").build();
+				}
+			} catch (Exception e) {
+				JsonObject retVal = new JsonObject();
+				retVal.add("error",new JsonPrimitive(e.getMessage()));
+				return Response.status(500).entity(retVal.toString()).
+						type("application/json").build();
+			}
 		}
 		else {
-			return Response.status(500).entity("Server is configured to use "+
-					bindaasConfigurationProtocol+". Specified "+protocol).build();
+			JsonObject retVal = new JsonObject();
+			retVal.add("error",new JsonPrimitive("Authentication protocol specified does not match with server's configuration"));
+			return Response.status(500).entity(retVal.toString()).
+					type("application/json").build();
 		}
 
 	}
