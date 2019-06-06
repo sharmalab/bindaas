@@ -9,6 +9,7 @@
 <bean id="psuedoSts" class="edu.emory.cci.bindaas.trusted_app.impl.TrustedApplicationManagerImpl" init-method="init">
 	<property name="defaultTrustedApplications" ref="trustedApplicationReg"></property>
 	<property name="apiKeyManager" ref="apiKeyManager"></property>
+	<property name="JWTManager" ref="jwtManager"></property>
 </bean>
 
 <bean id="trustedApplicationReg" class="edu.emory.cci.bindaas.trusted_app.TrustedApplicationRegistry">
@@ -31,7 +32,7 @@
 <!-- Blueprint References -->
 
 	<osgi:reference interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager" id="apiKeyManager"></osgi:reference>
-
+	<osgi:reference interface="edu.emory.cci.bindaas.core.jwt.IJWTManager" id="jwtManager"></osgi:reference>
 
 </beans>
 

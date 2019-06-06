@@ -15,12 +15,17 @@ import com.google.gson.annotations.Expose;
 import edu.emory.cci.bindaas.commons.mail.api.IMailService;
 import edu.emory.cci.bindaas.core.apikey.api.APIKey;
 import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
+import edu.emory.cci.bindaas.core.jwt.IJWTManager;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
+import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
+import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 
 import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidateAPIKey;
+import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidateJWT;
 
 public class UserManagementPanelAction implements IAdminAction {
 	
@@ -28,12 +33,19 @@ public class UserManagementPanelAction implements IAdminAction {
 	private Log log = LogFactory.getLog(getClass());
 	private IMailService mailService;
 	private IAPIKeyManager apiKeyManager;
+	private IJWTManager JWTManager;
 	
 	public IAPIKeyManager getApiKeyManager() {
 		return apiKeyManager;
 	}
 	public void setApiKeyManager(IAPIKeyManager apiKeyManager) {
 		this.apiKeyManager = apiKeyManager;
+	}
+	public IJWTManager getJWTManager() {
+		return JWTManager;
+	}
+	public void setJWTManager(IJWTManager JWTManager) {
+		this.JWTManager = JWTManager;
 	}
 	public IMailService getMailService() {
 		return mailService;
@@ -56,26 +68,45 @@ public class UserManagementPanelAction implements IAdminAction {
 	public String doAction(JsonObject payload , HttpServletRequest request) throws Exception {
 		BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
 		Request requestObject = GSONUtil.getGSONInstance().fromJson(payload, Request.class);
-	
+		@SuppressWarnings("unchecked")
+		DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
 		
 		String emailMessage =  null;
 		String emailAddress = null;
 		if(requestObject.entityAction!=null && (requestObject.entityAction.equals(ActivityType.APPROVE.toString()) || requestObject.entityAction.equals(ActivityType.REFRESH.toString())))
 		{
-			
-			APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.accepted, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.valueOf(requestObject.entityAction.toUpperCase()) );
-			emailMessage = String.format("Congratulations!\nYour application has been accepted." +
+			if (bindaasConfiguration.getObject().getAuthenticationProtocol().equals("API_KEY")) {
+				APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.accepted, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.valueOf(requestObject.entityAction.toUpperCase()) );
+				emailMessage = String.format("Congratulations!\nYour application has been accepted." +
 					"\nYour new API-Key : %s \nExpires On : %s ", apiKey.getValue() , apiKey.getExpires().toString());
-			emailAddress = apiKey.getEmailAddress();
-			
+				emailAddress = apiKey.getEmailAddress();
+			}
+			else {
+				String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.accepted, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.valueOf(requestObject.entityAction.toUpperCase()) );
+				log.info("Token updated as:" + jws);
+				// FIXME : Update mail and other
+				//  methods also make it work for both api_key and jwt
+			}
+
+
+
 		}
 		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.REVOKE.toString()) )
 		{
-			APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
-			invalidateAPIKey(apiKey.getValue());
-			emailMessage = "Your access has been revoked by the administrator";
-			emailAddress = apiKey.getEmailAddress();
-			
+			if (bindaasConfiguration.getObject().getAuthenticationProtocol().equals("API_KEY")) {
+				APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
+				invalidateAPIKey(apiKey.getValue());
+				emailMessage = "Your access has been revoked by the administrator";
+				emailAddress = apiKey.getEmailAddress();
+			}
+			else {
+				String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
+				invalidateJWT(jws);
+				log.info("Token updated as:" + jws);
+				// FIXME need to remove from cache as well like api keys
+			}
+
+
 		}
 		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.DENY.toString()) )
 		{

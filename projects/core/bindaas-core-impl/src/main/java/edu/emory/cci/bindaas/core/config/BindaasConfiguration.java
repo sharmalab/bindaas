@@ -16,6 +16,7 @@ public class BindaasConfiguration implements ThreadSafe {
 	@Expose private Boolean enableAudit;
 	@Expose private String authenticationProviderClass;
 	@Expose private String authorizationProviderClass;
+	@Expose private String authenticationProtocol;
 	@Expose private String auditProviderClass;
 	@Expose private String proxyUrl;
 	@Expose private String instanceName;
@@ -74,6 +75,12 @@ public class BindaasConfiguration implements ThreadSafe {
 	}
 	public synchronized void setAuthorizationProviderClass(String authorizationProviderClass) {
 		this.authorizationProviderClass = authorizationProviderClass;
+	}
+	public synchronized String  getAuthenticationProtocol() {
+		return authenticationProtocol;
+	}
+	public synchronized void setAuthenticationProtocol(String authenticationProtocol) {
+		this.authenticationProtocol = authenticationProtocol;
 	}
 	public synchronized String  getAuditProviderClass() {
 		return auditProviderClass;

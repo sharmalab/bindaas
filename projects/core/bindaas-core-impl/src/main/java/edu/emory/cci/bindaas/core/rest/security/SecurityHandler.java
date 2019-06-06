@@ -70,6 +70,11 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		SecurityHandler.getAuthenticationDecisionCache().invalidate(apikey);
 		SecurityHandler.getAuthorizationDecisionCache().invalidate(apikey);
 	}
+	// FIXME make single method to invalidate
+	public static void invalidateJWT(String jws) {
+		SecurityHandler.getAuthenticationDecisionCache().invalidate(jws);
+		SecurityHandler.getAuthorizationDecisionCache().invalidate(jws);
+	}
 
 
 	private String authenticationProviderClass;
@@ -78,6 +83,8 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.API_KEY; // default
 	public final static String TOKEN = "token";
 	public final static String API_KEY = "api_key";
+	public final static String JWT = "jwt";
+	public final static String AUTH_HEADER = "Authorization";
 	private ServiceTracker<DynamicObject<BindaasConfiguration>,DynamicObject<BindaasConfiguration>> bindaasConfigServiceTracker;
 	
 	
@@ -254,12 +261,89 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		
 		
 	}
+
+	private Principal handleJWT(Message message,final IAuthenticationProvider authenticationProvider) throws Exception
+	{
+		String jwt = null;
+
+		// get apiKey from the query parameters
+		MultivaluedMap<String, String> queryMap =  JAXRSUtils.getStructuredParams((String) message.get(Message.QUERY_STRING), "&", true , true);
+
+		if(queryMap!=null && queryMap.getFirst(JWT)!=null)
+			jwt = queryMap.getFirst(JWT);
+
+		// if not present in query param , then look into http header
+
+		if(jwt == null)
+		{
+			Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
+			log.info("proto headers are "+protocolHeaders.toString());
+			if(protocolHeaders!=null && protocolHeaders.get(AUTH_HEADER)!=null)
+			{
+				List<?> values = (List<?>) protocolHeaders.get(AUTH_HEADER);
+				if(values!=null && values.size() > 0)
+				{
+					jwt = values.get(0).toString().split(" ")[1];
+				}
+
+			}
+		}
+
+		if(jwt != null)
+		{
+			try {
+				final String jwToken = jwt;
+				AuthenticationResponseEntry responseEntry = authenticationDecisionCache.get(jwToken, new Callable<AuthenticationResponseEntry>() {
+
+					@Override
+					public AuthenticationResponseEntry call() throws Exception {
+						AuthenticationResponseEntry responseEntry = new AuthenticationResponseEntry();
+						try {
+
+							Principal authenticatedUser = authenticationProvider.loginUsingJWT( jwToken );
+							responseEntry.setDecision(true);
+							responseEntry.setPrincipal(authenticatedUser);
+						}catch(AuthenticationException authException)
+						{
+							responseEntry.setDecision(false);
+						}
+
+						return responseEntry;
+					}
+				});
+
+				if(responseEntry.getDecision().equals(true))
+				{
+					return responseEntry.getPrincipal();
+				}
+				else
+					throw new AuthenticationException(jwt);
+
+			}
+			catch(Exception e)
+			{
+				log.error(e);
+				throw e;
+			}
+		}
+		else
+		{
+			throw new AuthenticationException();
+		}
+
+
+	}
 	
 	
 
 	@Override
  	public Response handleRequest(Message message, ClassResourceInfo arg1) {
 		setRequestId(message);
+		// FIXME
+//		Map<String,String> headers = new HashMap<String, String>();
+//		headers.put("Authorization", "Bearer tushar");
+//		PhaseInterceptorChain.getCurrentMessage().put(Message.PROTOCOL_HEADERS, headers); //append by getting all and then adding
+//		log.info(PhaseInterceptorChain.getCurrentMessage().get(Message.PROTOCOL_HEADERS));
 		Principal authenticatedUser =  null;
 		if(isEnableAuthentication())
 		{
@@ -278,7 +362,8 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 						default : 
 						case HTTP_BASIC : authenticatedUser = handleHTTP_BASIC(message, authenticationProvider); break;
 						case SECURITY_TOKEN : authenticatedUser = handleSecurityToken(message, authenticationProvider); break;
-						case API_KEY : authenticatedUser = handleAPI_KEY(message, authenticationProvider); break;		
+						case API_KEY : authenticatedUser = handleAPI_KEY(message, authenticationProvider); break;
+						case JWT : authenticatedUser = handleJWT(message, authenticationProvider); break;
 				}
 				
 			} 

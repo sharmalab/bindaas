@@ -143,7 +143,16 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 			context.put("serviceUrl", serviceUrl);
 			
 			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
-			context.put("apiKey", admin.getProperty("apiKey"));
+			// FIXME update jwt for header
+			context.put("protocol", bindaasConfiguration.getObject().
+					getAuthenticationProtocol().equals("JWT")?
+					"jwt":
+					"api_key");
+
+			context.put("protocolValue", bindaasConfiguration.getObject().
+					getAuthenticationProtocol().equals("JWT")?
+					admin.getProperty("jwt"):
+					admin.getProperty("apiKey"));
 			
 			template.merge(context, response.getWriter());
 		}
