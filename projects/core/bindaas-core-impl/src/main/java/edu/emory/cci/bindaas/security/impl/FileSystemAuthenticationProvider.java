@@ -99,4 +99,14 @@ public class FileSystemAuthenticationProvider implements IAuthenticationProvider
 			throw new AuthenticationException(api_key);
 	}
 
+	@Override
+	public boolean isAuthenticationByJWTSupported() {
+		return false;
+	}
+
+	@Override
+	public BindaasUser loginUsingJWT(String jwt)
+			throws AuthenticationException {
+		throw new AuthenticationException(jwt);
+	}
 }

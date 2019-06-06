@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import edu.emory.cci.bindaas.core.rest.security.AuthenticationProtocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -142,7 +143,16 @@ public class BindaasInitializer implements IBindaasAdminService{
 		{
 			
 			securityModule.setAuthenticationProviderClass(bindaasConfiguration.getObject().getAuthenticationProviderClass());
-			
+			if(bindaasConfiguration.getObject().getAuthenticationProtocol()!=null && bindaasConfiguration.getObject().getAuthenticationProtocol().equals("JWT")){
+				securityModule.setAuthenticationProtocol(AuthenticationProtocol.JWT);
+			}
+			else if(bindaasConfiguration.getObject().getAuthenticationProtocol()!=null && bindaasConfiguration.getObject().getAuthenticationProtocol().equals("API_KEY")){
+				securityModule.setAuthenticationProtocol(AuthenticationProtocol.API_KEY);
+			}
+			else {
+				log.error("Unable to get authentication protocol. Assigning default value.");
+				securityModule.setAuthenticationProtocol(AuthenticationProtocol.API_KEY);
+			}
 			// authorization 
 			
 			if(bindaasConfiguration.getObject().getEnableAuthorization())

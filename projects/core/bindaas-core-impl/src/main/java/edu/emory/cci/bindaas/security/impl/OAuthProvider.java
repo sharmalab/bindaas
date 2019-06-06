@@ -1,49 +1,51 @@
 package edu.emory.cci.bindaas.security.impl;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import edu.emory.cci.bindaas.core.apikey.api.APIKeyManagerException;
-import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
+import edu.emory.cci.bindaas.core.jwt.IJWTManager;
+import edu.emory.cci.bindaas.core.jwt.JWTManagerException;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 
-public class DBAuthenticationProvider implements IAuthenticationProvider {
 
-		
+
+public class OAuthProvider implements IAuthenticationProvider{
+
 	private Log log = LogFactory.getLog(getClass());
-	private IAPIKeyManager apiKeyManager;
-	
-	
-	public IAPIKeyManager getApiKeyManager() {
-		return apiKeyManager;
+	private IJWTManager JWTManager;
+
+
+	public IJWTManager getJWTManager() {
+		return JWTManager;
 	}
 
 
-	public void setApiKeyManager(IAPIKeyManager apiKeyManager) {
-		this.apiKeyManager = apiKeyManager;
+	public void setJWTManager(IJWTManager JWTManager) {
+		this.JWTManager = JWTManager;
 	}
 
 
 	public void init()
 	{
-
+		log.info("OAuth initialized");
 	}
-	
-	
+
+
 	@Override
 	public boolean isAuthenticationByUsernamePasswordSupported() {
-		
+
 		return false;
 	}
 
 	@Override
 	public boolean isAuthenticationBySecurityTokenSupported() {
-		
+
 		return false;
 	}
 
@@ -61,47 +63,41 @@ public class DBAuthenticationProvider implements IAuthenticationProvider {
 
 	@Override
 	public Map<String, String> getPropertyDescription() {
-		
+
 		return new HashMap<String, String>(); // TODO implement later
 	}
-	
-
 
 	@Override
 	public boolean isAuthenticationByAPIKeySupported() {
 
-		return true;
+		return false;
 	}
-
 
 	@Override
 	public BindaasUser loginUsingAPIKey(String apiKey)
 			throws AuthenticationException {
-		try {
-			BindaasUser retVal = apiKeyManager.lookupUser(apiKey); 
-			
-			if(retVal!=null) return retVal;
-				else
-			throw new AuthenticationException(apiKey);
-		} catch (APIKeyManagerException e) {
-			log.error("Exception in Authentication Module" , e);
-			throw new AuthenticationException(apiKey);
-		}
-		
-	
-		
+		log.error("Login via ApiKey not supported. Authentication failed");
+		throw new AuthenticationException(apiKey);
 	}
-
 
 	@Override
 	public boolean isAuthenticationByJWTSupported() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public BindaasUser loginUsingJWT(String jwt)
 			throws AuthenticationException {
-		log.error("Login via JWT not supported. Authentication failed");
-		throw new AuthenticationException(jwt);
+		try {
+			BindaasUser retVal = JWTManager.lookupUser(jwt);
+
+			if(retVal!=null) return retVal;
+			else
+				throw new AuthenticationException(jwt);
+		} catch (JWTManagerException e) {
+			log.error("Exception in Authentication Module" , e);
+			throw new AuthenticationException(jwt);
+		}
 	}
+
 }
