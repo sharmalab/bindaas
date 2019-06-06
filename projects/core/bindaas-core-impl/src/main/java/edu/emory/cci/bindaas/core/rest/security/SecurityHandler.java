@@ -70,6 +70,11 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		SecurityHandler.getAuthenticationDecisionCache().invalidate(apikey);
 		SecurityHandler.getAuthorizationDecisionCache().invalidate(apikey);
 	}
+	// FIXME make single method to invalidate
+	public static void invalidateJWT(String jws) {
+		SecurityHandler.getAuthenticationDecisionCache().invalidate(jws);
+		SecurityHandler.getAuthorizationDecisionCache().invalidate(jws);
+	}
 
 
 	private String authenticationProviderClass;
@@ -78,6 +83,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.API_KEY; // default
 	public final static String TOKEN = "token";
 	public final static String API_KEY = "api_key";
+	public final static String JWT = "jwt";
 	public final static String AUTH_HEADER = "Authorization";
 	private ServiceTracker<DynamicObject<BindaasConfiguration>,DynamicObject<BindaasConfiguration>> bindaasConfigServiceTracker;
 	
@@ -263,8 +269,8 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		// get apiKey from the query parameters
 		MultivaluedMap<String, String> queryMap =  JAXRSUtils.getStructuredParams((String) message.get(Message.QUERY_STRING), "&", true , true);
 
-		if(queryMap!=null && queryMap.getFirst(API_KEY)!=null)
-			jwt = queryMap.getFirst(API_KEY);
+		if(queryMap!=null && queryMap.getFirst(JWT)!=null)
+			jwt = queryMap.getFirst(JWT);
 
 		// if not present in query param , then look into http header
 
@@ -333,6 +339,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	@Override
  	public Response handleRequest(Message message, ClassResourceInfo arg1) {
 		setRequestId(message);
+		// FIXME
 //		Map<String,String> headers = new HashMap<String, String>();
 //		headers.put("Authorization", "Bearer tushar");
 //		PhaseInterceptorChain.getCurrentMessage().put(Message.PROTOCOL_HEADERS, headers); //append by getting all and then adding

@@ -11,6 +11,7 @@ public interface IJWTManager {
 	public String generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy ,String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists) throws JWTManagerException;
 	public String modifyJWT(Long id , Stage stage , Date dateExpires ,String initiatedBy , String comments , ActivityType activityType ) throws JWTManagerException;
 	public BindaasUser lookupUser(String jwt) throws JWTManagerException;
+	public Date getExpires(String jwt);
 //	public APIKey createShortLivedAPIKey(BindaasUser bindaasUser , int lifetime , String applicationId) throws APIKeyManagerException;
 //	public Integer revokeAPIKey(BindaasUser bindaasUser,String initiatedBy ,String comments , ActivityType activityType) throws APIKeyManagerException;
 //	public Integer revokeAPIKey(String apiKey,String initiatedBy ,String comments , ActivityType activityType) throws APIKeyManagerException;

@@ -65,7 +65,7 @@
 			}
 			
 			function executeAPI(url, buttonClicked) {
-				var queryString = "?api_key=$apiKey&";
+				var queryString = "?$protocol=$protocolValue&";
 				$(buttonClicked).parent().find("input").each(function() {
 
 					if ($(this).attr("value") && $(this).attr("value") != "") {
@@ -78,7 +78,7 @@
 			}
 			
 			function executeDeleteAPI(url, buttonClicked) {
-				var queryString = "?api_key=$apiKey&";
+				var queryString = "?$protocol=$protocolValue&";
 				$(buttonClicked).parent().find("input").each(function() {
 
 					if ($(this).attr("value") && $(this).attr("value") != "") {
@@ -296,7 +296,7 @@
 
 											#if ($submitEndpoint.getType().toString().equals('MULTIPART'))
 
-											<form class="custom" action="$serviceUrl/services/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()?api_key=$apiKey" method="post" enctype="multipart/form-data" target="_blank">
+											<form class="custom" action="$serviceUrl/services/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()?$protocol=$protocolValue" method="post" enctype="multipart/form-data" target="_blank">
 												<label>File:</label>
 												<input name="myfile" type="file"  />
 												<a class='small button radius' onclick="uploadFile(this)">Upload</a>
@@ -304,7 +304,7 @@
 
 											#else
 											<textarea name="inputText"></textarea>
-											<a class="button secondary" onclick="executeSubmitAPI(this , '$serviceUrl/services/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()?api_key=$apiKey&')" >Submit</a>
+											<a class="button secondary" onclick="executeSubmitAPI(this , '$serviceUrl/services/$workspace.getName()/$profile.getName()/submit/$submitEndpoint.getName()?$protocol=$protocolValue&')" >Submit</a>
 											#end
 
 										</div>

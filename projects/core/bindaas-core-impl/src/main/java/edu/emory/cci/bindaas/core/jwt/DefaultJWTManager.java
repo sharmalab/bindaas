@@ -10,6 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 
@@ -20,6 +21,7 @@ import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
+import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidateJWT;
 
 public class DefaultJWTManager implements IJWTManager {
 
@@ -72,7 +74,7 @@ public class DefaultJWTManager implements IJWTManager {
 				UserRequest request = listOfValidTokens.get(0);
 				if(throwErrorIfAlreadyExists)
 				{
-					throw new JWTManagerException("JWT for the user already exists" , Reason.KEY_ALREADY_EXIST);
+					throw new JWTManagerException("JWT for the user already exists" , Reason.TOKEN_ALREADY_EXIST);
 				}
 				else
 				{
@@ -144,11 +146,12 @@ public class DefaultJWTManager implements IJWTManager {
 				switch (activityType) {
 					case APPROVE:
 					case REFRESH:
+						invalidateJWT(userRequest.getJWT()); // remove old JWT from cache
 						String jws = JWT.create()
 								.withIssuer("bindaas")
 								.withExpiresAt(dateExpires)
 								.sign(Algorithm.HMAC256(secret));
-						userRequest.setJWT(jws);
+						userRequest.setJWT(jws);             // overwrite old JWT
 						userRequest.setDateExpires(dateExpires);
 
 					case REVOKE:
@@ -213,6 +216,11 @@ public class DefaultJWTManager implements IJWTManager {
 		}
 
 		return null;
+	}
+
+	public Date getExpires(String token) {
+		DecodedJWT jwt = JWT.decode(token);
+		return jwt.getExpiresAt();
 	}
 
 	public void init() throws Exception {

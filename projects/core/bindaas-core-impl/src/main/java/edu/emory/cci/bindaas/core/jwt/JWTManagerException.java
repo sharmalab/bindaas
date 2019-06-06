@@ -3,7 +3,7 @@ package edu.emory.cci.bindaas.core.jwt;
 public class JWTManagerException extends Exception{
 	private static final long serialVersionUID = 1L;
 	private Reason reason;
-	public static enum Reason {KEY_DOES_NOT_EXIST , KEY_ALREADY_EXIST, PROCESSING_ERROR, METHOD_NOT_IMPLEMENTED}
+	public static enum Reason {TOKEN_DOES_NOT_EXIST , TOKEN_ALREADY_EXIST, PROCESSING_ERROR, METHOD_NOT_IMPLEMENTED}
 	
 	public Reason getReason() {
 		return reason;

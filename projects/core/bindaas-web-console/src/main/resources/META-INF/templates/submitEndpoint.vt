@@ -350,7 +350,7 @@
 
 				<script>
 					function executeAPI() {
-						var url = '$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()' + "?api_key=$apiKey&";
+						var url = '$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()' + "?$protocol=$protocolValue&";
 
 						var text = $("#inputText").attr("value");
 						$.post(url, text, function(data, status, response) {

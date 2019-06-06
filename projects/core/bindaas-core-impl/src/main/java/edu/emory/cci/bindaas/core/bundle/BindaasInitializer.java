@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import edu.emory.cci.bindaas.core.rest.security.AuthenticationProtocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -15,6 +14,7 @@ import org.osgi.framework.launch.Framework;
 
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.rest.security.AuditInLogger;
+import edu.emory.cci.bindaas.core.rest.security.AuthenticationProtocol;
 import edu.emory.cci.bindaas.core.rest.security.SecurityHandler;
 import edu.emory.cci.bindaas.core.rest.service.api.IBindaasAdminService;
 import edu.emory.cci.bindaas.core.rest.service.api.IExecutionService;
@@ -143,16 +143,11 @@ public class BindaasInitializer implements IBindaasAdminService{
 		{
 			
 			securityModule.setAuthenticationProviderClass(bindaasConfiguration.getObject().getAuthenticationProviderClass());
-			if(bindaasConfiguration.getObject().getAuthenticationProtocol()!=null && bindaasConfiguration.getObject().getAuthenticationProtocol().equals("JWT")){
-				securityModule.setAuthenticationProtocol(AuthenticationProtocol.JWT);
-			}
-			else if(bindaasConfiguration.getObject().getAuthenticationProtocol()!=null && bindaasConfiguration.getObject().getAuthenticationProtocol().equals("API_KEY")){
-				securityModule.setAuthenticationProtocol(AuthenticationProtocol.API_KEY);
-			}
-			else {
-				log.error("Unable to get authentication protocol. Assigning default value.");
-				securityModule.setAuthenticationProtocol(AuthenticationProtocol.API_KEY);
-			}
+			securityModule.setAuthenticationProtocol(bindaasConfiguration.getObject().
+					getAuthenticationProtocol().equals("JWT")?
+					AuthenticationProtocol.JWT:
+					AuthenticationProtocol.API_KEY);
+
 			// authorization 
 			
 			if(bindaasConfiguration.getObject().getEnableAuthorization())
