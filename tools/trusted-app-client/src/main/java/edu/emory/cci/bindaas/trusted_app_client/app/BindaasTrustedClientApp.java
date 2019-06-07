@@ -2,7 +2,6 @@ package edu.emory.cci.bindaas.trusted_app_client.app;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -14,9 +13,9 @@ import org.apache.commons.cli.ParseException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import edu.emory.cci.bindaas.trusted_app_client.core.APIKey;
 import edu.emory.cci.bindaas.trusted_app_client.core.TrustedAppClientImpl;
 
 public class BindaasTrustedClientApp {
@@ -93,22 +92,21 @@ public class BindaasTrustedClientApp {
 	    		{
 	    			Arguments authArg = parseRevokeArguments(line);
 	    			TrustedAppClientImpl client = new TrustedAppClientImpl(authArg.baseUrl,authArg.applicationID, authArg.applicationSecret);
-	    			String resp = client.revokeAccess(authArg.username, authArg.comments);
-	    			System.out.println("Server Returned :\n" + resp);
-	    			
+					JsonObject response = client.revokeAccess(authArg.protocol, authArg.username, authArg.comments);
+	    			System.out.println("Server Returned :\n" + gson.toJson(response));
 	    		} else if (action.equals("i"))
 	    		{
-	    			Arguments authArg = parseShortLivedArguments(line);
+	    			Arguments authArg = parseShortLivedAuthenticationTokenArguments(line);
 	    			TrustedAppClientImpl client = new TrustedAppClientImpl(authArg.baseUrl,authArg.applicationID, authArg.applicationSecret);
-	    			APIKey apiKey = client.getShortLivedAPIKey(authArg.username,authArg.lifetime);
-	    			System.out.println("Server Returned :\n" + gson.toJson(apiKey));
+					JsonObject response = client.getShortLivedAuthenticationToken(authArg.protocol, authArg.username,authArg.lifetime);
+	    			System.out.println("Server Returned :\n" + gson.toJson(response));
 	    		}
 	    		else if (action.equals("l"))
 	    		{
-	    			Arguments authArg = parseListAPIKeysArguments(line);
+	    			Arguments authArg = parseListAuthenticationTokensArguments(line);
 	    			TrustedAppClientImpl client = new TrustedAppClientImpl(authArg.baseUrl,authArg.applicationID, authArg.applicationSecret);
-	    			List<APIKey> apiKey = client.listAPIKeys();
-	    			System.out.println("Server Returned :\n" + gson.toJson(apiKey));
+					JsonArray response = client.listAuthenticationTokens(authArg.protocol);
+	    			System.out.println("Server Returned :\n" + gson.toJson(response));
 	    		}
 	    		else
 	    		{
@@ -201,6 +199,7 @@ public class BindaasTrustedClientApp {
 			System.out.println("[protocol] not specified");
 			System.out.println("default value of api_key set");
 		}
+
 		if(line.hasOption("id"))
 		{
 			args.applicationID = line.getOptionValue("id");
@@ -231,7 +230,7 @@ public class BindaasTrustedClientApp {
 		return args;
 	}
 	
-	private Arguments parseShortLivedArguments(CommandLine line) throws IllegalArgumentException
+	private Arguments parseShortLivedAuthenticationTokenArguments(CommandLine line) throws IllegalArgumentException
 	{
 		Arguments args = new Arguments();
 		if(line.hasOption("url"))
@@ -269,7 +268,24 @@ public class BindaasTrustedClientApp {
 		{
 			throw new IllegalArgumentException("[username] not specified");
 		}
-		
+
+		if(line.hasOption("protocol"))
+		{
+			if(line.getOptionValue("protocol").matches("api_key|jwt")){
+				args.protocol = line.getOptionValue("protocol");
+			}
+			else {
+				throw new IllegalArgumentException("Illegal value for [protocol]");
+			}
+
+		}
+		else
+		{
+			args.protocol = "api_key";
+			System.out.println("[protocol] not specified");
+			System.out.println("default value of api_key set");
+		}
+
 		if(line.hasOption("id"))
 		{
 			args.applicationID = line.getOptionValue("id");
@@ -288,7 +304,7 @@ public class BindaasTrustedClientApp {
 		return args;
 	}
 	
-	private Arguments parseListAPIKeysArguments(CommandLine line) throws IllegalArgumentException
+	private Arguments parseListAuthenticationTokensArguments(CommandLine line) throws IllegalArgumentException
 	{
 		Arguments args = new Arguments();
 		if(line.hasOption("url"))
@@ -308,7 +324,23 @@ public class BindaasTrustedClientApp {
 		{
 			throw new IllegalArgumentException("[secret] not specified");
 		}
-		
+
+		if(line.hasOption("protocol"))
+		{
+			if(line.getOptionValue("protocol").matches("api_key|jwt")){
+				args.protocol = line.getOptionValue("protocol");
+			}
+			else {
+				throw new IllegalArgumentException("Illegal value for [protocol]");
+			}
+
+		}
+		else
+		{
+			args.protocol = "api_key";
+			System.out.println("[protocol] not specified");
+			System.out.println("default value of api_key set");
+		}
 		
 		if(line.hasOption("id"))
 		{
@@ -362,7 +394,24 @@ public class BindaasTrustedClientApp {
 		{
 			throw new IllegalArgumentException("[username] not specified");
 		}
-		
+
+		if(line.hasOption("protocol"))
+		{
+			if(line.getOptionValue("protocol").matches("api_key|jwt")){
+				args.protocol = line.getOptionValue("protocol");
+			}
+			else {
+				throw new IllegalArgumentException("Illegal value for [protocol]");
+			}
+
+		}
+		else
+		{
+			args.protocol = "api_key";
+			System.out.println("[protocol] not specified");
+			System.out.println("default value of api_key set");
+		}
+
 		if(line.hasOption("id"))
 		{
 			args.applicationID = line.getOptionValue("id");

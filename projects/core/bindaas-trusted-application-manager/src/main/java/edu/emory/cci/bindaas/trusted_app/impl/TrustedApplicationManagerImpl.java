@@ -62,6 +62,7 @@ public class TrustedApplicationManagerImpl implements
 	private IJWTManager JWTManager;
 	private Log log = LogFactory.getLog(getClass());
 
+	public static final String protocolDoesNotMatchServerConfiguration = "Authentication protocol specified does not match with server's configuration";
 
 	public IAPIKeyManager getApiKeyManager() {
 		return apiKeyManager;
@@ -182,77 +183,124 @@ public class TrustedApplicationManagerImpl implements
 				.entity(retVal.toString()).type("application/json").build();
 	}
 
+	private Response exceptionToResponse(String message){
+		JsonObject retVal = new JsonObject();
+		retVal.add("error",new JsonPrimitive(message));
+		return Response.status(500).entity(retVal.toString()).
+				type("application/json").build();
+	}
+
 	@Override
 	@GET
-	@Path("/issueShortLivedApiKey")
-	public Response getAPIKey(@HeaderParam("_username") String username,
+	@Path("/issueShortLivedAuthenticationToken")
+	public Response issueShortLivedAuthenticationToken(@HeaderParam("_protocol") String protocol,
+			@HeaderParam("_username") String username,
 			@HeaderParam("_applicationID") String applicationID,
 			@HeaderParam("_salt") String salt,
 			@HeaderParam("_digest") String digest,
 			@QueryParam("lifetime") Integer lifetime) {
 
-		try {
+		if(bindaasConfigurationProtocol.equals("API_KEY") && protocol.equals("api_key")) {
+			try {
 
-			TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
-					applicationID, salt, digest, username);
+				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
+						applicationID, salt, digest, username);
 
-			BindaasUser bindaasUser = new BindaasUser(username);
-			JsonObject retVal = new JsonObject();
+				BindaasUser bindaasUser = new BindaasUser(username);
+				JsonObject retVal = new JsonObject();
 
-			int lifespan;
-			String logMsg;
+				int lifespan;
+				String logMsg;
 
-			if ((lifetime == null) || lifetime <=0){
-				lifespan = TrustedAppConstants.DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS;
-				logMsg = "The user did not request a positive lifetime for the key. Therefore, the time limit " +
-						"will be set to " + lifespan + " seconds.";
-				log.info(logMsg);
-				retVal.add("comments", new JsonPrimitive(logMsg));
+				if ((lifetime == null) || lifetime <=0){
+					lifespan = TrustedAppConstants.DEFAULT_LIFESPAN_OF_KEY_IN_SECONDS;
+					logMsg = "The user did not request a positive lifetime for the key. Therefore, the time limit " +
+							"will be set to " + lifespan + " seconds.";
+					log.info(logMsg);
+					retVal.add("comments", new JsonPrimitive(logMsg));
 
-			} else if (lifetime > TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_API_KEYS) {
-				lifespan = TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_API_KEYS;
-				logMsg = "The user requested lifetime [" + lifetime + "] exceeds the time limit " +
-						"set by the system for a short-lived API Key: " +
-						TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_API_KEYS + " seconds. Therefore, " +
-						"the time limit is set to " + lifespan + " seconds.";
-				log.info(logMsg);
-				retVal.add("comments", new JsonPrimitive(logMsg));
+				} else if (lifetime > TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_API_KEYS) {
+					lifespan = TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_API_KEYS;
+					logMsg = "The user requested lifetime [" + lifetime + "] exceeds the time limit " +
+							"set by the system for a short-lived API Key: " +
+							TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_API_KEYS + " seconds. Therefore, " +
+							"the time limit is set to " + lifespan + " seconds.";
+					log.info(logMsg);
+					retVal.add("comments", new JsonPrimitive(logMsg));
 
-			} else {
-				lifespan = lifetime;
+				} else {
+					lifespan = lifetime;
+				}
+
+				String applicationName = trustedAppEntry.getName();
+
+				APIKey sessionKey = generateApiKey(bindaasUser, lifespan,
+						applicationName);
+				retVal.add("api_key", new JsonPrimitive(sessionKey.getValue()));
+				retVal.add("username", new JsonPrimitive(username));
+				retVal.add("applicationID", new JsonPrimitive(applicationID));
+				retVal.add("expires", new JsonPrimitive(sessionKey.getExpires()
+						.toString()));
+				retVal.add("applicationName", new JsonPrimitive(applicationName));
+				return Response.ok().entity(retVal.toString())
+						.type("application/json").build();
+
+			} catch (NotAuthorizedException e) {
+				return exceptionToResponse(e, applicationID, "not-resolved",
+						username);
+
+			} catch (APIKeyManagerException apiKeyManagerException) {
+				switch (apiKeyManagerException.getReason()) {
+					case KEY_DOES_NOT_EXIST:
+						return exceptionToResponse(new APIKeyDoesNotExistException(
+								username), applicationID, "not-resolved", username);
+					default:
+						return exceptionToResponse(apiKeyManagerException.getMessage());
+				}
+			} catch (Exception e) {
+				return exceptionToResponse(e.getMessage());
 			}
+		}
+		else if (bindaasConfigurationProtocol.equals("JWT") && protocol.equals("jwt")) {
+			try {
 
-			String applicationName = trustedAppEntry.getName();
+				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
+						applicationID, salt, digest, username);
 
-			APIKey sessionKey = generateApiKey(bindaasUser, lifespan,
-					applicationName);
-			retVal.add("api_key", new JsonPrimitive(sessionKey.getValue()));
-			retVal.add("username", new JsonPrimitive(username));
-			retVal.add("applicationID", new JsonPrimitive(applicationID));
-			retVal.add("expires", new JsonPrimitive(sessionKey.getExpires()
-					.toString()));
-			retVal.add("applicationName", new JsonPrimitive(applicationName));
-			return Response.ok().entity(retVal.toString())
-					.type("application/json").build();
+				BindaasUser bindaasUser = new BindaasUser(username);
+				JsonObject retVal = new JsonObject();
+				//FIXME discuss expiry time or single use?
+				String applicationName = trustedAppEntry.getName();
 
-		} catch (NotAuthorizedException e) {
-			return exceptionToResponse(e, applicationID, "not-resolved",
-					username);
+				String jws = JWTManager.createShortLivedJWT(bindaasUser, lifetime,
+						applicationName);
+				retVal.add("jwt", new JsonPrimitive(jws));
+				retVal.add("username", new JsonPrimitive(username));
+				retVal.add("applicationID", new JsonPrimitive(applicationID));
+				retVal.add("expires", new JsonPrimitive(JWTManager.getExpires(jws)
+						.toString()));
+				retVal.add("applicationName", new JsonPrimitive(applicationName));
+				return Response.ok().entity(retVal.toString())
+						.type("application/json").build();
 
-		} catch (APIKeyManagerException apiKeyManagerException) {
-			switch (apiKeyManagerException.getReason()) {
-			case KEY_ALREADY_EXIST:
-				return exceptionToResponse(new DuplicateAPIKeyException(
-						username), applicationID, "not-resolved", username);
-			case KEY_DOES_NOT_EXIST:
-				return exceptionToResponse(new APIKeyDoesNotExistException(
-						username), applicationID, "not-resolved", username);
-			default:
-				return Response.status(500)
-						.entity(apiKeyManagerException.getMessage()).build();
+			} catch (NotAuthorizedException e) {
+				return exceptionToResponse(e, applicationID, "not-resolved",
+						username);
+
+			} catch (JWTManagerException JWTManagerException) {
+				switch (JWTManagerException.getReason()) {
+					case TOKEN_DOES_NOT_EXIST:
+						return exceptionToResponse(new JWTDoesNotExistException(
+								username), applicationID, "not-resolved", username);
+					default:
+						return exceptionToResponse(JWTManagerException.getMessage());
+				}
+			} catch (Exception e) {
+				return exceptionToResponse(e.getMessage());
 			}
-		} catch (Exception e) {
-			return Response.status(500).entity(e.getMessage()).build();
+		}
+		else {
+			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
 		}
 
 	}
@@ -349,20 +397,12 @@ public class TrustedApplicationManagerImpl implements
 					case KEY_ALREADY_EXIST:
 						return exceptionToResponse(new DuplicateAPIKeyException(
 								username), applicationID, "not-resolved", username);
-					case KEY_DOES_NOT_EXIST:
-						return exceptionToResponse(new APIKeyDoesNotExistException(
-								username), applicationID, "not-resolved", username);
 					default:
-						JsonObject retVal = new JsonObject();
-						retVal.add("error",new JsonPrimitive(apiKeyManagerException.getMessage()));
-						return Response.status(500).entity(retVal.toString()).
-								type("application/json").build();
+						return exceptionToResponse(apiKeyManagerException.getMessage());
 				}
 			} catch (Exception e) {
-				JsonObject retVal = new JsonObject();
-				retVal.add("error",new JsonPrimitive(e.getMessage()));
-				return Response.status(500).entity(retVal.toString()).
-						type("application/json").build();
+				return exceptionToResponse(e.getMessage());
+
 			}
 
 		}
@@ -399,27 +439,15 @@ public class TrustedApplicationManagerImpl implements
 					case TOKEN_ALREADY_EXIST:
 						return exceptionToResponse(new DuplicateJWTException(
 								username), applicationID, "not-resolved", username);
-					case TOKEN_DOES_NOT_EXIST:
-						return exceptionToResponse(new JWTDoesNotExistException(
-								username), applicationID, "not-resolved", username);
 					default:
-						JsonObject retVal = new JsonObject();
-						retVal.add("error",new JsonPrimitive(JWTManagerException.getMessage()));
-						return Response.status(500).entity(retVal.toString()).
-								type("application/json").build();
+						return exceptionToResponse(JWTManagerException.getMessage());
 				}
 			} catch (Exception e) {
-				JsonObject retVal = new JsonObject();
-				retVal.add("error",new JsonPrimitive(e.getMessage()));
-				return Response.status(500).entity(retVal.toString()).
-						type("application/json").build();
+				return exceptionToResponse(e.getMessage());
 			}
 		}
 		else {
-			JsonObject retVal = new JsonObject();
-			retVal.add("error",new JsonPrimitive("Authentication protocol specified does not match with server's configuration"));
-			return Response.status(500).entity(retVal.toString()).
-					type("application/json").build();
+			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
 		}
 
 	}
@@ -427,97 +455,139 @@ public class TrustedApplicationManagerImpl implements
 	@Override
 	@DELETE
 	@Path("/revokeUser")
-	public Response revokeAccess(@HeaderParam("_username") String username,
+	public Response revokeAccess(@HeaderParam("_protocol") String protocol,
+			@HeaderParam("_username") String username,
 			@HeaderParam("_applicationID") String applicationID,
 			@HeaderParam("_salt") String salt,
 			@HeaderParam("_digest") String digest,
 			@QueryParam("comments") String comments) {
-		try {
-			TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
-					applicationID, salt, digest, username);
+		// FIXME enforce strict if else condition here?
+		if(bindaasConfigurationProtocol.equals("API_KEY") && protocol.equals("api_key")){
+			try {
+				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
+						applicationID, salt, digest, username);
 
-			comments = comments == null ? comments = "API Key Revoked via Trusted Application API"
-					: comments;
-			Integer count = apiKeyManager.revokeAPIKey(
-					new BindaasUser(username), trustedAppEntry.getName(),
-					comments, ActivityType.REVOKE);
+				comments = comments == null ? comments = "API Key Revoked via Trusted Application API"
+						: comments;
+				Integer count = apiKeyManager.revokeAPIKey(
+						new BindaasUser(username), trustedAppEntry.getName(),
+						comments, ActivityType.REVOKE);
 
-			JsonObject retVal = new JsonObject();
-			retVal.add("username", new JsonPrimitive(username));
-			retVal.add("keys_deleted", new JsonPrimitive(count));
-			retVal.add("applicationID", new JsonPrimitive(applicationID));
+				JsonObject retVal = new JsonObject();
+				retVal.add("username", new JsonPrimitive(username));
+				retVal.add("keys_deleted", new JsonPrimitive(count));
+				retVal.add("applicationID", new JsonPrimitive(applicationID));
 
-			retVal.add("applicationName",
-					new JsonPrimitive(trustedAppEntry.getName()));
-			return Response.ok().entity(retVal.toString())
-					.type("application/json").build();
+				retVal.add("applicationName",
+						new JsonPrimitive(trustedAppEntry.getName()));
+				return Response.ok().entity(retVal.toString())
+						.type("application/json").build();
 
-		} catch (NotAuthorizedException e) {
-			return exceptionToResponse(e, applicationID, "not-resolved",
-					username);
+			} catch (NotAuthorizedException e) {
+				return exceptionToResponse(e, applicationID, "not-resolved",
+						username);
 
-		} catch (APIKeyManagerException apiKeyManagerException) {
-			switch (apiKeyManagerException.getReason()) {
-			case KEY_ALREADY_EXIST:
-				return exceptionToResponse(new DuplicateAPIKeyException(
-						username), applicationID, "not-resolved", username);
-			case KEY_DOES_NOT_EXIST:
-				return exceptionToResponse(new APIKeyDoesNotExistException(
-						username), applicationID, "not-resolved", username);
-			default:
-				return Response.status(500)
-						.entity(apiKeyManagerException.getMessage()).build();
+			} catch (Exception e) {
+				return exceptionToResponse(e.getMessage());
 			}
-		} catch (Exception e) {
-			return Response.status(500).entity(e.getMessage()).build();
+		}
+		else if (bindaasConfigurationProtocol.equals("JWT") && protocol.equals("jwt")) {
+			try {
+				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
+						applicationID, salt, digest, username);
+
+				comments = comments == null ? comments = "JWT revoked via Trusted Application API"
+						: comments;
+				Integer count = JWTManager.revokeJWT(new BindaasUser(username),
+						trustedAppEntry.getName(), comments, ActivityType.REVOKE);
+
+				JsonObject retVal = new JsonObject();
+				retVal.add("username", new JsonPrimitive(username));
+				retVal.add("tokens_deleted", new JsonPrimitive(count));
+				retVal.add("applicationID", new JsonPrimitive(applicationID));
+
+				retVal.add("applicationName",
+						new JsonPrimitive(trustedAppEntry.getName()));
+				return Response.ok().entity(retVal.toString())
+						.type("application/json").build();
+
+			} catch (NotAuthorizedException e) {
+				return exceptionToResponse(e, applicationID, "not-resolved",
+						username);
+
+			} catch (Exception e) {
+				return exceptionToResponse(e.getMessage());
+			}
+		}
+		else {
+			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
 		}
 
 	}
 
 	@Override
 	@GET
-	@Path("/listAPIkeys")
-	public Response listAPIKeys(@HeaderParam("_username") String username,
+	@Path("/listAuthenticationTokens")
+	public Response listAuthenticationTokens(@HeaderParam("_protocol") String protocol,
+			@HeaderParam("_username") String username,
 			@HeaderParam("_applicationID") String applicationID,
 			@HeaderParam("_salt") String salt,
 			@HeaderParam("_digest") String digest) {
 
-		try {
+		if(bindaasConfigurationProtocol.equals("API_KEY") && protocol.equals("api_key")) {
+			try {
 
-			TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
-					applicationID, salt, digest, username);
+				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
+						applicationID, salt, digest, username);
 
-			List<UserRequest> listOfApiKeys = apiKeyManager.listAPIKeys();
-			JsonArray array = GSONUtil.getGSONInstance()
-					.toJsonTree(listOfApiKeys).getAsJsonArray();
+				List<UserRequest> listOfApiKeys = apiKeyManager.listAPIKeys();
+				JsonArray array = GSONUtil.getGSONInstance()
+						.toJsonTree(listOfApiKeys).getAsJsonArray();
+				JsonObject retVal = new JsonObject();
 
-			JsonObject retVal = new JsonObject();
+				retVal.add("authenticationTokens", array);
+				retVal.add("applicationID", new JsonPrimitive(applicationID));
+				retVal.add("applicationName",
+						new JsonPrimitive(trustedAppEntry.getName()));
+				return Response.ok().entity(retVal.toString())
+						.type("application/json").build();
 
-			retVal.add("apiKeys", array);
-			retVal.add("applicationID", new JsonPrimitive(applicationID));
-			retVal.add("applicationName",
-					new JsonPrimitive(trustedAppEntry.getName()));
-			return Response.ok().entity(retVal.toString())
-					.type("application/json").build();
+			} catch (NotAuthorizedException e) {
+				return exceptionToResponse(e, applicationID, "not-resolved",
+						username);
 
-		} catch (NotAuthorizedException e) {
-			return exceptionToResponse(e, applicationID, "not-resolved",
-					username);
-
-		} catch (APIKeyManagerException apiKeyManagerException) {
-			switch (apiKeyManagerException.getReason()) {
-			case KEY_ALREADY_EXIST:
-				return exceptionToResponse(new DuplicateAPIKeyException(
-						username), applicationID, "not-resolved", username);
-			case KEY_DOES_NOT_EXIST:
-				return exceptionToResponse(new APIKeyDoesNotExistException(
-						username), applicationID, "not-resolved", username);
-			default:
-				return Response.status(500)
-						.entity(apiKeyManagerException.getMessage()).build();
+			} catch (Exception e) {
+				return exceptionToResponse(e.getMessage());
 			}
-		} catch (Exception e) {
-			return Response.status(500).entity(e.getMessage()).build();
+		}
+		else if (bindaasConfigurationProtocol.equals("JWT") && protocol.equals("jwt")) {
+			try {
+
+				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
+						applicationID, salt, digest, username);
+
+				List<UserRequest> listOfJWT = JWTManager.listJWT();
+				JsonArray array = GSONUtil.getGSONInstance()
+						.toJsonTree(listOfJWT).getAsJsonArray();
+				JsonObject retVal = new JsonObject();
+
+				retVal.add("authenticationTokens", array);
+				retVal.add("applicationID", new JsonPrimitive(applicationID));
+				retVal.add("applicationName",
+						new JsonPrimitive(trustedAppEntry.getName()));
+				return Response.ok().entity(retVal.toString())
+						.type("application/json").build();
+
+			} catch (NotAuthorizedException e) {
+				return exceptionToResponse(e, applicationID, "not-resolved",
+						username);
+
+			} catch (Exception e) {
+				return exceptionToResponse(e.getMessage());
+			}
+		}
+		else {
+			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
 		}
 
 	}

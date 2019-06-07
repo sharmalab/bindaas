@@ -7,8 +7,10 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import edu.emory.cci.bindaas.trusted_app_client.app.exception.ServerException;
-import edu.emory.cci.bindaas.trusted_app_client.core.APIKey;
 import edu.emory.cci.bindaas.trusted_app_client.core.TrustedAppClientImpl;
 
 public class TestTrustedAppClient {
@@ -20,13 +22,14 @@ public class TestTrustedAppClient {
 		String applicationID = "demo-id";
 		String applicationSecret = "demo-secret-key";
 		String randomUser = UUID.randomUUID().toString();
+		String protocol = "api_key";
 		Long epochTimeExpires = (new Date()).getTime() + 1000*60; // expires in 1 min
 		String comments = "junit testing";
 		TrustedAppClientImpl client = new TrustedAppClientImpl(url,applicationID, applicationSecret);
 		try {
-			APIKey apiKey = client.authorizeNewUser(randomUser, epochTimeExpires, comments);
-			Assert.assertNotNull(apiKey);
-			System.out.println(apiKey);
+			JsonObject response = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
+			Assert.assertNotNull(response);
+			System.out.println(response);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail(e.getMessage());
@@ -41,13 +44,14 @@ public class TestTrustedAppClient {
 		String applicationID = "demo-id";
 		String applicationSecret = "demo-secret-key";
 		String randomUser = UUID.randomUUID().toString();
+		String protocol = "api_key";
 		Long epochTimeExpires = (new Date()).getTime() + 1000*60; // expires in 1 min
 		String comments = "junit testing";
 		TrustedAppClientImpl client = new TrustedAppClientImpl(url,applicationID, applicationSecret);
 		try {
-			APIKey apiKey = client.authorizeNewUser(randomUser, epochTimeExpires, comments);
-			Assert.assertNotNull(apiKey);
-			System.out.println(apiKey);
+			JsonObject response = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
+			Assert.assertNotNull(response);
+			System.out.println(response);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail(e.getMessage());
@@ -55,7 +59,7 @@ public class TestTrustedAppClient {
 		
 		try {
 			
-			client.authorizeNewUser(randomUser, epochTimeExpires, comments);
+			client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
 			Assert.fail("API Key should never be generated for existing user");
 			
 		} catch (Exception e) {
@@ -71,15 +75,16 @@ public class TestTrustedAppClient {
 		String applicationID = "demo-id";
 		String applicationSecret = "demo-secret-key";
 		String randomUser = UUID.randomUUID().toString();
+		String protocol = "api_key";
 		Long epochTimeExpires = (new Date()).getTime() + 1000*60; // expires in 1 min
 		String comments = "junit testing";
 		TrustedAppClientImpl client = new TrustedAppClientImpl(url,applicationID, applicationSecret);
 		try {
-			APIKey masterKey = client.authorizeNewUser(randomUser, epochTimeExpires, comments);
-			Assert.assertNotNull(masterKey);
-			System.out.println(masterKey);
-			APIKey shortKey = client.getShortLivedAPIKey(randomUser, 10);
-			System.out.println(shortKey);
+			JsonObject masterResponse = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
+			Assert.assertNotNull(masterResponse);
+			System.out.println(masterResponse);
+			JsonObject shortResponse = client.getShortLivedAuthenticationToken(protocol, randomUser, 10);
+			System.out.println(shortResponse);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -95,10 +100,11 @@ public class TestTrustedAppClient {
 		String applicationID = "demo-id";
 		String applicationSecret = "demo-secret-key";
 		String randomUser = UUID.randomUUID().toString();
+		String protocol = "api_key";
 		TrustedAppClientImpl client = new TrustedAppClientImpl(url,applicationID, applicationSecret);
 		try {
 			
-		client.getShortLivedAPIKey(randomUser, 10);
+		client.getShortLivedAuthenticationToken(protocol, randomUser, 10);
 		Assert.fail("Short-Lived Key should not be generated");
 			
 		} catch (Exception e) {
@@ -114,14 +120,15 @@ public class TestTrustedAppClient {
 		String url = "http://localhost:9099/trustedApplication";
 		String applicationID = "demo-id";
 		String applicationSecret = "demo-secret-key";
+		String protocol = "api_key";
 		
 		TrustedAppClientImpl client = new TrustedAppClientImpl(url,applicationID, applicationSecret);
 		try {
-			List<APIKey> list = client.listAPIKeys();
-			Assert.assertNotNull(list);
-			Assert.assertTrue(list.size() > 0);
-			System.out.println(list);
-			System.out.println(list.size());
+			JsonArray response = client.listAuthenticationTokens(protocol);
+			Assert.assertNotNull(response);
+			Assert.assertTrue(response.size() > 0);
+			System.out.println(response);
+			System.out.println(response.size());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -138,16 +145,17 @@ public class TestTrustedAppClient {
 		String applicationID = "demo-id";
 		String applicationSecret = "demo-secret-key";
 		String randomUser = UUID.randomUUID().toString();
+		String protocol = "api_key";
 		Long epochTimeExpires = (new Date()).getTime() + 1000*60; // expires in 1 min
 		String comments = "junit testing";
 		TrustedAppClientImpl client = new TrustedAppClientImpl(url,applicationID, applicationSecret);
 		try {
-			APIKey masterKey = client.authorizeNewUser(randomUser, epochTimeExpires, comments);
-			Assert.assertNotNull(masterKey);
-			System.out.println(masterKey);
-			String resp = client.revokeAccess(randomUser, comments);
-			Assert.assertNotNull(resp);
-			System.out.println(resp);
+			JsonObject masterResponse = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
+			Assert.assertNotNull(masterResponse);
+			System.out.println(masterResponse);
+			JsonObject revokeResponse = client.revokeAccess(protocol, randomUser, comments);
+			Assert.assertNotNull(revokeResponse);
+			System.out.println(revokeResponse);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail(e.getMessage());
@@ -162,16 +170,17 @@ public class TestTrustedAppClient {
 		String applicationID = "demo-id";
 		String applicationSecret = "demo-secret-key";
 		String randomUser = UUID.randomUUID().toString();
+		String protocol = "api_key";
 		Long epochTimeExpires = (new Date()).getTime() + 1000*60; // expires in 1 min
 		String comments = "junit testing";
 		TrustedAppClientImpl client = new TrustedAppClientImpl(url,applicationID, applicationSecret);
 		try {
-			APIKey masterKey = client.authorizeNewUser(randomUser, epochTimeExpires, comments);
-			Assert.assertNotNull(masterKey);
-			System.out.println(masterKey);
-			String resp = client.revokeAccess(randomUser, comments);
-			Assert.assertNotNull(resp);
-			System.out.println(resp);
+			JsonObject masterResponse = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
+			Assert.assertNotNull(masterResponse);
+			System.out.println(masterResponse);
+			JsonObject revokeResponse = client.revokeAccess(protocol, randomUser, comments);
+			Assert.assertNotNull(revokeResponse);
+			System.out.println(revokeResponse);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail(e.getMessage());
@@ -179,10 +188,10 @@ public class TestTrustedAppClient {
 		}
 		
 		try {
-			
-			APIKey masterKey = client.authorizeNewUser(randomUser, epochTimeExpires, comments);
-			Assert.assertNotNull(masterKey);
-			System.out.println(masterKey);
+
+			JsonObject masterResponse = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
+			Assert.assertNotNull(masterResponse);
+			System.out.println(masterResponse);
 			
 		}catch(Exception e)
 		{

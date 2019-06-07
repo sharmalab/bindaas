@@ -14,7 +14,6 @@ import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 
 import com.google.gson.JsonObject;
-import edu.emory.cci.bindaas.trusted_app_client.core.APIKey;
 import edu.emory.cci.bindaas.trusted_app_client.core.ITrustedAppClient;
 import edu.emory.cci.bindaas.trusted_app_client.core.TrustedAppClientImpl;
 

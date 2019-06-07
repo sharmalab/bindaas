@@ -33,7 +33,7 @@ public class OAuthProvider implements IAuthenticationProvider{
 
 	public void init()
 	{
-		log.info("OAuth initialized");
+
 	}
 
 
