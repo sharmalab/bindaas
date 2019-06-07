@@ -31,7 +31,7 @@ public class HTTPQueryHandler implements IQueryHandler {
 	public QueryResult query(JsonObject dataSource,
 			JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters, RequestContext requestContext)
 			throws AbstractHttpCodeException {
-		
+		log.info(queryToExecute);
 		
 		try {
 			
