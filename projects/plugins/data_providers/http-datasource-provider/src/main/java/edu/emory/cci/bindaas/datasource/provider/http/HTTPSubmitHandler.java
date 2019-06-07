@@ -8,12 +8,14 @@ import java.io.OutputStream;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.datasource.provider.http.model.SubmitEndpointProperties;
 import edu.emory.cci.bindaas.framework.api.ISubmitHandler;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.model.RequestContext;
 import edu.emory.cci.bindaas.framework.model.SubmitEndpoint;
 import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeException;
 import edu.emory.cci.bindaas.framework.provider.exception.SubmitExecutionFailedException;
+import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.IOUtils;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 import org.apache.commons.logging.Log;
@@ -44,7 +46,13 @@ public class HTTPSubmitHandler implements ISubmitHandler {
         QueryResult queryResult = new QueryResult();
 
         try {
-            OutputStream outStream = new FileOutputStream("output.csv");
+
+            SubmitEndpointProperties submitEndpointProperties = GSONUtil
+                    .getGSONInstance().fromJson(endpointProperties,
+                            SubmitEndpointProperties.class);
+
+            OutputStream outStream = new FileOutputStream(submitEndpointProperties.getOutputfileName());
+            log.info(submitEndpointProperties.getUrl());
             outStream.write(data.getBytes());
 
             queryResult.setData(new ByteArrayInputStream(data.getBytes()));
