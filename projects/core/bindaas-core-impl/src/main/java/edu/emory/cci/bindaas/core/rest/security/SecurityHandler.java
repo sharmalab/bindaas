@@ -70,7 +70,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		SecurityHandler.getAuthenticationDecisionCache().invalidate(apikey);
 		SecurityHandler.getAuthorizationDecisionCache().invalidate(apikey);
 	}
-	// FIXME make single method to invalidate
+
 	public static void invalidateJWT(String jws) {
 		SecurityHandler.getAuthenticationDecisionCache().invalidate(jws);
 		SecurityHandler.getAuthorizationDecisionCache().invalidate(jws);
@@ -339,11 +339,6 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	@Override
  	public Response handleRequest(Message message, ClassResourceInfo arg1) {
 		setRequestId(message);
-		// FIXME
-//		Map<String,String> headers = new HashMap<String, String>();
-//		headers.put("Authorization", "Bearer tushar");
-//		PhaseInterceptorChain.getCurrentMessage().put(Message.PROTOCOL_HEADERS, headers); //append by getting all and then adding
-//		log.info(PhaseInterceptorChain.getCurrentMessage().get(Message.PROTOCOL_HEADERS));
 		Principal authenticatedUser =  null;
 		if(isEnableAuthentication())
 		{

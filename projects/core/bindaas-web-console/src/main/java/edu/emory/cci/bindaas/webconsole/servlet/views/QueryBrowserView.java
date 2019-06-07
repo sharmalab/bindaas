@@ -92,7 +92,7 @@ public class QueryBrowserView extends AbstractRequestHandler {
 			context.put("serviceUrl", serviceUrl);
 			
 			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
-			// FIXME update jwt for header
+
 			context.put("protocol", bindaasConfiguration.getObject().
 					getAuthenticationProtocol().equals("JWT")?
 					"jwt":

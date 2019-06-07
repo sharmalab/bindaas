@@ -269,10 +269,32 @@ public class TrustedApplicationManagerImpl implements
 
 				BindaasUser bindaasUser = new BindaasUser(username);
 				JsonObject retVal = new JsonObject();
-				//FIXME discuss expiry time or single use?
+
+				int lifespan;
+				String logMsg;
+
+				if ((lifetime == null) || lifetime <=0){
+					lifespan = TrustedAppConstants.DEFAULT_LIFESPAN_OF_JWT_IN_SECONDS;
+					logMsg = "The user did not request a positive lifetime for the token. Therefore, the time limit " +
+							"will be set to " + lifespan + " seconds.";
+					log.info(logMsg);
+					retVal.add("comments", new JsonPrimitive(logMsg));
+
+				} else if (lifetime > TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_JWT) {
+					lifespan = TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_JWT;
+					logMsg = "The user requested lifetime [" + lifetime + "] exceeds the time limit " +
+							"set by the system for a short-lived JWT: " +
+							TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_JWT + " seconds. Therefore, " +
+							"the time limit is set to " + lifespan + " seconds.";
+					log.info(logMsg);
+					retVal.add("comments", new JsonPrimitive(logMsg));
+
+				} else {
+					lifespan = lifetime;
+				}
 				String applicationName = trustedAppEntry.getName();
 
-				String jws = JWTManager.createShortLivedJWT(bindaasUser, lifetime,
+				String jws = JWTManager.createShortLivedJWT(bindaasUser, lifespan,
 						applicationName);
 				retVal.add("jwt", new JsonPrimitive(jws));
 				retVal.add("username", new JsonPrimitive(username));
@@ -461,7 +483,7 @@ public class TrustedApplicationManagerImpl implements
 			@HeaderParam("_salt") String salt,
 			@HeaderParam("_digest") String digest,
 			@QueryParam("comments") String comments) {
-		// FIXME enforce strict if else condition here?
+
 		if(bindaasConfigurationProtocol.equals("API_KEY") && protocol.equals("api_key")){
 			try {
 				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(

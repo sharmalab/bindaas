@@ -269,8 +269,6 @@ public class DefaultJWTManager implements IJWTManager {
 
 			verifier.verify(jws);
 
-			// FIXME cache revoked, refreshed tokens and check before proceeding. also give leeway above?
-
 			@SuppressWarnings("unchecked")
 			List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
 					add(Restrictions.eq("stage",	Stage.accepted.name())).
