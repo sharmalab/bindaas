@@ -18,6 +18,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.trusted_app_client.constants.TrustedAppClientConstants;
 import edu.emory.cci.bindaas.trusted_app_client.core.TrustedAppClientImpl;
 
 public class BindaasTrustedClientApp {
@@ -197,8 +198,8 @@ public class BindaasTrustedClientApp {
 		}
 		else
 		{
-			args.protocol = "api_key";
-			log.warn("[protocol] not specified. Using default value of api_key");
+			args.protocol = TrustedAppClientConstants.DEFAULT_PROTOCOL;
+			log.warn("[protocol] not specified. Using default value of "+TrustedAppClientConstants.DEFAULT_PROTOCOL);
 		}
 
 		if(line.hasOption("id"))
@@ -282,8 +283,8 @@ public class BindaasTrustedClientApp {
 		}
 		else
 		{
-			args.protocol = "api_key";
-			log.warn("[protocol] not specified. Using default value of api_key");
+			args.protocol = TrustedAppClientConstants.DEFAULT_PROTOCOL;
+			log.warn("[protocol] not specified. Using default value of "+TrustedAppClientConstants.DEFAULT_PROTOCOL);
 		}
 
 		if(line.hasOption("id"))
@@ -337,8 +338,8 @@ public class BindaasTrustedClientApp {
 		}
 		else
 		{
-			args.protocol = "api_key";
-			log.warn("[protocol] not specified. Using default value of api_key");
+			args.protocol = TrustedAppClientConstants.DEFAULT_PROTOCOL;
+			log.warn("[protocol] not specified. Using default value of "+TrustedAppClientConstants.DEFAULT_PROTOCOL);
 		}
 		
 		if(line.hasOption("id"))
@@ -406,8 +407,8 @@ public class BindaasTrustedClientApp {
 		}
 		else
 		{
-			args.protocol = "api_key";
-			log.warn("[protocol] not specified. Using default value of api_key");
+			args.protocol = TrustedAppClientConstants.DEFAULT_PROTOCOL;
+			log.warn("[protocol] not specified. Using default value of "+TrustedAppClientConstants.DEFAULT_PROTOCOL);
 		}
 
 		if(line.hasOption("id"))
