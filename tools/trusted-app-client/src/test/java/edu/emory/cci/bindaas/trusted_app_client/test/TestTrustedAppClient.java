@@ -1,9 +1,10 @@
 package edu.emory.cci.bindaas.trusted_app_client.test ;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,6 +15,8 @@ import edu.emory.cci.bindaas.trusted_app_client.app.exception.ServerException;
 import edu.emory.cci.bindaas.trusted_app_client.core.TrustedAppClientImpl;
 
 public class TestTrustedAppClient {
+
+	private Log log = LogFactory.getLog(getClass());
 
 	@Test
 	public void testAuthorizeNewUser()
@@ -29,9 +32,9 @@ public class TestTrustedAppClient {
 		try {
 			JsonObject response = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
 			Assert.assertNotNull(response);
-			System.out.println(response);
+			log.info(response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 			Assert.fail(e.getMessage());
 			
 		}
@@ -51,9 +54,9 @@ public class TestTrustedAppClient {
 		try {
 			JsonObject response = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
 			Assert.assertNotNull(response);
-			System.out.println(response);
+			log.info(response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 			Assert.fail(e.getMessage());
 		}
 		
@@ -82,12 +85,12 @@ public class TestTrustedAppClient {
 		try {
 			JsonObject masterResponse = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
 			Assert.assertNotNull(masterResponse);
-			System.out.println(masterResponse);
+			log.info(masterResponse);
 			JsonObject shortResponse = client.getShortLivedAuthenticationToken(protocol, randomUser, 10);
-			System.out.println(shortResponse);
+			log.info(shortResponse);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 			Assert.fail(e.getMessage());
 			
 		}
@@ -127,11 +130,11 @@ public class TestTrustedAppClient {
 			JsonArray response = client.listAuthenticationTokens(protocol);
 			Assert.assertNotNull(response);
 			Assert.assertTrue(response.size() > 0);
-			System.out.println(response);
-			System.out.println(response.size());
+			log.info(response);
+			log.info(response.size());
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 			Assert.fail(e.getMessage());
 			
 		}
@@ -152,12 +155,12 @@ public class TestTrustedAppClient {
 		try {
 			JsonObject masterResponse = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
 			Assert.assertNotNull(masterResponse);
-			System.out.println(masterResponse);
+			log.info(masterResponse);
 			JsonObject revokeResponse = client.revokeAccess(protocol, randomUser, comments);
 			Assert.assertNotNull(revokeResponse);
-			System.out.println(revokeResponse);
+			log.info(revokeResponse);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 			Assert.fail(e.getMessage());
 			
 		}
@@ -177,12 +180,12 @@ public class TestTrustedAppClient {
 		try {
 			JsonObject masterResponse = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
 			Assert.assertNotNull(masterResponse);
-			System.out.println(masterResponse);
+			log.info(masterResponse);
 			JsonObject revokeResponse = client.revokeAccess(protocol, randomUser, comments);
 			Assert.assertNotNull(revokeResponse);
-			System.out.println(revokeResponse);
+			log.info(revokeResponse);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 			Assert.fail(e.getMessage());
 			
 		}
@@ -191,11 +194,11 @@ public class TestTrustedAppClient {
 
 			JsonObject masterResponse = client.authorizeNewUser(protocol, randomUser, epochTimeExpires, comments);
 			Assert.assertNotNull(masterResponse);
-			System.out.println(masterResponse);
+			log.info(masterResponse);
 			
 		}catch(Exception e)
 		{
-			e.printStackTrace();
+			log.error(e);
 			Assert.fail(e.getMessage());
 		}
 	}

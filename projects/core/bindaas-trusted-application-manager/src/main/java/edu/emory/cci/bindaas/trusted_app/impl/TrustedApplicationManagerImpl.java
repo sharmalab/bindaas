@@ -62,7 +62,7 @@ public class TrustedApplicationManagerImpl implements
 	private IJWTManager JWTManager;
 	private Log log = LogFactory.getLog(getClass());
 
-	public static final String protocolDoesNotMatchServerConfiguration = "Authentication protocol specified does not match with server's configuration";
+	public static final String protocolDoesNotMatchServerConfiguration = "Authentication protocol in request does not match with server's configuration";
 
 	public IAPIKeyManager getApiKeyManager() {
 		return apiKeyManager;
@@ -200,7 +200,7 @@ public class TrustedApplicationManagerImpl implements
 			@HeaderParam("_digest") String digest,
 			@QueryParam("lifetime") Integer lifetime) {
 
-		if(bindaasConfigurationProtocol.equals("API_KEY") && protocol.equals("api_key")) {
+		if(bindaasConfigurationProtocol.equalsIgnoreCase(protocol) && protocol.equals("api_key")) {
 			try {
 
 				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
@@ -246,22 +246,26 @@ public class TrustedApplicationManagerImpl implements
 						.type("application/json").build();
 
 			} catch (NotAuthorizedException e) {
+				log.error(e.getErrorDescription());
 				return exceptionToResponse(e, applicationID, "not-resolved",
 						username);
 
 			} catch (APIKeyManagerException apiKeyManagerException) {
 				switch (apiKeyManagerException.getReason()) {
 					case KEY_DOES_NOT_EXIST:
+						log.error(apiKeyManagerException.getMessage());
 						return exceptionToResponse(new APIKeyDoesNotExistException(
 								username), applicationID, "not-resolved", username);
 					default:
+						log.error(apiKeyManagerException.getMessage());
 						return exceptionToResponse(apiKeyManagerException.getMessage());
 				}
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				return exceptionToResponse(e.getMessage());
 			}
 		}
-		else if (bindaasConfigurationProtocol.equals("JWT") && protocol.equals("jwt")) {
+		else if (bindaasConfigurationProtocol.equalsIgnoreCase(protocol) && protocol.equals("jwt")) {
 			try {
 
 				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
@@ -306,22 +310,27 @@ public class TrustedApplicationManagerImpl implements
 						.type("application/json").build();
 
 			} catch (NotAuthorizedException e) {
+				log.error(e.getErrorDescription());
 				return exceptionToResponse(e, applicationID, "not-resolved",
 						username);
 
 			} catch (JWTManagerException JWTManagerException) {
 				switch (JWTManagerException.getReason()) {
 					case TOKEN_DOES_NOT_EXIST:
+						log.error(JWTManagerException.getMessage());
 						return exceptionToResponse(new JWTDoesNotExistException(
 								username), applicationID, "not-resolved", username);
 					default:
+						log.error(JWTManagerException.getMessage());
 						return exceptionToResponse(JWTManagerException.getMessage());
 				}
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				return exceptionToResponse(e.getMessage());
 			}
 		}
 		else {
+			log.error(protocolDoesNotMatchServerConfiguration);
 			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
 		}
 
@@ -387,14 +396,16 @@ public class TrustedApplicationManagerImpl implements
 			@QueryParam("expires") Long epochTime,
 			@QueryParam("comments") String comments) {
 
-		if(bindaasConfigurationProtocol.equals("API_KEY") && protocol.equals("api_key")){
+		if(bindaasConfigurationProtocol.equalsIgnoreCase(protocol) && protocol.equals("api_key")){
 			try {
 
 				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
 						applicationID, salt, digest, username);
 				Date dateExpires = new Date(epochTime);
-				comments = comments == null ? comments = "API Key Generated via Trusted Application API"
-						: comments;
+				if (comments == null) {
+					comments = "API Key Generated via Trusted Application API";
+				}
+
 				APIKey apiKey = apiKeyManager.generateAPIKey(new BindaasUser(
 								username), dateExpires, trustedAppEntry.getName(),
 						comments, ActivityType.APPROVE, true);
@@ -411,30 +422,35 @@ public class TrustedApplicationManagerImpl implements
 						.type("application/json").build();
 
 			} catch (NotAuthorizedException e) {
+				log.error(e.getErrorDescription());
 				return exceptionToResponse(e, applicationID, "not-resolved",
 						username);
 
 			} catch (APIKeyManagerException apiKeyManagerException) {
 				switch (apiKeyManagerException.getReason()) {
 					case KEY_ALREADY_EXIST:
+						log.error(apiKeyManagerException.getMessage());
 						return exceptionToResponse(new DuplicateAPIKeyException(
 								username), applicationID, "not-resolved", username);
 					default:
+						log.error(apiKeyManagerException.getMessage());
 						return exceptionToResponse(apiKeyManagerException.getMessage());
 				}
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				return exceptionToResponse(e.getMessage());
 
 			}
 
 		}
-		else if (bindaasConfigurationProtocol.equals("JWT") && protocol.equals("jwt")) {
+		else if (bindaasConfigurationProtocol.equalsIgnoreCase(protocol) && protocol.equals("jwt")) {
 			try {
 				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
 						applicationID, salt, digest, username);
 				Date dateExpires = new Date(epochTime);
-				comments = comments == null ? comments = "JWT Generated via Trusted Application API"
-						: comments;
+				if (comments == null) {
+					comments = "JWT Generated via Trusted Application API";
+				}
 
 				String jws = JWTManager.generateJWT(new BindaasUser(
 						username), dateExpires, trustedAppEntry.getName(),
@@ -453,22 +469,27 @@ public class TrustedApplicationManagerImpl implements
 						.type("application/json").build();
 
 			} catch (NotAuthorizedException e) {
+				log.error(e.getErrorDescription());
 				return exceptionToResponse(e, applicationID, "not-resolved",
 						username);
 
 			} catch (JWTManagerException JWTManagerException) {
 				switch (JWTManagerException.getReason()) {
 					case TOKEN_ALREADY_EXIST:
+						log.error(JWTManagerException.getMessage());
 						return exceptionToResponse(new DuplicateJWTException(
 								username), applicationID, "not-resolved", username);
 					default:
+						log.error(JWTManagerException.getMessage());
 						return exceptionToResponse(JWTManagerException.getMessage());
 				}
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				return exceptionToResponse(e.getMessage());
 			}
 		}
 		else {
+			log.error(protocolDoesNotMatchServerConfiguration);
 			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
 		}
 
@@ -484,13 +505,15 @@ public class TrustedApplicationManagerImpl implements
 			@HeaderParam("_digest") String digest,
 			@QueryParam("comments") String comments) {
 
-		if(bindaasConfigurationProtocol.equals("API_KEY") && protocol.equals("api_key")){
+		if(bindaasConfigurationProtocol.equalsIgnoreCase(protocol) && protocol.equals("api_key")){
 			try {
 				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
 						applicationID, salt, digest, username);
 
-				comments = comments == null ? comments = "API Key Revoked via Trusted Application API"
-						: comments;
+				if (comments == null) {
+					comments = "API Key revoked via Trusted Application API";
+				}
+
 				Integer count = apiKeyManager.revokeAPIKey(
 						new BindaasUser(username), trustedAppEntry.getName(),
 						comments, ActivityType.REVOKE);
@@ -506,20 +529,24 @@ public class TrustedApplicationManagerImpl implements
 						.type("application/json").build();
 
 			} catch (NotAuthorizedException e) {
+				log.error(e.getErrorDescription());
 				return exceptionToResponse(e, applicationID, "not-resolved",
 						username);
 
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				return exceptionToResponse(e.getMessage());
 			}
 		}
-		else if (bindaasConfigurationProtocol.equals("JWT") && protocol.equals("jwt")) {
+		else if (bindaasConfigurationProtocol.equalsIgnoreCase(protocol) && protocol.equals("jwt")) {
 			try {
 				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
 						applicationID, salt, digest, username);
 
-				comments = comments == null ? comments = "JWT revoked via Trusted Application API"
-						: comments;
+				if (comments == null) {
+					comments = "JWT revoked via Trusted Application API";
+				}
+
 				Integer count = JWTManager.revokeJWT(new BindaasUser(username),
 						trustedAppEntry.getName(), comments, ActivityType.REVOKE);
 
@@ -534,14 +561,17 @@ public class TrustedApplicationManagerImpl implements
 						.type("application/json").build();
 
 			} catch (NotAuthorizedException e) {
+				log.error(e.getErrorDescription());
 				return exceptionToResponse(e, applicationID, "not-resolved",
 						username);
 
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				return exceptionToResponse(e.getMessage());
 			}
 		}
 		else {
+			log.error(protocolDoesNotMatchServerConfiguration);
 			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
 		}
 
@@ -556,7 +586,7 @@ public class TrustedApplicationManagerImpl implements
 			@HeaderParam("_salt") String salt,
 			@HeaderParam("_digest") String digest) {
 
-		if(bindaasConfigurationProtocol.equals("API_KEY") && protocol.equals("api_key")) {
+		if(bindaasConfigurationProtocol.equalsIgnoreCase(protocol) && protocol.equals("api_key")) {
 			try {
 
 				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
@@ -575,14 +605,16 @@ public class TrustedApplicationManagerImpl implements
 						.type("application/json").build();
 
 			} catch (NotAuthorizedException e) {
+				log.error(e.getErrorDescription());
 				return exceptionToResponse(e, applicationID, "not-resolved",
 						username);
 
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				return exceptionToResponse(e.getMessage());
 			}
 		}
-		else if (bindaasConfigurationProtocol.equals("JWT") && protocol.equals("jwt")) {
+		else if (bindaasConfigurationProtocol.equalsIgnoreCase(protocol) && protocol.equals("jwt")) {
 			try {
 
 				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
@@ -601,14 +633,17 @@ public class TrustedApplicationManagerImpl implements
 						.type("application/json").build();
 
 			} catch (NotAuthorizedException e) {
+				log.error(e.getErrorDescription());
 				return exceptionToResponse(e, applicationID, "not-resolved",
 						username);
 
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				return exceptionToResponse(e.getMessage());
 			}
 		}
 		else {
+			log.error(protocolDoesNotMatchServerConfiguration);
 			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
 		}
 

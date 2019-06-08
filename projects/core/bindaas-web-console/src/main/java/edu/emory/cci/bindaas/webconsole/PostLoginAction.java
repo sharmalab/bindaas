@@ -143,7 +143,6 @@ public class PostLoginAction extends HttpServlet {
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(Calendar.YEAR, 40);
 		String jws = JWTManager.generateJWT(principal, calendar.getTime(), "system", "System generated JWT for the user", ActivityType.SYSTEM_APPROVE, false);
-		log.info("Token for user: "+jws);
 		principal.addProperty("jwt",jws);
 		return principal;
 	}

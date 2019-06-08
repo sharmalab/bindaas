@@ -10,6 +10,8 @@ import java.util.UUID;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -30,6 +32,7 @@ import edu.emory.cci.bindaas.trusted_app_client.app.exception.ServerException;
 
 public class TrustedAppClientImpl implements ITrustedAppClient {
 
+	private static Log log = LogFactory.getLog(TrustedAppClientImpl.class);
 	private final static long ROUNDOFF_FACTOR = 100000;
 	private String baseUrl;
 	private String applicationID;
@@ -62,7 +65,7 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 		String digest = DatatypeConverter.printBase64Binary(MessageDigest
 				.getInstance("SHA-1").digest(predigest.getBytes("UTF-8")));
 
-		System.out.println(String.format("Digest of (%s,%s,%s,%s,%s)=%s",
+		log.info(String.format("Digest of (%s,%s,%s,%s,%s) = %s",
 				applicationID, applicationKey, salt, username, roundoff + "",
 				digest));
 
@@ -138,7 +141,7 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 					.getContent()));
 		}
 
-		System.out.println(serverDump.toString());
+		log.info(serverDump.toString());
 	}
 
 	public JsonObject authorizeNewUser(String protocol, String username, Long epochTimeExpires,
@@ -279,7 +282,6 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 				}
 				return authenticationTokens;
 			} else {
-				System.out.println( gson.toJson(serverResponseToJSON(response)));
 				String message = response.getEntity().getContent() != null ? gson.toJson(
 						serverResponseToJSON(response)) : "";
 				throw new ServerException(statusLine.getStatusCode(), message);

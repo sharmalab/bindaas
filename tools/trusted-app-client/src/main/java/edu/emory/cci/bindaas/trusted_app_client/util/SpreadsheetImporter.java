@@ -9,11 +9,14 @@ import java.util.Date;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;
-
 import com.google.gson.JsonObject;
+
 import edu.emory.cci.bindaas.trusted_app_client.core.ITrustedAppClient;
 import edu.emory.cci.bindaas.trusted_app_client.core.TrustedAppClientImpl;
 
@@ -29,6 +32,7 @@ import edu.emory.cci.bindaas.trusted_app_client.core.TrustedAppClientImpl;
  */
 public class SpreadsheetImporter {
 
+	private Log log = LogFactory.getLog(getClass());
 	private String filename;
 	private File file;
 	private ITrustedAppClient trustedAppClient;
@@ -120,22 +124,22 @@ public class SpreadsheetImporter {
 						JsonObject serverResponse = trustedAppClient.authorizeNewUser("api_key",
 								email, dateExpires.getTime(), comments);
 
-						System.out.println(username + "|\t" + email + "|\t"
+						log.info(username + "|\t" + email + "|\t"
 								+ serverResponse);
 						reportWriter.writeNext(new String[] { username, email,
 								expires, role, serverResponse.toString() });
 					} catch (Exception e) {
-						e.printStackTrace();
+						log.error(e);
 						reportWriter.writeNext(new String[] { username, email,
 								expires, role, String.format("{ 'error' : 'duplicate entry' , 'details' : '%s' }", e.getMessage()) });
 					} 
 
 				} else {
-					System.out.println("Cannot write entry "
+					log.info("Cannot write entry "
 							+ Joiner.on(",").join(nextLine));
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e);
 			}
 
 		}

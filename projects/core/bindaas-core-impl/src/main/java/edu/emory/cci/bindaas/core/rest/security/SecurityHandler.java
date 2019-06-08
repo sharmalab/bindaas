@@ -266,7 +266,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	{
 		String jwt = null;
 
-		// get apiKey from the query parameters
+		// get jwt from the query parameters
 		MultivaluedMap<String, String> queryMap =  JAXRSUtils.getStructuredParams((String) message.get(Message.QUERY_STRING), "&", true , true);
 
 		if(queryMap!=null && queryMap.getFirst(JWT)!=null)
@@ -277,7 +277,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		if(jwt == null)
 		{
 			Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
-			log.info("proto headers are "+protocolHeaders.toString());
+
 			if(protocolHeaders!=null && protocolHeaders.get(AUTH_HEADER)!=null)
 			{
 				List<?> values = (List<?>) protocolHeaders.get(AUTH_HEADER);
