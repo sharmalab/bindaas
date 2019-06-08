@@ -1,6 +1,8 @@
 package edu.emory.cci.bindaas.core.jwt;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -121,6 +123,81 @@ public class DefaultJWTManager implements IJWTManager {
 
 	}
 
+	@Override
+	public String createShortLivedJWT(BindaasUser bindaasUser, int lifetime , String applicationId) throws JWTManagerException {
+		Session session = sessionFactory.openSession();
+		try {
+			session.beginTransaction();
+
+			String emailAddress = bindaasUser
+					.getProperty(BindaasUser.EMAIL_ADDRESS) != null ? bindaasUser
+					.getProperty(BindaasUser.EMAIL_ADDRESS).toString()
+					: bindaasUser.getName() + "@" + bindaasUser.getDomain();
+
+
+			@SuppressWarnings("unchecked")
+			List<UserRequest> listOfValidTokens = (List<UserRequest>) session
+					.createCriteria(UserRequest.class)
+					.add(Restrictions.eq("stage", Stage.accepted.name()))
+					.add(Restrictions.eq("emailAddress", emailAddress))
+					.add(Restrictions.gt("dateExpires", new Date()))
+					.add(Restrictions.isNotNull("jwt"))
+					.list();
+
+			if (listOfValidTokens != null && listOfValidTokens.size() > 0) {
+				UserRequest request = listOfValidTokens.get(0);
+
+				// generate a short lived JWT for this user
+				GregorianCalendar calendar = new GregorianCalendar();
+				calendar.add(Calendar.SECOND , lifetime);
+
+				Date newExpirationDate = request.getDateExpires().before(calendar.getTime()) ? request.getDateExpires() : calendar.getTime();
+
+				String jws = JWT.create()
+						.withIssuer("bindaas")
+						.withExpiresAt(newExpirationDate)
+						.sign(Algorithm.HMAC256(secret));
+
+				UserRequest sessionKey = new UserRequest();
+
+				sessionKey.setJWT(jws);
+				sessionKey.setFirstName(request.getFirstName());
+				sessionKey.setLastName(request.getLastName());
+				sessionKey.setEmailAddress(emailAddress);
+				sessionKey.setReason(request.getReason());
+				sessionKey.setRequestDate(new Date());
+				sessionKey.setStage(Stage.accepted);
+				sessionKey.setDateExpires(newExpirationDate);
+
+				session.save(sessionKey);
+
+				HistoryLog historyLog = new HistoryLog();
+				historyLog.setActivityType(ActivityType.SYSTEM_APPROVE);
+				historyLog.setComments("Short-Lived JWT");
+				historyLog.setInitiatedBy(applicationId);
+				historyLog.setUserRequest(sessionKey);
+
+				session.save(historyLog);
+				session.getTransaction().commit();
+
+				return jws;
+
+			} else {
+				throw new JWTManagerException("Cannot generate JWT for [" + bindaasUser + "]. The User must apply for it first!!" , Reason.TOKEN_DOES_NOT_EXIST);
+			}
+
+		}
+		catch (JWTManagerException e) {
+			throw e;
+		}
+		catch (Exception e) {
+			log.error(e);
+			session.getTransaction().rollback();
+			throw new JWTManagerException(e, Reason.PROCESSING_ERROR);
+		} finally {
+			session.close();
+		}
+	}
 
 	@Override
 	public String modifyJWT(Long id, Stage stage, Date dateExpires,
@@ -192,8 +269,6 @@ public class DefaultJWTManager implements IJWTManager {
 
 			verifier.verify(jws);
 
-			// FIXME cache revoked, refreshed tokens and check before proceeding. also give leeway above?
-
 			@SuppressWarnings("unchecked")
 			List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
 					add(Restrictions.eq("stage",	Stage.accepted.name())).
@@ -218,13 +293,88 @@ public class DefaultJWTManager implements IJWTManager {
 		return null;
 	}
 
+	@Override
+	public List<UserRequest> listJWT() throws JWTManagerException {
+		Session session = sessionFactory.openSession();
+
+		try {
+			@SuppressWarnings("unchecked")
+			List<UserRequest> listOfValidTokens = (List<UserRequest>) session
+					.createCriteria(UserRequest.class)
+					.add(Restrictions.eq("stage", Stage.accepted.name()))
+					.add(Restrictions.gt("dateExpires", new Date()))
+					.add(Restrictions.isNotNull("jwt"))
+					.list();
+			return listOfValidTokens;
+		} catch (Exception e) {
+			log.error(e);
+			throw new JWTManagerException(e , Reason.PROCESSING_ERROR);
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public Integer revokeJWT(BindaasUser bindaasUser, String initiatedBy ,String comments , ActivityType activityType)
+			throws JWTManagerException {
+		Session session = sessionFactory.openSession();
+		try{
+			String emailAddress = bindaasUser
+					.getProperty(BindaasUser.EMAIL_ADDRESS) != null ? bindaasUser
+					.getProperty(BindaasUser.EMAIL_ADDRESS).toString()
+					: bindaasUser.getName() + "@" + bindaasUser.getDomain();
+
+			@SuppressWarnings("unchecked")
+			List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
+					add(Restrictions.eq("stage", Stage.accepted.name())).
+					add(Restrictions.eq("emailAddress", emailAddress)).
+					add(Restrictions.isNotNull("jwt")).
+					list();
+
+			if(listOfValidTokens!=null && listOfValidTokens.size() > 0)
+			{
+				session.beginTransaction();
+				HistoryLog historyLog = new HistoryLog();
+				for(UserRequest usrRequest : listOfValidTokens)
+				{
+					usrRequest.setStage(Stage.revoked);
+					invalidateJWT(usrRequest.getJWT());
+
+					historyLog.setActivityType(activityType.toString());
+					historyLog.setComments(comments);
+					historyLog.setInitiatedBy(initiatedBy);
+					historyLog.setUserRequest(usrRequest);
+					session.save(historyLog);
+				}
+				session.getTransaction().commit();
+
+				return listOfValidTokens.size();
+			}
+			else
+				return 0;
+
+
+		}catch(Exception e)
+		{
+			log.error(e);
+			session.getTransaction().rollback();
+			throw new JWTManagerException(e ,Reason.PROCESSING_ERROR);
+		}
+		finally{
+			if(session!=null)
+				session.close();
+		}
+
+	}
+
 	public Date getExpires(String token) {
 		DecodedJWT jwt = JWT.decode(token);
 		return jwt.getExpiresAt();
 	}
 
+
 	public void init() throws Exception {
-		log.info("DefaultJWTManager started");
+
 	}
 
 }

@@ -3,13 +3,15 @@ package edu.emory.cci.bindaas.trusted_app_client.core;
 import java.io.IOException;
 import java.net.URI;
 import java.security.MessageDigest;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -30,6 +32,7 @@ import edu.emory.cci.bindaas.trusted_app_client.app.exception.ServerException;
 
 public class TrustedAppClientImpl implements ITrustedAppClient {
 
+	private static Log log = LogFactory.getLog(TrustedAppClientImpl.class);
 	private final static long ROUNDOFF_FACTOR = 100000;
 	private String baseUrl;
 	private String applicationID;
@@ -62,7 +65,7 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 		String digest = DatatypeConverter.printBase64Binary(MessageDigest
 				.getInstance("SHA-1").digest(predigest.getBytes("UTF-8")));
 
-		System.out.println(String.format("Digest of (%s,%s,%s,%s,%s)=%s",
+		log.info(String.format("Digest of (%s,%s,%s,%s,%s) = %s",
 				applicationID, applicationKey, salt, username, roundoff + "",
 				digest));
 
@@ -74,7 +77,7 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 		return s.hasNext() ? s.next() : "";
 	}
 
-	public APIKey getShortLivedAPIKey(String username, Integer lifetime)
+	public JsonObject getShortLivedAuthenticationToken(String protocol, String username, Integer lifetime)
 			throws ServerException, ClientException {
 		try {
 			String salt = UUID.randomUUID().toString();
@@ -83,9 +86,10 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 
 			URI baseUri = new URI(baseUrl);
 			URIBuilder uriBuilder = new URIBuilder(baseUri.toString()
-					+ "/issueShortLivedApiKey");
+					+ "/issueShortLivedAuthenticationToken");
 			uriBuilder.addParameter("lifetime", lifetime.toString());
 			HttpGet get = new HttpGet(uriBuilder.build());
+			get.addHeader("_protocol", protocol);
 			get.addHeader("_username", username);
 			get.addHeader("_salt", salt);
 			get.addHeader("_digest", digest);
@@ -95,10 +99,10 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 			StatusLine statusLine = response.getStatusLine();
 			if (statusLine.getStatusCode() == 200
 					&& response.getEntity().getContent() != null) {
-				return serverResponseToAPIKey(response);
+				return serverResponseToJSON(response);
 			} else {
-				String message = response.getEntity().getContent() != null ? convertStreamToString(response
-						.getEntity().getContent()) : "";
+				String message = response.getEntity().getContent() != null ? gson.toJson(
+						serverResponseToJSON(response)) : "";
 				throw new ServerException(statusLine.getStatusCode(), message);
 
 			}
@@ -110,22 +114,6 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 			throw new ClientException(e);
 		}
 
-	}
-
-	private APIKey serverResponseToAPIKey(HttpResponse response)
-			throws IllegalStateException, IOException {
-		String content = convertStreamToString(response.getEntity()
-				.getContent());
-		JsonObject serverResponseJson = jsonParser.parse(content)
-				.getAsJsonObject();
-		APIKey apiKey = new APIKey();
-		apiKey.setValue(serverResponseJson.get("api_key").getAsString());
-		apiKey.setApplicationID(serverResponseJson.get("applicationID")
-				.getAsString());
-		apiKey.setApplicationName(serverResponseJson.get("applicationName")
-				.getAsString());
-		apiKey.setExpires(serverResponseJson.get("expires").getAsString());
-		return apiKey;
 	}
 
 	private JsonObject serverResponseToJSON(HttpResponse response)
@@ -153,7 +141,7 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 					.getContent()));
 		}
 
-		System.out.println(serverDump.toString());
+		log.info(serverDump.toString());
 	}
 
 	public JsonObject authorizeNewUser(String protocol, String username, Long epochTimeExpires,
@@ -199,7 +187,7 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 
 	}
 
-	public String revokeAccess(String username, String comments)
+	public JsonObject revokeAccess(String protocol, String username, String comments)
 			throws ServerException, ClientException {
 
 		try {
@@ -215,6 +203,7 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 				uriBuilder.addParameter("comments", comments);
 
 			HttpDelete delete = new HttpDelete(uriBuilder.build());
+			delete.addHeader("_protocol", protocol);
 			delete.addHeader("_username", username);
 			delete.addHeader("_salt", salt);
 			delete.addHeader("_digest", digest);
@@ -224,10 +213,10 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 			StatusLine statusLine = response.getStatusLine();
 			if (statusLine.getStatusCode() == 200
 					&& response.getEntity().getContent() != null) {
-				return convertStreamToString(response.getEntity().getContent());
+				return serverResponseToJSON(response);
 			} else {
-				String message = response.getEntity().getContent() != null ? convertStreamToString(response
-						.getEntity().getContent()) : "";
+				String message = response.getEntity().getContent() != null ? gson.toJson(
+						serverResponseToJSON(response)) : "";
 				throw new ServerException(statusLine.getStatusCode(), message);
 			}
 		} catch (ClientException e) {
@@ -240,7 +229,7 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 
 	}
 
-	public List<APIKey> listAPIKeys() throws ServerException, ClientException {
+	public JsonArray listAuthenticationTokens(String protocol) throws ServerException, ClientException {
 		try {
 			String salt = UUID.randomUUID().toString();
 			String username = UUID.randomUUID().toString(); // username for this
@@ -251,11 +240,16 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 			String digest = calculateDigestValue(this.applicationID,
 					this.applicationSecretKey, salt, username);
 
+			Map<String, String> protocolToHeaderKey = new HashMap<String, String>();
+			protocolToHeaderKey.put("api_key","apiKey");
+			protocolToHeaderKey.put("jwt","jwt");
+
 			URI baseUri = new URI(baseUrl);
 			URIBuilder uriBuilder = new URIBuilder(baseUri.toString()
-					+ "/listAPIkeys");
+					+ "/listAuthenticationTokens");
 
 			HttpGet get = new HttpGet(uriBuilder.build());
+			get.addHeader("_protocol", protocol);
 			get.addHeader("_username", username);
 			get.addHeader("_salt", salt);
 			get.addHeader("_digest", digest);
@@ -265,31 +259,31 @@ public class TrustedAppClientImpl implements ITrustedAppClient {
 			StatusLine statusLine = response.getStatusLine();
 			if (statusLine.getStatusCode() == 200
 					&& response.getEntity().getContent() != null) {
-				String retVal = convertStreamToString(response.getEntity()
-						.getContent());
-				JsonObject json = jsonParser.parse(retVal).getAsJsonObject();
-				JsonArray jsonArray = json.get("apiKeys").getAsJsonArray();
-				List<APIKey> apiKeyArray = new ArrayList<APIKey>();
+
+				JsonObject json = serverResponseToJSON(response);
+				JsonArray jsonArray = json.get("authenticationTokens").getAsJsonArray();
+				JsonArray authenticationTokens = new JsonArray();
 				Iterator<JsonElement> iter = jsonArray.iterator();
 				String applicationID = json.get("applicationID").getAsString();
 				String applicationName = json.get("applicationName")
 						.getAsString();
 				while (iter.hasNext()) {
-					JsonObject apiKeyJson = iter.next().getAsJsonObject();
-					APIKey apiKey = new APIKey();
-					apiKey.setApplicationID(applicationID);
-					apiKey.setApplicationName(applicationName);
-					apiKey.setExpires(apiKeyJson.get("dateExpires")
-							.getAsString());
-					apiKey.setValue(apiKeyJson.get("apiKey").getAsString());
-					apiKey.setUsername(apiKeyJson.get("emailAddress")
-							.getAsString());
-					apiKeyArray.add(apiKey);
+					JsonObject authenticationTokensJson = iter.next().getAsJsonObject();
+					JsonObject authenticationToken = new JsonObject();
+
+					authenticationToken.addProperty("value",authenticationTokensJson.get(
+							protocolToHeaderKey.get(protocol)).getAsString());
+					authenticationToken.addProperty("expires",authenticationTokensJson.get("dateExpires").getAsString());
+					authenticationToken.addProperty("applicationName",applicationName);
+					authenticationToken.addProperty("applicationID",applicationID);
+					authenticationToken.addProperty("username",authenticationTokensJson.get("emailAddress").getAsString());
+
+					authenticationTokens.add(authenticationToken);
 				}
-				return apiKeyArray;
+				return authenticationTokens;
 			} else {
-				String message = response.getEntity().getContent() != null ? convertStreamToString(response
-						.getEntity().getContent()) : "";
+				String message = response.getEntity().getContent() != null ? gson.toJson(
+						serverResponseToJSON(response)) : "";
 				throw new ServerException(statusLine.getStatusCode(), message);
 			}
 		} catch (ClientException e) {

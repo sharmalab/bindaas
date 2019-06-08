@@ -70,7 +70,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		SecurityHandler.getAuthenticationDecisionCache().invalidate(apikey);
 		SecurityHandler.getAuthorizationDecisionCache().invalidate(apikey);
 	}
-	// FIXME make single method to invalidate
+
 	public static void invalidateJWT(String jws) {
 		SecurityHandler.getAuthenticationDecisionCache().invalidate(jws);
 		SecurityHandler.getAuthorizationDecisionCache().invalidate(jws);
@@ -266,7 +266,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	{
 		String jwt = null;
 
-		// get apiKey from the query parameters
+		// get jwt from the query parameters
 		MultivaluedMap<String, String> queryMap =  JAXRSUtils.getStructuredParams((String) message.get(Message.QUERY_STRING), "&", true , true);
 
 		if(queryMap!=null && queryMap.getFirst(JWT)!=null)
@@ -277,7 +277,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		if(jwt == null)
 		{
 			Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
-			log.info("proto headers are "+protocolHeaders.toString());
+
 			if(protocolHeaders!=null && protocolHeaders.get(AUTH_HEADER)!=null)
 			{
 				List<?> values = (List<?>) protocolHeaders.get(AUTH_HEADER);
@@ -339,11 +339,6 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	@Override
  	public Response handleRequest(Message message, ClassResourceInfo arg1) {
 		setRequestId(message);
-		// FIXME
-//		Map<String,String> headers = new HashMap<String, String>();
-//		headers.put("Authorization", "Bearer tushar");
-//		PhaseInterceptorChain.getCurrentMessage().put(Message.PROTOCOL_HEADERS, headers); //append by getting all and then adding
-//		log.info(PhaseInterceptorChain.getCurrentMessage().get(Message.PROTOCOL_HEADERS));
 		Principal authenticatedUser =  null;
 		if(isEnableAuthentication())
 		{

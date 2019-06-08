@@ -149,6 +149,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.eq("emailAddress", emailAddress))
 					.add(Restrictions.gt("dateExpires", new Date())) // Fixed very critical bug
+					.add(Restrictions.isNotNull("apiKey"))
 					.list();
 
 			if (listOfValidKeys != null && listOfValidKeys.size() > 0) {
@@ -242,7 +243,11 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					: bindaasUser.getName() + "@" + bindaasUser.getDomain();
 			
 			@SuppressWarnings("unchecked")
-			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).add(Restrictions.eq("stage",	Stage.accepted.name())).add(Restrictions.eq("emailAddress", emailAddress)).list();
+			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).
+					add(Restrictions.eq("stage", Stage.accepted.name())).
+					add(Restrictions.eq("emailAddress", emailAddress)).
+					add(Restrictions.isNotNull("apiKey")).
+					list();
 			if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
 			{
 				session.beginTransaction();
@@ -380,6 +385,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.createCriteria(UserRequest.class)
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.gt("dateExpires", new Date()))
+					.add(Restrictions.isNotNull("apiKey"))
 					.list();
 			return listOfValidKeys;
 		} catch (Exception e) {

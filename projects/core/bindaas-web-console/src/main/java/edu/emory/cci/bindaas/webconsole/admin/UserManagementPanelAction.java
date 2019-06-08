@@ -83,7 +83,6 @@ public class UserManagementPanelAction implements IAdminAction {
 			}
 			else {
 				String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.accepted, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.valueOf(requestObject.entityAction.toUpperCase()) );
-				log.info("Token updated as:" + jws);
 				// FIXME : Update mail and other
 				//  methods also make it work for both api_key and jwt
 			}
@@ -102,8 +101,6 @@ public class UserManagementPanelAction implements IAdminAction {
 			else {
 				String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
 				invalidateJWT(jws);
-				log.info("Token updated as:" + jws);
-				// FIXME need to remove from cache as well like api keys
 			}
 
 
