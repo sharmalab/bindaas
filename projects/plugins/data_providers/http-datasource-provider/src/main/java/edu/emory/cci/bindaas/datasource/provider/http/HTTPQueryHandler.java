@@ -35,20 +35,22 @@ public class HTTPQueryHandler implements IQueryHandler {
 	public QueryResult query(JsonObject dataSource,
 			JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters, RequestContext requestContext)
 			throws AbstractHttpCodeException {
-		ProcessBuilder processBuilder = new ProcessBuilder(queryToExecute.split(" "));
-		Process process;
+
 		try {
-			Path path = FileSystems.getDefault().getPath(".");
-			log.info("Current execution directory: " + path.getFileName().toAbsolutePath().toString());
-			processBuilder.directory(path.toFile());
-			process = processBuilder.start();
+			Process process = Runtime.getRuntime().exec(queryToExecute);
+
+			int ret = process.waitFor();
 			InputStream inputStream = process.getInputStream();
-			log.info("The process builder successfully started for the query: " + queryToExecute);
+
+			log.info("Program exited with code: " + ret + " for: " + queryToExecute);
+
 			final QueryResult result = new QueryResult();
 			result.setData(inputStream);
 			return result;
 		} catch (IOException e) {
 			log.error("Process builder failed to start", e);
+		} catch (InterruptedException e) {
+			log.error("Process interrupted", e);
 		}
 
 		try {
