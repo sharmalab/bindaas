@@ -1,7 +1,11 @@
 package edu.emory.cci.bindaas.datasource.provider.http;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
 
@@ -31,8 +35,22 @@ public class HTTPQueryHandler implements IQueryHandler {
 	public QueryResult query(JsonObject dataSource,
 			JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters, RequestContext requestContext)
 			throws AbstractHttpCodeException {
-		log.info(queryToExecute);
-		
+		ProcessBuilder processBuilder = new ProcessBuilder(queryToExecute.split(" "));
+		Process process;
+		try {
+			Path path = FileSystems.getDefault().getPath(".");
+			log.info("Current execution directory: " + path.getFileName().toAbsolutePath().toString());
+			processBuilder.directory(path.toFile());
+			process = processBuilder.start();
+			InputStream inputStream = process.getInputStream();
+			log.info("The process builder successfully started for the query: " + queryToExecute);
+			final QueryResult result = new QueryResult();
+			result.setData(inputStream);
+			return result;
+		} catch (IOException e) {
+			log.error("Process builder failed to start", e);
+		}
+
 		try {
 			
 			HTTPQuery httpQuery = GSONUtil.getGSONInstance().fromJson(queryToExecute, HTTPQuery.class);
