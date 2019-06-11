@@ -39,6 +39,7 @@ public class DBAuditProvider implements IAuditProvider{
 				if (auditMessage.getOutputLine() != null) {
 					writer.newLine();
 					writer.write("[AUDIT] " + auditMessage.getOutputLine());
+					writer.newLine();
 				}
 				tx = session.beginTransaction();
 				session.save(auditMessage);
