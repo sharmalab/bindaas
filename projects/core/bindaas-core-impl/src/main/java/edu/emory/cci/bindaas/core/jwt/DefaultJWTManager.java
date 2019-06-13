@@ -372,6 +372,16 @@ public class DefaultJWTManager implements IJWTManager {
 		return jwt.getExpiresAt();
 	}
 
+	public String getEmailAddress(Long id){
+		Session session = sessionFactory.openSession();
+
+		@SuppressWarnings("unchecked")
+		List<UserRequest> userRequest = (List<UserRequest>) session.createCriteria(UserRequest.class).
+				add(Restrictions.eq("id", id)).list();
+
+		return userRequest.get(0).getEmailAddress();
+	}
+
 
 	public void init() throws Exception {
 
