@@ -83,8 +83,9 @@ public class UserManagementPanelAction implements IAdminAction {
 			}
 			else {
 				String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.accepted, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.valueOf(requestObject.entityAction.toUpperCase()) );
-				// FIXME : Update mail and other
-				//  methods also make it work for both api_key and jwt
+				emailMessage = String.format("Congratulations!\nYour application has been accepted." +
+						"\nYour new JWT : %s \nExpires On : %s ", jws , this.JWTManager.getExpires(jws).toString());
+				emailAddress = this.JWTManager.getEmailAddress(requestObject.entityId);
 			}
 
 
@@ -101,15 +102,26 @@ public class UserManagementPanelAction implements IAdminAction {
 			else {
 				String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
 				invalidateJWT(jws);
+				emailMessage = String.format("Congratulations!\nYour application has been accepted." +
+						"\nYour new JWT : %s \nExpires On : %s ", jws , this.JWTManager.getExpires(jws).toString());
+				emailAddress = this.JWTManager.getEmailAddress(requestObject.entityId);
 			}
 
 
 		}
 		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.DENY.toString()) )
 		{
-			APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.denied, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.DENY );
-			emailMessage = "Your application has been denied by the administrator";
-			emailAddress = apiKey.getEmailAddress();
+			if (bindaasConfiguration.getObject().getAuthenticationProtocol().equals("API_KEY")) {
+				APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.denied, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.DENY );
+				emailMessage = "Your application has been denied by the administrator";
+				emailAddress = apiKey.getEmailAddress();
+			}
+			else {
+				String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.denied, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.DENY );
+				emailMessage = "Your application has been denied by the administrator";
+				emailAddress = this.JWTManager.getEmailAddress(requestObject.entityId);
+			}
+
 		}
 		else
 		{

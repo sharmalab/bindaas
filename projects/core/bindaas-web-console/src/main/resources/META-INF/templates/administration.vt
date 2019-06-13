@@ -146,7 +146,7 @@
 										<input type="hidden" id="entityId" />
 										<input type="hidden" id="entityAction" />
 										<input type="hidden" id="entityComments" />
-## FIXME use authentication protocol to show correct token
+
 										<fieldset>
 											<legend>
 												<h5>Pending Requests</h5>
@@ -180,7 +180,7 @@
 											<form>
 												<table>
 													<thead>
-														<th>Request Date</th><th>Expires On</th><th>First Name</th><th>Last Name</th><th>Email Address</th><th>Token/API Key</th><th>Actions</th>
+														<th>Request Date</th><th>Expires On</th><th>First Name</th><th>Last Name</th><th>Email Address</th><th>#if($protocol=="jwt")Token #else API Key#end</th><th>Actions</th>
 													</thead>
 													<tbody>
 														#foreach ($acceptedRequest in $acceptedRequests)
@@ -190,7 +190,7 @@
 																<a href="#" class="foundicon-minus" onclick="showCommentsExpirationDialog('revoke' , '$acceptedRequest.getId()')"> Revoke Access </a>
 															</div>
 															<div>
-																<a href="#" class="foundicon-refresh" onclick="showGetExpirationDialog('refresh','$acceptedRequest.getId()')"> Refresh Key </a>
+																<a href="#" class="foundicon-refresh" onclick="showGetExpirationDialog('refresh','$acceptedRequest.getId()')"> Refresh #if($protocol=="jwt")Token #else Key#end </a>
 															</div></td>
 														</tr>
 														#end

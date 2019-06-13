@@ -113,12 +113,29 @@ public class AdminServlet extends AbstractRequestHandler {
 			Session session = sessionFactory.openSession();
 
 			try {
+				@SuppressWarnings("unchecked")
+				DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator
+						.getService(DynamicObject.class,
+								"(name=bindaas.adminconsole)");
+				@SuppressWarnings("unchecked")
+				DynamicObject<BindaasConfiguration> dynamicConfiguration = Activator
+						.getService(DynamicObject.class, "(name=bindaas)");
+
+				String protocol;
+				if (dynamicConfiguration.getObject().getAuthenticationProtocol().equals("JWT")){
+					protocol = "jwt";
+				}
+				else {
+					protocol = "apiKey";
+				}
+
 				List<?> pendingRequests = session
 						.createQuery(
 								"from UserRequest where stage = :stage order by requestDate desc")
 						.setString("stage", "pending").list();
 				List<?> acceptedRequests = session.createCriteria(UserRequest.class).add(Restrictions.eq("stage", "accepted")).
-						add(Restrictions.ge("dateExpires", new Date()))
+						add(Restrictions.ge("dateExpires", new Date())).
+						add(Restrictions.isNotNull(protocol))
 						.addOrder(Order.desc("requestDate")).setMaxResults(MAX_DISPLAY_THRESHOLD).list();
 				List<?> historyLog = session.createQuery(
 						"from HistoryLog order by activityDate desc").setMaxResults(MAX_DISPLAY_THRESHOLD).list();
@@ -134,16 +151,10 @@ public class AdminServlet extends AbstractRequestHandler {
 				velocityContext.put("pendingRequests", pendingRequests);
 				velocityContext.put("acceptedRequests", acceptedRequests);
 				velocityContext.put("historyLog", historyLog);
+				velocityContext.put("protocol", protocol);
 
 				DynamicProperties mailServiceProps = Activator.getService(
 						DynamicProperties.class, "(name=mailService)");
-				@SuppressWarnings("unchecked")
-				DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator
-						.getService(DynamicObject.class,
-								"(name=bindaas.adminconsole)");
-				@SuppressWarnings("unchecked")
-				DynamicObject<BindaasConfiguration> dynamicConfiguration = Activator
-						.getService(DynamicObject.class, "(name=bindaas)");
 
 				// set middleware props
 				velocityContext.put("middlewareConfiguration",

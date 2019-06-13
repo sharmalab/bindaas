@@ -329,7 +329,7 @@
 
 				#if ($submitEndpoint.getType().toString().equals('MULTIPART'))
 
-				<form class="custom" id="tryUploadForm" action="$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()?api_key=$apiKey" method="post" enctype="multipart/form-data" target="_blank">
+				<form class="custom" id="tryUploadForm" action="$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()?$protocol=$protocolValue&" method="post" enctype="multipart/form-data" target="_blank">
 					<label>File:</label>
 					<input name="myfile" type="file"  />
 					<a class='small button radius' onclick="uploadFile()">Upload</a>

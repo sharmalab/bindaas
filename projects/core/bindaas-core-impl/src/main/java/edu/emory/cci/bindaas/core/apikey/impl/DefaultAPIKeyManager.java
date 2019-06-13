@@ -78,7 +78,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.eq("emailAddress", emailAddress))
 					.add(Restrictions.gt("dateExpires", new Date()))
-					.add(Restrictions.isNotNull("apiKey")) //FIXME add null check at other places too
+					.add(Restrictions.isNotNull("apiKey"))
 					.list();
 
 			if (listOfValidKeys != null && listOfValidKeys.size() > 0) {
@@ -403,7 +403,10 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 			session.beginTransaction();
 			
 			@SuppressWarnings("unchecked")
-			List<UserRequest> list = session.createCriteria(UserRequest.class).add(Restrictions.lt("dateExpires", new Date())).list();
+			List<UserRequest> list = session.createCriteria(UserRequest.class).
+					add(Restrictions.lt("dateExpires", new Date())).
+					add(Restrictions.isNotNull("apiKey")).
+					list();
 			
 			for(UserRequest usr : list)
 			{
@@ -480,6 +483,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.gt("dateExpires", new Date()))
 					.add(Restrictions.eq("emailAddress", username + "@localhost"))
+					.add(Restrictions.isNotNull("apiKey"))
 					.list();
 			
 			if(userKeys!=null && userKeys.size() > 0)
