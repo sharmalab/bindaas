@@ -107,6 +107,12 @@
             </fileset>
         </copy>
 
+		<copy todir="${dist.placeholder.dir}/bin/" flatten="true">
+			<fileset dir="../projects/misc/trusted-app-client">
+				<include name="target/*.jar" />
+			</fileset>
+		</copy>
+
         <chmod dir="${dist.placeholder.dir}/bin" perm="a+rx" includes="*.*"/>
 
 	</target>

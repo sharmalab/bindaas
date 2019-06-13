@@ -1,1 +1,0 @@
-java -jar trusted-app-client-0.0.1-jar-with-dependencies.jar -action a -username test-user-1 -id demo-id -secret demo-secret-key -comments 'Testing new Account' -expires 12/31/2060 -url http://localhost:9099/trustedApplication

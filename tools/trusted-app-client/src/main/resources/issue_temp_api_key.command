@@ -1,1 +1,0 @@
-java -jar trusted-app-client-0.0.1-jar-with-dependencies.jar -action i -username test-user-1 -id demo-id -secret demo-secret-key -lifetime 36000 -url http://localhost:9099/trustedApplication
