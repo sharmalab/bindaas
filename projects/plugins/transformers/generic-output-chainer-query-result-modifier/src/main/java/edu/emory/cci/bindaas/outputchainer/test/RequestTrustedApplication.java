@@ -17,9 +17,11 @@ public class RequestTrustedApplication {
 		String appKey = "demo-secret-key";
 		String salt = "asfdagertaewrtae";
 		String username = "admin";
-		
+		String protocol = "api_key";
+
 		String digest = calculateDigestValue(appID, appKey, salt, username);
-		HttpGet get = new HttpGet("http://localhost:9099/trustedApplication/issueShortLivedApiKey");
+		HttpGet get = new HttpGet("http://localhost:9099/trustedApplication/issueShortLivedAuthenticationToken");
+		get.addHeader("_protocol", protocol);
 		get.addHeader("_username", username);
 		get.addHeader("_applicationID", appID);
 		get.addHeader("_salt", salt);
