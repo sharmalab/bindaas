@@ -101,6 +101,12 @@
             </fileset>
         </copy>
 
+        <copy todir="${dist.placeholder.dir}/bundles/system/" flatten="true">
+            <fileset dir="../projects/plugins/transformers/blob-download-plugin">
+                <include name="target/*.jar" />
+            </fileset>
+        </copy>
+
         <copy todir="${dist.placeholder.dir}/bundles/optional/" flatten="true">
             <fileset dir="../projects/plugins/data_providers/aime">
                 <include name="*/target/*.jar" />

@@ -1,7 +1,5 @@
 package edu.emory.cci.bindaas.security.impl;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,22 +21,18 @@ public class DBAuditProvider implements IAuditProvider{
 	private Log log = LogFactory.getLog(getClass());
 	private static Integer MAX_DISPLAY_THRESHOLD = 10000;
 	private static Integer EXPORT_BATCH_THRESHOLD = 4000;
-	private static String CSV_AUDIT_FILE = "audit.log.csv";
-	
+
 	
 	@Override
-	public void audit(AuditMessage auditMessage)
-			throws Exception {
+	public void audit(AuditMessage auditMessage) {
 		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
 		if(sessionFactory!=null)
 		{
 			Session session = sessionFactory.openSession();
 			Transaction tx = null ;
-			BufferedWriter writer = new BufferedWriter(new FileWriter(CSV_AUDIT_FILE, true));
 			try {
 				if (auditMessage.getOutputLine() != null) {
-					writer.newLine();
-					writer.write(auditMessage.getOutputLine());
+					log.info("[AUDIT] " + auditMessage.getOutputLine());
 				}
 				tx = session.beginTransaction();
 				session.save(auditMessage);
@@ -51,7 +45,6 @@ public class DBAuditProvider implements IAuditProvider{
 			}
 			finally
 			{
-				writer.close();
 				session.close();
 			}
 		}
@@ -60,7 +53,7 @@ public class DBAuditProvider implements IAuditProvider{
 	}
 	
 	@Override
-	public List<AuditMessage> getAuditLogs() throws Exception {
+	public List<AuditMessage> getAuditLogs() {
 		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
 		if(sessionFactory!=null)
 		{
@@ -87,7 +80,7 @@ public class DBAuditProvider implements IAuditProvider{
 	}
 	
 	@Override
-	public int clean() throws Exception {
+	public int clean() {
 		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
 		if(sessionFactory!=null)
 		{
@@ -115,7 +108,7 @@ public class DBAuditProvider implements IAuditProvider{
 	}
 
 	@Override
-	public void dump(Writer writer) throws Exception {
+	public void dump(Writer writer) {
 		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
 		if(sessionFactory!=null)
 		{
