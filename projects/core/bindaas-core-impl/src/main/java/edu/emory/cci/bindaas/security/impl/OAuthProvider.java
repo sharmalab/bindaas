@@ -77,6 +77,7 @@ public class OAuthProvider implements IAuthenticationProvider{
 	public BindaasUser loginUsingAPIKey(String apiKey)
 			throws AuthenticationException {
 		log.error("Login via ApiKey not supported. Authentication failed");
+		log.info("The supported authenticationProviderClass for API_KEY is edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider");
 		throw new AuthenticationException(apiKey);
 	}
 

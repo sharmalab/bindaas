@@ -102,6 +102,7 @@ public class DBAuthenticationProvider implements IAuthenticationProvider {
 	public BindaasUser loginUsingJWT(String jwt)
 			throws AuthenticationException {
 		log.error("Login via JWT not supported. Authentication failed");
+		log.info("The supported authenticationProviderClass for JWT is edu.emory.cci.bindaas.security.impl.OAuthProvider");
 		throw new AuthenticationException(jwt);
 	}
 }
