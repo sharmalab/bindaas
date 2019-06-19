@@ -78,6 +78,7 @@
 	<property name="protocol" value="http"></property>
 	<property name="enableAuthentication" value="true"></property>
 	<property name="authenticationProviderClass" value="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"></property>
+	<property name="authenticationProtocol" value="API_KEY"></property>
 	<property name="enableAuthorization" value="false"></property>
 	<property name="authorizationProviderClass" value="edu.emory.cci.bindaas.security_dashboard.service.AuthorizationProviderImpl"></property>
 	<property name="enableAudit" value="true"></property>
@@ -99,6 +100,10 @@
 </bean>
 
 <bean id="apiKeyManager" class="edu.emory.cci.bindaas.core.apikey.impl.DefaultAPIKeyManager" init-method="init">
+	<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+
+<bean id="JWTManager" class="edu.emory.cci.bindaas.core.jwt.DefaultJWTManager" init-method="init">
 	<property name="sessionFactory" ref="sessionFactory"></property>
 </bean>
 
@@ -154,7 +159,8 @@
 	<osgi:service ref="providerRegistry" interface="edu.emory.cci.bindaas.core.api.IProviderRegistry"></osgi:service>
 	<osgi:service ref="securityHandler" interface="edu.emory.cci.bindaas.core.api.ISecurityHandler"></osgi:service>
 	<osgi:service ref="apiKeyManager" interface="edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager"></osgi:service>
-	
+	<osgi:service ref="JWTManager" interface="edu.emory.cci.bindaas.core.jwt.IJWTManager"></osgi:service>
+
 <!-- Blueprint References -->
 	<osgi:reference interface="org.hibernate.SessionFactory" id="sessionFactory"></osgi:reference>
 	<osgi:reference interface="edu.emory.cci.bindaas.version_manager.api.IVersionManager" id="versionManager"></osgi:reference>

@@ -153,11 +153,21 @@ public class SubmitEndpointView extends AbstractRequestHandler {
 			context.put("documentation" , documentation);
 			
 			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
-			context.put("apiKey", admin.getProperty("apiKey"));
 			@SuppressWarnings("unchecked")
 			DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
 			String serviceUrl = bindaasConfiguration.getObject().getProxyUrl();
 			context.put("serviceUrl", serviceUrl);
+
+			context.put("protocol", bindaasConfiguration.getObject().
+					getAuthenticationProtocol().equals("JWT")?
+					"jwt":
+					"api_key");
+
+			context.put("protocolValue", bindaasConfiguration.getObject().
+					getAuthenticationProtocol().equals("JWT")?
+					admin.getProperty("jwt"):
+					admin.getProperty("apiKey"));
+
 			template.merge(context, response.getWriter());
 		}
 		else
