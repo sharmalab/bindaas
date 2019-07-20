@@ -44,6 +44,9 @@
   <!-- Initialize JS Plugins -->
   <script src="/foundation/javascripts/app.js"></script>
 
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/1.0.0/auth0-spa-js.production.js"></script>
+  <script src="/foundation/javascripts/custom/auth0.js"></script>
+
   <div class="row">
     <div class="twelve columns">
       <h2>Bindaas</h2>
@@ -63,7 +66,7 @@
   <div class="row">
     <div class="twelve columns">
   	
-  
+  #if($bindaasConfiguration.getAuthenticationProtocol().toString().equals("API_KEY"))
     #if ($adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("ldap") || $adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("defaultMethod"))
       <form action="/authenticate" method="post">
 	 	 <fieldset>
@@ -144,8 +147,25 @@
 	  </fieldset>
 	   
 	  #end
-	<a href="/user/login"><strong>Switch to Query Browser</strong></a>	
-    </div>
+	<a href="/user/login"><strong>Switch to Query Browser</strong></a>
+  #elseif ($bindaasConfiguration.getAuthenticationProtocol().toString().equals("JWT"))
+	  <form id ="auth0-form" action="/authenticate" method="post">
+		  <fieldset>
+
+			  <legend><h4>Admin Zone</h4></legend>
+
+			  <div class="row">
+				  <div class="two mobile-one columns">
+					  <input type="submit" class="right button" onclick="login()" value="Log In" />
+					  <input type="hidden" name="accessToken" id="accessToken" value="" />
+					  <input type="hidden" name="userProfile" id="userProfile" value="" />
+				  </div>
+			  </div>
+
+		  </fieldset>
+	  </form>
+  #end
+  </div>
 
    </div>
 

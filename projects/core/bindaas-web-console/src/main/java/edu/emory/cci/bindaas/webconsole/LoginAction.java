@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
@@ -55,14 +56,18 @@ public class LoginAction extends HttpServlet implements Filter{
 		String loginTarget = request.getParameter("loginTarget") !=null ? request.getParameter("loginTarget") : defaultLoginTarget;
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		
-		
+		String accessToken = request.getParameter("accessToken");
+		String userProfile = request.getParameter("userProfile");
+
 		
 		@SuppressWarnings("unchecked")
 		DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
-		
-		
-		if(dynamicAdminConsoleConfiguration!=null )
+		@SuppressWarnings("unchecked")
+		DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
+		String bindaasConfigurationProtocol = bindaasConfiguration.getObject().clone().getAuthenticationProtocol();
+		String authenticationProviderClass = bindaasConfiguration.getObject().clone().getAuthenticationProviderClass();
+
+		if(dynamicAdminConsoleConfiguration!=null && bindaasConfigurationProtocol.equals("API_KEY"))
 		{
 			try {
 
@@ -100,6 +105,20 @@ public class LoginAction extends HttpServlet implements Filter{
 						ErrorView.handleError(response, new Exception("Authentication System unavailable"));
 				}
 				
+			}
+		}
+		else if(dynamicAdminConsoleConfiguration!=null && bindaasConfigurationProtocol.equals("JWT"))
+		{
+			log.info("Access Token: "+accessToken);
+			log.info("User Profile: "+userProfile);
+			IAuthenticationProvider authenticationProvider = Activator.getService(IAuthenticationProvider.class , authenticationProviderClass);
+			try{
+				BindaasUser principal = authenticationProvider.login(accessToken);
+				request.getSession(true).setAttribute("loggedInUser", principal);
+				response.sendRedirect(postLoginActionTarget);
+			}
+			catch (AuthenticationException e){
+				log.error(e);
 			}
 		}
 		else

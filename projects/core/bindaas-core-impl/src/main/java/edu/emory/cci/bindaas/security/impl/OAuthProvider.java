@@ -58,7 +58,8 @@ public class OAuthProvider implements IAuthenticationProvider{
 	@Override
 	public BindaasUser login(String securityToken)
 			throws AuthenticationException {
-		throw new AuthenticationException("Not implemented [" + securityToken +"]");
+		return new BindaasUser("username");
+
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.version_manager.api.IVersionManager;
 import edu.emory.cci.bindaas.webconsole.bundle.Activator;
@@ -47,6 +48,8 @@ public class LoginView {
 	{
 		@SuppressWarnings("unchecked")
 		DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
+		@SuppressWarnings("unchecked")
+		DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
 		VelocityContext context = new VelocityContext();
 		/**
 		 * Add version information
@@ -57,7 +60,8 @@ public class LoginView {
 		context.put("loginTarget", loginTarget);
 		context.put("errorMessage", errorMessage);
 		context.put("adminconsoleConfiguration", dynamicAdminConsoleConfiguration.getObject().clone());
-		
+		context.put("bindaasConfiguration", bindaasConfiguration.getObject().clone());
+
 		// lazy init
 		if(template == null)
 		{

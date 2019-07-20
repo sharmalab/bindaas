@@ -83,7 +83,7 @@ public class PostLoginAction extends HttpServlet {
 
 				// generate a api_key or jwt for this user if doesnt exist
 
-				if(bindaasConfiguration.getObject().getAuthenticationProtocol().equals("JWT")){
+				if(bindaasConfiguration.getObject().clone().getAuthenticationProtocol().equals("JWT")){
 					principal = generateJWT(principal);
 				}
 				else {
