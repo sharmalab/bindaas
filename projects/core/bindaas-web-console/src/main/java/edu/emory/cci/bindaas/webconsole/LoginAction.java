@@ -90,7 +90,7 @@ public class LoginAction extends HttpServlet implements Filter{
 				}
 				else
 				{
-					ErrorView.handleError(response, new Exception("Autentication Method not supported"));
+					ErrorView.handleError(response, new Exception("Authentication Method not supported"));
 				}
 				
 			} catch (AuthenticationException e) {
@@ -111,7 +111,8 @@ public class LoginAction extends HttpServlet implements Filter{
 		{
 			log.info("Access Token: "+accessToken);
 			log.info("User Profile: "+userProfile);
-			IAuthenticationProvider authenticationProvider = Activator.getService(IAuthenticationProvider.class , authenticationProviderClass);
+
+			IAuthenticationProvider authenticationProvider = Activator.getService(IAuthenticationProvider.class , "(class="+authenticationProviderClass+")");
 			try{
 				BindaasUser principal = authenticationProvider.login(accessToken);
 				request.getSession(true).setAttribute("loggedInUser", principal);
@@ -119,6 +120,13 @@ public class LoginAction extends HttpServlet implements Filter{
 			}
 			catch (AuthenticationException e){
 				log.error(e);
+				try {
+					loginView.generateLoginView(request , response , loginTarget, "Invalid token or unauthorized user");
+				}
+				catch (Exception e1) {
+					log.error(e1);
+					ErrorView.handleError(response, new Exception("Authentication System unavailable"));
+				}
 			}
 		}
 		else

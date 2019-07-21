@@ -44,7 +44,7 @@
   <!-- Initialize JS Plugins -->
   <script src="/foundation/javascripts/app.js"></script>
 
-  <script src="https://cdn.auth0.com/js/auth0-spa-js/1.0.0/auth0-spa-js.production.js"></script>
+  <script src="/foundation/javascripts/auth0-spa-js.production.js"></script>
   <script src="/foundation/javascripts/custom/auth0.js"></script>
 
   <div class="row">
@@ -113,9 +113,9 @@
 	  </fieldset>
 	</form>
 	
-#end
+	#end
 
-#if ($adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("openid"))
+	#if ($adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("openid"))
 	
 	 	 <fieldset>
 			<legend><h4>Admin Zone</h4></legend>
@@ -148,22 +148,24 @@
 	   
 	  #end
 	<a href="/user/login"><strong>Switch to Query Browser</strong></a>
+
   #elseif ($bindaasConfiguration.getAuthenticationProtocol().toString().equals("JWT"))
-	  <form id ="auth0-form" action="/authenticate" method="post">
-		  <fieldset>
 
-			  <legend><h4>Admin Zone</h4></legend>
+	  <fieldset>
+		  <legend><h4>Admin Zone</h4></legend>
 
-			  <div class="row">
-				  <div class="two mobile-one columns">
-					  <input type="submit" class="right button" onclick="login()" value="Log In" />
-					  <input type="hidden" name="accessToken" id="accessToken" value="" />
-					  <input type="hidden" name="userProfile" id="userProfile" value="" />
-				  </div>
+		  <div class="row">
+			  <div class="two mobile-one columns">
+				  <input type="submit" class="right button" id="inputButton" onclick="login()" value="Log In" />
 			  </div>
+		  </div>
+	  </fieldset>
 
-		  </fieldset>
+	  <form id ="auth0-form" action="/authenticate" method="post">
+		  <input type="hidden" name="accessToken" id="accessToken" value="" />
+		  <input type="hidden" name="userProfile" id="userProfile" value="" />
 	  </form>
+
   #end
   </div>
 

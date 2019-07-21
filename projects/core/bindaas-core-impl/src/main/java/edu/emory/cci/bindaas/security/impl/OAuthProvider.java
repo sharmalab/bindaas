@@ -58,7 +58,7 @@ public class OAuthProvider implements IAuthenticationProvider{
 	@Override
 	public BindaasUser login(String securityToken)
 			throws AuthenticationException {
-		return new BindaasUser("username");
+		return new BindaasUser("admin");
 
 	}
 
