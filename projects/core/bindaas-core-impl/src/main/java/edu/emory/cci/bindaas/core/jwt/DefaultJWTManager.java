@@ -1,5 +1,10 @@
 package edu.emory.cci.bindaas.core.jwt;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -11,16 +16,25 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
+import com.auth0.jwk.GuavaCachedJwkProvider;
+import com.auth0.jwk.Jwk;
+import com.auth0.jwk.JwkException;
+import com.auth0.jwk.JwkProvider;
+import com.auth0.jwk.UrlJwkProvider;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import edu.emory.cci.bindaas.core.jwt.JWTManagerException.Reason;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
+import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
 import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidateJWT;
@@ -39,9 +53,70 @@ public class DefaultJWTManager implements IJWTManager {
 	}
 
 	private final static String secret = "fj32Jfv02Mq33g0f8ioDkw";
-	// FIXME: discuss secret generation
-	//  SecretKey secretKey = KeyGenerator.getInstance("HMACSHA256").generateKey();
+	// FIXME: read values from file
+	private final static String domain = "tushar-97.auth0.com";
 
+
+	@Override
+	public Boolean verifyToken(String token)
+			throws JWTManagerException {
+
+		try{
+			DecodedJWT jwt = JWT.decode(token);
+
+			JwkProvider http = new UrlJwkProvider(domain);
+			JwkProvider provider = new GuavaCachedJwkProvider(http);
+
+			Jwk jwk = provider.get(jwt.getKeyId());
+			Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(),null);
+
+			algorithm.verify(jwt);
+
+			return true;
+		}
+		catch(JwkException e){
+			log.error(e);
+			throw new JWTManagerException(e, Reason.PROCESSING_ERROR);
+
+		}
+
+	}
+
+	@Override
+	public BindaasUser createUser(String token)
+			throws JWTManagerException{
+
+		try{
+			URL urlForUserInfo = new URL("https://" + domain +"/userinfo") ;
+
+			HttpURLConnection request = (HttpURLConnection) urlForUserInfo.openConnection();
+			request.setRequestMethod("GET");
+			request.setRequestProperty("Authorization","Bearer "+token);
+
+			StringBuilder content;
+
+			try (BufferedReader in = new BufferedReader(
+					new InputStreamReader(request.getInputStream()))) {
+
+				String line;
+				content = new StringBuilder();
+
+				while ((line = in.readLine()) != null) {
+					content.append(line);
+				}
+			}
+
+			UserInfo userInfo = GSONUtil.getGSONInstance().fromJson(content.toString(), UserInfo.class);
+
+			return new BindaasUser(userInfo.getEmail());
+
+		}
+		catch (Exception e){
+			log.error(e);
+			throw new JWTManagerException(e,Reason.PROCESSING_ERROR);
+		}
+
+	}
 
 	@Override
 	public String generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy , String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists)

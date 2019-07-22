@@ -163,7 +163,7 @@
 
 	  <form id ="auth0-form" action="/authenticate" method="post">
 		  <input type="hidden" name="accessToken" id="accessToken" value="" />
-		  <input type="hidden" name="userProfile" id="userProfile" value="" />
+		  <input type="hidden" name="loginTarget" value="$loginTarget" />
 	  </form>
 
   #end

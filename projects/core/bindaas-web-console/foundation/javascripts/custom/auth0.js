@@ -25,7 +25,6 @@ const login = async () => {
     const user = await auth0.getUser();
 
     document.getElementById("accessToken").value = token;
-    document.getElementById("userProfile").value = JSON.stringify(user);
 
     auth0.logout();
 

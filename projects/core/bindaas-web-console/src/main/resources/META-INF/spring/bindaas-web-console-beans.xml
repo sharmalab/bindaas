@@ -192,7 +192,6 @@
 	<property name="defaultLoginTarget" value="/dashboard/"></property>
 	<property name="loginView" ref="loginView"></property>
 	<property name="apiKeyManager" ref="apiKeyManager"></property>
-	<property name="JWTManager" ref="jwtManager"></property>
 </bean>
 
 

@@ -58,7 +58,14 @@ public class OAuthProvider implements IAuthenticationProvider{
 	@Override
 	public BindaasUser login(String securityToken)
 			throws AuthenticationException {
-		return new BindaasUser("admin");
+
+		try{
+			return JWTManager.createUser(securityToken);
+		}
+		catch (JWTManagerException e){
+			log.error("Exception in Authentication Module" , e);
+			throw new AuthenticationException(securityToken);
+		}
 
 	}
 

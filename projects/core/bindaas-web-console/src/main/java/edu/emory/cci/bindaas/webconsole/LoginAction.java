@@ -57,7 +57,6 @@ public class LoginAction extends HttpServlet implements Filter{
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String accessToken = request.getParameter("accessToken");
-		String userProfile = request.getParameter("userProfile");
 
 		
 		@SuppressWarnings("unchecked")
@@ -109,19 +108,18 @@ public class LoginAction extends HttpServlet implements Filter{
 		}
 		else if(dynamicAdminConsoleConfiguration!=null && bindaasConfigurationProtocol.equals("JWT"))
 		{
-			log.info("Access Token: "+accessToken);
-			log.info("User Profile: "+userProfile);
-
 			IAuthenticationProvider authenticationProvider = Activator.getService(IAuthenticationProvider.class , "(class="+authenticationProviderClass+")");
 			try{
 				BindaasUser principal = authenticationProvider.login(accessToken);
 				request.getSession(true).setAttribute("loggedInUser", principal);
-				response.sendRedirect(postLoginActionTarget);
+
+				// No need to send to postLoginActionTarget as everything handled in login() method above itself
+				response.sendRedirect(loginTarget);
 			}
 			catch (AuthenticationException e){
 				log.error(e);
 				try {
-					loginView.generateLoginView(request , response , loginTarget, "Invalid token or unauthorized user");
+					loginView.generateLoginView(request , response , loginTarget, "Invalid login. Please use authorized email or check authenticationProviderClass");
 				}
 				catch (Exception e1) {
 					log.error(e1);

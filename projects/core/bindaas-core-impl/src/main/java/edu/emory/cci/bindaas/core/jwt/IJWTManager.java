@@ -10,6 +10,8 @@ import edu.emory.cci.bindaas.security.api.BindaasUser;
 
 public interface IJWTManager {
 
+	public Boolean verifyToken(String securityToken) throws JWTManagerException;
+	public BindaasUser createUser(String securityToken) throws JWTManagerException;
 	public String generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy ,String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists) throws JWTManagerException;
 	public String createShortLivedJWT(BindaasUser bindaasUser, int lifetime , String applicationId) throws JWTManagerException;
 	public String modifyJWT(Long id , Stage stage , Date dateExpires ,String initiatedBy , String comments , ActivityType activityType ) throws JWTManagerException;

@@ -116,6 +116,13 @@
 							<overWrite>true</overWrite>
 							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
 						</artifactItem>
+						<artifactItem>
+							<groupId>com.auth0</groupId>
+							<artifactId>jwks-rsa</artifactId>
+							<version>0.8.2</version>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.basedir}/src/main/resources/META-INF/lib</outputDirectory>
+						</artifactItem>
 					</artifactItems>
 				</configuration>
 			</plugin>
@@ -189,6 +196,11 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.12</version>
+		</dependency>
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>jwks-rsa</artifactId>
+			<version>0.8.2</version>
 		</dependency>
 	</dependencies>
 
