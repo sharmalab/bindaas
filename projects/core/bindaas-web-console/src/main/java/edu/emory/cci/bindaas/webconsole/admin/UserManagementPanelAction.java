@@ -25,7 +25,6 @@ import edu.emory.cci.bindaas.security.api.BindaasUser;
 import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 
 import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidateAPIKey;
-import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidateJWT;
 
 public class UserManagementPanelAction implements IAdminAction {
 	
@@ -70,7 +69,8 @@ public class UserManagementPanelAction implements IAdminAction {
 		Request requestObject = GSONUtil.getGSONInstance().fromJson(payload, Request.class);
 		@SuppressWarnings("unchecked")
 		DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
-		
+		String authenticationProtocol = bindaasConfiguration.getObject().getAuthenticationProtocol();
+
 		String emailMessage =  null;
 		String emailAddress = null;
 		if(requestObject.entityAction!=null && (requestObject.entityAction.equals(ActivityType.APPROVE.toString()) || requestObject.entityAction.equals(ActivityType.REFRESH.toString())))
@@ -82,10 +82,7 @@ public class UserManagementPanelAction implements IAdminAction {
 				emailAddress = apiKey.getEmailAddress();
 			}
 			else {
-				String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.accepted, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.valueOf(requestObject.entityAction.toUpperCase()) );
-				emailMessage = String.format("Congratulations!\nYour application has been accepted." +
-						"\nYour new JWT : %s \nExpires On : %s ", jws , this.JWTManager.getExpires(jws).toString());
-				emailAddress = this.JWTManager.getEmailAddress(requestObject.entityId);
+				throw new Exception("Action not defined");
 			}
 
 
@@ -93,17 +90,15 @@ public class UserManagementPanelAction implements IAdminAction {
 		}
 		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.REVOKE.toString()) )
 		{
-			if (bindaasConfiguration.getObject().getAuthenticationProtocol().equals("API_KEY")) {
+			if (authenticationProtocol.equals("API_KEY")) {
 				APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
 				invalidateAPIKey(apiKey.getValue());
 				emailMessage = "Your access has been revoked by the administrator";
 				emailAddress = apiKey.getEmailAddress();
 			}
 			else {
-				String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
-				invalidateJWT(jws);
-				emailMessage = String.format("Congratulations!\nYour application has been accepted." +
-						"\nYour new JWT : %s \nExpires On : %s ", jws , this.JWTManager.getExpires(jws).toString());
+				this.JWTManager.modifyJWT(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
+				emailMessage = "Your access has been revoked by the administrator";
 				emailAddress = this.JWTManager.getEmailAddress(requestObject.entityId);
 			}
 
@@ -111,13 +106,13 @@ public class UserManagementPanelAction implements IAdminAction {
 		}
 		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.DENY.toString()) )
 		{
-			if (bindaasConfiguration.getObject().getAuthenticationProtocol().equals("API_KEY")) {
+			if (authenticationProtocol.equals("API_KEY")) {
 				APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.denied, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.DENY );
 				emailMessage = "Your application has been denied by the administrator";
 				emailAddress = apiKey.getEmailAddress();
 			}
 			else {
-				String jws = this.JWTManager.modifyJWT(requestObject.entityId, Stage.denied, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.DENY );
+				this.JWTManager.modifyJWT(requestObject.entityId, Stage.denied, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.DENY );
 				emailMessage = "Your application has been denied by the administrator";
 				emailAddress = this.JWTManager.getEmailAddress(requestObject.entityId);
 			}
@@ -131,7 +126,12 @@ public class UserManagementPanelAction implements IAdminAction {
 		if(mailService != null) 
 		{
 			try{
-				mailService.sendMail(emailAddress , "Your Bindaas API Key status" , emailMessage);
+				if (authenticationProtocol.equals("API_KEY")) {
+					mailService.sendMail(emailAddress , "Your Bindaas API Key status" , emailMessage);
+				}
+				else {
+					mailService.sendMail(emailAddress , "Your Bindaas JWT status" , emailMessage);
+				}
 			}catch(Exception e)
 			{
 				log.error(String.format("Unable to send mail notification. Message [%s] not sent to [%s]" , emailMessage , emailAddress ));

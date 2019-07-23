@@ -24,10 +24,6 @@ import com.auth0.jwk.UrlJwkProvider;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 import edu.emory.cci.bindaas.core.jwt.JWTManagerException.Reason;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
@@ -83,10 +79,13 @@ public class DefaultJWTManager implements IJWTManager {
 	}
 
 	@Override
-	public BindaasUser createUser(String token)
+	public BindaasUser createUser(String token, String initiatedBy, String comments, ActivityType activityType)
 			throws JWTManagerException{
+		Session session = sessionFactory.openSession();
 
 		try{
+			session.beginTransaction();
+
 			URL urlForUserInfo = new URL("https://" + domain +"/userinfo") ;
 
 			HttpURLConnection request = (HttpURLConnection) urlForUserInfo.openConnection();
@@ -108,7 +107,54 @@ public class DefaultJWTManager implements IJWTManager {
 
 			UserInfo userInfo = GSONUtil.getGSONInstance().fromJson(content.toString(), UserInfo.class);
 
-			return new BindaasUser(userInfo.getEmail());
+
+			String firstName = userInfo.getGivenName();
+			String lastName = userInfo.getFamilyName();
+
+			if(firstName == null || lastName == null) {
+				if(userInfo.getName().contains(" ")) {
+					firstName = userInfo.getName().split(" ")[0];
+					lastName = userInfo.getName().split(" ")[1];
+				}
+				else if(userInfo.getName().contains("@")) {
+					firstName = userInfo.getName().split("@")[0];
+					lastName = userInfo.getName().split("@")[0];
+				}
+				else {
+					firstName = userInfo.getName();
+					lastName = userInfo.getName();
+				}
+			}
+
+			String emailAddress = userInfo.getEmail();
+
+			UserRequest userRequest = new UserRequest();
+			userRequest.setStage(Stage.accepted);
+			userRequest.setJWT(token);
+			userRequest.setDateExpires(getExpires(token));
+
+			userRequest.setFirstName(firstName);
+			userRequest.setLastName(lastName);
+			userRequest.setEmailAddress(emailAddress);
+
+			session.save(userRequest);
+			HistoryLog historyLog = new HistoryLog();
+			historyLog.setActivityType(activityType.toString());
+			historyLog.setComments(comments);
+			historyLog.setInitiatedBy(initiatedBy);
+			historyLog.setUserRequest(userRequest);
+
+			session.save(historyLog);
+			session.getTransaction().commit();
+
+			BindaasUser principal = new BindaasUser(userInfo.getEmail());
+			principal.setName(firstName);
+			principal.addProperty(BindaasUser.FIRST_NAME,firstName);
+			principal.addProperty(BindaasUser.LAST_NAME,lastName);
+			principal.addProperty(BindaasUser.EMAIL_ADDRESS,emailAddress);
+			principal.addProperty("jwt",token);
+
+			return principal;
 
 		}
 		catch (Exception e){
@@ -118,6 +164,7 @@ public class DefaultJWTManager implements IJWTManager {
 
 	}
 
+	// usage in trusted-app-client only
 	@Override
 	public String generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy , String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists)
 			throws JWTManagerException {
@@ -198,6 +245,7 @@ public class DefaultJWTManager implements IJWTManager {
 
 	}
 
+	// usage in trusted-app-client only
 	@Override
 	public String createShortLivedJWT(BindaasUser bindaasUser, int lifetime , String applicationId) throws JWTManagerException {
 		Session session = sessionFactory.openSession();
@@ -275,7 +323,7 @@ public class DefaultJWTManager implements IJWTManager {
 	}
 
 	@Override
-	public String modifyJWT(Long id, Stage stage, Date dateExpires,
+	public void modifyJWT(Long id, Stage stage, Date dateExpires,
 							   String initiatedBy, String comments, ActivityType activityType)
 			throws JWTManagerException {
 		Session session = sessionFactory.openSession();
@@ -295,28 +343,12 @@ public class DefaultJWTManager implements IJWTManager {
 
 				userRequest.setStage(stage);
 
-				switch (activityType) {
-					case APPROVE:
-					case REFRESH:
-						invalidateJWT(userRequest.getJWT()); // remove old JWT from cache
-						String jws = JWT.create()
-								.withIssuer("bindaas")
-								.withExpiresAt(dateExpires)
-								.sign(Algorithm.HMAC256(secret));
-						userRequest.setJWT(jws);             // overwrite old JWT
-						userRequest.setDateExpires(dateExpires);
-
-					case REVOKE:
-					case DENY:
-					default:
-						userRequest.setStage(stage);
-
-				}
+				invalidateJWT(userRequest.getJWT());
 
 				session.save(userRequest);
 				session.save(historyLog);
 				session.getTransaction().commit();
-				return userRequest.getJWT();
+
 			} else {
 				throw new Exception("No results found matching id = [" + id
 						+ "]");
@@ -333,31 +365,26 @@ public class DefaultJWTManager implements IJWTManager {
 	}
 
 	@Override
-	public BindaasUser lookupUser(String jws) throws JWTManagerException {
+	public BindaasUser lookupUser(String token) throws JWTManagerException {
 		Session session = sessionFactory.openSession();
 		try {
-			// will check for exp claim automatically
-			Algorithm algorithm = Algorithm.HMAC256(secret);
-			JWTVerifier verifier = JWT.require(algorithm)
-					.withIssuer("bindaas")
-					.build();
 
-			verifier.verify(jws);
+			if(verifyToken(token)){
+				@SuppressWarnings("unchecked")
+				List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
+						add(Restrictions.eq("stage",	Stage.accepted.name())).
+						add(Restrictions.eq("jwt", token)).
+						list();
 
-			@SuppressWarnings("unchecked")
-			List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
-					add(Restrictions.eq("stage",	Stage.accepted.name())).
-					add(Restrictions.eq("jwt", jws)).
-					list();
-
-			if(listOfValidTokens!=null && listOfValidTokens.size() > 0)
-			{
-				UserRequest request = listOfValidTokens.get(0);
-				BindaasUser bindaasUser = new BindaasUser(request.getEmailAddress());
-				bindaasUser.addProperty(BindaasUser.EMAIL_ADDRESS, request.getEmailAddress());
-				bindaasUser.addProperty(BindaasUser.FIRST_NAME, request.getFirstName());
-				bindaasUser.addProperty(BindaasUser.LAST_NAME, request.getLastName());
-				return bindaasUser;
+				if(listOfValidTokens!=null && listOfValidTokens.size() > 0)
+				{
+					UserRequest request = listOfValidTokens.get(0);
+					BindaasUser bindaasUser = new BindaasUser(request.getEmailAddress());
+					bindaasUser.addProperty(BindaasUser.EMAIL_ADDRESS, request.getEmailAddress());
+					bindaasUser.addProperty(BindaasUser.FIRST_NAME, request.getFirstName());
+					bindaasUser.addProperty(BindaasUser.LAST_NAME, request.getLastName());
+					return bindaasUser;
+				}
 			}
 
 		} catch (Exception e) {
@@ -368,6 +395,7 @@ public class DefaultJWTManager implements IJWTManager {
 		return null;
 	}
 
+	// usage in trusted-app-client only
 	@Override
 	public List<UserRequest> listJWT() throws JWTManagerException {
 		Session session = sessionFactory.openSession();
@@ -389,6 +417,7 @@ public class DefaultJWTManager implements IJWTManager {
 		}
 	}
 
+	// usage in trusted-app-client only
 	@Override
 	public Integer revokeJWT(BindaasUser bindaasUser, String initiatedBy ,String comments , ActivityType activityType)
 			throws JWTManagerException {
@@ -442,11 +471,13 @@ public class DefaultJWTManager implements IJWTManager {
 
 	}
 
+	// usage in trusted-app-client
 	public Date getExpires(String token) {
 		DecodedJWT jwt = JWT.decode(token);
 		return jwt.getExpiresAt();
 	}
 
+	// usage in trusted-app-client
 	public String getEmailAddress(Long id){
 		Session session = sessionFactory.openSession();
 

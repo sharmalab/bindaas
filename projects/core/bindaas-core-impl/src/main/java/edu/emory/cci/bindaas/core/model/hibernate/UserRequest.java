@@ -52,6 +52,7 @@ public class UserRequest {
 	private String apiKey;
 
 	@Expose
+	@Column(length = 1023)
 	private String jwt;
 	
 	@Expose

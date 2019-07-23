@@ -110,6 +110,7 @@ public class LoginAction extends HttpServlet implements Filter{
 		{
 			IAuthenticationProvider authenticationProvider = Activator.getService(IAuthenticationProvider.class , "(class="+authenticationProviderClass+")");
 			try{
+				log.info("Access Token: "+accessToken);
 				BindaasUser principal = authenticationProvider.login(accessToken);
 				request.getSession(true).setAttribute("loggedInUser", principal);
 

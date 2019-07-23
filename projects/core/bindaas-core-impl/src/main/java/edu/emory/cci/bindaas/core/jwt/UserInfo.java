@@ -84,4 +84,5 @@ public class UserInfo {
 	public Boolean getEmailVerified() { return emailVerified; }
 
 	public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
+
 }
