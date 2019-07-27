@@ -12,8 +12,6 @@ public interface IJWTManager {
 
 	public Boolean verifyToken(String securityToken) throws JWTManagerException;
 	public BindaasUser createUser(String securityToken, String initiatedBy, String comments, ActivityType activityType) throws JWTManagerException;
-	public String generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy ,String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists) throws JWTManagerException;
-	public String createShortLivedJWT(BindaasUser bindaasUser, int lifetime , String applicationId) throws JWTManagerException;
 	public void modifyJWT(Long id , Stage stage , Date dateExpires ,String initiatedBy , String comments , ActivityType activityType ) throws JWTManagerException;
 	public BindaasUser lookupUser(String jwt) throws JWTManagerException;
 	public List<UserRequest> listJWT() throws JWTManagerException;

@@ -5,9 +5,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -48,7 +46,6 @@ public class DefaultJWTManager implements IJWTManager {
 		this.sessionFactory = sessionFactory;
 	}
 
-	private final static String secret = "fj32Jfv02Mq33g0f8ioDkw";
 	// FIXME: read values from file
 	private final static String domain = "tushar-97.auth0.com";
 
@@ -164,163 +161,6 @@ public class DefaultJWTManager implements IJWTManager {
 
 	}
 
-	// usage in trusted-app-client only
-	@Override
-	public String generateJWT(BindaasUser bindaasUser , Date dateExpires, String initiatedBy , String comments , ActivityType activityType , boolean throwErrorIfAlreadyExists)
-			throws JWTManagerException {
-		Session session = sessionFactory.openSession();
-
-		try {
-			session.beginTransaction();
-
-			String emailAddress = bindaasUser
-					.getProperty(BindaasUser.EMAIL_ADDRESS) != null ? bindaasUser
-					.getProperty(BindaasUser.EMAIL_ADDRESS).toString()
-					: bindaasUser.getName() + "@" + bindaasUser.getDomain();
-			String firstName = bindaasUser
-					.getProperty(BindaasUser.FIRST_NAME) != null ? bindaasUser
-					.getProperty(BindaasUser.FIRST_NAME).toString()
-					: bindaasUser.getName();
-			String lastName = bindaasUser.getProperty(BindaasUser.LAST_NAME) != null ? bindaasUser
-					.getProperty(BindaasUser.LAST_NAME).toString()
-					: bindaasUser.getName();
-			
-			@SuppressWarnings("unchecked")
-			List<UserRequest> listOfValidTokens = (List<UserRequest>) session
-					.createCriteria(UserRequest.class)
-					.add(Restrictions.eq("stage", Stage.accepted.name()))
-					.add(Restrictions.eq("emailAddress", emailAddress))
-					.add(Restrictions.gt("dateExpires", new Date()))
-					.add(Restrictions.isNotNull("jwt"))
-					.list();
-
-			if (listOfValidTokens != null && listOfValidTokens.size() > 0) {
-				UserRequest request = listOfValidTokens.get(0);
-				if(throwErrorIfAlreadyExists)
-				{
-					throw new JWTManagerException("JWT for the user already exists" , Reason.TOKEN_ALREADY_EXIST);
-				}
-				else
-				{
-					return request.getJWT();
-				}
-			}
-
-
-			// generates JWT for first time user
-			String jws = JWT.create()
-					.withIssuer("bindaas")
-					.withExpiresAt(dateExpires)
-					.sign(Algorithm.HMAC256(secret));
-
-			UserRequest userRequest = new UserRequest();
-			userRequest.setStage(Stage.accepted);
-			userRequest.setJWT(jws);
-			userRequest.setDateExpires(dateExpires);
-
-			userRequest.setEmailAddress(emailAddress);
-			userRequest.setFirstName(firstName);
-			userRequest.setLastName(lastName);
-
-			session.save(userRequest);
-			HistoryLog historyLog = new HistoryLog();
-			historyLog.setActivityType(activityType.toString());
-			historyLog.setComments(comments);
-			historyLog.setInitiatedBy(initiatedBy);
-			historyLog.setUserRequest(userRequest);
-
-			session.save(historyLog);
-			session.getTransaction().commit();
-			return jws;
-		}
-
-		catch (JWTManagerException e) { throw e ;}
-		catch (Exception e) {
-			log.error(e);
-			session.getTransaction().rollback();
-			throw new JWTManagerException(e,Reason.PROCESSING_ERROR);
-		} finally {
-			session.close();
-		}
-
-	}
-
-	// usage in trusted-app-client only
-	@Override
-	public String createShortLivedJWT(BindaasUser bindaasUser, int lifetime , String applicationId) throws JWTManagerException {
-		Session session = sessionFactory.openSession();
-		try {
-			session.beginTransaction();
-
-			String emailAddress = bindaasUser
-					.getProperty(BindaasUser.EMAIL_ADDRESS) != null ? bindaasUser
-					.getProperty(BindaasUser.EMAIL_ADDRESS).toString()
-					: bindaasUser.getName() + "@" + bindaasUser.getDomain();
-
-
-			@SuppressWarnings("unchecked")
-			List<UserRequest> listOfValidTokens = (List<UserRequest>) session
-					.createCriteria(UserRequest.class)
-					.add(Restrictions.eq("stage", Stage.accepted.name()))
-					.add(Restrictions.eq("emailAddress", emailAddress))
-					.add(Restrictions.gt("dateExpires", new Date()))
-					.add(Restrictions.isNotNull("jwt"))
-					.list();
-
-			if (listOfValidTokens != null && listOfValidTokens.size() > 0) {
-				UserRequest request = listOfValidTokens.get(0);
-
-				// generate a short lived JWT for this user
-				GregorianCalendar calendar = new GregorianCalendar();
-				calendar.add(Calendar.SECOND , lifetime);
-
-				Date newExpirationDate = request.getDateExpires().before(calendar.getTime()) ? request.getDateExpires() : calendar.getTime();
-
-				String jws = JWT.create()
-						.withIssuer("bindaas")
-						.withExpiresAt(newExpirationDate)
-						.sign(Algorithm.HMAC256(secret));
-
-				UserRequest sessionKey = new UserRequest();
-
-				sessionKey.setJWT(jws);
-				sessionKey.setFirstName(request.getFirstName());
-				sessionKey.setLastName(request.getLastName());
-				sessionKey.setEmailAddress(emailAddress);
-				sessionKey.setReason(request.getReason());
-				sessionKey.setRequestDate(new Date());
-				sessionKey.setStage(Stage.accepted);
-				sessionKey.setDateExpires(newExpirationDate);
-
-				session.save(sessionKey);
-
-				HistoryLog historyLog = new HistoryLog();
-				historyLog.setActivityType(ActivityType.SYSTEM_APPROVE);
-				historyLog.setComments("Short-Lived JWT");
-				historyLog.setInitiatedBy(applicationId);
-				historyLog.setUserRequest(sessionKey);
-
-				session.save(historyLog);
-				session.getTransaction().commit();
-
-				return jws;
-
-			} else {
-				throw new JWTManagerException("Cannot generate JWT for [" + bindaasUser + "]. The User must apply for it first!!" , Reason.TOKEN_DOES_NOT_EXIST);
-			}
-
-		}
-		catch (JWTManagerException e) {
-			throw e;
-		}
-		catch (Exception e) {
-			log.error(e);
-			session.getTransaction().rollback();
-			throw new JWTManagerException(e, Reason.PROCESSING_ERROR);
-		} finally {
-			session.close();
-		}
-	}
 
 	@Override
 	public void modifyJWT(Long id, Stage stage, Date dateExpires,
@@ -395,7 +235,6 @@ public class DefaultJWTManager implements IJWTManager {
 		return null;
 	}
 
-	// usage in trusted-app-client only
 	@Override
 	public List<UserRequest> listJWT() throws JWTManagerException {
 		Session session = sessionFactory.openSession();
@@ -417,7 +256,6 @@ public class DefaultJWTManager implements IJWTManager {
 		}
 	}
 
-	// usage in trusted-app-client only
 	@Override
 	public Integer revokeJWT(BindaasUser bindaasUser, String initiatedBy ,String comments , ActivityType activityType)
 			throws JWTManagerException {
@@ -471,13 +309,13 @@ public class DefaultJWTManager implements IJWTManager {
 
 	}
 
-	// usage in trusted-app-client
+	@Override
 	public Date getExpires(String token) {
 		DecodedJWT jwt = JWT.decode(token);
 		return jwt.getExpiresAt();
 	}
 
-	// usage in trusted-app-client
+	@Override
 	public String getEmailAddress(Long id){
 		Session session = sessionFactory.openSession();
 
