@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
@@ -55,14 +56,17 @@ public class LoginAction extends HttpServlet implements Filter{
 		String loginTarget = request.getParameter("loginTarget") !=null ? request.getParameter("loginTarget") : defaultLoginTarget;
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		
-		
+		String accessToken = request.getParameter("accessToken");
+
 		
 		@SuppressWarnings("unchecked")
 		DynamicObject<BindaasAdminConsoleConfiguration> dynamicAdminConsoleConfiguration = Activator.getService(DynamicObject.class, "(name=bindaas.adminconsole)");
-		
-		
-		if(dynamicAdminConsoleConfiguration!=null )
+		@SuppressWarnings("unchecked")
+		DynamicObject<BindaasConfiguration> bindaasConfiguration = Activator.getService(DynamicObject.class , "(name=bindaas)");
+		String bindaasConfigurationProtocol = bindaasConfiguration.getObject().clone().getAuthenticationProtocol();
+		String authenticationProviderClass = bindaasConfiguration.getObject().clone().getAuthenticationProviderClass();
+
+		if(dynamicAdminConsoleConfiguration!=null && bindaasConfigurationProtocol.equals("API_KEY"))
 		{
 			try {
 
@@ -85,7 +89,7 @@ public class LoginAction extends HttpServlet implements Filter{
 				}
 				else
 				{
-					ErrorView.handleError(response, new Exception("Autentication Method not supported"));
+					ErrorView.handleError(response, new Exception("Authentication Method not supported"));
 				}
 				
 			} catch (AuthenticationException e) {
@@ -100,6 +104,28 @@ public class LoginAction extends HttpServlet implements Filter{
 						ErrorView.handleError(response, new Exception("Authentication System unavailable"));
 				}
 				
+			}
+		}
+		else if(dynamicAdminConsoleConfiguration!=null && bindaasConfigurationProtocol.equals("JWT"))
+		{
+			IAuthenticationProvider authenticationProvider = Activator.getService(IAuthenticationProvider.class , "(class="+authenticationProviderClass+")");
+			try{
+				log.info("Access Token: "+accessToken);
+				BindaasUser principal = authenticationProvider.login(accessToken);
+				request.getSession(true).setAttribute("loggedInUser", principal);
+
+				// No need to send to postLoginActionTarget as everything handled in login() method above itself
+				response.sendRedirect(loginTarget);
+			}
+			catch (AuthenticationException e){
+				log.error(e);
+				try {
+					loginView.generateLoginView(request , response , loginTarget, "Invalid login. Please use authorized email or check authenticationProviderClass");
+				}
+				catch (Exception e1) {
+					log.error(e1);
+					ErrorView.handleError(response, new Exception("Authentication System unavailable"));
+				}
 			}
 		}
 		else

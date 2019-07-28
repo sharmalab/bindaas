@@ -27,14 +27,18 @@
 ##		FIXME: Move to proper CSS file later
 		<style type = "text/css">
 			.wrapword{
-				white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
-				white-space: -webkit-pre-wrap; /*Chrome & Safari */
-				white-space: -pre-wrap;      /* Opera 4-6 */
-				white-space: -o-pre-wrap;    /* Opera 7 */
-				white-space: pre-wrap;       /* css-3 */
-				word-wrap: break-word;       /* Internet Explorer 5.5+ */
-				word-break: break-all;
-				white-space: normal;
+				/*white-space: -moz-pre-wrap !important;  !* Mozilla, since 1999 *!*/
+				/*white-space: -webkit-pre-wrap; !*Chrome & Safari *!*/
+				/*white-space: -pre-wrap;      !* Opera 4-6 *!*/
+				/*white-space: -o-pre-wrap;    !* Opera 7 *!*/
+				/*white-space: pre-wrap;       !* css-3 *!*/
+				/*word-wrap: break-word;       !* Internet Explorer 5.5+ *!*/
+				/*word-break: break-all;*/
+				/*white-space: normal;*/
+				white-space: nowrap;
+				text-overflow:ellipsis;
+				overflow: hidden;
+				max-width:100px;
 			}
 		</style>
 		<!-- Latest version of jQuery -->
@@ -189,9 +193,12 @@
 															<div>
 																<a href="#" class="foundicon-minus" onclick="showCommentsExpirationDialog('revoke' , '$acceptedRequest.getId()')"> Revoke Access </a>
 															</div>
+															#if($protocol=="apiKey")
 															<div>
-																<a href="#" class="foundicon-refresh" onclick="showGetExpirationDialog('refresh','$acceptedRequest.getId()')"> Refresh #if($protocol=="jwt")Token #else Key#end </a>
-															</div></td>
+																<a href="#" class="foundicon-refresh" onclick="showGetExpirationDialog('refresh','$acceptedRequest.getId()')"> Refresh Key </a>
+															</div>
+															#end
+															</td>
 														</tr>
 														#end
 													</tbody>

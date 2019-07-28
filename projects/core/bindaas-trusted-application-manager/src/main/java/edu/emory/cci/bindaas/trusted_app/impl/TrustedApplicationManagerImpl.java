@@ -62,7 +62,9 @@ public class TrustedApplicationManagerImpl implements
 	private IJWTManager JWTManager;
 	private Log log = LogFactory.getLog(getClass());
 
-	public static final String protocolDoesNotMatchServerConfiguration = "Authentication protocol in request does not match with server's configuration";
+	public static final String protocolDoesNotMatchError = "Authentication protocol in request does not match with server's configuration";
+	public static final String cannotIssueTokenError = "Can not issue token with protocol [JWT]";
+	public static final String cannotAuthorizeUserError = "Can not authorize user with protocol [JWT]";
 
 	public IAPIKeyManager getApiKeyManager() {
 		return apiKeyManager;
@@ -266,72 +268,13 @@ public class TrustedApplicationManagerImpl implements
 			}
 		}
 		else if (bindaasConfigurationProtocol.equalsIgnoreCase(protocol) && protocol.equals("jwt")) {
-			try {
+			log.error(cannotIssueTokenError);
+			return exceptionToResponse(cannotIssueTokenError);
 
-				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
-						applicationID, salt, digest, username);
-
-				BindaasUser bindaasUser = new BindaasUser(username);
-				JsonObject retVal = new JsonObject();
-
-				int lifespan;
-				String logMsg;
-
-				if ((lifetime == null) || lifetime <=0){
-					lifespan = TrustedAppConstants.DEFAULT_LIFESPAN_OF_JWT_IN_SECONDS;
-					logMsg = "The user did not request a positive lifetime for the token. Therefore, the time limit " +
-							"will be set to " + lifespan + " seconds.";
-					log.info(logMsg);
-					retVal.add("comments", new JsonPrimitive(logMsg));
-
-				} else if (lifetime > TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_JWT) {
-					lifespan = TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_JWT;
-					logMsg = "The user requested lifetime [" + lifetime + "] exceeds the time limit " +
-							"set by the system for a short-lived JWT: " +
-							TrustedAppConstants.MAXIMUM_LIFE_TIME_FOR_SHORT_LIVED_JWT + " seconds. Therefore, " +
-							"the time limit is set to " + lifespan + " seconds.";
-					log.info(logMsg);
-					retVal.add("comments", new JsonPrimitive(logMsg));
-
-				} else {
-					lifespan = lifetime;
-				}
-				String applicationName = trustedAppEntry.getName();
-
-				String jws = JWTManager.createShortLivedJWT(bindaasUser, lifespan,
-						applicationName);
-				retVal.add("jwt", new JsonPrimitive(jws));
-				retVal.add("username", new JsonPrimitive(username));
-				retVal.add("applicationID", new JsonPrimitive(applicationID));
-				retVal.add("expires", new JsonPrimitive(JWTManager.getExpires(jws)
-						.toString()));
-				retVal.add("applicationName", new JsonPrimitive(applicationName));
-				return Response.ok().entity(retVal.toString())
-						.type("application/json").build();
-
-			} catch (NotAuthorizedException e) {
-				log.error(e.getErrorDescription());
-				return exceptionToResponse(e, applicationID, "not-resolved",
-						username);
-
-			} catch (JWTManagerException JWTManagerException) {
-				switch (JWTManagerException.getReason()) {
-					case TOKEN_DOES_NOT_EXIST:
-						log.error(JWTManagerException.getMessage());
-						return exceptionToResponse(new JWTDoesNotExistException(
-								username), applicationID, "not-resolved", username);
-					default:
-						log.error(JWTManagerException.getMessage());
-						return exceptionToResponse(JWTManagerException.getMessage());
-				}
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				return exceptionToResponse(e.getMessage());
-			}
 		}
 		else {
-			log.error(protocolDoesNotMatchServerConfiguration);
-			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
+			log.error(protocolDoesNotMatchError);
+			return exceptionToResponse(protocolDoesNotMatchError);
 		}
 
 	}
@@ -444,53 +387,13 @@ public class TrustedApplicationManagerImpl implements
 
 		}
 		else if (bindaasConfigurationProtocol.equalsIgnoreCase(protocol) && protocol.equals("jwt")) {
-			try {
-				TrustedApplicationEntry trustedAppEntry = authenticateTrustedApplication(
-						applicationID, salt, digest, username);
-				Date dateExpires = new Date(epochTime);
-				if (comments == null) {
-					comments = "JWT Generated via Trusted Application API";
-				}
 
-				String jws = JWTManager.generateJWT(new BindaasUser(
-						username), dateExpires, trustedAppEntry.getName(),
-						comments, ActivityType.APPROVE, true);
-
-				JsonObject retVal = new JsonObject();
-				retVal.add("jwt", new JsonPrimitive(jws));
-				retVal.add("username", new JsonPrimitive(username));
-				retVal.add("applicationID", new JsonPrimitive(applicationID));
-				retVal.add("expires", new JsonPrimitive(JWTManager.getExpires(jws)
-						.toString()));
-				retVal.add("applicationName",
-						new JsonPrimitive(trustedAppEntry.getName()));
-
-				return Response.ok().entity(retVal.toString())
-						.type("application/json").build();
-
-			} catch (NotAuthorizedException e) {
-				log.error(e.getErrorDescription());
-				return exceptionToResponse(e, applicationID, "not-resolved",
-						username);
-
-			} catch (JWTManagerException JWTManagerException) {
-				switch (JWTManagerException.getReason()) {
-					case TOKEN_ALREADY_EXIST:
-						log.error(JWTManagerException.getMessage());
-						return exceptionToResponse(new DuplicateJWTException(
-								username), applicationID, "not-resolved", username);
-					default:
-						log.error(JWTManagerException.getMessage());
-						return exceptionToResponse(JWTManagerException.getMessage());
-				}
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				return exceptionToResponse(e.getMessage());
-			}
+			log.error(cannotAuthorizeUserError);
+			return exceptionToResponse(cannotAuthorizeUserError);
 		}
 		else {
-			log.error(protocolDoesNotMatchServerConfiguration);
-			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
+			log.error(protocolDoesNotMatchError);
+			return exceptionToResponse(protocolDoesNotMatchError);
 		}
 
 	}
@@ -571,8 +474,8 @@ public class TrustedApplicationManagerImpl implements
 			}
 		}
 		else {
-			log.error(protocolDoesNotMatchServerConfiguration);
-			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
+			log.error(protocolDoesNotMatchError);
+			return exceptionToResponse(protocolDoesNotMatchError);
 		}
 
 	}
@@ -643,8 +546,8 @@ public class TrustedApplicationManagerImpl implements
 			}
 		}
 		else {
-			log.error(protocolDoesNotMatchServerConfiguration);
-			return exceptionToResponse(protocolDoesNotMatchServerConfiguration);
+			log.error(protocolDoesNotMatchError);
+			return exceptionToResponse(protocolDoesNotMatchError);
 		}
 
 	}

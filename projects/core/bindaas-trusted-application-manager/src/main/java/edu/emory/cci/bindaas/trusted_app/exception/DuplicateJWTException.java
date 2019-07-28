@@ -18,13 +18,13 @@ public class DuplicateJWTException extends AbstractHttpCodeException {
 	@Override
 	public String getErrorDescription() {
 
-		return "JWT for the user [" + user + "] already exist";
+		return "JWT for the user [" + user + "] already exists";
 	}
 
 	@Override
 	public String getSuggestedAction() {
 
-		return "Either use existing key or first delete the it and then try generating a new one";
+		return "Either use existing token or first delete it and then try generating a new one";
 	}
 
 	@Override

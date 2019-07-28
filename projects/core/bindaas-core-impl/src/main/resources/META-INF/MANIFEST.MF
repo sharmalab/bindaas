@@ -189,5 +189,6 @@ Bundle-ClassPath:  .,
  META-INF/lib/jackson-annotations-2.9.9.jar,
  META-INF/lib/jackson-core-2.9.9.jar,
  META-INF/lib/jackson-databind-2.9.9.jar,
- META-INF/lib/commons-codec-1.12.jar
+ META-INF/lib/commons-codec-1.12.jar,
+ META-INF/lib/jwks-rsa-0.8.2.jar
 Require-Bundle: org.apache.felix.gogo.runtime
