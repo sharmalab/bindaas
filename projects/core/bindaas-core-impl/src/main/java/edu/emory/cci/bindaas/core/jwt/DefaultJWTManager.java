@@ -36,7 +36,7 @@ import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidat
 public class DefaultJWTManager implements IJWTManager {
 
 	private Log log = LogFactory.getLog(getClass());
-	private SessionFactory sessionFactory;
+	private static SessionFactory sessionFactory;
 	
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;
@@ -124,6 +124,7 @@ public class DefaultJWTManager implements IJWTManager {
 			}
 
 			String emailAddress = userInfo.getEmail();
+			String role = userInfo.getRole();
 
 			UserRequest userRequest = new UserRequest();
 			userRequest.setStage(Stage.accepted);
@@ -133,6 +134,7 @@ public class DefaultJWTManager implements IJWTManager {
 			userRequest.setFirstName(firstName);
 			userRequest.setLastName(lastName);
 			userRequest.setEmailAddress(emailAddress);
+			userRequest.setRole(role);
 
 			session.save(userRequest);
 			HistoryLog historyLog = new HistoryLog();
@@ -150,7 +152,7 @@ public class DefaultJWTManager implements IJWTManager {
 			principal.addProperty(BindaasUser.LAST_NAME,lastName);
 			principal.addProperty(BindaasUser.EMAIL_ADDRESS,emailAddress);
 			principal.addProperty("jwt",token);
-			principal.addProperty("role",userInfo.getRole());
+			principal.addProperty("role",role);
 
 			return principal;
 
@@ -213,7 +215,7 @@ public class DefaultJWTManager implements IJWTManager {
 			if(verifyToken(token)){
 				@SuppressWarnings("unchecked")
 				List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
-						add(Restrictions.eq("stage",	Stage.accepted.name())).
+						add(Restrictions.eq("stage", Stage.accepted.name())).
 						add(Restrictions.eq("jwt", token)).
 						list();
 
@@ -327,6 +329,24 @@ public class DefaultJWTManager implements IJWTManager {
 		return userRequest.get(0).getEmailAddress();
 	}
 
+	public static String getRole(String token) {
+
+		Session session = sessionFactory.openSession();
+
+		@SuppressWarnings("unchecked")
+		List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
+				add(Restrictions.eq("stage", Stage.accepted.name())).
+				add(Restrictions.eq("jwt", token)).
+				list();
+
+		if(listOfValidTokens!=null && listOfValidTokens.size() > 0)
+		{
+			UserRequest request = listOfValidTokens.get(0);
+			return request.getRole();
+		}
+
+		return null;
+	}
 
 	public void init() throws Exception {
 

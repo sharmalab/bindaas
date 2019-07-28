@@ -1,10 +1,14 @@
 package edu.emory.cci.bindaas.core.impl;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.apache.cxf.jaxrs.ext.MessageContextImpl;
+import org.apache.cxf.phase.PhaseInterceptorChain;
 
 import com.google.gson.JsonObject;
 
@@ -37,6 +41,15 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	private IModifierRegistry modifierRegistry;
 	private IValidator validator;
 	private Log log = LogFactory.getLog(getClass());
+	public final static String ROLE = "role";
+
+	public String getRole(){
+		MessageContext messageContext = new MessageContextImpl(PhaseInterceptorChain.getCurrentMessage());
+		if (messageContext.get(ROLE) != null) {
+			return messageContext.get(ROLE).toString();
+		}
+		return null;
+	}
 
 	@Override
 	public QueryResult executeQueryEndpoint(String user,
@@ -45,6 +58,18 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		
 		RequestContext requestContext = new RequestContext();
 		requestContext.setUser(user);
+
+		Map<String,Object> attr = requestContext.getAttributes();
+		if(attr == null) {
+			attr = new HashMap<String, Object>();
+			requestContext.setAttributes(attr);
+		}
+
+		String userRole = getRole();
+		if(userRole != null) {
+			requestContext.addAttribute(ROLE,userRole);
+		}
+
 		// construct real query
 		
 		Map<String, BindVariable> bindVariables = queryEndpoint
@@ -145,7 +170,18 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		
 		RequestContext requestContext = new RequestContext();
 		requestContext.setUser(user);
-		
+
+		Map<String,Object> attr = requestContext.getAttributes();
+		if(attr == null) {
+			attr = new HashMap<String, Object>();
+			requestContext.setAttributes(attr);
+		}
+
+		String userRole = getRole();
+		if(userRole != null) {
+			requestContext.addAttribute(ROLE,userRole);
+		}
+
 		// construct real query
 		Map<String, BindVariable> bindVariables = deleteEndpoint
 				.getBindVariables();
@@ -203,7 +239,18 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 		try {
 			RequestContext requestContext = new RequestContext();
 			requestContext.setUser(user);
-			
+
+			Map<String,Object> attr = requestContext.getAttributes();
+			if(attr == null) {
+				attr = new HashMap<String, Object>();
+				requestContext.setAttributes(attr);
+			}
+
+			String userRole = getRole();
+			if(userRole != null) {
+				requestContext.addAttribute(ROLE,userRole);
+			}
+
 			InputStream finalStream = executeSubmitPayloadModifierChain(requestContext,
 					is, submitEndpoint.getSubmitPayloadModifiers(),
 					submitEndpoint);
@@ -330,6 +377,18 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 			
 			RequestContext requestContext = new RequestContext();
 			requestContext.setUser(user);
+
+			Map<String,Object> attr = requestContext.getAttributes();
+			if(attr == null) {
+				attr = new HashMap<String, Object>();
+				requestContext.setAttributes(attr);
+			}
+
+			String userRole = getRole();
+			if(userRole != null) {
+				requestContext.addAttribute(ROLE,userRole);
+			}
+
 			log.trace(data);
 			
 			String finalData = executeSubmitPayloadModifierChain(requestContext, data,
