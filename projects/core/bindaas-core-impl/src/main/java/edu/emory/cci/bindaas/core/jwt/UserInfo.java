@@ -45,6 +45,10 @@ public class UserInfo {
 	@Expose
 	private Boolean emailVerified;
 
+	@SerializedName("https://bindaas.com/role")
+	@Expose
+	private String role;
+
 	public String getSub() { return sub; }
 
 	public void setSub(String sub) { this.sub = sub; }
@@ -84,5 +88,9 @@ public class UserInfo {
 	public Boolean getEmailVerified() { return emailVerified; }
 
 	public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
+
+	public String getRole() { return role; }
+
+	public void setRole(String role) { this.role = role; }
 
 }

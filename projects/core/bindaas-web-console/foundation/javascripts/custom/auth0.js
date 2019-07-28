@@ -13,6 +13,7 @@ const configureClient = async () => {
 
 window.onload = async () => {
     await configureClient();
+    document.getElementById("inputButton").disabled = false;
 
 };
 

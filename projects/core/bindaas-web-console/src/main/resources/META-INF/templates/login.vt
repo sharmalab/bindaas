@@ -156,7 +156,7 @@
 
 		  <div class="row">
 			  <div class="two mobile-one columns">
-				  <input type="submit" class="right button" id="inputButton" onclick="login()" value="Log In" />
+				  <input type="submit" class="right button" id="inputButton" onclick="login()" value="Log In" disabled/>
 			  </div>
 		  </div>
 	  </fieldset>

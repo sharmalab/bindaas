@@ -150,6 +150,7 @@ public class DefaultJWTManager implements IJWTManager {
 			principal.addProperty(BindaasUser.LAST_NAME,lastName);
 			principal.addProperty(BindaasUser.EMAIL_ADDRESS,emailAddress);
 			principal.addProperty("jwt",token);
+			principal.addProperty("role",userInfo.getRole());
 
 			return principal;
 
