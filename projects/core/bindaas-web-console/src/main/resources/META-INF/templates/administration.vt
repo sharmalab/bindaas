@@ -24,7 +24,7 @@
 		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
 		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
 		<link rel="stylesheet" href="/foundation/stylesheets/general_enclosed_foundicons.css">
-##		FIXME: Move to proper CSS file later
+##		FIXME: Move to proper CSS file later + ellipsis
 		<style type = "text/css">
 			.wrapword{
 				/*white-space: -moz-pre-wrap !important;  !* Mozilla, since 1999 *!*/

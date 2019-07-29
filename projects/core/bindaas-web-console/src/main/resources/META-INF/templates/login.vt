@@ -161,6 +161,10 @@
 		  </div>
 	  </fieldset>
 
+	  <input type="hidden" name="domain" id="domain" value="$auth0Domain" />
+	  <input type="hidden" name="clientId" id="clientId" value="$auth0ClientId" />
+	  <input type="hidden" name="audience" id="audience" value="$auth0Audience" />
+
 	  <form id ="auth0-form" action="/authenticate" method="post">
 		  <input type="hidden" name="accessToken" id="accessToken" value="" />
 		  <input type="hidden" name="loginTarget" value="$loginTarget" />

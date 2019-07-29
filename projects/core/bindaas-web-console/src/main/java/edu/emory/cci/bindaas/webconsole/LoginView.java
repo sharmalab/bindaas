@@ -7,6 +7,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
+import edu.emory.cci.bindaas.core.jwt.IJWTManager;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.version_manager.api.IVersionManager;
 import edu.emory.cci.bindaas.webconsole.bundle.Activator;
@@ -19,8 +20,9 @@ public class LoginView {
 	private  Template template;
 	private VelocityEngineWrapper velocityEngineWrapper;
 	private IVersionManager versionManager;
-	
-	
+	private IJWTManager JWTManager;
+
+
 	public IVersionManager getVersionManager() {
 		return versionManager;
 	}
@@ -43,7 +45,17 @@ public class LoginView {
 		this.velocityEngineWrapper = velocityEngineWrapper;
 	}
 
-	
+
+
+	public IJWTManager getJWTManager() {
+		return JWTManager;
+	}
+
+	public void setJWTManager(IJWTManager JWTManager) {
+		this.JWTManager = JWTManager;
+	}
+
+
 	public void generateLoginView(HttpServletRequest request , HttpServletResponse response , String loginTarget , String errorMessage) throws Exception
 	{
 		@SuppressWarnings("unchecked")
@@ -61,6 +73,9 @@ public class LoginView {
 		context.put("errorMessage", errorMessage);
 		context.put("adminconsoleConfiguration", dynamicAdminConsoleConfiguration.getObject().clone());
 		context.put("bindaasConfiguration", bindaasConfiguration.getObject().clone());
+		context.put("auth0Domain", this.JWTManager.getAuth0Domain());
+		context.put("auth0ClientId", this.JWTManager.getAuth0ClientId());
+		context.put("auth0Audience", this.JWTManager.getAuth0Audience());
 
 		// lazy init
 		if(template == null)

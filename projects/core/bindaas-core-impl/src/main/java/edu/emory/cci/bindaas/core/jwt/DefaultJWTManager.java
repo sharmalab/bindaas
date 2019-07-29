@@ -7,6 +7,7 @@ import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,11 +24,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.JWT;
 
+import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.jwt.JWTManagerException.Reason;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
+import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
@@ -36,8 +39,28 @@ import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidat
 public class DefaultJWTManager implements IJWTManager {
 
 	private Log log = LogFactory.getLog(getClass());
+	private Properties defaultProperties;
+	private DynamicProperties dynamicProperties;
 	private static SessionFactory sessionFactory;
-	
+	private String domain;
+	private String clientId;
+	private String audience;
+
+	public DynamicProperties getDynamicProperties() {
+		return dynamicProperties;
+	}
+
+	public Properties getDefaultProperties() {
+		return defaultProperties;
+	}
+
+	public void setDefaultProperties(Properties defaultProperties) {
+		this.defaultProperties = defaultProperties;
+	}
+
+	public void setDynamicProperties(DynamicProperties dynamicProperties) {
+		this.dynamicProperties = dynamicProperties;
+	}
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;
 	}
@@ -46,8 +69,20 @@ public class DefaultJWTManager implements IJWTManager {
 		this.sessionFactory = sessionFactory;
 	}
 
-	// FIXME: read values from file
-	private final static String domain = "tushar-97.auth0.com";
+	@Override
+	public String getAuth0Domain () {
+		return this.domain;
+	}
+
+	@Override
+	public String getAuth0ClientId () {
+		return this.clientId;
+	}
+
+	@Override
+	public String getAuth0Audience () {
+		return this.audience;
+	}
 
 
 	@Override
@@ -349,6 +384,11 @@ public class DefaultJWTManager implements IJWTManager {
 	}
 
 	public void init() throws Exception {
+
+		dynamicProperties = new DynamicProperties("bindaas.auth0", defaultProperties , Activator.getContext());
+		this.domain = dynamicProperties.get("auth0.domain");
+		this.clientId = dynamicProperties.get("auth0.clientId");
+		this.audience = dynamicProperties.get("auth0.audience");
 
 	}
 

@@ -103,8 +103,16 @@
 	<property name="sessionFactory" ref="sessionFactory"></property>
 </bean>
 
+<!--FIXME: Update default properties value-->
 <bean id="JWTManager" class="edu.emory.cci.bindaas.core.jwt.DefaultJWTManager" init-method="init">
 	<property name="sessionFactory" ref="sessionFactory"></property>
+	<property name="defaultProperties">
+		<props>
+			<prop key="auth0.domain">tushar-97.auth0.com</prop>
+			<prop key="auth0.clientId">RHWrWpw9Yf0SgGOBlpG0mXqIwIEhykN4</prop>
+			<prop key="auth0.audience">my-api</prop>
+		</props>
+	</property>
 </bean>
 
 <!-- System Package -->

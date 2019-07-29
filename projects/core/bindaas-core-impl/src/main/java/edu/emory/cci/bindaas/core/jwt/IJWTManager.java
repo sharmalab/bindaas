@@ -18,5 +18,8 @@ public interface IJWTManager {
 	public Integer revokeJWT(BindaasUser bindaasUser, String initiatedBy ,String comments , ActivityType activityType) throws JWTManagerException;
 	public Date getExpires(String jwt);
 	public String getEmailAddress(Long id);
+	public String getAuth0Domain();
+	public String getAuth0ClientId();
+	public String getAuth0Audience();
 
 }
