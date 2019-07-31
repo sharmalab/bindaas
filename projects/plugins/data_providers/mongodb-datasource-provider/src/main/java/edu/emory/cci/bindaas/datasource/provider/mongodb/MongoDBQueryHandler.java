@@ -56,12 +56,8 @@ public class MongoDBQueryHandler implements IQueryHandler {
             JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters, RequestContext requestContext)
             throws AbstractHttpCodeException {
 
-        if(requestContext.getAttributes().containsKey(ROLE)) {
-            log.info("Role: "+requestContext.getAttributes().get(ROLE));
-        }
-        else {
-            log.info("no role!");
-        }
+        // can get role from requestContext as
+        // requestContext.getAttributes().get(ROLE)
 
         try{
             if(outputFormatProps!=null)
