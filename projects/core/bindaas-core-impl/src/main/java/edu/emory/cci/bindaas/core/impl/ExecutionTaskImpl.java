@@ -12,6 +12,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.IExecutionTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
@@ -41,12 +42,11 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 	private IModifierRegistry modifierRegistry;
 	private IValidator validator;
 	private Log log = LogFactory.getLog(getClass());
-	public final static String ROLE = "role";
 
 	public String getRole(){
 		MessageContext messageContext = new MessageContextImpl(PhaseInterceptorChain.getCurrentMessage());
-		if (messageContext.get(ROLE) != null) {
-			return messageContext.get(ROLE).toString();
+		if (messageContext.get(BindaasConstants.ROLE) != null) {
+			return messageContext.get(BindaasConstants.ROLE).toString();
 		}
 		return null;
 	}
@@ -67,7 +67,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 
 		String userRole = getRole();
 		if(userRole != null) {
-			requestContext.addAttribute(ROLE,userRole);
+			requestContext.addAttribute(BindaasConstants.ROLE,userRole);
 		}
 
 		// construct real query
@@ -179,7 +179,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 
 		String userRole = getRole();
 		if(userRole != null) {
-			requestContext.addAttribute(ROLE,userRole);
+			requestContext.addAttribute(BindaasConstants.ROLE,userRole);
 		}
 
 		// construct real query
@@ -248,7 +248,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 
 			String userRole = getRole();
 			if(userRole != null) {
-				requestContext.addAttribute(ROLE,userRole);
+				requestContext.addAttribute(BindaasConstants.ROLE,userRole);
 			}
 
 			InputStream finalStream = executeSubmitPayloadModifierChain(requestContext,
@@ -386,7 +386,7 @@ public class ExecutionTaskImpl implements IExecutionTasks {
 
 			String userRole = getRole();
 			if(userRole != null) {
-				requestContext.addAttribute(ROLE,userRole);
+				requestContext.addAttribute(BindaasConstants.ROLE,userRole);
 			}
 
 			log.trace(data);

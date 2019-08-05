@@ -13,5 +13,9 @@ public interface BindaasConstants {
 	public final static String AUDIT_PROVIDER = "audit.provider.class";
 	public final static String SERVICE_URL = "service.url";
 	public static final String SERVICE_UI_URL = "service.ui.url";
-	
+	public static final String API_KEY = "api_key";
+	public static final String APIKEY= "apiKey";
+	public static final String JWT = "jwt";
+	public static final String ROLE = "role";
+
 }

@@ -66,7 +66,7 @@
   <div class="row">
     <div class="twelve columns">
   	
-  #if($bindaasConfiguration.getAuthenticationProtocol().toString().equals("API_KEY"))
+  #if($bindaasConfiguration.getAuthenticationProtocol().toString().equals("api_key"))
     #if ($adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("ldap") || $adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("defaultMethod"))
       <form action="/authenticate" method="post">
 	 	 <fieldset>
@@ -149,7 +149,7 @@
 	  #end
 	<a href="/user/login"><strong>Switch to Query Browser</strong></a>
 
-  #elseif ($bindaasConfiguration.getAuthenticationProtocol().toString().equals("JWT"))
+  #elseif ($bindaasConfiguration.getAuthenticationProtocol().toString().equals("jwt"))
 
 	  <fieldset>
 		  <legend><h4>Admin Zone</h4></legend>

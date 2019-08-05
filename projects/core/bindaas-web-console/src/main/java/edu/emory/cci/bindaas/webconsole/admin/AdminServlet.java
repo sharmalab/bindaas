@@ -18,6 +18,7 @@ import org.hibernate.criterion.Restrictions;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
@@ -126,7 +127,7 @@ public class AdminServlet extends AbstractRequestHandler {
 						.getAttribute("loggedInUser");
 
 				String protocol = dynamicConfiguration.getObject().getAuthenticationProtocol().
-						equals("JWT") ? "jwt": "apiKey";
+						equals(BindaasConstants.JWT) ? BindaasConstants.JWT: BindaasConstants.APIKEY;
 
 				List<?> pendingRequests = session.createCriteria(UserRequest.class).add(Restrictions.eq("stage", "pending")).
 						add(Restrictions.isNotNull(protocol))
@@ -141,7 +142,7 @@ public class AdminServlet extends AbstractRequestHandler {
 						"from HistoryLog where userRequest."+protocol+" is not null order by activityDate desc").setMaxResults(MAX_DISPLAY_THRESHOLD).list();
 
 				// if role is not admin add restrictions
-				if(protocol.equals("jwt") && !principal.getProperty("role").toString().equals("admin")) {
+				if(protocol.equals(BindaasConstants.JWT) && !principal.getProperty(BindaasConstants.ROLE).toString().equals("admin")) {
 					pendingRequests = session.createCriteria(UserRequest.class).add(Restrictions.eq("stage", "pending")).
 							add(Restrictions.eq("emailAddress", principal.getProperty(BindaasUser.EMAIL_ADDRESS))).
 							add(Restrictions.isNotNull(protocol))

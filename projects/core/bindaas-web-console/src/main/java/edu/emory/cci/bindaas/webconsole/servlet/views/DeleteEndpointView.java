@@ -13,6 +13,7 @@ import org.apache.velocity.VelocityContext;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
@@ -145,14 +146,12 @@ public class DeleteEndpointView extends AbstractRequestHandler {
 			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
 
 			context.put("protocol", bindaasConfiguration.getObject().
-					getAuthenticationProtocol().equals("JWT")?
-					"jwt":
-					"api_key");
+					getAuthenticationProtocol());
 
 			context.put("protocolValue", bindaasConfiguration.getObject().
-					getAuthenticationProtocol().equals("JWT")?
-					admin.getProperty("jwt"):
-					admin.getProperty("apiKey"));
+					getAuthenticationProtocol().equals(BindaasConstants.JWT)?
+					admin.getProperty(BindaasConstants.JWT):
+					admin.getProperty(BindaasConstants.APIKEY));
 			
 			template.merge(context, response.getWriter());
 		}

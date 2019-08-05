@@ -78,7 +78,7 @@
 	<property name="protocol" value="http"></property>
 	<property name="enableAuthentication" value="true"></property>
 	<property name="authenticationProviderClass" value="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"></property>
-	<property name="authenticationProtocol" value="API_KEY"></property>
+	<property name="authenticationProtocol" value="api_key"></property>
 	<property name="enableAuthorization" value="false"></property>
 	<property name="authorizationProviderClass" value="edu.emory.cci.bindaas.security_dashboard.service.AuthorizationProviderImpl"></property>
 	<property name="enableAudit" value="true"></property>

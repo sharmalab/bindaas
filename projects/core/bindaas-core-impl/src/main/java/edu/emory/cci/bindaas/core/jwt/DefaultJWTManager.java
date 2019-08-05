@@ -24,6 +24,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.JWT;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.jwt.JWTManagerException.Reason;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
@@ -186,8 +187,8 @@ public class DefaultJWTManager implements IJWTManager {
 			principal.addProperty(BindaasUser.FIRST_NAME,firstName);
 			principal.addProperty(BindaasUser.LAST_NAME,lastName);
 			principal.addProperty(BindaasUser.EMAIL_ADDRESS,emailAddress);
-			principal.addProperty("jwt",token);
-			principal.addProperty("role",role);
+			principal.addProperty(BindaasConstants.JWT,token);
+			principal.addProperty(BindaasConstants.ROLE,role);
 
 			return principal;
 
@@ -251,7 +252,7 @@ public class DefaultJWTManager implements IJWTManager {
 				@SuppressWarnings("unchecked")
 				List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
 						add(Restrictions.eq("stage", Stage.accepted.name())).
-						add(Restrictions.eq("jwt", token)).
+						add(Restrictions.eq(BindaasConstants.JWT, token)).
 						list();
 
 				if(listOfValidTokens!=null && listOfValidTokens.size() > 0)
@@ -283,7 +284,7 @@ public class DefaultJWTManager implements IJWTManager {
 					.createCriteria(UserRequest.class)
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.gt("dateExpires", new Date()))
-					.add(Restrictions.isNotNull("jwt"))
+					.add(Restrictions.isNotNull(BindaasConstants.JWT))
 					.list();
 			return listOfValidTokens;
 		} catch (Exception e) {
@@ -308,7 +309,7 @@ public class DefaultJWTManager implements IJWTManager {
 			List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
 					add(Restrictions.eq("stage", Stage.accepted.name())).
 					add(Restrictions.eq("emailAddress", emailAddress)).
-					add(Restrictions.isNotNull("jwt")).
+					add(Restrictions.isNotNull(BindaasConstants.JWT)).
 					list();
 
 			if(listOfValidTokens!=null && listOfValidTokens.size() > 0)
@@ -371,7 +372,7 @@ public class DefaultJWTManager implements IJWTManager {
 		@SuppressWarnings("unchecked")
 		List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
 				add(Restrictions.eq("stage", Stage.accepted.name())).
-				add(Restrictions.eq("jwt", token)).
+				add(Restrictions.eq(BindaasConstants.JWT, token)).
 				list();
 
 		if(listOfValidTokens!=null && listOfValidTokens.size() > 0)

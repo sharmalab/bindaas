@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.security.api.AuthenticationException;
@@ -66,7 +67,7 @@ public class LoginAction extends HttpServlet implements Filter{
 		String bindaasConfigurationProtocol = bindaasConfiguration.getObject().clone().getAuthenticationProtocol();
 		String authenticationProviderClass = bindaasConfiguration.getObject().clone().getAuthenticationProviderClass();
 
-		if(dynamicAdminConsoleConfiguration!=null && bindaasConfigurationProtocol.equals("API_KEY"))
+		if(dynamicAdminConsoleConfiguration!=null && bindaasConfigurationProtocol.equals(BindaasConstants.API_KEY))
 		{
 			try {
 
@@ -106,7 +107,7 @@ public class LoginAction extends HttpServlet implements Filter{
 				
 			}
 		}
-		else if(dynamicAdminConsoleConfiguration!=null && bindaasConfigurationProtocol.equals("JWT"))
+		else if(dynamicAdminConsoleConfiguration!=null && bindaasConfigurationProtocol.equals(BindaasConstants.JWT))
 		{
 			IAuthenticationProvider authenticationProvider = Activator.getService(IAuthenticationProvider.class , "(class="+authenticationProviderClass+")");
 			try{
