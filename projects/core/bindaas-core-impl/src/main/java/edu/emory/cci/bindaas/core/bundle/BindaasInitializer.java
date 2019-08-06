@@ -12,6 +12,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
 import edu.emory.cci.bindaas.core.rest.security.AuditInLogger;
 import edu.emory.cci.bindaas.core.rest.security.AuthenticationProtocol;
@@ -144,7 +145,7 @@ public class BindaasInitializer implements IBindaasAdminService{
 			
 			securityModule.setAuthenticationProviderClass(bindaasConfiguration.getObject().getAuthenticationProviderClass());
 			securityModule.setAuthenticationProtocol(bindaasConfiguration.getObject().
-					getAuthenticationProtocol().equals("JWT")?
+					getAuthenticationProtocol().equals(BindaasConstants.JWT)?
 					AuthenticationProtocol.JWT:
 					AuthenticationProtocol.API_KEY);
 

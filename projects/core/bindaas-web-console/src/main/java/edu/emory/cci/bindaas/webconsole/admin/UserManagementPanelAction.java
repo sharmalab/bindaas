@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 
 import edu.emory.cci.bindaas.commons.mail.api.IMailService;
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.apikey.api.APIKey;
 import edu.emory.cci.bindaas.core.apikey.api.IAPIKeyManager;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
@@ -75,7 +76,7 @@ public class UserManagementPanelAction implements IAdminAction {
 		String emailAddress = null;
 		if(requestObject.entityAction!=null && (requestObject.entityAction.equals(ActivityType.APPROVE.toString()) || requestObject.entityAction.equals(ActivityType.REFRESH.toString())))
 		{
-			if (bindaasConfiguration.getObject().getAuthenticationProtocol().equals("API_KEY")) {
+			if (authenticationProtocol.equals(BindaasConstants.API_KEY)) {
 				APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.accepted, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.valueOf(requestObject.entityAction.toUpperCase()) );
 				emailMessage = String.format("Congratulations!\nYour application has been accepted." +
 					"\nYour new API-Key : %s \nExpires On : %s ", apiKey.getValue() , apiKey.getExpires().toString());
@@ -90,7 +91,7 @@ public class UserManagementPanelAction implements IAdminAction {
 		}
 		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.REVOKE.toString()) )
 		{
-			if (authenticationProtocol.equals("API_KEY")) {
+			if (authenticationProtocol.equals(BindaasConstants.API_KEY)) {
 				APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.revoked, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.REVOKE );
 				invalidateAPIKey(apiKey.getValue());
 				emailMessage = "Your access has been revoked by the administrator";
@@ -106,7 +107,7 @@ public class UserManagementPanelAction implements IAdminAction {
 		}
 		else if(requestObject.entityAction!=null && requestObject.entityAction.equals(ActivityType.DENY.toString()) )
 		{
-			if (authenticationProtocol.equals("API_KEY")) {
+			if (authenticationProtocol.equals(BindaasConstants.API_KEY)) {
 				APIKey apiKey = this.apiKeyManager.modifyAPIKey(requestObject.entityId, Stage.denied, requestObject.getExpiration(), admin.getName(), requestObject.entityComments, ActivityType.DENY );
 				emailMessage = "Your application has been denied by the administrator";
 				emailAddress = apiKey.getEmailAddress();
@@ -126,7 +127,7 @@ public class UserManagementPanelAction implements IAdminAction {
 		if(mailService != null) 
 		{
 			try{
-				if (authenticationProtocol.equals("API_KEY")) {
+				if (authenticationProtocol.equals(BindaasConstants.API_KEY)) {
 					mailService.sendMail(emailAddress , "Your Bindaas API Key status" , emailMessage);
 				}
 				else {

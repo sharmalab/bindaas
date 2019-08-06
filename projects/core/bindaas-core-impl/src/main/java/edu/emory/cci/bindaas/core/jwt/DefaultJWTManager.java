@@ -7,6 +7,7 @@ import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,11 +24,14 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.JWT;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
+import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.jwt.JWTManagerException.Reason;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog.ActivityType;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest.Stage;
+import edu.emory.cci.bindaas.core.util.DynamicProperties;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.security.api.BindaasUser;
 
@@ -36,8 +40,28 @@ import static edu.emory.cci.bindaas.core.rest.security.SecurityHandler.invalidat
 public class DefaultJWTManager implements IJWTManager {
 
 	private Log log = LogFactory.getLog(getClass());
-	private SessionFactory sessionFactory;
-	
+	private Properties defaultProperties;
+	private DynamicProperties dynamicProperties;
+	private static SessionFactory sessionFactory;
+	private String domain;
+	private String clientId;
+	private String audience;
+
+	public DynamicProperties getDynamicProperties() {
+		return dynamicProperties;
+	}
+
+	public Properties getDefaultProperties() {
+		return defaultProperties;
+	}
+
+	public void setDefaultProperties(Properties defaultProperties) {
+		this.defaultProperties = defaultProperties;
+	}
+
+	public void setDynamicProperties(DynamicProperties dynamicProperties) {
+		this.dynamicProperties = dynamicProperties;
+	}
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;
 	}
@@ -46,8 +70,20 @@ public class DefaultJWTManager implements IJWTManager {
 		this.sessionFactory = sessionFactory;
 	}
 
-	// FIXME: read values from file
-	private final static String domain = "tushar-97.auth0.com";
+	@Override
+	public String getAuth0Domain () {
+		return this.domain;
+	}
+
+	@Override
+	public String getAuth0ClientId () {
+		return this.clientId;
+	}
+
+	@Override
+	public String getAuth0Audience () {
+		return this.audience;
+	}
 
 
 	@Override
@@ -124,6 +160,7 @@ public class DefaultJWTManager implements IJWTManager {
 			}
 
 			String emailAddress = userInfo.getEmail();
+			String role = userInfo.getRole();
 
 			UserRequest userRequest = new UserRequest();
 			userRequest.setStage(Stage.accepted);
@@ -133,6 +170,7 @@ public class DefaultJWTManager implements IJWTManager {
 			userRequest.setFirstName(firstName);
 			userRequest.setLastName(lastName);
 			userRequest.setEmailAddress(emailAddress);
+			userRequest.setRole(role);
 
 			session.save(userRequest);
 			HistoryLog historyLog = new HistoryLog();
@@ -149,7 +187,8 @@ public class DefaultJWTManager implements IJWTManager {
 			principal.addProperty(BindaasUser.FIRST_NAME,firstName);
 			principal.addProperty(BindaasUser.LAST_NAME,lastName);
 			principal.addProperty(BindaasUser.EMAIL_ADDRESS,emailAddress);
-			principal.addProperty("jwt",token);
+			principal.addProperty(BindaasConstants.JWT,token);
+			principal.addProperty(BindaasConstants.ROLE,role);
 
 			return principal;
 
@@ -212,8 +251,8 @@ public class DefaultJWTManager implements IJWTManager {
 			if(verifyToken(token)){
 				@SuppressWarnings("unchecked")
 				List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
-						add(Restrictions.eq("stage",	Stage.accepted.name())).
-						add(Restrictions.eq("jwt", token)).
+						add(Restrictions.eq("stage", Stage.accepted.name())).
+						add(Restrictions.eq(BindaasConstants.JWT, token)).
 						list();
 
 				if(listOfValidTokens!=null && listOfValidTokens.size() > 0)
@@ -245,7 +284,7 @@ public class DefaultJWTManager implements IJWTManager {
 					.createCriteria(UserRequest.class)
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.gt("dateExpires", new Date()))
-					.add(Restrictions.isNotNull("jwt"))
+					.add(Restrictions.isNotNull(BindaasConstants.JWT))
 					.list();
 			return listOfValidTokens;
 		} catch (Exception e) {
@@ -270,7 +309,7 @@ public class DefaultJWTManager implements IJWTManager {
 			List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
 					add(Restrictions.eq("stage", Stage.accepted.name())).
 					add(Restrictions.eq("emailAddress", emailAddress)).
-					add(Restrictions.isNotNull("jwt")).
+					add(Restrictions.isNotNull(BindaasConstants.JWT)).
 					list();
 
 			if(listOfValidTokens!=null && listOfValidTokens.size() > 0)
@@ -326,8 +365,31 @@ public class DefaultJWTManager implements IJWTManager {
 		return userRequest.get(0).getEmailAddress();
 	}
 
+	public static String getRole(String token) {
+
+		Session session = sessionFactory.openSession();
+
+		@SuppressWarnings("unchecked")
+		List<UserRequest> listOfValidTokens = (List<UserRequest>) session.createCriteria(UserRequest.class).
+				add(Restrictions.eq("stage", Stage.accepted.name())).
+				add(Restrictions.eq(BindaasConstants.JWT, token)).
+				list();
+
+		if(listOfValidTokens!=null && listOfValidTokens.size() > 0)
+		{
+			UserRequest request = listOfValidTokens.get(0);
+			return request.getRole();
+		}
+
+		return null;
+	}
 
 	public void init() throws Exception {
+
+		dynamicProperties = new DynamicProperties("bindaas.auth0", defaultProperties , Activator.getContext());
+		this.domain = dynamicProperties.get("auth0.domain");
+		this.clientId = dynamicProperties.get("auth0.clientId");
+		this.audience = dynamicProperties.get("auth0.audience");
 
 	}
 

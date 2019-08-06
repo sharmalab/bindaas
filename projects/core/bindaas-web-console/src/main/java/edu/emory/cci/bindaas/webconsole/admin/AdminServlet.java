@@ -18,7 +18,9 @@ import org.hibernate.criterion.Restrictions;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
+import edu.emory.cci.bindaas.core.model.hibernate.HistoryLog;
 import edu.emory.cci.bindaas.core.model.hibernate.UserRequest;
 import edu.emory.cci.bindaas.core.util.DynamicObject;
 import edu.emory.cci.bindaas.core.util.DynamicProperties;
@@ -121,24 +123,43 @@ public class AdminServlet extends AbstractRequestHandler {
 				DynamicObject<BindaasConfiguration> dynamicConfiguration = Activator
 						.getService(DynamicObject.class, "(name=bindaas)");
 
-				String protocol;
-				if (dynamicConfiguration.getObject().getAuthenticationProtocol().equals("JWT")){
-					protocol = "jwt";
-				}
-				else {
-					protocol = "apiKey";
-				}
+				BindaasUser principal = (BindaasUser) request.getSession()
+						.getAttribute("loggedInUser");
 
-				List<?> pendingRequests = session
-						.createQuery(
-								"from UserRequest where stage = :stage order by requestDate desc")
-						.setString("stage", "pending").list();
+				String protocol = dynamicConfiguration.getObject().getAuthenticationProtocol().
+						equals(BindaasConstants.JWT) ? BindaasConstants.JWT: BindaasConstants.APIKEY;
+
+				List<?> pendingRequests = session.createCriteria(UserRequest.class).add(Restrictions.eq("stage", "pending")).
+						add(Restrictions.isNotNull(protocol))
+						.addOrder(Order.desc("requestDate")).setMaxResults(MAX_DISPLAY_THRESHOLD).list();
+
 				List<?> acceptedRequests = session.createCriteria(UserRequest.class).add(Restrictions.eq("stage", "accepted")).
 						add(Restrictions.ge("dateExpires", new Date())).
 						add(Restrictions.isNotNull(protocol))
 						.addOrder(Order.desc("requestDate")).setMaxResults(MAX_DISPLAY_THRESHOLD).list();
+
 				List<?> historyLog = session.createQuery(
-						"from HistoryLog order by activityDate desc").setMaxResults(MAX_DISPLAY_THRESHOLD).list();
+						"from HistoryLog where userRequest."+protocol+" is not null order by activityDate desc").setMaxResults(MAX_DISPLAY_THRESHOLD).list();
+
+				// if role is not admin add restrictions
+				if(protocol.equals(BindaasConstants.JWT) && !principal.getProperty(BindaasConstants.ROLE).toString().equals("admin")) {
+					pendingRequests = session.createCriteria(UserRequest.class).add(Restrictions.eq("stage", "pending")).
+							add(Restrictions.eq("emailAddress", principal.getProperty(BindaasUser.EMAIL_ADDRESS))).
+							add(Restrictions.isNotNull(protocol))
+							.addOrder(Order.desc("requestDate")).setMaxResults(MAX_DISPLAY_THRESHOLD).list();
+
+					acceptedRequests = session.createCriteria(UserRequest.class).add(Restrictions.eq("stage", "accepted")).
+							add(Restrictions.ge("dateExpires", new Date())).
+							add(Restrictions.eq("emailAddress", principal.getProperty(BindaasUser.EMAIL_ADDRESS))).
+							add(Restrictions.isNotNull(protocol))
+							.addOrder(Order.desc("requestDate")).setMaxResults(MAX_DISPLAY_THRESHOLD).list();
+
+					historyLog = session.createQuery(
+							"from HistoryLog where userRequest.emailAddress = :email and userRequest.jwt is not null order by activityDate desc").
+							setParameter("email", principal.getProperty(BindaasUser.EMAIL_ADDRESS).toString()).
+							setMaxResults(MAX_DISPLAY_THRESHOLD).list();
+
+				}
 
 				VelocityContext velocityContext = new VelocityContext();
 				/**

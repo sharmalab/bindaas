@@ -78,7 +78,7 @@
 	<property name="protocol" value="http"></property>
 	<property name="enableAuthentication" value="true"></property>
 	<property name="authenticationProviderClass" value="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider"></property>
-	<property name="authenticationProtocol" value="API_KEY"></property>
+	<property name="authenticationProtocol" value="api_key"></property>
 	<property name="enableAuthorization" value="false"></property>
 	<property name="authorizationProviderClass" value="edu.emory.cci.bindaas.security_dashboard.service.AuthorizationProviderImpl"></property>
 	<property name="enableAudit" value="true"></property>
@@ -103,8 +103,16 @@
 	<property name="sessionFactory" ref="sessionFactory"></property>
 </bean>
 
+<!--FIXME: Update default properties value-->
 <bean id="JWTManager" class="edu.emory.cci.bindaas.core.jwt.DefaultJWTManager" init-method="init">
 	<property name="sessionFactory" ref="sessionFactory"></property>
+	<property name="defaultProperties">
+		<props>
+			<prop key="auth0.domain">tushar-97.auth0.com</prop>
+			<prop key="auth0.clientId">RHWrWpw9Yf0SgGOBlpG0mXqIwIEhykN4</prop>
+			<prop key="auth0.audience">my-api</prop>
+		</props>
+	</property>
 </bean>
 
 <!-- System Package -->

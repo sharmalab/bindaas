@@ -66,7 +66,7 @@
   <div class="row">
     <div class="twelve columns">
   	
-  #if($bindaasConfiguration.getAuthenticationProtocol().toString().equals("API_KEY"))
+  #if($bindaasConfiguration.getAuthenticationProtocol().toString().equals("api_key"))
     #if ($adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("ldap") || $adminconsoleConfiguration.getAdminConfiguration().getAuthenticationMethod().toString().equals("defaultMethod"))
       <form action="/authenticate" method="post">
 	 	 <fieldset>
@@ -149,17 +149,21 @@
 	  #end
 	<a href="/user/login"><strong>Switch to Query Browser</strong></a>
 
-  #elseif ($bindaasConfiguration.getAuthenticationProtocol().toString().equals("JWT"))
+  #elseif ($bindaasConfiguration.getAuthenticationProtocol().toString().equals("jwt"))
 
 	  <fieldset>
 		  <legend><h4>Admin Zone</h4></legend>
 
 		  <div class="row">
 			  <div class="two mobile-one columns">
-				  <input type="submit" class="right button" id="inputButton" onclick="login()" value="Log In" />
+				  <input type="submit" class="right button" id="inputButton" onclick="login()" value="Log In" disabled/>
 			  </div>
 		  </div>
 	  </fieldset>
+
+	  <input type="hidden" name="domain" id="domain" value="$auth0Domain" />
+	  <input type="hidden" name="clientId" id="clientId" value="$auth0ClientId" />
+	  <input type="hidden" name="audience" id="audience" value="$auth0Audience" />
 
 	  <form id ="auth0-form" action="/authenticate" method="post">
 		  <input type="hidden" name="accessToken" id="accessToken" value="" />
@@ -171,5 +175,4 @@
 
    </div>
 
-<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
 </html>

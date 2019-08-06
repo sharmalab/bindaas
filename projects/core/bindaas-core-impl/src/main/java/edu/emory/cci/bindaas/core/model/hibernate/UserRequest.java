@@ -58,7 +58,9 @@ public class UserRequest {
 	@Expose
 	@Column(nullable = false)
 	private String stage; // pending|accepted|revoked|denied
-	
+
+	@Expose
+	private String role;
 	
 	public Long getId() {
 		return id;
@@ -131,5 +133,10 @@ public class UserRequest {
 	public void setStage(String stage) {
 		this.stage = stage;
 	}
-
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
 }

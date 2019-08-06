@@ -35,6 +35,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.ISecurityHandler;
 import edu.emory.cci.bindaas.core.bundle.Activator;
 import edu.emory.cci.bindaas.core.config.BindaasConfiguration;
@@ -43,6 +44,7 @@ import edu.emory.cci.bindaas.security.api.AuthenticationException;
 import edu.emory.cci.bindaas.security.api.IAuthenticationProvider;
 import edu.emory.cci.bindaas.security.api.IAuthorizationProvider;
 
+import static edu.emory.cci.bindaas.core.jwt.DefaultJWTManager.getRole;
 
 public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	private Log log = LogFactory.getLog(getClass());
@@ -82,9 +84,8 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 	
 	private AuthenticationProtocol authenticationProtocol = AuthenticationProtocol.API_KEY; // default
 	public final static String TOKEN = "token";
-	public final static String API_KEY = "api_key";
-	public final static String JWT = "jwt";
 	public final static String AUTH_HEADER = "Authorization";
+
 	private ServiceTracker<DynamicObject<BindaasConfiguration>,DynamicObject<BindaasConfiguration>> bindaasConfigServiceTracker;
 	
 	
@@ -198,17 +199,17 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		// get apiKey from the query parameters
 		MultivaluedMap<String, String> queryMap =  JAXRSUtils.getStructuredParams((String) message.get(Message.QUERY_STRING), "&", true , true);
 		
-		if(queryMap!=null && queryMap.getFirst(API_KEY)!=null)
-			apiKey = queryMap.getFirst(API_KEY);
+		if(queryMap!=null && queryMap.getFirst(BindaasConstants.API_KEY)!=null)
+			apiKey = queryMap.getFirst(BindaasConstants.API_KEY);
 		
 		// if not present in query param , then look into http header
 		
 		if(apiKey == null)
 		{
 			Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
-			if(protocolHeaders!=null && protocolHeaders.get(API_KEY)!=null)
+			if(protocolHeaders!=null && protocolHeaders.get(BindaasConstants.API_KEY)!=null)
 			{
-				List<?> values = (List<?>) protocolHeaders.get(API_KEY);
+				List<?> values = (List<?>) protocolHeaders.get(BindaasConstants.API_KEY);
 				if(values!=null && values.size() > 0)
 				{
 					apiKey = values.get(0).toString();
@@ -264,30 +265,7 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 
 	private Principal handleJWT(Message message,final IAuthenticationProvider authenticationProvider) throws Exception
 	{
-		String jwt = null;
-
-		// get jwt from the query parameters
-		MultivaluedMap<String, String> queryMap =  JAXRSUtils.getStructuredParams((String) message.get(Message.QUERY_STRING), "&", true , true);
-
-		if(queryMap!=null && queryMap.getFirst(JWT)!=null)
-			jwt = queryMap.getFirst(JWT);
-
-		// if not present in query param , then look into http header
-
-		if(jwt == null)
-		{
-			Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
-
-			if(protocolHeaders!=null && protocolHeaders.get(AUTH_HEADER)!=null)
-			{
-				List<?> values = (List<?>) protocolHeaders.get(AUTH_HEADER);
-				if(values!=null && values.size() > 0)
-				{
-					jwt = values.get(0).toString().split(" ")[1];
-				}
-
-			}
-		}
+		String jwt = extractJWT(message);
 
 		if(jwt != null)
 		{
@@ -452,6 +430,9 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		{
 			message.put(SecurityContext.class,
 					createSecurityContext(authenticatedUser.getName()));
+			if(authenticationProtocol.equals(AuthenticationProtocol.JWT)){
+				message.put(BindaasConstants.ROLE,getRole(extractJWT(message)));
+			}
 		}
 		else
 		{
@@ -543,6 +524,35 @@ public class SecurityHandler implements RequestHandler,ISecurityHandler {
 		}
 		else
 		return null;
+	}
+
+	private String extractJWT(Message message){
+		String jwt = null;
+
+		// get jwt from the query parameters
+		MultivaluedMap<String, String> queryMap =  JAXRSUtils.getStructuredParams((String) message.get(Message.QUERY_STRING), "&", true , true);
+
+		if(queryMap!=null && queryMap.getFirst(BindaasConstants.JWT)!=null) {
+			jwt = queryMap.getFirst(BindaasConstants.JWT);
+		}
+
+		// if not present in query param , then look into http header
+		if(jwt == null)
+		{
+			Map<?,?> protocolHeaders = (Map<?,?>) message.get(Message.PROTOCOL_HEADERS);
+
+			if(protocolHeaders!=null && protocolHeaders.get(AUTH_HEADER)!=null)
+			{
+				List<?> values = (List<?>) protocolHeaders.get(AUTH_HEADER);
+				if(values!=null && values.size() > 0)
+				{
+					jwt = values.get(0).toString().split(" ")[1];
+				}
+
+			}
+		}
+
+		return jwt;
 	}
 
 

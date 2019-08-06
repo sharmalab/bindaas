@@ -314,6 +314,7 @@
 <bean id="loginView" class="edu.emory.cci.bindaas.webconsole.LoginView">
 	<property name="velocityEngineWrapper" ref="velocityWrapper"></property>
 	<property name="versionManager" ref="versionManager"></property>
+	<property name="JWTManager" ref="jwtManager"></property>
 </bean>
 
 

@@ -1,18 +1,23 @@
 let auth0 = null;
 
-//FIXME read values from file
-const configureClient = async () => {
+const configureClient = async (auth0Domain,auth0ClientId,auth0Audience) => {
     auth0 = await createAuth0Client({
-        domain: 'tushar-97.auth0.com',
-        client_id: 'RHWrWpw9Yf0SgGOBlpG0mXqIwIEhykN4',
-        audience: 'my-api',
+        domain: auth0Domain,
+        client_id: auth0ClientId,
+        audience: auth0Audience,
         prompt: 'login'
     });
 };
 
 
 window.onload = async () => {
-    await configureClient();
+
+    let auth0Domain = document.getElementById("domain").value;
+    let auth0ClientId = document.getElementById("clientId").value;
+    let auth0Audience = document.getElementById("audience").value;
+
+    await configureClient(auth0Domain,auth0ClientId,auth0Audience);
+    document.getElementById("inputButton").disabled = false;
 
 };
 
