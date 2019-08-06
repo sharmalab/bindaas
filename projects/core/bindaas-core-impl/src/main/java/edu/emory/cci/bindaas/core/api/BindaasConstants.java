@@ -17,5 +17,6 @@ public interface BindaasConstants {
 	public static final String APIKEY= "apiKey";
 	public static final String JWT = "jwt";
 	public static final String ROLE = "role";
+	public static final String AUTH0_ROLE_CLAIM = "https://bindaas.com/role";
 
 }

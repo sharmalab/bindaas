@@ -3,6 +3,8 @@ package edu.emory.cci.bindaas.core.jwt;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
+
 public class UserInfo {
 
 	@SerializedName("sub")
@@ -45,7 +47,7 @@ public class UserInfo {
 	@Expose
 	private Boolean emailVerified;
 
-	@SerializedName("https://bindaas.com/role")
+	@SerializedName(BindaasConstants.AUTH0_ROLE_CLAIM)
 	@Expose
 	private String role;
 

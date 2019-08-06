@@ -24,23 +24,7 @@
 		<link rel="stylesheet" href="/foundation/stylesheets/foundation.min.css">
 		<link rel="stylesheet" href="/foundation/stylesheets/app.css">
 		<link rel="stylesheet" href="/foundation/stylesheets/general_enclosed_foundicons.css">
-##		FIXME: Move to proper CSS file later + ellipsis
-		<style type = "text/css">
-			.wrapword{
-				/*white-space: -moz-pre-wrap !important;  !* Mozilla, since 1999 *!*/
-				/*white-space: -webkit-pre-wrap; !*Chrome & Safari *!*/
-				/*white-space: -pre-wrap;      !* Opera 4-6 *!*/
-				/*white-space: -o-pre-wrap;    !* Opera 7 *!*/
-				/*white-space: pre-wrap;       !* css-3 *!*/
-				/*word-wrap: break-word;       !* Internet Explorer 5.5+ *!*/
-				/*word-break: break-all;*/
-				/*white-space: normal;*/
-				white-space: nowrap;
-				text-overflow:ellipsis;
-				overflow: hidden;
-				max-width:100px;
-			}
-		</style>
+
 		<!-- Latest version of jQuery -->
 		<script src="/foundation/javascripts/jquery.js"></script>
 		
@@ -146,6 +130,12 @@
 												$("#getCommentsDialog").reveal();
 											}
 
+											function showTokenDialog(token){
+												document.getElementById("tokenArea").value = token;
+												$("#showToken").reveal();
+
+											}
+
 										</script>
 										<input type="hidden" id="entityId" />
 										<input type="hidden" id="entityAction" />
@@ -189,7 +179,15 @@
 													<tbody>
 														#foreach ($acceptedRequest in $acceptedRequests)
 														<tr>
-															<td>$acceptedRequest.getRequestDate().toString()</td><td>$acceptedRequest.getDateExpires()</td><td>$acceptedRequest.getFirstName()</td><td>$acceptedRequest.getLastName()</td><td>$acceptedRequest.getEmailAddress()</td><td class="wrapword">#if(!$acceptedRequest.getJWT())$acceptedRequest.getApiKey()#else$acceptedRequest.getJWT()#end</td><td>
+															<td>$acceptedRequest.getRequestDate().toString()</td><td>$acceptedRequest.getDateExpires()</td><td>$acceptedRequest.getFirstName()</td><td>$acceptedRequest.getLastName()</td><td>$acceptedRequest.getEmailAddress()</td>
+															<td>
+																#if(!$acceptedRequest.getJWT())
+																	$acceptedRequest.getApiKey()
+																#else
+																	<a href="#" class="foundicon-paper-clip" onclick="showTokenDialog('$acceptedRequest.getJWT()')"> Reveal Token </a>
+																#end
+															</td>
+															<td>
 															<div>
 																<a href="#" class="foundicon-minus" onclick="showCommentsExpirationDialog('revoke' , '$acceptedRequest.getId()')"> Revoke Access </a>
 															</div>
@@ -1049,6 +1047,14 @@
 				});
 			</script>
 			<a class="close-reveal-modal">&#215;</a>
+		</div>
+		<div id="showToken" class="reveal-modal large">
+			<label>Access Token:</label>
+			<div>
+				<textarea id="tokenArea" rows="8" readonly></textarea>
+			</div>
+			<a class="close-reveal-modal">&#215;</a>
+
 		</div>
 
 </html>
