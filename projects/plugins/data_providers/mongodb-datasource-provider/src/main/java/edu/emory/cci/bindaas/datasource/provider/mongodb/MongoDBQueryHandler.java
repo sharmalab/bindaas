@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +45,7 @@ import edu.emory.cci.bindaas.framework.provider.exception.QueryExecutionFailedEx
 import edu.emory.cci.bindaas.framework.provider.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
-import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.addAuthRule;
+import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.getAuthorizationRulesCache;
 
 public class MongoDBQueryHandler implements IQueryHandler {
 
@@ -115,7 +116,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
                     
                         
                     // get DB collection
-                    DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
+                    final DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
                     String dbCollectionKey = configuration.getDb() + "-" + configuration.getCollection();
                     if (! dbCollectionMap.containsKey(dbCollectionKey) ) {
                         MongoClient mongo = null;
@@ -151,42 +152,50 @@ public class MongoDBQueryHandler implements IQueryHandler {
                         }
                     }
 
-                    Object role = requestContext.getAttributes().get(BindaasConstants.ROLE);
+                    final Object role = requestContext.getAttributes().get(BindaasConstants.ROLE);
                     Boolean authorization = configuration.getAuthorizationCollection() != null && !configuration.getAuthorizationCollection().isEmpty();
 
+                    // caching role for all query operations
                     if( role != null && authorization) {
                         try {
-                            // first check in cache
-                            MongoClient mongo = null;
-                            MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
-                            optionsBuilder.connectionsPerHost(50);
-                            MongoClientOptions options = optionsBuilder.build();
+                            getAuthorizationRulesCache().get(role.toString(), new Callable<List<String>>() {
+                                @Override
+                                public List<String> call() throws Exception {
+                                    MongoClient mongo = null;
+                                    MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
+                                    optionsBuilder.connectionsPerHost(50);
+                                    MongoClientOptions options = optionsBuilder.build();
 
-                            if(configuration.getUsername() == null && configuration.getPassword() == null){
-                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
-                            }
-                            else if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
-                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
-                            }
-                            else{
-                                MongoCredential credential = MongoCredential.createCredential(
-                                        configuration.getUsername(),
-                                        configuration.getAuthenticationDb(),
-                                        configuration.getPassword().toCharArray()
-                                );
-                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential),options);
-                            }
+                                    if(configuration.getUsername() == null && configuration.getPassword() == null){
+                                        mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+                                    }
+                                    else if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+                                        mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+                                    }
+                                    else{
+                                        MongoCredential credential = MongoCredential.createCredential(
+                                                configuration.getUsername(),
+                                                configuration.getAuthenticationDb(),
+                                                configuration.getPassword().toCharArray()
+                                        );
+                                        mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential),options);
+                                    }
 
-                            MongoDatabase database = mongo.getDatabase(configuration.getDb());
-                            MongoCollection<Document> authCollection = database.getCollection(configuration.getAuthorizationCollection());
-                            authCollection.dropIndexes();
-                            authCollection.createIndex(Indexes.text("roles"));
-                            FindIterable<Document> docs = authCollection.find(Filters.text(role.toString()));
-                            List<String> projectsList = new ArrayList<String>();
-                            for (Document doc : docs) {
-                                projectsList.add(doc.getString("projectName"));
-                            }
-                            addAuthRule(role.toString(),projectsList);
+                                    MongoDatabase database = mongo.getDatabase(configuration.getDb());
+                                    MongoCollection<Document> authCollection = database.getCollection(configuration.getAuthorizationCollection());
+                                    authCollection.dropIndexes();
+                                    authCollection.createIndex(Indexes.text("roles"));
+                                    FindIterable<Document> docs = authCollection.find(Filters.text(role.toString()));
+                                    List<String> projectsList = new ArrayList<String>();
+                                    for (Document doc : docs) {
+                                        projectsList.add(doc.getString("projectName"));
+                                    }
+
+                                    return projectsList;
+                                }
+                            });
+
+//                            addAuthRule(role.toString(),projectsList);
 
                         } catch (Exception e) {
                             log.error(e);

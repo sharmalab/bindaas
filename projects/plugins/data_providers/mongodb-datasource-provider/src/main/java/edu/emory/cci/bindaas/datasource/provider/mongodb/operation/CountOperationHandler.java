@@ -21,7 +21,7 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
-import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.getAuthRules;
+import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.getAuthorizationRulesCache;
 
 public class CountOperationHandler implements IOperationHandler {
 
@@ -39,7 +39,7 @@ public class CountOperationHandler implements IOperationHandler {
 				DBCursor cursor = collection.find(query);
 				if(authorization) {
 					for(DBObject o : cursor) {
-						if(!getAuthRules().get(role).contains(o.get("Project").toString())){
+						if(!getAuthorizationRulesCache().getIfPresent(role).contains(o.get("Project").toString())){
 							throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION, "Not authorized to execute this query.");
 						}
 					}

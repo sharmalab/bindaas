@@ -6,10 +6,13 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.gson.JsonObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -40,7 +43,16 @@ public class MongoDBProvider implements IProvider{
 	private Log log = LogFactory.getLog(getClass());
 	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
 	private JsonObject documentation;
-	private static Map<String, List<String>> authRules;
+	private static final Long DECISION_CACHE_MAX = 1000l;
+	private static final Long DECISION_CACHE_TIMEOUT_MINUTES = 6l;
+	private static Cache<String ,List<String>> authorizationRulesCache;
+
+	public static Cache<String, List<String>> getAuthorizationRulesCache() {
+		if (authorizationRulesCache == null) {
+			initCache();
+		}
+		return authorizationRulesCache;
+	}
 
 	public void init() {
 		Dictionary<String, Object> props = new Hashtable<String, Object>();
@@ -51,8 +63,14 @@ public class MongoDBProvider implements IProvider{
 		
 		documentation = DocumentationUtil.getProviderDocumentation(Activator.getContext(), DOCUMENTATION_RESOURCES_LOCATION);
 
-		authRules = new HashMap<String, List<String>>();
+		initCache();
 	}
+
+	private static void initCache() {
+		// initialize cache
+		authorizationRulesCache = CacheBuilder.newBuilder().expireAfterWrite(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
+	}
+
 	public void setQueryHandler(IQueryHandler queryHandler) {
 		this.queryHandler = queryHandler;
 	}
@@ -65,13 +83,6 @@ public class MongoDBProvider implements IProvider{
 		this.submitHandler = submitHandler;
 	}
 
-	public static Map<String, List<String>> getAuthRules() {
-		return authRules;
-	}
-
-	public static void addAuthRule(String role, List<String> projects) {
-		getAuthRules().put(role,projects);
-	}
 
 	@Override
 	public String getId() {

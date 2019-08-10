@@ -2,6 +2,7 @@ package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import com.mongodb.client.model.Indexes;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
@@ -36,7 +38,7 @@ import edu.emory.cci.bindaas.framework.provider.exception.DeleteExecutionFailedE
 import edu.emory.cci.bindaas.framework.provider.exception.QueryExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
-import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.addAuthRule;
+import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.getAuthorizationRulesCache;
 
 public class MongoDBDeleteHandler implements IDeleteHandler {
 
@@ -68,7 +70,7 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 			}
 			
 			// get DB collection
-			DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
+			final DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
 			MongoClient mongo = null;
 			try {
 				if(configuration.getUsername() == null && configuration.getPassword() == null){
@@ -89,22 +91,48 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 				DBCollection collection = db.getCollection(configuration.getCollection());
 
 
-				Object role = requestContext.getAttributes().get(BindaasConstants.ROLE);
+				final Object role = requestContext.getAttributes().get(BindaasConstants.ROLE);
 				Boolean authorization = configuration.getAuthorizationCollection() != null && !configuration.getAuthorizationCollection().isEmpty();
 
+				// caching role for all delete operations
 				if( role != null && authorization) {
 					try {
-						// first check in cache
-						MongoDatabase database = mongo.getDatabase(configuration.getDb());
-						MongoCollection<Document> authCollection = database.getCollection(configuration.getAuthorizationCollection());
-						authCollection.dropIndexes();
-						authCollection.createIndex(Indexes.text("roles"));
-						FindIterable<Document> docs = authCollection.find(Filters.text(role.toString()));
-						List<String> projectsList = new ArrayList<String>();
-						for (Document doc : docs) {
-							projectsList.add(doc.getString("projectName"));
-						}
-						addAuthRule(role.toString(),projectsList);
+
+						getAuthorizationRulesCache().get(role.toString(), new Callable<List<String>>() {
+							@Override
+							public List<String> call() throws Exception {
+								MongoClient mongo = null;
+								MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
+								optionsBuilder.connectionsPerHost(50);
+								MongoClientOptions options = optionsBuilder.build();
+
+								if(configuration.getUsername() == null && configuration.getPassword() == null){
+									mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+								}
+								else if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+									mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+								}
+								else{
+									MongoCredential credential = MongoCredential.createCredential(
+											configuration.getUsername(),
+											configuration.getAuthenticationDb(),
+											configuration.getPassword().toCharArray()
+									);
+									mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential),options);
+								}
+
+								MongoDatabase database = mongo.getDatabase(configuration.getDb());
+								MongoCollection<Document> authCollection = database.getCollection(configuration.getAuthorizationCollection());
+								authCollection.dropIndexes();
+								authCollection.createIndex(Indexes.text("roles"));
+								FindIterable<Document> docs = authCollection.find(Filters.text(role.toString()));
+								List<String> projectsList = new ArrayList<String>();
+								for (Document doc : docs) {
+									projectsList.add(doc.getString("projectName"));
+								}
+								return projectsList;
+							}
+						});
 
 					} catch (Exception e) {
 						log.error(e);
