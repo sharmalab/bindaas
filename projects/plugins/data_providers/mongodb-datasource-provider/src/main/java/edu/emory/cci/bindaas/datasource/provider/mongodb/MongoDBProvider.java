@@ -2,7 +2,10 @@ package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
 import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +40,8 @@ public class MongoDBProvider implements IProvider{
 	private Log log = LogFactory.getLog(getClass());
 	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
 	private JsonObject documentation;
-	
+	private static Map<String, List<String>> authRules;
+
 	public void init() {
 		Dictionary<String, Object> props = new Hashtable<String, Object>();
 		props.put("class", getClass().getName());
@@ -46,6 +50,8 @@ public class MongoDBProvider implements IProvider{
 		// initialize documentation object
 		
 		documentation = DocumentationUtil.getProviderDocumentation(Activator.getContext(), DOCUMENTATION_RESOURCES_LOCATION);
+
+		authRules = new HashMap<String, List<String>>();
 	}
 	public void setQueryHandler(IQueryHandler queryHandler) {
 		this.queryHandler = queryHandler;
@@ -57,6 +63,14 @@ public class MongoDBProvider implements IProvider{
 
 	public void setSubmitHandler(ISubmitHandler submitHandler) {
 		this.submitHandler = submitHandler;
+	}
+
+	public static Map<String, List<String>> getAuthRules() {
+		return authRules;
+	}
+
+	public static void addAuthRule(String role, List<String> projects) {
+		getAuthRules().put(role,projects);
 	}
 
 	@Override
