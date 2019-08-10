@@ -1,5 +1,7 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb.operation;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -20,12 +22,14 @@ import edu.emory.cci.bindaas.framework.model.ProviderException;
 import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
+import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.getAuthRules;
+
 public class FindOperationHandler implements IOperationHandler {
 	
 	private Log log = LogFactory.getLog(getClass());
 	@Override
 	public QueryResult handleOperation(DBCollection collection,
-			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry )
+			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry, String role, Boolean authorization )
 			throws ProviderException {
 	
 		FindOperationDescriptor operationDescriptor = GSONUtil.getGSONInstance().fromJson(operationArguments, FindOperationDescriptor.class);
@@ -49,6 +53,14 @@ public class FindOperationHandler implements IOperationHandler {
 				else
 				{
 					cursor = collection.find(query);
+				}
+
+				if(authorization) {
+					for(DBObject o : cursor) {
+						if(!getAuthRules().get(role).contains(o.get("Project").toString())){
+							throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION, "Not authorized to execute this query.");
+						}
+					}
 				}
 
 				if(operationDescriptor.sort !=null)

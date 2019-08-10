@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import com.mongodb.util.JSON;
@@ -20,16 +21,28 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
+import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.getAuthRules;
+
+
 public class DeleteOperationHandler implements IOperationHandler{
 
 	private Log log = LogFactory.getLog(getClass());
 	@Override
 	public QueryResult handleOperation(DBCollection collection,
-			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry )
+			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry, String role, Boolean authorization )
 			throws ProviderException {
 	
 		DeleteOperationDescriptor operationDescriptor = GSONUtil.getGSONInstance().fromJson(operationArguments, DeleteOperationDescriptor.class);
 		validateArguments(operationDescriptor);
+		DBObject query = (DBObject) JSON.parse(operationDescriptor.query.toString());
+		DBCursor cursor = collection.find(query);
+		if(authorization) {
+			for(DBObject o : cursor) {
+				if(!getAuthRules().get(role).contains(o.get("Project").toString())){
+					throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION, "Not authorized to execute this query.");
+				}
+			}
+		}
 		WriteResult writeResult = collection.remove( DBObject.class.cast(JSON.parse(operationDescriptor.query.toString())));
 		QueryResult queryResult = new QueryResult();
 		queryResult.setData(new ByteArrayInputStream( String.format("{ \"rowsAffected\" : %s ,  \"operation\" : \"delete\" , \"query\" : %s }", writeResult.getN() + "" , operationDescriptor.query.toString() ).getBytes()));
