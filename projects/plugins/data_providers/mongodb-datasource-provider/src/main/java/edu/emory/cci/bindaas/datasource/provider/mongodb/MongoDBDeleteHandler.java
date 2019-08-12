@@ -143,7 +143,7 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 				// use operationDescriptor to route to correct handler
 				
 				IOperationHandler operationHandler = operationDescriptor.get_operation().getHandler();
-				QueryResult result = operationHandler.handleOperation(collection, null , operationDescriptor.get_operation_args(), null, role.toString(), authorization);
+				QueryResult result = operationHandler.handleOperation(collection, null , operationDescriptor.get_operation_args(), null, role, authorization);
 				return result;
 				
 			} catch (Exception e) {

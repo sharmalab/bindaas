@@ -24,7 +24,7 @@ window.onload = async () => {
 
 const login = async () => {
 
-    document.getElementById('inputButton').style.opacity=0.5;
+    document.getElementById("inputButton").disabled=true;
 
     const token = await auth0.getTokenWithPopup();
     const user = await auth0.getUser();
@@ -32,6 +32,8 @@ const login = async () => {
     document.getElementById("accessToken").value = token;
 
     auth0.logout();
+
+    document.getElementById("inputButton").disabled=false;
 
     document.getElementById("auth0-form").submit();
 

@@ -10,6 +10,6 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 
 public interface IOperationHandler {
 
-	public QueryResult handleOperation(DBCollection collection, OutputFormatProps outputFormatProps , JsonObject operationArguments, OutputFormatRegistry registry, String rsole, boolean authorization) throws ProviderException;
+	public QueryResult handleOperation(DBCollection collection, OutputFormatProps outputFormatProps , JsonObject operationArguments, OutputFormatRegistry registry, Object role, boolean authorization) throws ProviderException;
 	
 }

@@ -29,7 +29,7 @@ public class CountOperationHandler implements IOperationHandler {
 	
 	@Override
 	public QueryResult handleOperation(DBCollection collection,
-			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry, String role, boolean authorization)
+			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry, Object role, boolean authorization)
 			throws ProviderException {
 		CountOperationDescriptor operationDescriptor = GSONUtil.getGSONInstance().fromJson(operationArguments, CountOperationDescriptor.class);
 		validateArguments(operationDescriptor);
@@ -37,9 +37,9 @@ public class CountOperationHandler implements IOperationHandler {
 			try{
 				DBObject query = (DBObject) JSON.parse(operationDescriptor.query.toString());
 				DBCursor cursor = collection.find(query);
-				if(authorization) {
+				if(role != null & authorization) {
 					for(DBObject o : cursor) {
-						if(!getAuthorizationRulesCache().getIfPresent(role).
+						if(!getAuthorizationRulesCache().getIfPresent(role.toString()).
 								contains(o.get("project").toString())){
 							throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION, "Not authorized to execute this query.");
 						}

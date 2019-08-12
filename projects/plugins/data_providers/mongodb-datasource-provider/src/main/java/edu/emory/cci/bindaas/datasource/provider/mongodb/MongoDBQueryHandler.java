@@ -204,7 +204,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
                     // use operationDescriptor to route to correct handler
                     
                     IOperationHandler operationHandler = operationDescriptor.get_operation().getHandler();
-                    QueryResult result = operationHandler.handleOperation(dbCollectionMap.get(dbCollectionKey), props , operationDescriptor.get_operation_args(), registry, role.toString(), authorization);
+                    QueryResult result = operationHandler.handleOperation(dbCollectionMap.get(dbCollectionKey), props , operationDescriptor.get_operation_args(), registry, role, authorization);
                     return result;
                     
                     
