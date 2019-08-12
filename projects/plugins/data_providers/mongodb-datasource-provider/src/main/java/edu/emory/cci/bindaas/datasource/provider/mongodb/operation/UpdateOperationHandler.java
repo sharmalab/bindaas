@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import com.mongodb.util.JSON;
@@ -20,18 +21,30 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
+import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.getAuthorizationRulesCache;
+
 public class UpdateOperationHandler implements IOperationHandler{
 
 	private Log log = LogFactory.getLog(getClass());
 	@Override
 	public QueryResult handleOperation(DBCollection collection,
-			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry )
+			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry, String role, boolean authorization )
 			throws ProviderException {
 	
 		UpdateOperationDescriptor operationDescriptor = GSONUtil.getGSONInstance().fromJson(operationArguments, UpdateOperationDescriptor.class);
 		validateArguments(operationDescriptor);
-		
-		WriteResult writeResult = collection.update( DBObject.class.cast(JSON.parse(operationDescriptor.query.toString())), DBObject.class.cast(JSON.parse(operationDescriptor.update.toString())),operationDescriptor.upsert,operationDescriptor.multi);
+
+		DBObject query = (DBObject) JSON.parse(operationDescriptor.query.toString());
+		DBCursor cursor = collection.find(query);
+		if(authorization) {
+			for(DBObject o : cursor) {
+				if(!getAuthorizationRulesCache().getIfPresent(role).
+						contains(o.get("Project").toString())){
+					throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION, "Not authorized to execute this query.");
+				}
+			}
+		}
+		WriteResult writeResult = collection.update(query, DBObject.class.cast(JSON.parse(operationDescriptor.update.toString())),operationDescriptor.upsert,operationDescriptor.multi);
 		QueryResult queryResult = new QueryResult();
 		queryResult.setData(new ByteArrayInputStream( String.format("{ \"rowsAffected\" : %s ,  \"operation\" : \"update\" , " +
 				"\"query\" : %s , \"upsert\": %b , \"multi\": %b }", writeResult.getN() + "" ,

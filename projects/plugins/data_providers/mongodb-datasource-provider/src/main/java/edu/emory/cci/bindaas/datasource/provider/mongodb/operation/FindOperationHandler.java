@@ -29,7 +29,7 @@ public class FindOperationHandler implements IOperationHandler {
 	private Log log = LogFactory.getLog(getClass());
 	@Override
 	public QueryResult handleOperation(DBCollection collection,
-			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry, String role, Boolean authorization )
+			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry, String role, boolean authorization )
 			throws ProviderException {
 	
 		FindOperationDescriptor operationDescriptor = GSONUtil.getGSONInstance().fromJson(operationArguments, FindOperationDescriptor.class);
@@ -57,7 +57,8 @@ public class FindOperationHandler implements IOperationHandler {
 
 				if(authorization) {
 					for(DBObject o : cursor) {
-						if(!getAuthorizationRulesCache().getIfPresent(role).contains(o.get("Project").toString())){
+						if(!getAuthorizationRulesCache().getIfPresent(role).
+								contains(o.get("Project").toString())){
 							throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION, "Not authorized to execute this query.");
 						}
 					}

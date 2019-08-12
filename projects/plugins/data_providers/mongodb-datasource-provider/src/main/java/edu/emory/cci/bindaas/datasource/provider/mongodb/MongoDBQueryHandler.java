@@ -153,12 +153,12 @@ public class MongoDBQueryHandler implements IQueryHandler {
                     }
 
                     final Object role = requestContext.getAttributes().get(BindaasConstants.ROLE);
-                    Boolean authorization = configuration.getAuthorizationCollection() != null && !configuration.getAuthorizationCollection().isEmpty();
+                    boolean authorization = configuration.getAuthorizationCollection() != null && !configuration.getAuthorizationCollection().isEmpty();
 
                     // caching role for all query operations
                     if( role != null && authorization) {
                         try {
-                            getAuthorizationRulesCache().get(role.toString(), new Callable<List<String>>() {
+                           List<String> projects =  getAuthorizationRulesCache().get(role.toString(), new Callable<List<String>>() {
                                 @Override
                                 public List<String> call() throws Exception {
                                     MongoClient mongo = null;
@@ -194,8 +194,6 @@ public class MongoDBQueryHandler implements IQueryHandler {
                                     return projectsList;
                                 }
                             });
-
-//                            addAuthRule(role.toString(),projectsList);
 
                         } catch (Exception e) {
                             log.error(e);
