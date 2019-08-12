@@ -40,7 +40,7 @@ public class CountOperationHandler implements IOperationHandler {
 				if(authorization) {
 					for(DBObject o : cursor) {
 						if(!getAuthorizationRulesCache().getIfPresent(role).
-								contains(o.get("Project").toString())){
+								contains(o.get("project").toString())){
 							throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION, "Not authorized to execute this query.");
 						}
 					}

@@ -156,7 +156,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 
 				if(role != null & authorization) {
 					if (!getAuthorizationRulesCache().getIfPresent(role.toString()).
-							contains(object.get("Project").toString())) {
+							contains(object.get("project").toString())) {
 						throw new Exception("Not authorized to execute this query.");
 					}
 				}
@@ -180,7 +180,7 @@ public class MongoDBSubmitHandler implements ISubmitHandler {
 				if(role != null & authorization) {
 					for (DBObject o : object) {
 						if(!getAuthorizationRulesCache().getIfPresent(role.toString()).
-								contains(o.get("Project").toString())){
+								contains(o.get("project").toString())){
 							throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION, "Not authorized to execute this query.");
 						}
 					}

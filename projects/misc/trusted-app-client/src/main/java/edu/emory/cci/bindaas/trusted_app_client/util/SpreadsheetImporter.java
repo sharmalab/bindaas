@@ -119,7 +119,7 @@ public class SpreadsheetImporter {
 							"{ 'username' : '%s' , 'role' : '%s' }", username,
 							role);
 					Date dateExpires = dateFormat.parse(expires);
-					// FIXME fix protocol
+					// The utility only works with api keys for the time being
 					try {
 						JsonObject serverResponse = trustedAppClient.authorizeNewUser("api_key",
 								email, dateExpires.getTime(), comments);
