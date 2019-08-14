@@ -14,6 +14,8 @@
 		<span class="has-tip tip-left" data-width="210" title="Username for connecting to the MongoDB database"><input type="text" id="mongo_username" /></span>
 		<label>Password (Optional)</label>
 		<span class="has-tip tip-left" data-width="210" title="Password for connecting to the MongoDB database"><input type="password" id="mongo_password" /></span>
+		<label>Authorization Rules Collection Name (Optional)</label>
+		<span class="has-tip tip-left" data-width="210" title="Name of the MongoDB database collection which specifies the rules"><input type="text" id="mongo_auth_collection" /></span>
 
 		<span class="has-tip tip-left" data-width="210" title="This option will generate submit API to upload data in CSV and JSON formats"><label for="mongo_auto_init"><input type="checkbox" CHECKED id="mongo_auto_init">  Generate Default API</label></span>
 		
@@ -52,6 +54,11 @@
 			{
 				updateProviderFieldMongo();
 			});
+
+			$("#mongo_auth_collection").keyup(function ()
+			{
+				updateProviderFieldMongo();
+			});
 			
 			$("#mongo_auto_init").click(function ()
 			{
@@ -75,6 +82,7 @@
 		   	 dataSourceJson.authenticationDb = $("#mongo_authenticationDb").attr("value");
 		   	 dataSourceJson.username = $("#mongo_username").attr("value");
 		   	 dataSourceJson.password = $("#mongo_password").attr("value");
+		   	 dataSourceJson.authorizationCollection = $("#mongo_auth_collection").attr("value");
 
 		   	 if($('#mongo_auto_init').attr('checked')) {
 					  dataSourceJson.initialize = true;
@@ -102,6 +110,7 @@
 				   $("#mongo_authenticationDb").attr("value", dataSourceJson.authenticationDb);
 				   $("#mongo_username").attr("value", dataSourceJson.username);
 				   $("#mongo_password").attr("value", dataSourceJson.password);
+				   $("#mongo_auth_collection").attr("value", dataSourceJson.authorizationCollection);
 
 				   if(dataSourceJson.initialize == true) {
 						  $('#mongo_auto_init').attr('checked' , "true");
