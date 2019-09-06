@@ -13,6 +13,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.apikey.api.APIKey;
 import edu.emory.cci.bindaas.core.apikey.api.APIKeyManagerException;
 import edu.emory.cci.bindaas.core.apikey.api.APIKeyManagerException.Reason;
@@ -78,6 +79,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.eq("emailAddress", emailAddress))
 					.add(Restrictions.gt("dateExpires", new Date()))
+					.add(Restrictions.isNotNull(BindaasConstants.APIKEY))
 					.list();
 
 			if (listOfValidKeys != null && listOfValidKeys.size() > 0) {
@@ -148,6 +150,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.eq("emailAddress", emailAddress))
 					.add(Restrictions.gt("dateExpires", new Date())) // Fixed very critical bug
+					.add(Restrictions.isNotNull(BindaasConstants.APIKEY))
 					.list();
 
 			if (listOfValidKeys != null && listOfValidKeys.size() > 0) {
@@ -207,7 +210,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 			@SuppressWarnings("unchecked")
 			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).
 			add(Restrictions.eq("stage",	Stage.accepted.name())).
-			add(Restrictions.eq("apiKey", apiKey)).
+			add(Restrictions.eq(BindaasConstants.APIKEY, apiKey)).
 			add(Restrictions.gt("dateExpires", new Date())).
 			list();
 			
@@ -241,7 +244,11 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					: bindaasUser.getName() + "@" + bindaasUser.getDomain();
 			
 			@SuppressWarnings("unchecked")
-			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).add(Restrictions.eq("stage",	Stage.accepted.name())).add(Restrictions.eq("emailAddress", emailAddress)).list();
+			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).
+					add(Restrictions.eq("stage", Stage.accepted.name())).
+					add(Restrictions.eq("emailAddress", emailAddress)).
+					add(Restrictions.isNotNull(BindaasConstants.APIKEY)).
+					list();
 			if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
 			{
 				session.beginTransaction();
@@ -279,7 +286,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 		try{
 			
 			@SuppressWarnings("unchecked")
-			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).add(Restrictions.eq("stage",	Stage.accepted.name())).add(Restrictions.eq("apiKey", apiKey)).list();
+			List<UserRequest> listOfValidKeys = (List<UserRequest>) session.createCriteria(UserRequest.class).add(Restrictions.eq("stage",	Stage.accepted.name())).add(Restrictions.eq(BindaasConstants.APIKEY, apiKey)).list();
 			if(listOfValidKeys!=null && listOfValidKeys.size() > 0)
 			{
 				session.beginTransaction();
@@ -379,6 +386,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.createCriteria(UserRequest.class)
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.gt("dateExpires", new Date()))
+					.add(Restrictions.isNotNull(BindaasConstants.APIKEY))
 					.list();
 			return listOfValidKeys;
 		} catch (Exception e) {
@@ -396,7 +404,10 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 			session.beginTransaction();
 			
 			@SuppressWarnings("unchecked")
-			List<UserRequest> list = session.createCriteria(UserRequest.class).add(Restrictions.lt("dateExpires", new Date())).list();
+			List<UserRequest> list = session.createCriteria(UserRequest.class).
+					add(Restrictions.lt("dateExpires", new Date())).
+					add(Restrictions.isNotNull(BindaasConstants.APIKEY)).
+					list();
 			
 			for(UserRequest usr : list)
 			{
@@ -473,6 +484,7 @@ public class DefaultAPIKeyManager implements IAPIKeyManager {
 					.add(Restrictions.eq("stage", Stage.accepted.name()))
 					.add(Restrictions.gt("dateExpires", new Date()))
 					.add(Restrictions.eq("emailAddress", username + "@localhost"))
+					.add(Restrictions.isNotNull(BindaasConstants.APIKEY))
 					.list();
 			
 			if(userKeys!=null && userKeys.size() > 0)

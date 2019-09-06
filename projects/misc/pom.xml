@@ -15,5 +15,6 @@
     <modules>
         <module>commons-xml2json</module>
         <module>json2csv</module>
+        <module>trusted-app-client</module>
     </modules>
 </project>

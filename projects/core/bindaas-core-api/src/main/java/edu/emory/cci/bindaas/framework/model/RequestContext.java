@@ -14,6 +14,8 @@ public class RequestContext {
 		this.attributes = attributes;
 	}
 
+	public void addAttribute(String key, Object value) { this.attributes.put(key,value); }
+
 	public String getUser() {
 		return user;
 	}

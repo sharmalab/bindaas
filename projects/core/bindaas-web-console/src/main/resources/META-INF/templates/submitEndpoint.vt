@@ -329,7 +329,7 @@
 
 				#if ($submitEndpoint.getType().toString().equals('MULTIPART'))
 
-				<form class="custom" id="tryUploadForm" action="$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()?api_key=$apiKey" method="post" enctype="multipart/form-data" target="_blank">
+				<form class="custom" id="tryUploadForm" action="$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()?$protocol=$protocolValue&" method="post" enctype="multipart/form-data" target="_blank">
 					<label>File:</label>
 					<input name="myfile" type="file"  />
 					<a class='small button radius' onclick="uploadFile()">Upload</a>
@@ -350,7 +350,7 @@
 
 				<script>
 					function executeAPI() {
-						var url = '$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()' + "?api_key=$apiKey&";
+						var url = '$serviceUrl/services/$workspace/$profile/submit/$submitEndpoint.getName()' + "?$protocol=$protocolValue&";
 
 						var text = $("#inputText").attr("value");
 						$.post(url, text, function(data, status, response) {
@@ -366,5 +366,4 @@
 			<a class="close-reveal-modal">&#215;</a>
 		</div>
 
-	<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script></body>
 </html>

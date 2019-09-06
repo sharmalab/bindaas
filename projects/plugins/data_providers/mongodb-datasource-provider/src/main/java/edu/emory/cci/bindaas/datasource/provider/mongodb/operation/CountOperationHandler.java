@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.Expose;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
@@ -20,19 +21,30 @@ import edu.emory.cci.bindaas.framework.model.QueryResult;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 import edu.emory.cci.bindaas.framework.util.StandardMimeType;
 
+import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.getAuthorizationRulesCache;
+
 public class CountOperationHandler implements IOperationHandler {
 
 	private Log log = LogFactory.getLog(getClass());
 	
 	@Override
 	public QueryResult handleOperation(DBCollection collection,
-			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry)
+			OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry, Object role, boolean authorization)
 			throws ProviderException {
 		CountOperationDescriptor operationDescriptor = GSONUtil.getGSONInstance().fromJson(operationArguments, CountOperationDescriptor.class);
 		validateArguments(operationDescriptor);
 		
 			try{
 				DBObject query = (DBObject) JSON.parse(operationDescriptor.query.toString());
+				DBCursor cursor = collection.find(query);
+				if(role != null & authorization) {
+					for(DBObject o : cursor) {
+						if(!getAuthorizationRulesCache().getIfPresent(role.toString()).
+								contains(o.get("project").toString())){
+							throw new ProviderException(MongoDBProvider.class.getName() , MongoDBProvider.VERSION, "Not authorized to execute this query.");
+						}
+					}
+				}
 				long count = collection.count(query);
 				JsonObject result = new JsonObject();
 				result.add("query", operationDescriptor.query);

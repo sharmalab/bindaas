@@ -14,6 +14,7 @@ import org.apache.velocity.VelocityContext;
 
 import com.google.gson.JsonObject;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.core.api.IManagementTasks;
 import edu.emory.cci.bindaas.core.api.IModifierRegistry;
 import edu.emory.cci.bindaas.core.api.IProviderRegistry;
@@ -159,8 +160,15 @@ public class QueryEndpointView extends AbstractRequestHandler {
 			String serviceUrl = bindaasConfiguration.getObject().getProxyUrl();
 			context.put("serviceUrl", serviceUrl);
 			BindaasUser admin = (BindaasUser) request.getSession().getAttribute("loggedInUser");
-			context.put("apiKey", admin.getProperty("apiKey"));
-			
+
+			context.put("protocol", bindaasConfiguration.getObject().
+					getAuthenticationProtocol());
+
+			context.put("protocolValue", bindaasConfiguration.getObject().
+					getAuthenticationProtocol().equals(BindaasConstants.JWT)?
+					admin.getProperty(BindaasConstants.JWT):
+					admin.getProperty(BindaasConstants.APIKEY));
+
 			template.merge(context, response.getWriter());
 		}
 		else

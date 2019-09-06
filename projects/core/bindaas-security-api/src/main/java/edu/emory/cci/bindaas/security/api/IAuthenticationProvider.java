@@ -50,5 +50,13 @@ public interface IAuthenticationProvider {
 	 */
 	public boolean isAuthenticationByAPIKeySupported();
 	public BindaasUser loginUsingAPIKey(String securityToken ) throws AuthenticationException;
-	
+
+	/**
+	 * Support for JwT
+	 * @return
+	 */
+
+	public boolean isAuthenticationByJWTSupported();
+	public BindaasUser loginUsingJWT(String jwt) throws AuthenticationException;
+
 }
