@@ -69,3 +69,11 @@ password: password
 More details on configuring Bindaas can be found from the [admin guide](https://github.com/sharmalab/bindaas/wiki/Bindaas-Admin-Guide).
 
 If you prefer to run Bindaas using its Docker container, please refer to [docker/README.md](DOCKER-README.md) for more details.
+
+
+
+## Citing MEDIator
+If you have used Bindaas in your research, please cite the below papers:
+
+* Kathiravelu, P., Saghar, Y.N., Aggarwal, T., and Sharma, A. Data Services with Bindaas: RESTful Interfaces for
+Diverse Data Sources. In The IEEE International Conference on Big Data (BigData’19). 6 pages. Dec. 2019.
