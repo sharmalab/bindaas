@@ -72,7 +72,7 @@ If you prefer to run Bindaas using its Docker container, please refer to [docker
 
 
 
-## Citing MEDIator
+## Citing Bindaas
 If you have used Bindaas in your research, please cite the below papers:
 
 * Kathiravelu, P., Saghar, Y.N., Aggarwal, T., and Sharma, A. Data Services with Bindaas: RESTful Interfaces for
