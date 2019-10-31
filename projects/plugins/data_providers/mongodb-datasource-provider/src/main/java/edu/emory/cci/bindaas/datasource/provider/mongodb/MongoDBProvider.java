@@ -1,15 +1,24 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.gson.JsonObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 
 import edu.emory.cci.bindaas.datasource.provider.mongodb.bundle.Activator;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
@@ -34,7 +43,17 @@ public class MongoDBProvider implements IProvider{
 	private Log log = LogFactory.getLog(getClass());
 	private static final String DOCUMENTATION_RESOURCES_LOCATION = "META-INF/documentation";
 	private JsonObject documentation;
-	
+	private static final Long DECISION_CACHE_MAX = 1000l;
+	private static final Long DECISION_CACHE_TIMEOUT_MINUTES = 6l;
+	private static Cache<String ,List<String>> authorizationRulesCache;
+
+	public static Cache<String, List<String>> getAuthorizationRulesCache() {
+		if (authorizationRulesCache == null) {
+			initCache();
+		}
+		return authorizationRulesCache;
+	}
+
 	public void init() {
 		Dictionary<String, Object> props = new Hashtable<String, Object>();
 		props.put("class", getClass().getName());
@@ -43,7 +62,15 @@ public class MongoDBProvider implements IProvider{
 		// initialize documentation object
 		
 		documentation = DocumentationUtil.getProviderDocumentation(Activator.getContext(), DOCUMENTATION_RESOURCES_LOCATION);
+
+		initCache();
 	}
+
+	private static void initCache() {
+		// initialize cache
+		authorizationRulesCache = CacheBuilder.newBuilder().expireAfterWrite(DECISION_CACHE_TIMEOUT_MINUTES, TimeUnit.MINUTES).maximumSize(DECISION_CACHE_MAX).build();
+	}
+
 	public void setQueryHandler(IQueryHandler queryHandler) {
 		this.queryHandler = queryHandler;
 	}
@@ -55,6 +82,7 @@ public class MongoDBProvider implements IProvider{
 	public void setSubmitHandler(ISubmitHandler submitHandler) {
 		this.submitHandler = submitHandler;
 	}
+
 
 	@Override
 	public String getId() {
@@ -167,9 +195,23 @@ public class MongoDBProvider implements IProvider{
 	}
 	private void connect(DataSourceConfiguration configuration) throws Exception
 	{
-		Mongo mongo = null;
+		MongoClient mongo = null;
 		try {
-			mongo = new Mongo(configuration.getHost(),configuration.getPort());
+			if(configuration.getUsername() == null && configuration.getPassword() == null){
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()));
+			}
+			else if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()));
+			}
+			else{
+				MongoCredential credential = MongoCredential.createCredential(
+						configuration.getUsername(),
+						configuration.getAuthenticationDb(),
+						configuration.getPassword().toCharArray()
+				);
+				mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential));
+			}
+
 			DB db = mongo.getDB(configuration.getDb());
 			DBCollection collection = db.getCollection(configuration.getCollection());
 			collection.count(); // run a simple command to check connectivity

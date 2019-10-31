@@ -50,11 +50,17 @@ public class UserRequest {
 	
 	@Expose
 	private String apiKey;
+
+	@Expose
+	@Column(length = 1023)
+	private String jwt;
 	
 	@Expose
 	@Column(nullable = false)
 	private String stage; // pending|accepted|revoked|denied
-	
+
+	@Expose
+	private String role;
 	
 	public Long getId() {
 		return id;
@@ -115,11 +121,22 @@ public class UserRequest {
 	public void setApiKey(String apiKey) {
 		this.apiKey = apiKey;
 	}
+	public String getJWT() {
+		return jwt;
+	}
+	public void setJWT(String jwt) {
+		this.jwt = jwt;
+	}
 	public String getStage() {
 		return stage;
 	}
 	public void setStage(String stage) {
 		this.stage = stage;
 	}
-
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
 }

@@ -26,7 +26,9 @@
                 <include>${project.groupId}:mongodb-datasource-provider-0.0.1-SNAPSHOT:jar</include>
                 <include>${project.groupId}:mysql-datasource-provider-0.0.1-SNAPSHOT:jar</include>
                 <include>${project.groupId}:postgres-datasource-provider-0.0.1-SNAPSHOT:jar</include>
+                <include>${project.groupId}:blob-download-plugin-0.0.1-SNAPSHOT:jar</include>
                 <include>${project.groupId}:security-dashboard-0.0.1:jar</include>
+                <include>${project.groupId}:trusted-app-client-0.0.1:jar</include>
             </includes>
         </dependencySet>
         <dependencySet>

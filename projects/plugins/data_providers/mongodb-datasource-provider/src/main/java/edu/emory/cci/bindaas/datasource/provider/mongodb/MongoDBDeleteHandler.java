@@ -1,16 +1,30 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bson.Document;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.DeleteOperationHandler.DeleteOperationDescriptor;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.operation.IOperationHandler;
@@ -23,6 +37,8 @@ import edu.emory.cci.bindaas.framework.provider.exception.AbstractHttpCodeExcept
 import edu.emory.cci.bindaas.framework.provider.exception.DeleteExecutionFailedException;
 import edu.emory.cci.bindaas.framework.provider.exception.QueryExecutionFailedException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
+
+import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.getAuthorizationRulesCache;
 
 public class MongoDBDeleteHandler implements IDeleteHandler {
 
@@ -54,17 +70,80 @@ public class MongoDBDeleteHandler implements IDeleteHandler {
 			}
 			
 			// get DB collection
-			DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
-			Mongo mongo = null;
+			final DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
+			MongoClient mongo = null;
 			try {
-				mongo = new Mongo(configuration.getHost(),configuration.getPort());
+				if(configuration.getUsername() == null && configuration.getPassword() == null){
+					mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()));
+				}
+				else if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+					mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()));
+				}
+				else{
+					MongoCredential credential = MongoCredential.createCredential(
+							configuration.getUsername(),
+							configuration.getAuthenticationDb(),
+							configuration.getPassword().toCharArray()
+					);
+					mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential));
+				}
 				DB db = mongo.getDB(configuration.getDb());
 				DBCollection collection = db.getCollection(configuration.getCollection());
+
+
+				final Object role = requestContext.getAttributes().get(BindaasConstants.ROLE);
+				Boolean authorization = configuration.getAuthorizationCollection() != null && !configuration.getAuthorizationCollection().isEmpty();
+
+				// caching role for all delete operations
+				if( role != null && authorization) {
+					try {
+
+						getAuthorizationRulesCache().get(role.toString(), new Callable<List<String>>() {
+							@Override
+							public List<String> call() throws Exception {
+								MongoClient mongo = null;
+								MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
+								optionsBuilder.connectionsPerHost(50);
+								MongoClientOptions options = optionsBuilder.build();
+
+								if(configuration.getUsername() == null && configuration.getPassword() == null){
+									mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+								}
+								else if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+									mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+								}
+								else{
+									MongoCredential credential = MongoCredential.createCredential(
+											configuration.getUsername(),
+											configuration.getAuthenticationDb(),
+											configuration.getPassword().toCharArray()
+									);
+									mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential),options);
+								}
+
+								MongoDatabase database = mongo.getDatabase(configuration.getDb());
+								MongoCollection<Document> authCollection = database.getCollection(configuration.getAuthorizationCollection());
+								authCollection.dropIndexes();
+								authCollection.createIndex(Indexes.text("roles"));
+								FindIterable<Document> docs = authCollection.find(Filters.text(role.toString()));
+								List<String> projectsList = new ArrayList<String>();
+								for (Document doc : docs) {
+									projectsList.add(doc.getString("projectName"));
+								}
+								return projectsList;
+							}
+						});
+
+					} catch (Exception e) {
+						log.error(e);
+						throw e;
+					}
+				}
 
 				// use operationDescriptor to route to correct handler
 				
 				IOperationHandler operationHandler = operationDescriptor.get_operation().getHandler();
-				QueryResult result = operationHandler.handleOperation(collection, null , operationDescriptor.get_operation_args(), null);
+				QueryResult result = operationHandler.handleOperation(collection, null , operationDescriptor.get_operation_args(), null, role, authorization);
 				return result;
 				
 			} catch (Exception e) {

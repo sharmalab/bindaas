@@ -2,6 +2,7 @@ package edu.emory.cci.bindaas.security.model.hibernate;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -24,7 +25,7 @@ public class AuditMessage {
 	private String subject;
 	private String requestUri;
 	private String event;
-	
+	private static final String SEPARATOR = ", ";
 	public Long getId() {
 		return id;
 	}
@@ -75,5 +76,12 @@ public class AuditMessage {
 	}
 	private Integer outcome;
 	private String source;
+
+	@Column(length = 1023)
 	private String queryString;
+
+	public String getOutputLine() {
+		return timestamp.toString() + SEPARATOR + requestUri + SEPARATOR + queryString + SEPARATOR + subject +
+				SEPARATOR+ source + SEPARATOR + event + SEPARATOR + outcome;
+	}
 }

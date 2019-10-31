@@ -483,7 +483,7 @@
 			}
 						
 			function executeDeleteAPI(url, buttonClicked) {
-				var queryString = "?api_key=$apiKey&";
+				var queryString = "?$protocol=$protocolValue&"
 				$(buttonClicked).parent().find("input").each(function() {
 
 					if ($(this).attr("value") && $(this).attr("value") != "") {
@@ -530,7 +530,6 @@
 			}
 		</script>
 		
-		<script type="text/javascript" src="http://jira.cci.emory.edu:8080/s/en_US-6wxn3q/784/109/1.1.2/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=3e8defd2"></script>
 		<script>
 		$("#autoDetectToggle").trigger("click");
 		</script>

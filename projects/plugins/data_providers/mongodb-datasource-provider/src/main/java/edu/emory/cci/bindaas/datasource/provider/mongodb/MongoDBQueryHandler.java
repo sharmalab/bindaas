@@ -1,19 +1,31 @@
 package edu.emory.cci.bindaas.datasource.provider.mongodb;
 
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bson.Document;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Indexes;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
-import com.mongodb.MongoOptions;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
+import edu.emory.cci.bindaas.core.api.BindaasConstants;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.DataSourceConfiguration;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormat;
 import edu.emory.cci.bindaas.datasource.provider.mongodb.model.OutputFormatProps;
@@ -33,12 +45,13 @@ import edu.emory.cci.bindaas.framework.provider.exception.QueryExecutionFailedEx
 import edu.emory.cci.bindaas.framework.provider.exception.ValidationException;
 import edu.emory.cci.bindaas.framework.util.GSONUtil;
 
+import static edu.emory.cci.bindaas.datasource.provider.mongodb.MongoDBProvider.getAuthorizationRulesCache;
+
 public class MongoDBQueryHandler implements IQueryHandler {
 
     private Log log = LogFactory.getLog(getClass());
     private OutputFormatRegistry registry;
     private JsonParser parser = new JsonParser();
-    
     private Map<String, DBCollection> dbCollectionMap = new HashMap<String, DBCollection>();
 
     public OutputFormatRegistry getRegistry() {
@@ -53,7 +66,7 @@ public class MongoDBQueryHandler implements IQueryHandler {
     public QueryResult query(JsonObject dataSource,
             JsonObject outputFormatProps, String queryToExecute, Map<String,String> runtimeParameters, RequestContext requestContext)
             throws AbstractHttpCodeException {
-        
+
         try{
             if(outputFormatProps!=null)
             {
@@ -103,15 +116,31 @@ public class MongoDBQueryHandler implements IQueryHandler {
                     
                         
                     // get DB collection
-                    DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
+                    final DataSourceConfiguration configuration = GSONUtil.getGSONInstance().fromJson(dataSource, DataSourceConfiguration.class);
                     String dbCollectionKey = configuration.getDb() + "-" + configuration.getCollection();
                     if (! dbCollectionMap.containsKey(dbCollectionKey) ) {
-                        Mongo mongo = null;
+                        MongoClient mongo = null;
                         try {
-                            MongoOptions options = new MongoOptions();
-                            options.connectionsPerHost = 50;
 
-                            mongo = new Mongo(new ServerAddress(configuration.getHost(), configuration.getPort()), options);
+                            MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
+                            optionsBuilder.connectionsPerHost(50);
+                            MongoClientOptions options = optionsBuilder.build();
+
+                            if(configuration.getUsername() == null && configuration.getPassword() == null){
+                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+                            }
+                            else if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+                            }
+                            else{
+                                MongoCredential credential = MongoCredential.createCredential(
+                                        configuration.getUsername(),
+                                        configuration.getAuthenticationDb(),
+                                        configuration.getPassword().toCharArray()
+                                );
+                                mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential),options);
+                            }
+
                             DB db = mongo.getDB(configuration.getDb());
                             DBCollection mongoDbCollection = db.getCollection(configuration.getCollection());
                             dbCollectionMap.put(dbCollectionKey, mongoDbCollection);
@@ -122,10 +151,60 @@ public class MongoDBQueryHandler implements IQueryHandler {
                             throw e;
                         }
                     }
+
+                    final Object role = requestContext.getAttributes().get(BindaasConstants.ROLE);
+                    boolean authorization = configuration.getAuthorizationCollection() != null && !configuration.getAuthorizationCollection().isEmpty();
+
+                    // caching role for all query operations
+                    if( role != null && authorization) {
+                        try {
+                           List<String> projects =  getAuthorizationRulesCache().get(role.toString(), new Callable<List<String>>() {
+                                @Override
+                                public List<String> call() throws Exception {
+                                    MongoClient mongo = null;
+                                    MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
+                                    optionsBuilder.connectionsPerHost(50);
+                                    MongoClientOptions options = optionsBuilder.build();
+
+                                    if(configuration.getUsername() == null && configuration.getPassword() == null){
+                                        mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+                                    }
+                                    else if(configuration.getUsername().isEmpty() && configuration.getPassword().isEmpty()){
+                                        mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), options);
+                                    }
+                                    else{
+                                        MongoCredential credential = MongoCredential.createCredential(
+                                                configuration.getUsername(),
+                                                configuration.getAuthenticationDb(),
+                                                configuration.getPassword().toCharArray()
+                                        );
+                                        mongo = new MongoClient(new ServerAddress(configuration.getHost(),configuration.getPort()), Arrays.asList(credential),options);
+                                    }
+
+                                    MongoDatabase database = mongo.getDatabase(configuration.getDb());
+                                    MongoCollection<Document> authCollection = database.getCollection(configuration.getAuthorizationCollection());
+                                    authCollection.dropIndexes();
+                                    authCollection.createIndex(Indexes.text("roles"));
+                                    FindIterable<Document> docs = authCollection.find(Filters.text(role.toString()));
+                                    List<String> projectsList = new ArrayList<String>();
+                                    for (Document doc : docs) {
+                                        projectsList.add(doc.getString("projectName"));
+                                    }
+
+                                    return projectsList;
+                                }
+                            });
+
+                        } catch (Exception e) {
+                            log.error(e);
+                            throw e;
+                        }
+                    }
+
                     // use operationDescriptor to route to correct handler
                     
                     IOperationHandler operationHandler = operationDescriptor.get_operation().getHandler();
-                    QueryResult result = operationHandler.handleOperation(dbCollectionMap.get(dbCollectionKey), props , operationDescriptor.get_operation_args(), registry);
+                    QueryResult result = operationHandler.handleOperation(dbCollectionMap.get(dbCollectionKey), props , operationDescriptor.get_operation_args(), registry, role, authorization);
                     return result;
                     
                     

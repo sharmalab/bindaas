@@ -19,20 +19,21 @@ import edu.emory.cci.bindaas.security.model.hibernate.AuditMessage;
 public class DBAuditProvider implements IAuditProvider{
 
 	private Log log = LogFactory.getLog(getClass());
-	private static Integer MAX_DISPLAY_THRESHOLD = 10000 ;
-	private static Integer EXPORT_BATCH_THRESHOLD = 4000 ;
-	
+	private static Integer MAX_DISPLAY_THRESHOLD = 10000;
+	private static Integer EXPORT_BATCH_THRESHOLD = 4000;
+
 	
 	@Override
-	public void audit(AuditMessage auditMessage)
-			throws Exception {
+	public void audit(AuditMessage auditMessage) {
 		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
 		if(sessionFactory!=null)
 		{
 			Session session = sessionFactory.openSession();
 			Transaction tx = null ;
-			try{
-				
+			try {
+				if (auditMessage.getOutputLine() != null) {
+					log.info("[AUDIT] " + auditMessage.getOutputLine());
+				}
 				tx = session.beginTransaction();
 				session.save(auditMessage);
 				tx.commit();
@@ -52,7 +53,7 @@ public class DBAuditProvider implements IAuditProvider{
 	}
 	
 	@Override
-	public List<AuditMessage> getAuditLogs() throws Exception {
+	public List<AuditMessage> getAuditLogs() {
 		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
 		if(sessionFactory!=null)
 		{
@@ -79,7 +80,7 @@ public class DBAuditProvider implements IAuditProvider{
 	}
 	
 	@Override
-	public int clean() throws Exception {
+	public int clean() {
 		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
 		if(sessionFactory!=null)
 		{
@@ -107,7 +108,7 @@ public class DBAuditProvider implements IAuditProvider{
 	}
 
 	@Override
-	public void dump(Writer writer) throws Exception {
+	public void dump(Writer writer) {
 		SessionFactory sessionFactory = Activator.getService(SessionFactory.class);
 		if(sessionFactory!=null)
 		{

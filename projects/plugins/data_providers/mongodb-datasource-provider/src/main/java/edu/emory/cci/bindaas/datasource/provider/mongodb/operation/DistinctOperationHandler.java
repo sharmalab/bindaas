@@ -29,7 +29,7 @@ public class DistinctOperationHandler implements IOperationHandler {
 
 	@Override
 	public QueryResult handleOperation(DBCollection collection,
-									   OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry)
+									   OutputFormatProps outputFormatProps, JsonObject operationArguments , OutputFormatRegistry registry, Object role, boolean authorization)
 			throws ProviderException {
 		DistinctOperationDescriptor operationDescriptor = GSONUtil.getGSONInstance().fromJson(operationArguments, DistinctOperationDescriptor.class);
 		validateArguments(operationDescriptor);

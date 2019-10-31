@@ -22,7 +22,7 @@
 
     </category>
     <root>
-        <priority value="warn" />
+        <priority value="info" />
         <appender-ref ref="console" />
         <appender-ref ref="R" />
     </root>

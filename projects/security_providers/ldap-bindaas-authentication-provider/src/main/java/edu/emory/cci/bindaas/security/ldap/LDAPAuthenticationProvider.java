@@ -159,4 +159,15 @@ public class LDAPAuthenticationProvider implements IAuthenticationProvider {
 		return false;
 	}
 
+	@Override
+	public boolean isAuthenticationByJWTSupported() {
+		return false;
+	}
+
+	@Override
+	public BindaasUser loginUsingJWT(String jwt)
+			throws AuthenticationException {
+		log.error("Login via JWT not supported. Authentication failed");
+		throw new AuthenticationException(jwt);
+	}
 }

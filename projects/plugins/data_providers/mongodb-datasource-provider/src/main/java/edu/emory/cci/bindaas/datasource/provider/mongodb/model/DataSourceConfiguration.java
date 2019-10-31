@@ -8,6 +8,10 @@ public class DataSourceConfiguration {
 	@Expose private String collection;
 	@Expose private String host;
 	@Expose private int port = 27017;
+	@Expose private String authenticationDb;
+	@Expose private String username;
+	@Expose private String password;
+	@Expose private String authorizationCollection;
 	@Expose private boolean initialize;
 	
 	
@@ -61,7 +65,38 @@ public class DataSourceConfiguration {
 
 	public void setPort(int port) {
 		this.port = port;
-	}	
-	
-	
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setAuthenticationDb(String authenticationDb) {
+		this.authenticationDb = authenticationDb;
+	}
+
+	public String getAuthenticationDb() {
+		return authenticationDb;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getAuthorizationCollection() {
+		return authorizationCollection;
+	}
+
+	public void setAuthorizationCollection(String authorizationCollection) {
+		this.authorizationCollection = authorizationCollection;
+	}
+
 }

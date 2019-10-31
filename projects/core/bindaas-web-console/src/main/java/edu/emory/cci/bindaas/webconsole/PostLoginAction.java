@@ -23,13 +23,13 @@ import edu.emory.cci.bindaas.webconsole.bundle.Activator;
 import edu.emory.cci.bindaas.webconsole.config.BindaasAdminConsoleConfiguration;
 
 public class PostLoginAction extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String defaultLoginTarget;
 	private Log log = LogFactory.getLog(getClass());
 	private LoginView loginView;
 	private IAPIKeyManager apiKeyManager;
-	
+
 	public IAPIKeyManager getApiKeyManager() {
 		return apiKeyManager;
 	}

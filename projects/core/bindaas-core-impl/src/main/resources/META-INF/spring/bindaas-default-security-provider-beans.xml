@@ -77,6 +77,12 @@
 		<property name="apiKeyManager" ref="apiKeyManager"></property>
 	</bean>
 
+	<bean id="oAuthProvider"
+		  class="edu.emory.cci.bindaas.security.impl.OAuthProvider"
+		  init-method="init">
+		<property name="JWTManager" ref="JWTManager"></property>
+	</bean>
+
 	<bean id="auditCommand" class="edu.emory.cci.bindaas.core.system.command.AuditCommand"
 		init-method="init">
 		<property name="auditProvider" ref="auditProvider"></property>
@@ -89,7 +95,16 @@
 		<osgi:service-properties>
 			<entry key="class"
 				value="edu.emory.cci.bindaas.security.impl.DBAuthenticationProvider" />
-			<entry key="protocol" value="API_KEY" />
+			<entry key="protocol" value="api_key" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="oAuthProvider"
+		interface="edu.emory.cci.bindaas.security.api.IAuthenticationProvider">
+		<osgi:service-properties>
+			<entry key="class"
+				value="edu.emory.cci.bindaas.security.impl.OAuthProvider" />
+			<entry key="protocol" value="jwt" />
 		</osgi:service-properties>
 	</osgi:service>
 

@@ -101,11 +101,23 @@
             </fileset>
         </copy>
 
+        <copy todir="${dist.placeholder.dir}/bundles/system/" flatten="true">
+            <fileset dir="../projects/plugins/transformers/blob-download-plugin">
+                <include name="target/*.jar" />
+            </fileset>
+        </copy>
+
         <copy todir="${dist.placeholder.dir}/bundles/optional/" flatten="true">
             <fileset dir="../projects/plugins/data_providers/aime">
                 <include name="*/target/*.jar" />
             </fileset>
         </copy>
+
+		<copy todir="${dist.placeholder.dir}/bin/" flatten="true">
+			<fileset dir="../projects/misc/trusted-app-client">
+				<include name="target/*.jar" />
+			</fileset>
+		</copy>
 
         <chmod dir="${dist.placeholder.dir}/bin" perm="a+rx" includes="*.*"/>
 
