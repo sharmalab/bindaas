@@ -73,4 +73,4 @@ If you prefer to run Bindaas using its Docker container, please refer to [docker
 ## Citing Bindaas
 If you use Bindaas in your research, please cite the below paper:
 
-* Kathiravelu, P., Saghar, Y.N., Aggarwal, T., and Sharma, A. **Data Services with Bindaas: RESTful Interfaces for Diverse Data Sources**. In *The IEEE International Conference on Big Data (BigData’19)*. 6 pages. Dec. 2019.
+* Kathiravelu, P., Saghar, Y.N., Aggarwal, T., and Sharma, A. **Data Services with Bindaas: RESTful Interfaces for Diverse Data Sources**. In *The IEEE International Conference on Big Data (BigData’19)*. pp. 457 - 462. Dec. 2019.
