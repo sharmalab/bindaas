@@ -3,7 +3,7 @@ package edu.emory.cci.bindaas.datasource.provider.mongodb.operation;
 public enum MongoDBQueryOperationType {
 
 	find(new FindOperationHandler()),count(new CountOperationHandler()),distinct(new DistinctOperationHandler()),
-	group(new GroupOperationHandler()),mapReduce(new FindOperationHandler()) ;
+	group(new GroupOperationHandler()),mapReduce(new MapReduceOperationHandler()) ;
 	
 	MongoDBQueryOperationType(IOperationHandler handler)
 	{
