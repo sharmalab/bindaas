@@ -15,6 +15,7 @@ All queries must follow following syntax
   <li><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#distinct(java.lang.String, com.mongodb.DBObject)">distinct</a></li>
   <li><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#group(com.mongodb.DBObject, com.mongodb.DBObject, com.mongodb.DBObject, java.lang.String)">group</a></li>
   <li><a href="http://api.mongodb.org/java/current/com/mongodb/DBCollection.html#mapReduce(java.lang.String, java.lang.String, java.lang.String, com.mongodb.DBObject)">mapreduce</a></li>
+	<li><a href="https://mongodb.github.io/mongo-java-driver/3.6/javadoc/?com/mongodb/client/model/Aggregates.html">aggregate</a></li>
 </ul>
 </div>
 
@@ -87,6 +88,20 @@ All queries must follow following syntax
 							"map" : "function(){}" , 
 							"reduce" : "function(){}" , 
 							"outputCollection" : "outputcollection"    
+						}
+}
+</textarea>
+</div>
+
+<div>
+	<h5>aggregate</h5>
+	<textarea readonly="readonly">
+{
+	"_operation" : "aggregate" ,
+	"_operation_args" : {
+							"match" : { patientId: 'x' }  ,
+							"group" : { _id: "$age", total: { $sum: "$bill" } } ,
+							"sort" :  { total: -1 }
 						}
 }
 </textarea>
