@@ -1,4 +1,4 @@
-# Bindaas Data Integration Middleware Platform
+# Bindaas Data Access Federation Middleware Platform
 
 Bindaas federates multiple data sources, provides access to them through REST interfaces, and enables query, access, and integration of data from diverse data sources such as MySQL and MongoDB.
 
