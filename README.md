@@ -1,5 +1,7 @@
 # Bindaas Data Integration Middleware Platform
 
+Bindaas federates multiple data sources, provides access to them through REST interfaces, and enables query, access, and integration of data from diverse data sources such as MySQL and MongoDB.
+
 ## Building Bindaas
 
 Bindaas can be built using Apache Maven 3.x and Java 1.8.
