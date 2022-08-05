@@ -4,7 +4,7 @@
 
 Bindaas can be built using Apache Maven 3.x and Java 1.8.
 
- $ mvn clean install
+`$ mvn clean install`
 
 Bindaas binaries can be found in the binaries folder.
 
@@ -19,22 +19,22 @@ bindaas-dist-3.3.5-201806281144-min.tar.gz
 
 Extract this compressed binary. 
 
-$ tar xvzf bindaas-dist-3.3.5-201806281144-min.tar.gz
+`$ tar xvzf bindaas-dist-3.3.5-201806281144-min.tar.gz`
 
 Now bindaas-dist-3.3.5-201806281144-min will be your BINDAAS-BINARY-HOME.
 
 Bindaas can be executed using the startup.sh script in
 BINDAAS-BINARY-HOME/bin
 
-$ sh startup.sh
+`$ sh startup.sh`
 
 Similarly, you may shut down Bindaas by executing the shutdown script:
 
-$ sh shutdown.sh
+`$ sh shutdown.sh`
 
 If you would like to have an interactive OSGi console with logs displayed inline:
 
-$ java -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.10.100.v20150529-1857.jar -console
+`$ java -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.10.100.v20150529-1857.jar -console`
 
 
 ## Troubleshooting
@@ -43,7 +43,7 @@ If you encounter the error "java.net.SocketException: Can't assign requested add
 CXF errors when you are on a Mac with a wireless connection, please use the flag "-Djava.net.preferIPv4Stack=true" to fix this,
 as shown below:
 
-$ java -Djava.net.preferIPv4Stack=true -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.10.100.v20150529-1857.jar -console
+`$ java -Djava.net.preferIPv4Stack=true -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org.eclipse.osgi_3.10.100.v20150529-1857.jar -console`
 
 
 ## Verify Setup
@@ -51,7 +51,7 @@ $ java -Djava.net.preferIPv4Stack=true -Dpid=BINDAAS_INSTANCE -Xmx1024m -jar org
 To verify everything is setup correctly visit the following url in your web-browser :
 http://localhost:8080/dashboard/
 
-You should be greeted by Bindaas' Login page.
+You should be greeted by Bindaas Login page.
 
 The logs can be found at <BINDAAS-BINARY-HOME>/log/bindaas.log.
 
