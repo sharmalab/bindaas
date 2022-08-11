@@ -1,6 +1,7 @@
 # Bindaas Data Access Federation Middleware
+<!---
 [![Build Status](https://travis-ci.com/sharmalab/bindaas.svg?branch=master)](https://travis-ci.com/sharmalab/bindaas)
-
+-->
 Bindaas federates multiple data sources, provides access to them through REST interfaces, and enables query, access, and integration of data from diverse data sources such as MySQL and MongoDB.
 
 ## Building Bindaas
