@@ -141,7 +141,8 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.4.24.Final</version>
+                <!--Pls do not change the version.-->
+                <version>4.3.11.Final</version>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
