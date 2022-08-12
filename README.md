@@ -10,8 +10,6 @@ Bindaas can be built using Apache Maven 3.x and Java 1.8.
 
 `$ mvn clean install`
 
-Bindaas binaries can be found in the binaries folder.
-
 Bindaas does not build with JDK 10, due to incompatibilities in Maven plugins.
 
 
