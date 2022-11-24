@@ -142,7 +142,7 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <!--Pls do not change the version.-->
-                <version>4.3.11.Final</version>
+                <version>5.3.20.Final</version>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
